@@ -1,5 +1,6 @@
 /* SPA для портфолио: маршрутизация, меню, эффекты, печать текста */
 import { mountPrismaticBurst } from './prismatic-burst.js';
+import { mountColorBends } from './color-bends.js';
 
 const DATA = {
 	menuTitles: [], // строки из mts/document/menu.txt
@@ -651,6 +652,40 @@ function renderRoute(){
 		const slideObj = DATA.slides[4] || null;
 		const body = slideObj?.body || '';
 		typeInto(mainText, body);
+		return;
+	}
+	// Слайд 09 — центрированный текст + интерактивный фон ColorBends
+	if(route.index === 9){
+		$app.innerHTML = '';
+		const root = document.createElement('section');
+		root.className = 'view';
+		root.style.background = 'var(--bg-dark)';
+		// фон
+		const bends = mountColorBends(root, {
+			colors: ['#570000', '#23415F', '#004A36'],
+			rotation: -56,
+			speed: 0.3,
+			scale: 0.5,
+			frequency: 1.0,
+			warpStrength: 1.0,
+			mouseInfluence: 1.0,
+			parallax: 0.6,
+			noise: 0.1,
+			transparent: false,
+		});
+		// текст
+		const box = document.createElement('div');
+		box.className = 'center-text-box';
+		const mainText = document.createElement('div');
+		mainText.className = 'main-text';
+		box.appendChild(mainText);
+		root.appendChild(box);
+		$app.appendChild(root);
+		const slideObj = DATA.slides[9] || null;
+		const body = slideObj?.body || '';
+		typeInto(mainText, body);
+		// очистка
+		cleanup = () => bends.detach();
 		return;
 	}
 	// Универсальный центрированный текстовый слайд
