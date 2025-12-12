@@ -29,10 +29,14 @@ const IFRAME_MAP = {
 	24: './mts/message/message-slow.html',
 	33: './mts/ui-phone/ui-port-naked/ui-port-naked.html',
 	34: './mts/message/message-port.html',
+	17: './mts/widgets/widgets.html',
+	18: './mts/page/page.html',
 };
 
 // На каких слайдах поверх видео нужен эффект шума
 const NOISE_SLIDES = new Set([2, 3, 8, 20, 22, 25, 35]);
+// Слайды со светлой темой (меню и номера — чёрные)
+const LIGHT_SLIDES = new Set([15, 16, 17, 18]);
 
 const $app = document.getElementById('app');
 const $side = document.getElementById('sideMenu');
@@ -283,7 +287,7 @@ function renderTwoColSlide(index){
 	$app.innerHTML = '';
 	const root = document.createElement('section');
 	root.className = 'view slide-two-col';
-	root.style.background = 'var(--bg-dark)';
+	root.style.background = LIGHT_SLIDES.has(index) ? '#EDE8E1' : 'var(--bg-dark)';
 
 	const left = document.createElement('div');
 	left.className = 'slide-left';
@@ -611,6 +615,12 @@ function renderRoute(){
 	if(cleanup){ try{ cleanup(); }catch(e){} cleanup = null; }
 	const route = currentRoute();
 	setFooterState(route);
+	// Тема для светлых слайдов
+	if (route.view === 'slide' && LIGHT_SLIDES.has(route.index)) {
+		document.body.classList.add('theme-light');
+	} else {
+		document.body.classList.remove('theme-light');
+	}
 	renderSideMenu(route.view === 'slide' ? route.index : 0);
 	if(route.view === 'home'){
 		cleanup = renderHome();
@@ -623,6 +633,260 @@ function renderRoute(){
 	}
 	if(route.index === 5){
 		renderSlide05();
+		return;
+	}
+	// Слайд 15 — светлая тема: фон #EDE8E1, текст чёрный, фон-iframe на всю высоту
+	if(route.index === 15){
+		$app.innerHTML = '';
+		const root = document.createElement('section');
+		root.className = 'view';
+		root.style.background = '#EDE8E1';
+		const bg = document.createElement('iframe');
+		bg.src = './mts/database.html';
+		bg.className = 'bg-iframe-fullheight-center';
+		bg.setAttribute('title', 'Database');
+		bg.setAttribute('loading', 'lazy');
+		root.appendChild(bg);
+		const textWrap = document.createElement('div');
+		textWrap.style.position = 'relative';
+		textWrap.style.zIndex = '2';
+		textWrap.style.padding = 'var(--pad)';
+		textWrap.style.maxWidth = '70vw';
+		textWrap.style.textAlign = 'left';
+		textWrap.style.fontWeight = '400';
+		textWrap.style.lineHeight = '140%';
+		textWrap.style.fontSize = 'var(--fz-main)';
+		textWrap.style.color = '#000000';
+		root.appendChild(textWrap);
+		$app.appendChild(root);
+		const slideObj = DATA.slides[15] || null;
+		const body = slideObj?.body || '';
+		typeInto(textWrap, body);
+		return;
+	}
+	// Слайд 16 — светлая тема, текст в левой и правой колонке + SVG под текстом
+	if(route.index === 16){
+		$app.innerHTML = '';
+		const root = document.createElement('section');
+		root.className = 'view slide-two-col';
+		root.style.background = '#EDE8E1';
+
+		const left = document.createElement('div');
+		left.className = 'slide-left';
+		const right = document.createElement('div');
+		right.className = 'slide-right';
+		right.style.display = 'block';
+		right.style.padding = 'var(--pad)';
+
+		// Левая колонка: текст + SVG
+		const leftWrap = document.createElement('div');
+		leftWrap.style.width = '100%';
+		const leftText = document.createElement('div');
+		leftText.className = 'main-text';
+		const leftImg = document.createElement('img');
+		leftImg.src = './mts/flexibility-01.svg';
+		leftImg.alt = '';
+		leftImg.style.width = '100%';
+		leftImg.style.height = 'auto';
+		leftImg.style.display = 'block';
+		leftImg.style.marginTop = '24px';
+		leftWrap.appendChild(leftText);
+		leftWrap.appendChild(leftImg);
+		left.appendChild(leftWrap);
+
+		// Правая колонка: текст + SVG
+		const rightText = document.createElement('div');
+		rightText.className = 'main-text';
+		const rightImg = document.createElement('img');
+		rightImg.src = './mts/flexibility-02.svg';
+		rightImg.alt = '';
+		rightImg.style.width = '100%';
+		rightImg.style.height = 'auto';
+		rightImg.style.display = 'block';
+		rightImg.style.marginTop = '24px';
+		right.appendChild(rightText);
+		right.appendChild(rightImg);
+
+		root.appendChild(left);
+		root.appendChild(right);
+		$app.appendChild(root);
+
+		// Текст делим на левый/правый по строкам
+		const slideObj = DATA.slides[16] || null;
+		const body = (slideObj?.body || '').replace(/\r\n?/g, '\n');
+		const lines = body.split('\n').map(s => s.trim()).filter(Boolean);
+		const leftBody = lines[0] || body;
+		const rightBody = lines.slice(1).join('\n') || '';
+		typeInto(leftText, leftBody);
+		if (rightBody) typeInto(rightText, rightBody);
+		return;
+	}
+	if(route.index === 7){
+		$app.innerHTML = '';
+		const root = document.createElement('section');
+		root.className = 'view';
+		root.style.background = 'var(--bg-dark)';
+		// фон — iframe на всю высоту
+		const bg = document.createElement('iframe');
+		bg.src = './mts/mts-graph-01.html';
+		bg.className = 'bg-iframe-fullheight-center';
+		bg.setAttribute('title', 'Graph 01');
+		bg.setAttribute('loading', 'lazy');
+		root.appendChild(bg);
+		// текст шире 50vw
+		const textWrap = document.createElement('div');
+		textWrap.style.position = 'relative';
+		textWrap.style.zIndex = '2';
+		textWrap.style.padding = 'var(--pad)';
+		textWrap.style.maxWidth = '70vw';
+		textWrap.style.textAlign = 'left';
+		textWrap.style.fontWeight = '400';
+		textWrap.style.lineHeight = '140%';
+		textWrap.style.fontSize = 'var(--fz-main)';
+		root.appendChild(textWrap);
+		$app.appendChild(root);
+		const slideObj = DATA.slides[7] || null;
+		const body = slideObj?.body || '';
+		typeInto(textWrap, body);
+		return;
+	}
+	// Аналогично 07: фон-iframe и ширина текста 70vw
+	if(route.index === 19){
+		$app.innerHTML = '';
+		const root = document.createElement('section');
+		root.className = 'view';
+		root.style.background = 'var(--bg-dark)';
+		const bg = document.createElement('iframe');
+		bg.src = './mts/mts-graph-02.html';
+		bg.className = 'bg-iframe-fullheight-center';
+		bg.setAttribute('title', 'Graph 02');
+		bg.setAttribute('loading', 'lazy');
+		root.appendChild(bg);
+		const textWrap = document.createElement('div');
+		textWrap.style.position = 'relative';
+		textWrap.style.zIndex = '2';
+		textWrap.style.padding = 'var(--pad)';
+		textWrap.style.maxWidth = '70vw';
+		textWrap.style.textAlign = 'left';
+		textWrap.style.fontWeight = '400';
+		textWrap.style.lineHeight = '140%';
+		textWrap.style.fontSize = 'var(--fz-main)';
+		root.appendChild(textWrap);
+		$app.appendChild(root);
+		const slideObj = DATA.slides[19] || null;
+		const body = slideObj?.body || '';
+		typeInto(textWrap, body);
+		return;
+	}
+	if(route.index === 23){
+		$app.innerHTML = '';
+		const root = document.createElement('section');
+		root.className = 'view';
+		root.style.background = 'var(--bg-dark)';
+		const bg = document.createElement('iframe');
+		bg.src = './mts/mts-graph-03.html';
+		bg.className = 'bg-iframe-fullheight-center';
+		bg.setAttribute('title', 'Graph 03');
+		bg.setAttribute('loading', 'lazy');
+		root.appendChild(bg);
+		const textWrap = document.createElement('div');
+		textWrap.style.position = 'relative';
+		textWrap.style.zIndex = '2';
+		textWrap.style.padding = 'var(--pad)';
+		textWrap.style.maxWidth = '70vw';
+		textWrap.style.textAlign = 'left';
+		textWrap.style.fontWeight = '400';
+		textWrap.style.lineHeight = '140%';
+		textWrap.style.fontSize = 'var(--fz-main)';
+		root.appendChild(textWrap);
+		$app.appendChild(root);
+		const slideObj = DATA.slides[23] || null;
+		const body = slideObj?.body || '';
+		typeInto(textWrap, body);
+		return;
+	}
+	// Слайд 26 — фон-iframe speed-test-slow, текст 70vw
+	if(route.index === 26){
+		$app.innerHTML = '';
+		const root = document.createElement('section');
+		root.className = 'view';
+		root.style.background = 'var(--bg-dark)';
+		const bg = document.createElement('iframe');
+		bg.src = './mts/speed/speed-test-slow.html';
+		bg.className = 'bg-iframe-fullheight-center';
+		bg.setAttribute('title', 'Speed Test Slow');
+		bg.setAttribute('loading', 'lazy');
+		root.appendChild(bg);
+		const textWrap = document.createElement('div');
+		textWrap.style.position = 'relative';
+		textWrap.style.zIndex = '2';
+		textWrap.style.padding = 'var(--pad)';
+		textWrap.style.maxWidth = '70vw';
+		textWrap.style.textAlign = 'left';
+		textWrap.style.fontWeight = '400';
+		textWrap.style.lineHeight = '140%';
+		textWrap.style.fontSize = 'var(--fz-main)';
+		root.appendChild(textWrap);
+		$app.appendChild(root);
+		const slideObj = DATA.slides[26] || null;
+		const body = slideObj?.body || '';
+		typeInto(textWrap, body);
+		return;
+	}
+	// Слайд 32 — фон-iframe speed-test-seed, текст 70vw
+	if(route.index === 32){
+		$app.innerHTML = '';
+		const root = document.createElement('section');
+		root.className = 'view';
+		root.style.background = 'var(--bg-dark)';
+		const bg = document.createElement('iframe');
+		bg.src = './mts/speed/speed-test-seed.html';
+		bg.className = 'bg-iframe-fullheight-center';
+		bg.setAttribute('title', 'Speed Test Seed');
+		bg.setAttribute('loading', 'lazy');
+		root.appendChild(bg);
+		const textWrap = document.createElement('div');
+		textWrap.style.position = 'relative';
+		textWrap.style.zIndex = '2';
+		textWrap.style.padding = 'var(--pad)';
+		textWrap.style.maxWidth = '70vw';
+		textWrap.style.textAlign = 'left';
+		textWrap.style.fontWeight = '400';
+		textWrap.style.lineHeight = '140%';
+		textWrap.style.fontSize = 'var(--fz-main)';
+		root.appendChild(textWrap);
+		$app.appendChild(root);
+		const slideObj = DATA.slides[32] || null;
+		const body = slideObj?.body || '';
+		typeInto(textWrap, body);
+		return;
+	}
+	// Слайд 30 — фон-iframe weight.html, текст 70vw
+	if(route.index === 30){
+		$app.innerHTML = '';
+		const root = document.createElement('section');
+		root.className = 'view';
+		root.style.background = 'var(--bg-dark)';
+		const bg = document.createElement('iframe');
+		bg.src = './mts/weight.html';
+		bg.className = 'bg-iframe-fullheight-center';
+		bg.setAttribute('title', 'Weight');
+		bg.setAttribute('loading', 'lazy');
+		root.appendChild(bg);
+		const textWrap = document.createElement('div');
+		textWrap.style.position = 'relative';
+		textWrap.style.zIndex = '2';
+		textWrap.style.padding = 'var(--pad)';
+		textWrap.style.maxWidth = '70vw';
+		textWrap.style.textAlign = 'left';
+		textWrap.style.fontWeight = '400';
+		textWrap.style.lineHeight = '140%';
+		textWrap.style.fontSize = 'var(--fz-main)';
+		root.appendChild(textWrap);
+		$app.appendChild(root);
+		const slideObj = DATA.slides[30] || null;
+		const body = slideObj?.body || '';
+		typeInto(textWrap, body);
 		return;
 	}
 	// Фоновые iframe на всю высоту: 37–42
