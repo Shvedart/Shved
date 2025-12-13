@@ -52,6 +52,19 @@ const $btnNext = document.getElementById('btnNext');
 
 function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
 
+function applyFadeIn(el, events){
+	try{
+		el.classList?.add('media-fade');
+		const done = () => {
+			el.classList?.add('loaded');
+			events.forEach(ev => el.removeEventListener(ev, done));
+		};
+		events.forEach(ev => el.addEventListener(ev, done, { once:true }));
+		// запасной таймер на случай, если событие не придёт
+		setTimeout(done, 1200);
+	}catch(e){}
+}
+
 function currentRoute(){
 	const h = location.hash || '#/home';
 	const m = h.match(/^#\/(home|slide)\/?(\d+)?/i);
@@ -256,6 +269,7 @@ function renderHome(){
 	video.playsInline = true;
 	video.preload = 'auto';
 	video.controls = false;
+	applyFadeIn(video, ['loadeddata','canplay','canplaythrough','loadedmetadata']);
 	root.appendChild(video);
 
 	// Шум поверх
@@ -328,6 +342,22 @@ function renderTwoColSlide(index){
 	const mainText = document.createElement('div');
 	mainText.className = 'main-text';
 	left.appendChild(mainText);
+	// Доп. иллюстрация под текстом для слайда 10
+	if (index === 10) {
+		const ill = document.createElement('img');
+		ill.src = './mts/scroll.svg';
+		ill.alt = '';
+		ill.style.display = 'block';
+		ill.style.marginTop = '32px';
+		ill.style.maxWidth = '80%';
+		ill.style.height = 'auto';
+		// Плавное появление через 6 секунд после загрузки
+		ill.classList.add('media-fade');
+		ill.addEventListener('load', () => {
+			setTimeout(() => ill.classList.add('loaded'), 10000);
+		}, { once: true });
+		left.appendChild(ill);
+	}
 
 	const holder = document.createElement('div');
 	holder.className = 'video-holder';
@@ -337,6 +367,7 @@ function renderTwoColSlide(index){
 		frame.src = iframeSrc;
 		frame.setAttribute('title', 'Slide ' + String(index).padStart(2,'0') + ' Iframe');
 		frame.setAttribute('loading', 'lazy');
+		applyFadeIn(frame, ['load']);
 		holder.appendChild(frame);
 	} else {
 		const video = document.createElement('video');
@@ -346,6 +377,7 @@ function renderTwoColSlide(index){
 		video.autoplay = true;
 		video.playsInline = true;
 		video.preload = 'auto';
+		applyFadeIn(video, ['loadeddata','canplay','canplaythrough','loadedmetadata']);
 		holder.appendChild(video);
 	}
 	right.appendChild(holder);
@@ -354,7 +386,7 @@ function renderTwoColSlide(index){
 	let noiseHandle = null;
 	// (для iframe шума не делаем)
 	if (!IFRAME_MAP[index] && NOISE_SLIDES.has(index)) {
-		noiseHandle = attachNoiseOverlay(holder, { alpha: 16, refreshInterval: 2 });
+		noiseHandle = attachNoiseOverlay(holder, { alpha: 26, refreshInterval: 2 });
 	}
 
 	root.appendChild(left);
@@ -432,6 +464,7 @@ function renderSlide05(){
 	frame.setAttribute('allowtransparency', 'true');
 	frame.style.backgroundColor = 'transparent';
 	frame.setAttribute('loading', 'lazy');
+	applyFadeIn(frame, ['load']);
 	root.appendChild(frame);
 
 	// Текстовый блок (сверху слева 55px), ширина 50vw
@@ -465,6 +498,7 @@ function renderSlide27(){
 	bg.src = './mts/font.svg';
 	bg.alt = '';
 	bg.className = 'bg-fullheight-center';
+	applyFadeIn(bg, ['load']);
 	root.appendChild(bg);
 
 	// Текстовый блок
@@ -497,6 +531,7 @@ function renderSlide29(){
 	bg.src = './mts/icons-font.svg';
 	bg.alt = '';
 	bg.className = 'bg-fullheight-center';
+	applyFadeIn(bg, ['load']);
 	root.appendChild(bg);
 
 	const textWrap = document.createElement('div');
@@ -533,6 +568,7 @@ function renderSlide46(){
 	bg.playsInline = true;
 	bg.preload = 'auto';
 	bg.setAttribute('aria-hidden', 'true');
+	applyFadeIn(bg, ['loadeddata','canplay','canplaythrough','loadedmetadata']);
 	root.appendChild(bg);
 
 	const textWrap = document.createElement('div');
@@ -569,6 +605,7 @@ function renderSlide47(){
 	bg.playsInline = true;
 	bg.preload = 'auto';
 	bg.setAttribute('aria-hidden', 'true');
+	applyFadeIn(bg, ['loadeddata','canplay','canplaythrough','loadedmetadata']);
 	root.appendChild(bg);
 
 	const textWrap = document.createElement('div');
@@ -1017,6 +1054,7 @@ function renderRoute(){
 		bg.className = 'bg-iframe-fullheight-center';
 		bg.setAttribute('title', 'Flow Iframe');
 		bg.setAttribute('loading', 'lazy');
+		applyFadeIn(bg, ['load']);
 		root.appendChild(bg);
 		// текст слева
 		const textWrap = document.createElement('div');
@@ -1076,6 +1114,7 @@ function renderRoute(){
 		const img = document.createElement('img');
 		img.src = './mts/svg-animation.svg';
 		img.alt = '';
+		applyFadeIn(img, ['load']);
 		holder.appendChild(img);
 		right.appendChild(holder);
 
@@ -1099,6 +1138,7 @@ function renderRoute(){
 		bg.src = './mts/сalls-schedule.svg';
 		bg.alt = '';
 		bg.className = 'bg-fullwidth-bottom';
+	applyFadeIn(bg, ['load']);
 		root.appendChild(bg);
 
 		const textWrap = document.createElement('div');
