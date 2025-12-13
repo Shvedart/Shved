@@ -196,7 +196,7 @@ body{
 	position:fixed;
 	top:0; right:0;
 	height:100vh;
-	width:min(520px, 86vw);
+	width:max(50vw, 820px);
 	background:#0d0d10;
 	color:var(--text);
 	transform:translateX(110%);
@@ -222,53 +222,73 @@ body{
 	pointer-events:auto;
 }
 .side-menu__header{
-	display:flex;
-	align-items:center;
-	justify-content:space-between;
-	padding:20px 22px;
-	border-bottom:1px solid rgba(255,255,255,0.08);
+	display:none;
 }
 .side-menu__title{
 	font-weight:600;
+	font-size:22px;
 }
 .side-menu__close{
-	font-size:28px;
-	line-height:1;
-	width:40px;height:40px;
-	border-radius:8px;
-	background:rgba(255,255,255,0.06);
-	color:var(--text);
+	width:56px;height:56px;
+	display:grid;place-items:center;
+	border-radius:16px;
+	padding:8px;
+	background:rgba(0,0,0,0.3);
+	backdrop-filter: blur(40px);
+	border:1px solid rgba(255,255,255,0.2);
+	transition:background .12s ease, transform .12s ease;
 }
+.side-menu__close:hover{background:rgba(255,255,255,0.2); transform:translateY(-1px)}
+.side-menu__close:active{background:rgba(255,255,255,0.3)}
+.side-menu__close img{width:28px;height:28px;display:block}
 .side-menu__list{
-	padding:10px 6px 18px 6px;
+	padding:55px;
 	overflow:auto;
+	display:grid;
+	grid-template-columns: repeat(3, minmax(160px, 1fr)) max-content;
+	column-gap:36px;
+	row-gap:10px;
+	align-content:start;
+	font-size:13px;
+}
+.side-col{
+	display:flex;
+	flex-direction:column;
+	gap:10px;
+	min-width:0;
+}
+.side-menu__close--grid{
+	justify-self:end;
+	align-self:start;
 }
 .side-item{
 	display:flex;
 	align-items:center;
 	gap:10px;
-	padding:10px 14px;
-	border-radius:10px;
+	padding:8px 10px;
+	border-radius:8px;
 	cursor:pointer;
 	transition:background .12s ease;
 }
 .side-item:hover{background:rgba(255,255,255,0.06)}
 .side-item__num{
 	display:inline-block;
-	min-width:38px;
+	min-width:20px;
 	color:var(--text-dim);
+	font-weight:500;
+	font-size:13px;
 }
 .side-item__title{
-	flex:1;
 	white-space:nowrap;
 	overflow:hidden;
 	text-overflow:ellipsis;
+	font-size:13px;
 }
 .side-item__badge{
 	color:var(--text-dim);
-	font-size:0.9em;
+	font-size:13px;
 }
-.side-item--active{background:rgba(255,255,255,0.10)}
+.side-item--active{background:rgba(255,255,255,0.12)}
 
 /* Эффект курсора для тайпинга */
 .typewriter__cursor{

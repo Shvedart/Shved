@@ -106,27 +106,57 @@ function toggleSideMenu(open){
 
 function renderSideMenu(activeIndex){
 	$sideList.innerHTML = '';
-	for(let i=0;i<DATA.menuTitles.length;i++){
-		const title = DATA.menuTitles[i];
-		const item = document.createElement('div');
-		item.className = 'side-item' + (i === activeIndex ? ' side-item--active' : '');
-		item.addEventListener('click', () => {
-			toggleSideMenu(false);
-			if(i === 0){ gotoHome(); } else { gotoSlide(i); }
-		});
-		const num = document.createElement('div');
-		num.className = 'side-item__num';
-		num.textContent = String(i).padStart(2,'0');
-		const ttl = document.createElement('div');
-		ttl.className = 'side-item__title';
-		ttl.textContent = title.replace(/\s*✦\s*/g, '');
-		const badge = document.createElement('div');
-		badge.className = 'side-item__badge';
-		if(isInteractiveByTitle(title)) badge.textContent = '✦';
-		item.appendChild(num);
-		item.appendChild(ttl);
-		item.appendChild(badge);
-		$sideList.appendChild(item);
+	// создаём 3 колонки слайдов, последняя 4-я колонка — крестик
+	const cols = [];
+	for (let c = 0; c < 3; c++) {
+		const col = document.createElement('div');
+		col.className = 'side-col';
+		cols.push(col);
+		$sideList.appendChild(col);
+	}
+	// колонка для close
+	const closeCol = document.createElement('div');
+	closeCol.className = 'side-col side-col--close';
+	const closeBtn = document.createElement('button');
+	closeBtn.className = 'side-menu__close side-menu__close--grid';
+	closeBtn.setAttribute('aria-label', 'Закрыть меню');
+	const img = document.createElement('img');
+	img.src = './ui-element/close.svg';
+	img.alt = 'Закрыть';
+	closeBtn.appendChild(img);
+	closeBtn.addEventListener('click', () => toggleSideMenu(false));
+	closeCol.appendChild(closeBtn);
+	$sideList.appendChild(closeCol);
+
+	// Раскладываем пункты по колонкам сверху вниз (column-major)
+	const total = DATA.menuTitles.length;
+	const colCount = 3;
+	const perCol = Math.ceil(total / colCount);
+	for (let c = 0; c < colCount; c++) {
+		for (let r = 0; r < perCol; r++) {
+			const i = c * perCol + r;
+			if (i >= total) break;
+			const title = DATA.menuTitles[i];
+			const item = document.createElement('div');
+			item.className = 'side-item' + (i === activeIndex ? ' side-item--active' : '');
+			item.addEventListener('click', () => {
+				toggleSideMenu(false);
+				if(i === 0){ gotoHome(); } else { gotoSlide(i); }
+			});
+			const num = document.createElement('div');
+			num.className = 'side-item__num';
+			num.textContent = String(i).padStart(2,'0');
+			const ttl = document.createElement('div');
+			ttl.className = 'side-item__title';
+			ttl.textContent = title.replace(/\s*✦\s*/g, '');
+			const badge = document.createElement('div');
+			badge.className = 'side-item__badge';
+			if(isInteractiveByTitle(title)) badge.textContent = '✦';
+			item.appendChild(num);
+			item.appendChild(ttl);
+			item.appendChild(badge);
+			cols[c].appendChild(item);
+		}
 	}
 }
 
