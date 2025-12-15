@@ -562,6 +562,7 @@ function renderSlide01(){
 	textWrap.style.fontWeight = '400';
 	textWrap.style.lineHeight = '140%';
 	textWrap.style.fontSize = 'var(--fz-main)';
+	textWrap.classList.add('media-fade'); // появится позже
 	root.appendChild(textWrap);
 
 	// Лого по центру
@@ -569,6 +570,8 @@ function renderSlide01(){
 	logo.src = './mts/mts-logo.svg';
 	logo.alt = 'MTS';
 	logo.className = 'slide-01__logo';
+	logo.classList.add('media-fade');
+	logo.style.transition = 'opacity .6s ease';
 	root.appendChild(logo);
 
 	// Призматический интерактивный фон (WebGL)
@@ -580,7 +583,8 @@ function renderSlide01(){
 		hoverDampness: 0.25,
 		rayCount: 0,
 		mixBlendMode: 'lighten',
-		colors: ['#9D0E1E', '#169168', '#B9B9B9']
+		colors: ['#9D0E1E', '#169168', '#B9B9B9'],
+		autoFadeIn: false
 		// colors: ['#D94A5A', '#52CDA4', '#ffffff']
 	});
 
@@ -589,9 +593,36 @@ function renderSlide01(){
 	// Текст слайда 01
 	const slideObj = DATA.slides[1] || null;
 	const body = slideObj?.body || '';
-	typeInto(textWrap, body);
+	// Последовательное появление: 1) канвас (1.5s), 2) лого, 3) старт печати
+	let tCanvas, tLogo, tText;
+	try {
+		if (burstHandle && burstHandle.canvas){
+			burstHandle.canvas.classList.add('media-fade');
+			burstHandle.canvas.style.transition = 'opacity 1.5s ease';
+			tCanvas = setTimeout(() => {
+				burstHandle.canvas.classList.add('loaded');
+			}, 0);
+		}
+		tLogo = setTimeout(() => {
+			logo.classList.add('loaded');
+			tText = setTimeout(() => {
+				textWrap.classList.add('loaded');
+				typeInto(textWrap, body);
+			}, 600);
+		}, 1500);
+	} catch(e){
+		try{ burstHandle?.canvas?.classList.add('loaded'); }catch(_){}
+		try{ logo.classList.add('loaded'); }catch(_){}
+		try{ textWrap.classList.add('loaded'); }catch(_){}
+		typeInto(textWrap, body);
+	}
 
-	return () => burstHandle.detach();
+	return () => {
+		if (tCanvas) clearTimeout(tCanvas);
+		if (tLogo) clearTimeout(tLogo);
+		if (tText) clearTimeout(tText);
+		burstHandle.detach();
+	};
 }
 
 /* Слайд 05 — текст слева, на фоне справа iframe, без шума */

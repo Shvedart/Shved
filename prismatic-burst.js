@@ -12,7 +12,8 @@ export function mountPrismaticBurst(container, options = {}){
 		hoverDampness: 0.25,
 		rayCount: 24,
 		mixBlendMode: 'lighten',
-		noiseAmount: 0.8
+		noiseAmount: 0.8,
+		autoFadeIn: true
 	}, options || {});
 
 	const canvas = document.createElement('canvas');
@@ -335,10 +336,13 @@ export function mountPrismaticBurst(container, options = {}){
 	ro.observe(container);
 	resize();
 	raf = requestAnimationFrame(loop);
-	// Отложенно помечаем как загруженный для мягкого появления
-	try { requestAnimationFrame(() => canvas.classList.add('loaded')); } catch(e){}
+	// Отложенно помечаем как загруженный для мягкого появления (можно отключить)
+	if (opts.autoFadeIn !== false) {
+		try { requestAnimationFrame(() => canvas.classList.add('loaded')); } catch(e){}
+	}
 
-	return {
+		return {
+			canvas,
 		detach(){
 			stopped = true;
 			cancelAnimationFrame(raf);
