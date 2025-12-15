@@ -500,5 +500,10 @@ body{
 	.slide-two-col .slide-right{min-height:50vh}
 	.footer{left:var(--pad); bottom:var(--pad)}
 }
+a {
+    color: #24A1de;
+}
 
-
+a:hover {
+    color: #1e8fc8;
+}
