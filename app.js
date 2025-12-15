@@ -52,6 +52,74 @@ const $btnNext = document.getElementById('btnNext');
 
 function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
 
+function linkifyTelegram(container){
+	try{
+		const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null);
+		const targets = [];
+		while (walker.nextNode()){
+			const node = walker.currentNode;
+			if (node.nodeValue && node.nodeValue.includes('@Shved_art')){
+				targets.push(node);
+			}
+		}
+		targets.forEach(node => {
+			const parts = node.nodeValue.split('@Shved_art');
+			const frag = document.createDocumentFragment();
+			for (let i = 0; i < parts.length; i++){
+				if (parts[i]) frag.appendChild(document.createTextNode(parts[i]));
+				if (i < parts.length - 1){
+					const a = document.createElement('a');
+					a.href = 'https://t.me/Shved_art';
+					a.textContent = '@Shved_art';
+					a.target = '_blank';
+					a.rel = 'noopener noreferrer';
+					a.style.textDecoration = 'underline';
+					frag.appendChild(a);
+				}
+			}
+			node.parentNode.replaceChild(frag, node);
+		});
+	}catch(e){}
+}
+
+// Преобразование текстовых "<a href='...'>текст</a>" в реальные ссылки после печати
+function hydrateAnchors(container){
+	try{
+		const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null);
+		const targets = [];
+		const re = /<a\s+href=["']([^"']+)["']>(.*?)<\/a>/i;
+		while (walker.nextNode()){
+			const node = walker.currentNode;
+			if (node.nodeValue && re.test(node.nodeValue)) targets.push(node);
+		}
+		targets.forEach(node => {
+			const text = node.nodeValue;
+			const frag = document.createDocumentFragment();
+			let lastIndex = 0;
+			const regex = /<a\s+href=["']([^"']+)["']>(.*?)<\/a>/ig;
+			let m;
+			while ((m = regex.exec(text)) !== null){
+				const [full, href, label] = m;
+				if (m.index > lastIndex){
+					frag.appendChild(document.createTextNode(text.slice(lastIndex, m.index)));
+				}
+				const a = document.createElement('a');
+				a.href = href;
+				a.textContent = label;
+				a.target = '_blank';
+				a.rel = 'noopener noreferrer';
+				a.style.textDecoration = 'underline';
+				frag.appendChild(a);
+				lastIndex = m.index + full.length;
+			}
+			if (lastIndex < text.length){
+				frag.appendChild(document.createTextNode(text.slice(lastIndex)));
+			}
+			node.parentNode.replaceChild(frag, node);
+		});
+	}catch(e){}
+}
+
 function applyFadeIn(el, events){
 	try{
 		el.classList?.add('media-fade');
@@ -126,6 +194,8 @@ function gotoPrev(){
 function gotoNext(){
 	const r = currentRoute();
 	if(r.view === 'home'){ gotoSlide(1); return; }
+	// На последнем (50) — переход на главный (00)
+	if (r.index >= 50){ gotoHome(); return; }
 	gotoSlide(r.index + 1);
 }
 
@@ -140,12 +210,32 @@ function setFooterState(route){
 		num = String(route.index).padStart(2,'0');
 		const title = DATA.menuTitles[route.index] || '';
 		interactive = isInteractiveByTitle(title);
+		// Скрыть метку интерактивности на 36, 43, 50
+		if ([36, 43, 50].includes(route.index)) interactive = false;
 	} else {
-		// Главный экран — интерактивный ✦
+		// Главный экран — интерактивный ✦, но без "МТС/00"
 		interactive = true;
 	}
 	$num.textContent = num;
 	$badge.hidden = !interactive;
+	// На главном экране скрываем "МТС/NN", на остальных — показываем
+	if (route.view === 'home'){
+		$btnProject.style.visibility = 'hidden';
+		$btnProject.style.pointerEvents = 'none';
+		// Перемещаем метку "интерактивный ✦" в правый верх (55/55)
+		$badge.style.position = 'fixed';
+		$badge.style.right = 'var(--pad)';
+		$badge.style.top = 'var(--pad)';
+		$badge.style.left = '';
+	} else {
+		$btnProject.style.visibility = '';
+		$btnProject.style.pointerEvents = '';
+		// Возвращаем метку в обычный поток (в правом верхнем блоке)
+		$badge.style.position = '';
+		$badge.style.left = '';
+		$badge.style.top = '';
+		$badge.style.right = '';
+	}
 }
 
 function toggleSideMenu(open){
@@ -435,7 +525,9 @@ function renderTwoColSlide(index){
 	// Текст из text-slides.txt по индексу
 	const slideObj = DATA.slides[index] || null;
 	const body = slideObj?.body || '';
-	typeInto(mainText, body);
+	typeInto(mainText, body).then(() => {
+		hydrateAnchors(mainText);
+	});
 
 	return () => { if (noiseHandle) noiseHandle.detach(); };
 }
@@ -812,7 +904,12 @@ function renderRoute(){
 		$app.appendChild(root);
 		const slideObj = DATA.slides[index] || null;
 		const body = slideObj?.body || '';
-		typeInto(mainText, body);
+		typeInto(mainText, body).then(() => {
+			// Гидрируем ссылки, напечатанные как текстовый <a ...>...</a>
+			hydrateAnchors(mainText);
+			// Поддержка старого варианта с @Shved_art
+			if (index === 50) linkifyTelegram(mainText);
+		});
 	}
 	// Слайды 09, 21, 36, 43, 49, 50 — центрированный текст
 	if([9, 21, 36, 43, 49, 50].includes(route.index)){
