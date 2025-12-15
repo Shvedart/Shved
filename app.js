@@ -549,13 +549,15 @@ function renderSlide01(){
 	const root = document.createElement('section');
 	root.className = 'view slide-01';
 
-	// Текстовый блок вверху слева, 80vw, отступы 55
+	// Текстовый блок: слева 55px и прижат к низу на 130px, ширина до 80vw
 	const textWrap = document.createElement('div');
 	textWrap.style.position = 'absolute';
 	textWrap.style.left = 'var(--pad)';
-	textWrap.style.top = 'var(--pad)';
-	textWrap.style.right = 'var(--pad)';
+	textWrap.style.bottom = '130px';
+	textWrap.style.top = 'auto';
+	textWrap.style.right = 'auto';
 	textWrap.style.maxWidth = '80vw';
+	textWrap.style.minHeight = '180px'; // чтобы высота не «прыгала» во время печати
 	textWrap.style.textAlign = 'left';
 	textWrap.style.fontWeight = '400';
 	textWrap.style.lineHeight = '140%';
