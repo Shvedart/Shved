@@ -1,6 +1,7 @@
 /* SPA для портфолио: маршрутизация, меню, эффекты, печать текста */
 import { mountPrismaticBurst } from './prismatic-burst.js';
 import { attachNoiseOverlay } from './noise-overlay.js';
+import { initScrubber } from './video-scrub.js';
 import { mountColorBends } from './color-bends.js';
 
 const DATA = {
@@ -381,43 +382,22 @@ function renderHome(){
 	const body = slide0?.body || '';
 	typeInto(textBox, body);
 
-	// Скрамблинг по курсору — управление текущим временем видео
-	let hasMeta = false;
-	let duration = 0;
-	let targetT = 0;
-	let currentT = 0;
-	let raf = 0;
-
-	function sync(){
-		if(!hasMeta) { raf = requestAnimationFrame(sync); return; }
-		// Плавное приближение к целевому времени
-		const alpha = 0.12;
-		currentT += (targetT - currentT) * alpha;
-		try{
-			video.currentTime = clamp(currentT, 0, Math.max(0.01, duration));
-		}catch(e){}
-		raf = requestAnimationFrame(sync);
-	}
-	function onMove(e){
-		if(!hasMeta) return;
-		const w = Math.max(1, window.innerWidth || document.documentElement.clientWidth || 1);
-		const x = clamp(e.clientX / w, 0, 1);
-		targetT = x * duration;
-	}
-	video.addEventListener('loadedmetadata', () => {
-		duration = video.duration || 0;
-		hasMeta = duration > 0;
-		video.pause();
-		cancelAnimationFrame(raf);
-		raf = requestAnimationFrame(sync);
+	// Скрамблинг по курсору — управление текущим временем видео (дросселированное)
+	const scrubber = initScrubber(video, {
+		mapX: (e) => {
+			const x = e?.touches?.[0]?.clientX ?? e?.clientX ?? 0;
+			const w = window.innerWidth || document.documentElement.clientWidth || 1;
+			return x / w;
+		},
+		intervalMs: 33,
+		minDelta: 0.02,
+		lerp: 0.35
 	});
-	window.addEventListener('pointermove', onMove, { passive:true });
 
 	// Очистка (если понадобится)
 	return () => {
-		cancelAnimationFrame(raf);
 		noiseHandle.detach();
-		window.removeEventListener('pointermove', onMove);
+		try{ scrubber.destroy(); }catch(e){}
 	};
 }
 
