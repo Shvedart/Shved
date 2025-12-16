@@ -487,7 +487,7 @@ function renderSlide01(){
 	const textWrap = document.createElement('div');
 	textWrap.style.position = 'absolute';
 	textWrap.style.left = 'var(--pad)';
-	textWrap.style.bottom = '130px';
+	textWrap.style.bottom = '120px';
 	textWrap.style.top = 'auto';
 	textWrap.style.right = 'auto';
 	textWrap.style.maxWidth = '80vw';
