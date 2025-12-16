@@ -416,22 +416,6 @@ function renderTwoColSlide(index){
 	const mainText = document.createElement('div');
 	mainText.className = 'main-text';
 	left.appendChild(mainText);
-	// Доп. иллюстрация под текстом для слайда 10
-	if (index === 10) {
-		const ill = document.createElement('img');
-		ill.src = './mts/scroll.svg';
-		ill.alt = '';
-		ill.style.display = 'block';
-		ill.style.marginTop = '32px';
-		ill.style.maxWidth = '80%';
-		ill.style.height = 'auto';
-		// Плавное появление через 6 секунд после загрузки
-		ill.classList.add('media-fade');
-		ill.addEventListener('load', () => {
-			setTimeout(() => ill.classList.add('loaded'), 10000);
-		}, { once: true });
-		left.appendChild(ill);
-	}
 
 	const holder = document.createElement('div');
 	holder.className = 'video-holder';
