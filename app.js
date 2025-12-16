@@ -774,7 +774,7 @@ function renderSlide47(){
 
 	const bg = document.createElement('video');
 	bg.src = './mts/сonnection.mp4';
-	bg.className = 'bg-fullheight-center';
+	bg.className = 'bg-fullwidth-center';
 	bg.muted = true;
 	bg.loop = true;
 	bg.autoplay = true;
