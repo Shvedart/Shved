@@ -858,7 +858,7 @@ function renderRoute(){
 		const box = document.createElement('div');
 		box.className = 'center-text-box';
 		// Индивидуальные высоты для некоторых слайдов
-		const heightMap = { 21: '90px', 43: '130px', 49: '210px', 50: '210px' };
+		const heightMap = { 21: '90px', 43: '130px', 49: '240px', 50: '210px' };
 		if (heightMap[index]) box.style.height = heightMap[index];
 		const mainText = document.createElement('div');
 		mainText.className = 'main-text';
