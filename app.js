@@ -805,6 +805,8 @@ function renderRoute(){
 		root.style.background = 'var(--bg-dark)';
 		const box = document.createElement('div');
 		box.className = 'center-text-box';
+		// Индивидуальная высота для слайда 04
+		box.style.height = '325px';
 		const mainText = document.createElement('div');
 		mainText.className = 'main-text';
 		box.appendChild(mainText);
