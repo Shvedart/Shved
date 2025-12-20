@@ -253,6 +253,10 @@ body{
 .footer__brand:hover,
 .footer__resume:hover,
 .footer__project:hover{opacity:0.8}
+/* На главном экране у "Шведюк Д.А." отключаем визуальный hover */
+.is-home .footer__brand:hover,
+.is-home .footer__brand:focus,
+.is-home .footer__brand:active{opacity:1 !important}
 .footer__nav{
 	display:none;
 }
@@ -401,6 +405,35 @@ body{
 .top-right__interactive{
 	margin-top:6px;
 	color:rgba(255, 255, 255, 0.80);;
+	position:relative; /* для тултипа */
+}
+/* Tooltip для "интерактивный ✦" */
+.top-right__interactive::after{
+	content: 'На этом слайде интерактивный фон — просто поводите мышкой по экрану';
+	position:absolute;
+	top: calc(100% + 8px);
+	right: 0;
+	max-width: 320px;
+	background: rgba(0, 0, 0, 0.60);
+	color:#fff;
+	padding: 10px 12px;
+	border-radius: 10px;
+	font-size:12px;
+	line-height:1.35;
+	white-space: normal;
+	opacity:0;
+	visibility:hidden;
+	transform: translateY(4px);
+	transition: opacity .15s ease, transform .15s ease, visibility .15s ease;
+	z-index: 100;
+	pointer-events: none;
+	text-align: left;
+}
+.top-right__interactive:hover::after,
+.top-right__interactive:focus-visible::after{
+	opacity:1;
+	visibility:visible;
+	transform: translateY(0);
 }
 
 /* Правый низ: стрелки навигации */
@@ -555,6 +588,16 @@ a:hover {
     color: #1e8fc8;
 }
 
+/* Главная (00): у "Шведюк Д.А." цвет и ховер не меняются */
+.is-home .footer__brand,
+.is-home .footer__brand:visited,
+.is-home .footer__brand:hover,
+.is-home .footer__brand:focus,
+.is-home .footer__brand:active{
+	color: var(--text) !important;
+	opacity: 1 !important;
+	text-decoration: none !important;
+}
 /* Мобильные отступы */
 @media (max-width: 900px){
 	:root{

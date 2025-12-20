@@ -783,6 +783,12 @@ function renderRoute(){
 	} else {
 		document.body.classList.remove('theme-light');
 	}
+	// Маркер главного экрана (для стилизации ховера в футере)
+	if (route.view === 'home') {
+		document.body.classList.add('is-home');
+	} else {
+		document.body.classList.remove('is-home');
+	}
 	renderSideMenu(route.view === 'slide' ? route.index : 0);
 	if(route.view === 'home'){
 		cleanup = renderHome();
