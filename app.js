@@ -51,6 +51,9 @@ const $num = document.getElementById('slideNumber');
 const $badge = document.getElementById('interactiveBadge');
 const $btnPrev = document.getElementById('btnPrev');
 const $btnNext = document.getElementById('btnNext');
+const $controls = document.getElementById('controls');
+const $startControls = document.getElementById('startControls');
+const $btnStart = document.getElementById('btnStart');
 
 function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
 
@@ -248,6 +251,18 @@ function setFooterState(route){
 		$badge.style.left = '';
 		$badge.style.top = '';
 		$badge.style.right = '';
+	}
+}
+
+// Управление нижним блоком навигации (стрелки/кнопка "Начать" на главном)
+function updateControlsForRoute(route){
+	const isHome = route.view === 'home';
+	if (isHome){
+		if ($controls){ $controls.setAttribute('hidden','true'); $controls.style.display = 'none'; }
+		if ($startControls){ $startControls.removeAttribute('hidden'); $startControls.style.display = ''; }
+	} else {
+		if ($startControls){ $startControls.setAttribute('hidden','true'); $startControls.style.display = 'none'; }
+		if ($controls){ $controls.removeAttribute('hidden'); $controls.style.display = ''; }
 	}
 }
 
@@ -790,6 +805,7 @@ function renderRoute(){
 		document.body.classList.remove('is-home');
 	}
 	renderSideMenu(route.view === 'slide' ? route.index : 0);
+	updateControlsForRoute(route);
 	if(route.view === 'home'){
 		cleanup = renderHome();
 		return;
@@ -1308,6 +1324,7 @@ async function boot(){
 	$btnProject.addEventListener('click', () => toggleSideMenu(true));
 	$sideClose.addEventListener('click', () => toggleSideMenu(false));
 	$sideBackdrop.addEventListener('click', () => toggleSideMenu(false));
+	$btnStart?.addEventListener('click', () => gotoSlide(1));
 
 	// Первый рендер
 	if(!location.hash) location.hash = '#/home';

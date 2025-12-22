@@ -417,7 +417,7 @@ body{
 	background: rgba(0, 0, 0, 0.60);
 	color:#fff;
 	padding: 10px 12px;
-	border-radius: 10px;
+	border-radius: 12px;
 	font-size:12px;
 	line-height:1.35;
 	white-space: normal;
@@ -439,19 +439,41 @@ body{
 /* Правый низ: стрелки навигации */
 .controls{
 	position:fixed;
+	left:auto !important;
 	right:var(--pad);
 	bottom:var(--pad);
 	z-index:50;
-	display:flex;
+	display:inline-flex; /* не растягиваемся */
 	align-items:center;
 	gap:4px;
-	padding:8px;
+	padding:8px; /* толщина обводки */
 	border-radius:16px;
 	/* background:rgba(255,255,255,0.06); */
 	background: rgba(0, 0, 0, 0.30);
 	backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.20);
 	/* box-shadow: var(--shadow); */
+	width:auto;
+	max-width: calc(100vw - calc(var(--pad) * 2));
+	height: 58px;
+}
+/* Отдельный контейнер для кнопки "Начать" на 00 */
+.start-controls{
+	position:fixed;
+	left:auto !important;
+	right:var(--pad);
+	bottom:var(--pad);
+	z-index:50;
+	display:inline-flex;
+	align-items:center;
+	gap:4px;
+	padding:1px; /* толщина обводки */
+	border-radius:16px;
+	background: rgb(0, 0, 0);
+	backdrop-filter: blur(8px);
+	width:auto;
+	max-width: calc(100vw - calc(var(--pad) * 2));
+	height:58px;
 }
 .controls__arrow{
 	width:49px;
@@ -482,6 +504,43 @@ body{
 	transform:translateY(-1px);
 }
 .controls__arrow::-moz-focus-inner{border:0}
+
+/* Кнопка "Начать" (на главном вместо стрелок) */
+.controls__start,
+.start-button{
+	min-width: 140px;
+	height: 100%;
+	display:flex;
+	align-items:center;
+	gap:8px;
+	justify-content:center;
+	border:none;
+	border-radius:16px;
+	background:transparent;
+	color:var(--text);
+	cursor:pointer;
+	font:inherit;
+	padding:0 8px 0px 24px;
+	transition:background .12s ease, transform .12s ease;
+	font-size: var(--menu-size);
+}
+.controls__start:hover,.start-button:hover{ background:rgba(255,255,255,0.08); transform:translateY(-1px) }
+.controls__start:focus,.controls__start:focus-visible,
+.start-button:focus,.start-button:focus-visible{ outline:none; box-shadow:none; background:rgba(255,255,255,0.08); transform:translateY(-1px) }
+.controls__start[hidden], .start-button[hidden]{ display:none }
+
+.start-button:hover {
+	transform:translateY(0px)
+}
+
+/* Иконка внутри кнопки "Начать" */
+.start-button__icon{
+	display:block;
+	width:40px;
+	height:26px;
+}
+
+/* Star Border эффект отключён */
 
 /* Центрированный текстовый блок фиксированной высоты */
 .center-text-box{
