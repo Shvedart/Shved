@@ -365,6 +365,75 @@ async function typeInto(container, text){
 	return tw;
 }
 
+// Управление печатью текста: включено только на 00 (home)
+function isTypewriterEnabled(index){
+	// сейчас включено только на главном (index === 0)
+	return index === 0;
+}
+
+function renderTextStatic(container, text){
+	try{
+		const tokens = window.TextTyper.parseTokens(text);
+		const stack = [container];
+		const pushEl = (el) => { stack[stack.length-1].appendChild(el); stack.push(el); };
+		const popToMatch = (tag) => {
+			for (let si = stack.length - 1; si >= 1; si--){
+				const el = stack[si];
+				const tagName = (el.tagName || '').toLowerCase();
+				const virtualTag = el.getAttribute ? el.getAttribute('data-tt-tag') : null;
+				if (tagName === tag || virtualTag === tag){
+					while (stack.length - 1 >= si){ stack.pop(); }
+					break;
+				}
+			}
+		};
+		const appendTextWithBr = (parent, s) => {
+			const parts = String(s ?? '').split(/<br\s*\/?>/gi);
+			for (let i = 0; i < parts.length; i++){
+				if (parts[i]) parent.appendChild(document.createTextNode(parts[i]));
+				if (i < parts.length - 1){
+					parent.appendChild(document.createElement('br'));
+				}
+			}
+		};
+		for (const t of tokens){
+			if (t.type === 'text'){
+				appendTextWithBr(stack[stack.length-1], t.text || '');
+			} else if (t.type === 'start'){
+				if (t.tag === 'b' || t.tag === 'i'){
+					const el = document.createElement(t.tag);
+					stack[stack.length-1].appendChild(el);
+					stack.push(el);
+				} else if (t.tag === 'gray'){
+					const el = document.createElement('span');
+					el.style.color = '#595959';
+					el.setAttribute('data-tt-tag', 'gray');
+					stack[stack.length-1].appendChild(el);
+					stack.push(el);
+				}
+			} else if (t.type === 'end'){
+				popToMatch(t.tag);
+			} else if (t.type === 'delete' || t.type === 'pause'){
+				// пропускаем в статичном режиме
+				continue;
+			}
+		}
+	}catch(e){
+		// fallback — вставляем как есть, убрав служебные теги
+		container.textContent = String(text || '').replace(/<pause\b[^>]*\/?>/gi,'').replace(/<delete>[\s\S]*?<\/delete>/gi,'');
+	}
+}
+
+function renderText(container, text, slideIndex){
+	const normalizeBreaks = (s) => String(s ?? '').replace(/<br\s*\/?>/gi, '\n');
+	if (isTypewriterEnabled(slideIndex)){
+		return typeInto(container, normalizeBreaks(text));
+	} else {
+		renderTextStatic(container, text);
+		return Promise.resolve();
+	}
+}
+
 /* Главный экран */
 function renderHome(){
 	$app.innerHTML = '';
@@ -395,7 +464,7 @@ function renderHome(){
 	// Печать основного текста (из слайда 00)
 	const slide0 = DATA.slides.find(s => /^Слайд\s*0+/.test((s.title||''))) || DATA.slides[0];
 	const body = slide0?.body || '';
-	typeInto(textBox, body);
+	renderText(textBox, body, 0);
 
 	// Скрамблинг по курсору — управление текущим временем видео (дросселированное)
 	const scrubber = initScrubber(video, {
@@ -469,9 +538,7 @@ function renderTwoColSlide(index){
 	// Текст из text-slides.txt по индексу
 	const slideObj = DATA.slides[index] || null;
 	const body = slideObj?.body || '';
-	typeInto(mainText, body).then(() => {
-		hydrateAnchors(mainText);
-	});
+	renderText(mainText, body, index).then(() => { hydrateAnchors(mainText); });
 
 	return () => { if (noiseHandle) noiseHandle.detach(); };
 }
@@ -540,14 +607,14 @@ function renderSlide01(){
 			logo.classList.add('loaded');
 			tText = setTimeout(() => {
 				textWrap.classList.add('loaded');
-				typeInto(textWrap, body);
+				renderText(textWrap, body, 1);
 			}, 400); // быстрее старт печати после лого
 		}, 700); // логотип появляется раньше
 	} catch(e){
 		try{ burstHandle?.canvas?.classList.add('loaded'); }catch(_){}
 		try{ logo.classList.add('loaded'); }catch(_){}
 		try{ textWrap.classList.add('loaded'); }catch(_){}
-		typeInto(textWrap, body);
+		renderText(textWrap, body, 15);
 	}
 
 	return () => {
@@ -592,7 +659,7 @@ function renderSlide05(){
 
 	const slideObj = DATA.slides[5] || null;
 	const body = slideObj?.body || '';
-	typeInto(textWrap, body);
+	renderText(textWrap, body, 5);
 }
 
 /* Слайд 27 — фон font.svg (100vh, центр по вертикали), текст слева */
@@ -626,7 +693,7 @@ function renderSlide27(){
 
 	const slideObj = DATA.slides[27] || null;
 	const body = slideObj?.body || '';
-	typeInto(textWrap, body);
+	renderText(textWrap, body, 27);
 }
 
 /* Слайд 29 — фон icons-font.svg (100vh, центр по вертикали), текст слева */
@@ -658,7 +725,7 @@ function renderSlide29(){
 
 	const slideObj = DATA.slides[29] || null;
 	const body = slideObj?.body || '';
-	typeInto(textWrap, body);
+	renderText(textWrap, body, 29);
 }
 
 /* Слайд 46 — фоновые видео switches.mp4 (100vh, центр), текст слева */
@@ -695,7 +762,7 @@ function renderSlide46(){
 
 	const slideObj = DATA.slides[46] || null;
 	const body = slideObj?.body || '';
-	typeInto(textWrap, body);
+	renderText(textWrap, body, 46);
 }
 
 /* Слайд 47 — фоновые видео connection.mp4 (100vh, центр), текст слева */
@@ -732,7 +799,7 @@ function renderSlide47(){
 
 	const slideObj = DATA.slides[47] || null;
 	const body = slideObj?.body || '';
-	typeInto(textWrap, body);
+	renderText(textWrap, body, 47);
 }
 
 /* Слайд 44 — фоновое видео fullscreen + справа SVG, текст слева */
@@ -783,7 +850,7 @@ function renderSlide44(){
 
 	const slideObj = DATA.slides[44] || null;
 	const body = slideObj?.body || '';
-	typeInto(mainText, body);
+	renderText(mainText, body, 31);
 }
 
 /* Рендерер маршрута */
@@ -836,7 +903,7 @@ function renderRoute(){
 		$app.appendChild(root);
 		const slideObj = DATA.slides[4] || null;
 		const body = slideObj?.body || '';
-		typeInto(mainText, body);
+		renderText(mainText, body, 4);
 		return;
 	}
 	// Слайд 09 — центрированный текст + интерактивный фон ColorBends
@@ -868,7 +935,7 @@ function renderRoute(){
 		$app.appendChild(root);
 		const slideObj = DATA.slides[9] || null;
 		const body = slideObj?.body || '';
-		typeInto(mainText, body);
+		renderText(mainText, body, 9);
 		// очистка
 		cleanup = () => bends.detach();
 		return;
@@ -891,14 +958,9 @@ function renderRoute(){
 		$app.appendChild(root);
 		const slideObj = DATA.slides[index] || null;
 		const body = slideObj?.body || '';
-		typeInto(mainText, body).then((tw) => {
-			// Гидрируем ссылки, напечатанные как текстовый <a ...>...</a>
+		renderText(mainText, body, index).then(() => {
 			hydrateAnchors(mainText);
-			// Поддержка старого варианта с @Shved_art
-			if (index === 50){
-				// Предпочтительно работать по содержимому печатчика
-				try{ linkifyTelegram(tw?.content || mainText); }catch(e){ linkifyTelegram(mainText); }
-			}
+			if (index === 50){ try{ linkifyTelegram(mainText); }catch(e){} }
 		});
 	}
 	// Слайды 09, 21, 36, 43, 49, 50 — центрированный текст
@@ -932,7 +994,7 @@ function renderRoute(){
 		$app.appendChild(root);
 		const slideObj = DATA.slides[15] || null;
 		const body = slideObj?.body || '';
-		typeInto(textWrap, body);
+		renderText(textWrap, body, 23);
 		return;
 	}
 	// Слайд 16 — светлая тема, текст в левой и правой колонке + SVG под текстом
@@ -988,8 +1050,8 @@ function renderRoute(){
 		const lines = body.split('\n').map(s => s.trim()).filter(Boolean);
 		const leftBody = lines[0] || body;
 		const rightBody = lines.slice(1).join('\n') || '';
-		typeInto(leftText, leftBody);
-		if (rightBody) typeInto(rightText, rightBody);
+		renderText(leftText, leftBody, 16);
+		if (rightBody) renderText(rightText, rightBody, 16);
 		return;
 	}
 	if(route.index === 7){
@@ -1018,7 +1080,7 @@ function renderRoute(){
 		$app.appendChild(root);
 		const slideObj = DATA.slides[7] || null;
 		const body = slideObj?.body || '';
-		typeInto(textWrap, body);
+		renderText(textWrap, body, 7);
 		return;
 	}
 	// Аналогично 07: фон-iframe и ширина текста 70vw
@@ -1046,7 +1108,7 @@ function renderRoute(){
 		$app.appendChild(root);
 		const slideObj = DATA.slides[19] || null;
 		const body = slideObj?.body || '';
-		typeInto(textWrap, body);
+		renderText(textWrap, body, 19);
 		return;
 	}
 	if(route.index === 23){
@@ -1073,7 +1135,7 @@ function renderRoute(){
 		$app.appendChild(root);
 		const slideObj = DATA.slides[23] || null;
 		const body = slideObj?.body || '';
-		typeInto(textWrap, body);
+		renderText(textWrap, body, 26);
 		return;
 	}
 	// Слайд 26 — фон-iframe speed-test-slow, текст 70vw
@@ -1101,7 +1163,7 @@ function renderRoute(){
 		$app.appendChild(root);
 		const slideObj = DATA.slides[26] || null;
 		const body = slideObj?.body || '';
-		typeInto(textWrap, body);
+		renderText(textWrap, body, 32);
 		return;
 	}
 	// Слайд 32 — фон-iframe speed-test-seed, текст 70vw
@@ -1129,7 +1191,7 @@ function renderRoute(){
 		$app.appendChild(root);
 		const slideObj = DATA.slides[32] || null;
 		const body = slideObj?.body || '';
-		typeInto(textWrap, body);
+		renderText(textWrap, body, 30);
 		return;
 	}
 	// Слайд 30 — фон-iframe weight.html, текст 70vw
@@ -1157,7 +1219,7 @@ function renderRoute(){
 		$app.appendChild(root);
 		const slideObj = DATA.slides[30] || null;
 		const body = slideObj?.body || '';
-		typeInto(textWrap, body);
+		renderText(textWrap, body, route.index);
 		return;
 	}
 	// Фоновые iframe на всю высоту: 37–42
@@ -1207,7 +1269,7 @@ function renderRoute(){
 		$app.appendChild(root);
 		const slideObj = DATA.slides[route.index] || null;
 		const body = slideObj?.body || '';
-		typeInto(textWrap, body);
+		renderText(textWrap, body, route.index);
 		return;
 	}
 	if(route.index === 27){
@@ -1261,7 +1323,7 @@ function renderRoute(){
 
 		const slideObj = DATA.slides[31] || null;
 		const body = slideObj?.body || '';
-		typeInto(mainText, body);
+		renderText(mainText, body, 31);
 		return;
 	}
 	// Слайд 45 — фон svg на всю высоту экрана
@@ -1293,7 +1355,7 @@ function renderRoute(){
 
 		const slideObj = DATA.slides[45] || null;
 		const body = slideObj?.body || '';
-		typeInto(textWrap, body);
+		renderText(textWrap, body, 45);
 		return;
 	}
 	// Типовые слайды (включая 02,03,08,20,22,25,35)
