@@ -250,6 +250,16 @@ body{
 	padding:0;
 	font:inherit;
 }
+.footer__icon-save{
+	width: 24px;
+	height: 24px;
+	margin-left: 4px;
+	vertical-align: middle;
+	display: inline-block;
+	background-color: currentColor; /* иконка наследует цвет текста */
+	mask: url('./ui-element/file_save.svg') center / contain no-repeat;
+	-webkit-mask: url('./ui-element/file_save.svg') center / contain no-repeat;
+}
 .footer__brand:hover,
 .footer__resume:hover,
 .footer__project:hover{opacity:0.8}
