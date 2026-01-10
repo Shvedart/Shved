@@ -9,8 +9,8 @@
 	--menu-size:21px; /* Inter Regular 21px */
 	--radius:14px;
 	--shadow:0 10px 30px rgba(0,0,0,0.25);
-	/* Плавная шкала: 600px → 13px, 1512px → ~30px, cap 34px на 1920+ */
-	--fz-main: clamp(13px, calc(1.864vw + 1.82px), 34px);
+	/* Плавная шкала: 600px → 13px, 1512px → ~30px, cap 30px на 1920+ */
+	--fz-main: clamp(13px, calc(1.864vw + 1.82px), 30px);
 }
 /* Светлая тема для отдельных слайдов */
 .theme-light{
