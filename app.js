@@ -1364,10 +1364,13 @@ function renderRoute(){
 
 /* Инициализация */
 async function boot(){
+	// helper для cache-busting
+	const v = Date.now();
+	const withVersion = (url) => url + (url.includes('?') ? '&' : '?') + 'v=' + v;
 	// Загрузка меню и текстов
 	const [menuTxt, slidesTxt] = await Promise.all([
-		fetch('./mts/document/menu.txt', { cache: 'no-store' }).then(r => r.text()),
-		fetch('./mts/document/text-slides.txt', { cache: 'no-store' }).then(r => r.text()),
+		fetch(withVersion('./mts/document/menu.txt'), { cache: 'no-store' }).then(r => r.text()),
+		fetch(withVersion('./mts/document/text-slides.txt'), { cache: 'no-store' }).then(r => r.text()),
 	]);
 	DATA.menuTitles = menuTxt.split(/\r?\n/).filter(Boolean);
 	DATA.slides = window.TextTyper.parseSlides(slidesTxt);
