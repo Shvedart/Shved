@@ -1,0 +1,63 @@
+/* Design tokens (renamed to dash-case for broad browser support) */
+:root {
+	/* colors */
+	--text-color-primary: #1c1a1a;
+	--text-color-secondary: #1c1a1a66;
+	--text-color-red: #F95E28;
+	--text-color-darck: #f3f0ed;
+	--text-color-darck-secondary: #f3f0eda5;
+	--link-default: #1c1a1a;
+	--link-secondary: #1c1a1a66;
+	--surface-bg: #ffffff;
+	--surface-fill: #1c1a1a;
+	--surface-dark-bg: #000000;
+	--surface-chapter: #f3f0ed;
+	--link-hover: #F95E28;
+
+	/* spacing */
+	/* Fluid spacing: на мобилке меньше, на десктопе = текущим значениям */
+	--gap-0: 0px;
+	--gap-xs: clamp(6px, 0.8vw, 8px);
+	--gap-s: clamp(10px, 1.1vw, 13px);
+	--gap-m: clamp(16px, 1.6vw, 21px);
+	--gap-l: clamp(22px, 2.4vw, 34px);
+	--gap-xl: clamp(34px, 3.8vw, 55px);
+	--gap-xxl: clamp(55px, 6.2vw, 89px);
+
+	/* radius */
+    --radius-s: 13px;
+    --radius-m: 21px;
+	--radius-l: 34px;
+	--radius-xl: 50px;
+
+	/* widths (containers) */
+	--width-l: 1012px;
+	--width-xl: 1120px;
+	--width-xxl: 1300px;
+	--width-1120: 1120px;
+
+	/* typography sizes */
+	/* Fluid typography: max = текущим значениям, min — комфортно для мобилки */
+	--h1-size: clamp(40px, 6vw, 72px);
+	--h1-line: clamp(44px, 6.6vw, 79px);
+	--h1-tracking: -2.16px;
+
+	--h2-size: clamp(30px, 3.6vw, 44px);
+	--h2-line: clamp(34px, 3.9vw, 47px);
+	--h2-tracking: -1.02px;
+
+	--h3-size: clamp(20px, 2.3vw, 27px);
+	--h4-size: clamp(16px, 1.7vw, 20px);
+
+	--p-primary-size: clamp(18px, 2.2vw, 27px);
+	--p-primary-line: clamp(26px, 3.0vw, 38px);
+	--p-secondary-size: clamp(15px, 1.7vw, 20px);
+	--p-secondary-line: clamp(20px, 2.1vw, 26px);
+	--p-little-size: clamp(11px, 1.1vw, 12px);
+	--p-little-line: clamp(16px, 1.4vw, 18px);
+	--p-quote-size: clamp(22px, 2.8vw, 34px);
+	--p-quote-line: clamp(30px, 3.6vw, 46px);
+	--p-letter-primary: 0px;
+}
+
+

@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="ru">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Мобильный ассистент · МТС</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="icon" type="image/x-icon" href="../ui-element/favicon.ico">
+	<link rel="shortcut icon" type="image/x-icon" href="../ui-element/favicon.ico">
+	<link rel="stylesheet" href="./styles/global.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js" defer></script>
+	<script src="./scripts/main.js" defer></script>
+</head>
+<body>
+	<main class="page" data-name="MTS">
+		<header class="container">
+			<nav class="menu">
+				<a class="button" href="./index.html">Шведюк Д.А.</a>
+				<a class="button" href="../Designer_Denis_Shvedyuk.pdf" download="Designer_Denis_Shvedyuk.pdf">Резюме</a>
+				<a class="button" href="https://t.me/Shved_art" target="_blank" rel="noopener">
+					TG @Shved_art <span class="lottie-inline lottie-inline--after tg-sticker" aria-hidden="true" data-lottie-idle="./tgs/telegram.json" data-lottie-hover="./tgs/telegram_orange.json"></span>
+				</a>
+			</nav>
+		</header>
+
+		<section class="container gap-l section" aria-labelledby="mts-h1">
+			<h1 id="mts-h1" class="h1" style="text-transform: uppercase;">
+				МТС · <i>Мобильный <br>ассистент</i> для <br> монтажников
+			</h1>
+
+			<div class="grid grid-2" aria-label="Роль и команда">
+				<div class="w-m">
+					<h3 class="h3 ">Моя роль:</h3>
+					<p class="p-primary ">Senior Product Designer (<b>end-to-end,</b> полевые исследования, архитектурные решения, UI, UX-стратегия и внедрение)</p>
+				</div>
+				<div class="w-m">
+					<h3 class="h3 ">Команда:</h3>
+					<p class="p-primary ">Владелец продукта, дизайнер, 6 разработчиков, 3 аналитика, тестировщик</p>
+				</div>
+			</div>
+
+			<div class="w-m">
+				<h3 class="h3 ">Контекст</h3>
+				<p class="p-primary ">Монтажники МТС подключают/устраняют аварии абонентов. <b>Критичные данные для монтажника</b> разбросаны по 60+ легаси-системам и <b>доступны только через колл-центр.</b></p>
+			</div>
+
+			<div class="w-m">
+				<h3 class="h3 ">Сценарий</h3>
+				<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+					<li>Монтажник приезжает на адрес подключать абонента</li>
+					<li>Не понимает, какие порты на коммутаторе можно освободить, какое оборудование на месте</li>
+					<li>Звонит в колл-центр → описывает ситуацию → ждет, пока оператор проверит в различных системах</li>
+					<li>Получает устные инструкции</li>
+					<li>Если не дозвонился — оформляет заявку на новое оборудование</li>
+				</ul>
+			</div>
+
+			<div class="w-m">
+				<h2 class="h2 ">Бизнес-боль</h2>
+				<p class="p-primary "><b>Компания содержала огромный колл-центр,</b> а среднее время подключения росло вместе с затратами на лишние выезды и оборудование.</p>
+			</div>
+			<div class="w-m">
+				<h2 class="h2 ">Показатели успеха</h2>
+				<p class="p-primary ">↓ <b>количество звонков в колл-центр</b><br>
+					↓ среднее время подключения абонента<br>
+					↓ затраты на оборудование</p>
+			</div>
+		</section>
+
+		<section class="chapter container-xxl dark" aria-label="Материалы кейса">
+			<div class="two-halves-grid">
+				<div class="flex-t w-60">
+					<div class="p-l-xxl p-t-b-xxl w-l">
+						<p class="p-primary dark-text"><b>Гипотеза:</b> Монтажникам достаточно данных о коммутаторе и портах.</p>
+						<p class="p-primary dark-text"><b>MVP</b><br>Первый сценарий был прямолинейный: <br><b>карта → дом → коммутатор → статусы портов.</b></p>
+						<p class="p-secondary dark-text-secondary">*Весь UI сильно переработан и обезличен. Большинство функций не отображены, так как являются корпоративной тайной. В реальности макеты выглядели иначе.</p>
+						<p class="p-primary dark-text"><b>Результат:</b><span class="color-text-red"> Ключевые метрики не изменились.</span></p>
+					</div>
+				</div>
+				<div class="ui-video-wrap">
+					<video class="ui-inet-c" src="./MTS/ui-mvp.mp4" autoplay muted loop playsinline></video>
+				</div>
+			</div>
+		</section>
+
+		<section class="container gap-s section" aria-labelledby="mts-h1">
+			<h1 id="mts-h1" class="h1" style="text-transform: uppercase;">
+				Глубинные <i><br>исследования</i>
+			</h1>
+
+			<div class="w-m">
+				<h3 class="h3 ">Полевые исследования</h3>
+				<p class="p-primary "><b>Выезжал на подключения с монтажником,</b> фиксируя полный рабочий день — от получения задания до сдачи работы.</p>
+			</div>
+			
+			<div class="w-m">
+				<h3 class="h3">Колл-центр</h3>
+				<p class="p-primary ">Провёл <b>2 смены на линии поддержки,</b> принимая звонки от монтажников совместно с оператором.</p>
+			</div>
+
+			<div class="w-m">
+				<h3 class="h3 ">Инсайты</h3>
+				<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+					<li>Звонят не только за статусами портов → MVP покрывает малую долю запросов → расширили данные: дом · коммутатор · порт · ЛС · услуги</li> <br>
+					<li>Связь в полях: В 70% локаций — 3G/EDGE → оптимизировал вес графики и скорости интерфейса. Удалил корп. шрифты, растровую графику, создал иконочный шрифт, анимации делал в lottie, <b>удалось снизить вес с 7 МБ до 320 КБ</b></li><br>
+					<li>Данные и сценарии сильно различаются по регионам → собрал систему компонентов/виджетов под любые длины/наборы полей. Проверил на реальных данных из БД</li><br>
+					<li>Хороший UX не вытесняет привычку → <b>потребовался операционный рычаг</b> (5-минутную задержку на звонки в колл-центр)</li>
+				</ul>
+			</div>
+		</section>
+
+
+		</section>
+		<section class="container gap-xl section" aria-labelledby="mts-h1">
+			<div class="flex-t">
+				<div class="w-l">
+					<p class="p-primary"><i>Ключевой сценарий</i></p>
+					<h2 class="h2 serif p-t-0">Пользовательский путь <br><i>основан на рабочем дне монтажника</i></h2>
+				</div>
+			</div>
+			<figure class="figure mt-xl">
+				<img class="" src="./MTS/UX.svg" alt="Пример использования — PayPal" loading="lazy" width="1120">
+			</figure>
+			<div class="w-m">
+				<h2 class="h2 serif">Информацию подаем дозированно</h2>
+				<p class="p-primary ">День монтажника начинается в офисе, где он получает задание и инструкции.</b></p>
+			</div>
+		</section>
+
+<!-- mts-ui-flow -->
+		<section class="container gap-l section" aria-labelledby="mts-h1">
+			<section class="chapter container-xxl" aria-label="Материалы кейса">
+				<div class="embed ui-flow-embed" style="--ui-flow-h: clamp(560px, 78vh, 980px);">
+					<iframe class="embed__iframe" src="./MTS/ui-flow/office/index-office.html" scrolling="no" title="MTS UI Flow — Office" loading="lazy"></iframe>
+				</div>
+			</section>
+
+			<section class="container" aria-labelledby="mts-h1">
+				<div class="w-l">
+					<p class="p-primary center">Выбрал актуальную задачу</b></p>
+				</div>
+			</section>
+	
+			<section class="chapter container-xxl" aria-label="Материалы кейса">
+				<div class="embed ui-flow-embed" style="--ui-flow-h: clamp(560px, 78vh, 980px);">
+					<iframe class="embed__iframe" src="./MTS/ui-flow/office/index-office-task.html" scrolling="no" title="MTS UI Flow — Office" loading="lazy"></iframe>
+				</div>
+			</section>
+
+			<section class="container" aria-labelledby="mts-h1">
+				<div class="w-l">
+					<p class="p-primary center">Приехал в подъезд к абоненту</b></p>
+				</div>
+			</section>
+	
+			<section class="chapter container-xxl" aria-label="Материалы кейса">
+				<div class="embed ui-flow-embed" style="--ui-flow-h: clamp(560px, 78vh, 980px);">
+					<iframe class="embed__iframe" src="./MTS/ui-flow/entrance/index-entrance.html" scrolling="no" title="MTS UI Flow — Office" loading="lazy"></iframe>
+				</div>
+			</section>
+
+			<section class="container" aria-labelledby="mts-h1">
+				<div class="w-l">
+					<p class="p-primary center">Нашел оборудование, к которому будет подключать абонента</b></p>
+				</div>
+			</section>
+	
+			<section class="chapter container-xxl" aria-label="Материалы кейса">
+				<div class="embed ui-flow-embed" style="--ui-flow-h: clamp(560px, 78vh, 980px);">
+					<iframe class="embed__iframe" src="./MTS/ui-flow/switch/index-switch.html" scrolling="no" title="MTS UI Flow — Office" loading="lazy"></iframe>
+				</div>
+			</section>
+
+			<section class="container" aria-labelledby="mts-h1">
+				<div class="w-l">
+					<p class="p-primary center">Возле оборудования выполняет поиск портов</b></p>
+				</div>
+			</section>
+	
+			<section class="chapter container-xxl" aria-label="Материалы кейса">
+				<div class="embed ui-flow-embed" style="--ui-flow-h: clamp(560px, 78vh, 980px);">
+					<iframe class="embed__iframe" src="./MTS/ui-flow/switch/index-port.html" scrolling="no" title="MTS UI Flow — Office" loading="lazy"></iframe>
+				</div>
+			</section>
+
+			<section class="container" aria-labelledby="mts-h1">
+				<div class="w-l">
+					<p class="p-primary center">Настраивает подключение в квартире абонента</b></p>
+				</div>
+			</section>
+	
+			<section class="chapter container-xxl" aria-label="Материалы кейса">
+				<div class="embed ui-flow-embed" style="--ui-flow-h: clamp(560px, 78vh, 980px);">
+					<iframe class="embed__iframe" src="./MTS/ui-flow/home/index-home.html" scrolling="no" title="MTS UI Flow — Office" loading="lazy"></iframe>
+				</div>
+			</section>
+		</section>
+
+		<section class="container gap-s section" aria-labelledby="mts-h1">
+			<h1 id="mts-h1" class="h1" style="text-transform: uppercase;">
+				Прямой канал связи <i><br>с пользователями</i>
+			</h1>
+
+			<div class="w-m">
+				<p class="p-primary ">Мы создание Telegram-чата с монтажниками из разных регионов. </p>
+			</div>
+
+			<div class="w-m">
+				<h3 class="h3 ">Получал ежедневно:</h3>
+				<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+					<li>Скриншоты проблем</li>
+					<li>Голосовые сообщения с описанием рабочих ситуаций</li>
+					<li>Предложения по улучшению</li>
+				</ul>
+			</div>
+
+			<div class="w-m">
+				<p class="p-primary "><b>Результат: </b>Узкие места выявлялись за часы, а не недели.</p>
+			</div>
+		</section>
+
+		<!-- ui-test-cable-->
+		<section class="chapter container-xxl dark chapter--bg-video" aria-label="Материалы кейса">
+			<video class="chapter__bg-video" src="./MTS/ui-test-cable/ui-test-cable.mp4" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+			<div class="two-halves-grid chapter__content">
+				<div class="flex-t w-60">
+					<div class="p-l-xxl p-t-b-xxl w-l">
+						<p class="p-primary dark-text">Фича, которая повлияла на одну из метрик <b>“Поиск свободного кабеля”</b></p>
+						<p class="p-primary dark-text">Cистема отправляла сигнал по кабелю,
+							по скорости отклика определялась его длина, если длины хватало, 
+							то можно было использовать существующий кабель, <b>не нужно было сверлить 
+							стены и тянуть новый кабель — это экономило время на подключения</b></p>
+					</div>
+				</div>
+				<div class="ui-video-wrap">
+					<img class="media ui-inet-c" src="./MTS/ui-test-cable/ui-test-cable.svg" alt="UI: поиск свободного кабеля" loading="lazy">
+				</div>
+			</div>
+		</section>
+
+<!-- mts-results -->
+		<section class="container gap-s section" aria-labelledby="mts-h1">
+			<h1 id="mts-h1" class="h1" style="text-transform: uppercase;">
+				Результаты
+			</h1>
+
+			<div class="grid grid-3" aria-label="Роль и команда">
+				<div class="w-m">
+					<h2 class="h2">-70 %</h2>
+					<p class="p-primary ">количества звонков в колл-центр (основной KPI)</p>
+				</div>
+				<div class="w-m">
+					<h2 class="h2">-30 %</h2>
+					<p class="p-primary ">среднее время подключения (с 60 до 40 минут)</p>
+				</div>
+				<div class="w-m">
+					<h2 class="h2">-15 %</h2>
+					<p class="p-primary ">затраты на оборудование за счет переиспользования кабеля и освобождения портов</p>
+				</div>
+			</div>
+
+			<blockquote class="p-quote-xl" style="border-left:1px solid var(--link-secondary); padding-left: var(--gap-l);">
+				В результате проекта я пришёл к выводам: полевые исследования — это необходимость, Telegram-чат с пользователями даёт бесценный поток обратной связи, а оптимизация производительности является неотъемлемой частью дизайна, особенно при работе в условиях нестабильной связи.
+			</blockquote>
+
+			<!-- <div class="w-m">
+				<h3 class="h3 ">Мои выводы</h3>
+				<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+					<li>Полевые исследования — это необходимость</li>
+					<li>Telegram-чат с пользователями — это бесценный поток обратной связи </li>
+					<li>Оптимизация производительности — это часть дизайна, чтобы подготовить его в условия плохой связи</li>
+				</ul>
+			</div> -->
+		</section>
+
+		<section class="container section case-list" aria-label="Кейсы">
+			<div class="case">
+				<div class="title"><a href="./davv.html" style="text-decoration:none;">Инструменты <i>для Figma</i> · DAVV</a></div>
+				<div class="arrow" aria-hidden="true">→</div>
+			</div>
+			<hr class="divider">
+			<div class="case muted">
+				<div class="title"><i>Портал</i> телемаркетологов · МТС</div>
+				<div class="status">в работе</div>
+			</div>
+			<hr class="divider">
+			<div class="case muted">
+				<div class="title">Распределение <i>платежей</i> · билайн</div>
+				<div class="status">в работе</div>
+			</div>
+			<hr class="divider">
+			<div class="case muted">
+				<div class="title"><i>Взыскание</i> задолженностей · билайн</div>
+				<div class="status">в работе</div>
+			</div>
+		</section>
+	
+
+		<footer class="container section section--tight">
+			<nav class="menu">
+				<a class="button" href="./index.html">Шведюк Д.А.</a>
+				<a class="button" href="../Designer_Denis_Shvedyuk.pdf" download="Designer_Denis_Shvedyuk.pdf">Резюме</a>
+				<a class="button" href="https://t.me/Shved_art" target="_blank" rel="noopener">
+					TG @Shved_art <span class="lottie-inline lottie-inline--after tg-sticker" aria-hidden="true" data-lottie-idle="./tgs/telegram.json" data-lottie-hover="./tgs/telegram_orange.json"></span>
+				</a>
+			</nav>
+		</footer>
+	</main>
+</body>
+</html>
+
+

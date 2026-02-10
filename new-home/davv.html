@@ -1,0 +1,1390 @@
+<!doctype html>
+<html lang="ru">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>DAVV — плагины для Figma</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="icon" type="image/x-icon" href="../ui-element/favicon.ico">
+	<link rel="shortcut icon" type="image/x-icon" href="../ui-element/favicon.ico">
+	<link rel="stylesheet" href="./styles/global.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js" defer></script>
+	<script src="./scripts/main.js" defer></script>
+</head>
+<body>
+	<main class="page" data-name="Davv/Section-1">
+		<header class="container">
+			<nav class="menu">
+				<a class="button" href="./index.html">Шведюк Д.А.</a>
+				<a class="button" href="../Designer_Denis_Shvedyuk.pdf" download="Designer_Denis_Shvedyuk.pdf">Резюме</a>
+				<a class="button" href="https://t.me/Shved_art" target="_blank" rel="noopener">
+					TG @Shved_art <span class="lottie-inline lottie-inline--after tg-sticker" aria-hidden="true" data-lottie-idle="./tgs/telegram.json" data-lottie-hover="./tgs/telegram_orange.json"></span>
+				</a>
+			</nav>
+		</header>
+
+		<section class="container gap-l" aria-labelledby="davv-h1">
+			<h1 id="davv-h1" class="h1" style="text-transform: uppercase;">
+				Davv · <i>плагины</i> <br> <i>в Figma</i> для&nbsp;работы <br> с&nbsp;анимацией
+			</h1>
+			<div class="grid grid-2" aria-labelledby="role-team-title">
+				<div>
+					<h4 id="role-team-title" class="h4">Моя роль:</h4>
+					<p class="p-secondary">Founder · Product Designer · Creative Director</p>
+				</div>
+				<div>
+					<h4 class="h4">Команда:</h4>
+					<p class="p-secondary">Я, 2 разработчика и менеджер</p>
+				</div>
+			</div>
+            <div>
+                <h4 id="responsibilities-title" class="h4">За что я отвечал:</h4>
+                <ul class="p-secondary" style="padding-left: 1.4em; list-style: disc;">
+                    <li>Автор идеи, концепции и продуктового направления</li>
+                    <li>Формулировал гипотезы, проверял их до разработки</li>
+                    <li>Приоритизировал задачи</li>
+                    <li>Рисовал весь визуал</li>
+                    <li>Ставил задачи разработчикам, принимал решения по UX/функциональности</li>
+                    <li>Тестировал, готовил релизы</li>
+                    <li>Отвечал за рост: контент, комьюнити, коммуникацию, маркетинг</li>
+                    <li>Делал часть простых задач (HTML/CSS)</li>
+                </ul>  
+            </div>
+            <div class="py-m">
+                <h4 id="metrics-title" class="h4 mt-l">Метрики и рост за 3 года</h4>
+                <div class="grid grid-5">
+                    <div>
+                        <div class="h3">263 000+</div>
+                        <p class="p-secondary">пользователей (установки, активны сейчас)</p>
+                    </div>
+                    <div>
+                        <div class="h3">≈ 46 350</div>
+                        <p class="p-secondary">открытий плагинов каждый месяц</p>
+                    </div>
+                    <div>
+                        <div class="h3">40 000+</div>
+                        <p class="p-secondary">подписчиков в <a href="https://www.instagram.com/davv_svgmotion/">Instagram</a></p>
+						<p class="p-little">Instagram — продукт компании Meta Platforms Inc., признанной экстремистской организацией в РФ.</p>
+                    </div>
+                    <div>
+                        <div class="h3">1,8 млн</div>
+                        <p class="p-secondary">просмотров у <a href="https://www.instagram.com/reel/DQTkM9YDD-i/">лучшего рилса</a></p>
+                    </div>
+                    <div>
+						<div class="h3">0$</div>
+                        <p class="p-secondary">рекламного бюджета</p> 
+                    </div>
+                </div>    
+            </div>
+		</section>
+
+        <section class="container section" aria-labelledby="start-title">
+			<h2 id="start-title" class="h2 serif">С чего всё началось</h2>
+			<blockquote class="p-quote" style="border-left:1px solid var(--link-secondary); padding-left: var(--gap-l);">
+				Если продукт нужен мне как дизайнеру, <br>значит, он может быть нужен и другим
+			</blockquote>
+			<div class="row" aria-label="Иконки этапов">
+				<img class="media" src="./how-it-all-started/how-it-all-started-01.svg" alt="" width="105" height="105" loading="lazy">
+			</div>
+			<p class="p-primary">
+				Раньше, чтобы сделать простую анимацию линий/контуров, я делал так:<br>
+				рисовал в Figma → в  Illustrator подготавливал файл для After Effects → анимировал → экспортировал → добавлял в Figma.
+			</p>
+            <div class="row" aria-label="Иконки этапов">
+				<img class="media" src="./how-it-all-started/how-it-all-started-02.svg" alt="" width="105" height="105" loading="lazy">
+			</div>
+			<p class="p-primary">
+				<b>Идея:</b> анимировать линии сразу не выходя из figma в плагине. <br><b>Так появился первый плагин — SVG Motion.</b>
+			</p>
+		</section>
+		<div class="whole-case">
+
+		<!-- SVG MOTION -->
+			<section class="section chapter section--chapter container-xxl" aria-labelledby="svg-motion-title">
+				<figure class="figure">
+					<img class="media" src="./svg-motion/01-svg-motion-head.svg" alt="SVG Motion — хиро" loading="lazy">
+				</figure>
+				<div class="flex-c">
+					<div class="p-l-r-l w-l">
+						<h2 id="svg-motion-title" class="h2 center">Как работает SVG Motion</h2>
+						<div class="steps grid grid-4 py-m w-l">
+							<div class="step">
+								<svg class="line-svg" viewBox="0 0 100 12" preserveAspectRatio="none">
+									<defs><marker id="arrow1" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="currentColor"/></marker></defs>
+									<circle cx="2" cy="6" r="2" fill="currentColor"/><line x1="4" y1="6" x2="98" y2="6" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 3" marker-end="url(#arrow1)"/>
+								</svg>
+								<p class="p-secondary">Figma API отдаёт SVG</p>
+							</div>
+							<div class="step">
+								<svg class="line-svg" viewBox="0 0 100 12" preserveAspectRatio="none">
+									<defs><marker id="arrow2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="currentColor"/></marker></defs>
+									<circle cx="2" cy="6" r="2" fill="currentColor"/><line x1="4" y1="6" x2="98" y2="6" stroke="currentColor" stroke-width="1.2" marker-end="url(#arrow2)"/>
+								</svg>
+								<p class="p-secondary">Плагин парсит SVG и находит stroke / dash‑параметры</p>
+							</div>
+							<div class="step">
+								<svg class="line-svg" viewBox="0 0 100 12" preserveAspectRatio="none">
+									<defs><marker id="arrow3" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="currentColor"/></marker></defs>
+									<circle cx="2" cy="6" r="2" fill="currentColor"/><line x1="4" y1="6" x2="98" y2="6" stroke="currentColor" stroke-width="1.2" marker-end="url(#arrow3)"/>
+								</svg>
+								<p class="p-secondary">Применяет заранее подготовленные паттерны анимации</p>
+							</div>
+							<div class="step">
+								<svg class="line-svg" viewBox="0 0 100 12" preserveAspectRatio="none">
+									<defs><marker id="arrow4" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="currentColor"/></marker></defs>
+									<circle cx="2" cy="6" r="2" fill="currentColor"/><line x1="4" y1="6" x2="98" y2="6" stroke="currentColor" stroke-width="1.2" marker-end="url(#arrow4)"/>
+								</svg>
+								<p class="p-secondary">Даёт настройки, которые можно подстроить под себя</p>
+							</div>
+						</div>                   
+					</div>
+
+					<div class="p-l-r-l w-l">
+						<figure class="figure">
+							<img class="media" src="./svg-motion/02-svg-motion-stroke.svg" alt="SVG stroke — пример" loading="lazy" width="1120">
+						</figure>					
+					</div>
+					<div class="p-l-r-l w-m">
+						<h2 class="h2 center">Что видит пользователь</h2>
+						<p class="p-primary center">Пользователь открывает макет и сразу видит анимацию. <br> Меняя настройки, он интуитивно понимает, за что отвечает каждая из них. Это позволило начать работу без онбординга.</p>
+					</div>
+							
+					<div class="figure overlay-wrap p-l w-l">
+						<img src="./svg-motion/figms-ui.svg" alt="SVG Motion UI в Figma" loading="lazy" width="1120">
+						<iframe class="overlay-iframe" src="https://davv.store/iframes/svg_motion/" title="SVG Motion live demo" loading="lazy"></iframe>
+					</div>
+
+					<div class="p-l-r-l w-m">   
+						<h2 class="h2">Мы запустились за 2 месяца</h2>
+						<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+							<li>Изучили API Figma</li>
+							<li>Сделали плагин</li>
+							<li>Подготовили шаблоны с примерами анимаций</li>
+							<li>Реализовали экспорт в SVG, GIF, WebM</li>
+							<li>Подали заявку на публикацию плагина</li>
+							<li>Оформили страницу в Figma Community</li>
+							<li>Сделали лендинг продукта</li>
+							<li>Настроили страницу оплаты на Gumroad</li>
+							<li>Запустили соцсети с примерами анимаций</li>
+						</ul>
+						<h2 class="h2">Шаблоны с примерами анимаций</h2>
+					</div>
+
+					<div class="gallery p-l p-l-r-xl" style="--gallery-h: 600px;" data-drag-scroll="true" aria-label="Галерея видео">
+						<video class="gallery__item" src="./svg-motion/04-svg-motion-video-01.mp4" autoplay muted loop playsinline style="width:278px;"></video>
+						<video class="gallery__item" src="./svg-motion/04-svg-motion-video-02.mp4" autoplay muted loop playsinline style="width:974px;"></video>
+						<video class="gallery__item" src="./svg-motion/04-svg-motion-video-03.mp4" autoplay muted loop playsinline style="width:278px;"></video>
+						<video class="gallery__item" src="./svg-motion/04-svg-motion-video-04.mp4" autoplay muted loop playsinline style="width:974px;"></video>
+						<video class="gallery__item" src="./svg-motion/04-svg-motion-video-05.mp4" autoplay muted loop playsinline style="width:278px;"></video>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<h2 class="h2 center">Спрос есть</h2>
+						<p class="p-primary center">Появились первые пользователи. <br> Пошли первые продажи.</p>
+					</div>
+
+					<div class="p-l w-l">       
+						<div class="reels grid grid-3 w-l" data-sound-group aria-label="Видео-примеры (можно включить звук)">
+							<div class="reel">
+								<video id="reel-1" class="reel__video" src="./svg-motion/06-svg-motion-video-01.MP4" autoplay muted loop playsinline preload="metadata"></video>
+								<button class="sound-btn" type="button" data-sound-toggle aria-controls="reel-1" aria-pressed="false" aria-label="Включить звук">
+									<img class="sound-btn__icon" alt="" src="./icons/volume_up_24dp_E3E3E3_FILL0_wght300_GRAD0_opsz24.svg">
+								</button>
+							</div>
+							<div class="reel">
+								<video id="reel-2" class="reel__video" src="./svg-motion/06-svg-motion-video-02.mp4" autoplay muted loop playsinline preload="metadata"></video>
+								<button class="sound-btn" type="button" data-sound-toggle aria-controls="reel-2" aria-pressed="false" aria-label="Включить звук">
+									<img class="sound-btn__icon" alt="" src="./icons/volume_up_24dp_E3E3E3_FILL0_wght300_GRAD0_opsz24.svg">
+								</button>
+							</div>
+							<div class="reel">
+								<video id="reel-3" class="reel__video" src="./svg-motion/06-svg-motion-video-03.mp4" autoplay muted loop playsinline preload="metadata"></video>
+								<button class="sound-btn" type="button" data-sound-toggle aria-controls="reel-3" aria-pressed="false" aria-label="Включить звук">
+									<img class="sound-btn__icon" alt="" src="./icons/volume_up_24dp_E3E3E3_FILL0_wght300_GRAD0_opsz24.svg">
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<p class="p-primary center">Блогеры по всему миру начали снимать обзоры про SVG motion. Всё происходило органически.</p>
+					</div>
+
+					<div class="p-l w-l">       
+						<figure class="figure mt-xl ">
+							<img class="media" src="./svg-motion/05-svg-motion-paypal.jpg" alt="Пример использования — PayPal" loading="lazy" width="1120">
+						</figure>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<p class="p-primary center">Пользователи начали писать комментарии и предложения по улучшению, например — добавить MP4. Так мы начали системно собирать обратную связь.</p>
+					</div>
+
+					<div class="p-l w-l">   
+						<figure class="figure">
+							<img class="media" src="./svg-motion/07-svg-motion-coments.png" alt="Комментарии пользователей SVG Motion" loading="lazy" width="1120">
+						</figure>
+					</div>
+					<div class="p-l-r-l w-m">
+						<p class="p-primary center"> <b><a href="https://www.figma.com/community/plugin/1077659774432109711/svg-motion">SVG motion</a> установлен у 138 тыс. пользователей</b> за 3,5 года органического роста без рекламного бюджета, первый и самый популярный плагин из набора.</p>
+					</div>
+				</div>
+			</section>
+
+			<div class="p-l-r-l w-m">
+				<p class="p-primary center">Следующим плагином стал Physics Animation</p>
+			</div>
+
+		<!-- physics animation -->
+			<section class="section chapter section--chapter container-xxl" aria-labelledby="svg-motion-title">
+				<div class="p-s">
+					<figure class="figure">
+						<img class="media" src="./physics-animation/01-physics-animation-head.svg" alt="SVG Motion — хиро" loading="lazy">
+					</figure>				
+				</div>
+				<div class="flex-c">
+					<div class="p-l-r-l w-m">
+						<h2 class="h2 center">Проверяли интерес</h2>
+						<p class="p-primary center">Перед запуском мы публиковали Reels с результатами и писали дизайнерам — так проверяли интерес.</p>
+					</div>
+
+					<div class="p-l w-l">       
+						<figure class="figure mt-xl ">
+							<img class="media" src="./physics-animation/02-physics-animation-coment.png" alt="Пример использования — PayPal" loading="lazy" width="1120">
+						</figure>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<h2 class="h2 center">UI плагина</h2>
+						<p class="p-primary center">Интерфейс плагинов мы делали в самом конце, уже перед релизом. Сначала тестировали, какие настройки нужны, какие не используются. И только когда примеры анимации были готовы — делали финальный UI.</p>
+					</div>
+
+					<div class="gallery p-l p-l-r-xl" style="--gallery-h: 600px;" data-drag-scroll="true" aria-label="Галерея изображений UI">
+						<figure class="gallery__figure">
+							<img class="gallery__img" src="./physics-animation/03-physics-animation-ui-1.jpg" alt="До релиза плагин выглядел так" loading="lazy">
+							<figcaption class="gallery__caption">До релиза плагин выглядел так</figcaption>
+						</figure>
+						<figure class="gallery__figure">
+							<img class="gallery__img" src="./physics-animation/03-physics-animation-ui-2.jpg" alt="В момент релиза плагин выглядел так" loading="lazy">
+							<figcaption class="gallery__caption">В момент релиза плагин выглядел так</figcaption>
+						</figure>
+						<figure class="gallery__figure">
+							<img class="gallery__img" src="./physics-animation/03-physics-animation-ui-3.jpg" alt="После сбора информации и отзывов от пользователей" loading="lazy">
+							<figcaption class="gallery__caption">После сбора информации и отзывов от пользователей</figcaption>
+						</figure>
+					</div>
+
+					<div class="gallery p-l p-l-r-xl" style="--gallery-h: 600px;" data-drag-scroll="true" aria-label="Галерея видео">
+						<video class="gallery__item" src="./physics-animation/04-physics-animation-video-1.mp4" autoplay muted loop playsinline preload="metadata"></video>
+						<video class="gallery__item" src="./physics-animation/04-physics-animation-video-2.mp4" autoplay muted loop playsinline preload="metadata"></video>
+						<video class="gallery__item" src="./physics-animation/04-physics-animation-video-3.mp4" autoplay muted loop playsinline preload="metadata"></video>
+						<video class="gallery__item" src="./physics-animation/04-physics-animation-video-4.mp4" autoplay muted loop playsinline preload="metadata"></video>
+						<video class="gallery__item" src="./physics-animation/04-physics-animation-video-5.mp4" autoplay muted loop playsinline preload="metadata"></video>
+						<video class="gallery__item" src="./physics-animation/04-physics-animation-video-6.mp4" autoplay muted loop playsinline preload="metadata"></video>
+						<video class="gallery__item" src="./physics-animation/04-physics-animation-video-7.mp4" autoplay muted loop playsinline preload="metadata"></video>
+						<video class="gallery__item" src="./physics-animation/04-physics-animation-video-8.mp4" autoplay muted loop playsinline preload="metadata"></video>
+						<video class="gallery__item" src="./physics-animation/04-physics-animation-video-9.mp4" autoplay muted loop playsinline preload="metadata"></video>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<p class="p-primary center">У плагина Physics Animation интерфейс получился сложнее, 
+							
+							поэтому без онбординга тут не обошлось. Наблюдения показали, что видео-онбординг 
+							воспринимается гораздо лучше.</p>
+					</div>
+
+					<div class="p-l w-l">
+						<div class="embed youtube " style="--embed-ratio: 16/12;">
+							<div class="yt-lite" data-youtube-id="-hdOMZd0N1c">
+								<img class="yt-lite__thumb" src="./physics-animation/05-5-physics-animation-cover.svg" alt="" loading="lazy">
+								<button class="yt-lite__play" type="button" aria-label="Воспроизвести видео"></button>
+							</div>
+						</div>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<h2 class="h2 center">Быстрый рост плагина</h2>
+						<p class="p-primary center">На второй день после релиза плагин попал в топ рекомендаций Figma и быстро начал набирать установки.</p>
+					</div>
+
+					<div class="p-l w-l">   
+						<figure class="figure">
+							<img class="media" src="./physics-animation/05-physics-animation-top.png" alt="Комментарии пользователей SVG Motion" loading="lazy" width="1120">
+						</figure>
+					</div>
+					<div class="p-l-r-l w-m">
+						<p class="p-primary center"> <b><a href="https://www.figma.com/community/plugin/1051790240828992953/physics-animation">Physics Animation</a> установлен у 54 тыс. пользователей</b><br> за 3 года органического роста без рекламного бюджета</p>
+					</div>
+				</div>
+			</section>
+
+		<!-- user-interviews -->
+			<section class="section chapter section--chapter container-xxl p-t-b-xl" aria-labelledby="svg-motion-title">
+				<div class="flex-c" >
+					<div class="p-l-r-l w-m">
+						<h1 id="davv-h1" class="h1 w-m" style="text-transform: uppercase;">
+							<i>Интервью </i> <br> с пользователями <br>
+						</h1>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<p class="p-primary ">Когда плагины начали набирать установки и появилось стабильное количество покупателей, мы перешли к активным пользовательским исследованиям.</p>
+					</div>
+
+					<div class="p-l-r-l w-m">   
+						<h3 class="h3 ">Целью было понять</h3>
+						<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+							<li>В какой момент они приходят к решению о покупке</li>
+							<li>Какую задачу они реально решают</li>
+							<li>Где интерфейс мешает, а где помогает</li>
+						</ul>
+					</div>
+
+					<div class="p-l-r-l w-m">   
+						<h3 class="h3 ">Мы искали респондентов через несколько каналов</h3>
+						<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+							<li>Письма через Gumroad с коротким опросником</li>
+							<li>Личные сообщения от пользователей</li>
+						</ul>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<p class="p-primary ">Самыми ценными оказались пользователи, <b>которые готовы купить прямо сейчас</b>. Именно они могли максимально точно объяснить, зачем им инструмент и какие альтернативы они рассматривали.</p>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<p class="p-primary ">Интересный инсайт: значительная часть <b>таких пользователей находила нас самостоятельно.</b></p>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<p class="p-primary ">В ряде стран люди сталкивались с тем, что не могли оплатить плагин, так как для покупки требовалась зарубежная банковская карта, а часть пользователей писала нам с просьбой о скидке.</p>
+					</div>
+
+					<div class="p-l w-m">       
+						<figure class="figure mt-xl ">
+							<img class="media" src="./user-interviews/01-user-interviews-com.png" alt="Пример использования — PayPal" loading="lazy" width="1120">
+						</figure>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<p class="p-primary ">Мы предлагали им бесплатно ключ активации в обмен на звонок с интервью. Соглашались все.</p>
+					</div>
+
+					<div class="gallery p-l p-l-r-xl" style="--gallery-h: 600px;" data-drag-scroll="true" aria-label="Галерея видео">
+						<video class="gallery__item" src="./user-interviews/interviews/02-user-interviews-video.mp4" autoplay muted loop playsinline preload="metadata"></video>
+						<video class="gallery__item" src="./user-interviews/interviews/03-user-interviews-video.mp4" autoplay muted loop playsinline preload="metadata"></video>
+						<video class="gallery__item" src="./user-interviews/interviews/04-user-interviews-video.mp4" autoplay muted loop playsinline preload="metadata"></video>
+						<video class="gallery__item" src="./user-interviews/interviews/05-user-interviews-video.mp4" autoplay muted loop playsinline preload="metadata"></video>
+						<video class="gallery__item" src="./user-interviews/interviews/06-user-interviews-video.mp4" autoplay muted loop playsinline preload="metadata"></video>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<h2 class="h2 ">Формат интервью</h2>
+						<p class="p-primary ">Мы пробовали разные форматы интервью, классические интервью по списку вопросов и более свободный формат дружеской беседы.</p>
+						<p class="p-primary ">Со временем стало понятно, что именно этот формат дружеской беседы даёт больше глубинных инсайтов.</p>
+					</div>
+
+					<div class="p-l-r-l w-m">   
+						<h3 class="h3 ">Во время таких интервью мы</h3>
+						<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+							<li>Разговаривали с пользователем</li>
+							<li>Просили комментировать действия вслух</li>
+							<li>Наблюдали, как он пользуется плагином в реальном времени</li>
+							<li>Фиксировали моменты, где ожидание не совпадает с результатом</li>
+						</ul>
+					</div>
+
+					<div class="p-l-r-l w-m">   
+						<h3 class="h3 ">✖ Классические интервью по списку вопросов</h3>
+						<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+							<li>Пользователи зажимаются</li>
+							<li>Стараются дать «правильный ответ»</li>
+							<li>Угадывают ожидания интервьюера</li>
+						</ul>
+					</div>
+
+					<div class="p-l-r-l w-m">   
+						<h3 class="h3 ">✓ Дружеская беседа</h3>
+						<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+							<li>Пользователи более открытые</li>
+							<li>Легко показывают какие действия пробует первыми</li>
+							<li>Какие обходные пути придумывает</li>
+							<li>Лучше понимаешь мышление пользователя</li>
+						</ul>
+					</div>
+
+					<div class="p-l-r-l w-m p-t-b-l"">   
+						<blockquote class="p-quote" style="border-left:1px solid var(--link-secondary); padding-left: var(--gap-l);">
+							Один из показательных примеров дружеской беседы 
+							В одном из интервью пользователь подробно описал, 
+							что в своей работе он не хочет просто двигать объекты, 
+							а хочет менять их форму, управляя координатами якорных точек. 
+							<b>Так родился новый плагин Shape move.</b>
+						</blockquote>
+					</div>
+
+					<div class="p-l-r-l w-m">   
+						<h3 class="h3 ">Инсайты исследований</h3>
+						<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+							<li>Пользователи теряются, если настроек слишком много</li>
+							<li>Им нравится быстро видить результат</li>
+							<li>Документацию почти никто не читает</li>
+							<li>Видео-онбординг и визуальные примеры работают лучше текста</li>
+							<li>Увидели обходные пути и баги</li>
+						</ul>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<h3 class="h3 ">Когда пользователи приходят к решению о покупке</h3>
+						<p class="p-primary ">В первом сценарии решение о покупке возникало в момент, 
+							когда пользователь находил пример анимации, подходящий для текущего проекта. 
+							Возможность применить эффект в макете и сразу проверить его на своей задаче 
+							становилась ключевым триггером покупки.</p>
+						<p class="p-primary ">Во втором сценарии. Пользователь видел видео блогера, который показывал и рекомендовал плагин. 
+							В ходе интервью мы заметили, что по этому пути чаще всего приходили начинающие дизайнеры.</p>
+					</div>
+
+				</div>
+			</section>	
+			
+		<!-- shape move -->
+			<section class="section chapter section--chapter container-xxl" aria-labelledby="svg-motion-title">
+				<div class="p-s">
+					<figure class="figure">
+						<img class="media" src="./shape-move/01-shape-move-head.svg" alt="SVG Motion — хиро" loading="lazy">
+					</figure>				
+				</div>
+				<div class="flex-c">
+					<div class="p-l-r-l w-m">
+						<h2 class="h2 center">Основная идея</h2>
+						<p class="p-primary center">Пользователь создаёт два или больше фреймов с вектором, меняет координаты точек и получает плавную анимацию перехода формы.</p>
+					</div>
+
+					<div class="p-l w-l">
+						<div class="embed youtube " style="--embed-ratio: 16/12;">
+							<div class="yt-lite" data-youtube-id="eXlkd9hv70M">
+								<img class="yt-lite__thumb" src="./shape-move/05-5-shape-move-cover.svg" alt="" loading="lazy">
+								<button class="yt-lite__play" type="button" aria-label="Воспроизвести видео"></button>
+							</div>
+						</div>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<p class="p-primary center">Такой подход помогал анимировать иконки, шрифты и микроанимацию в интерфейсах.</p>
+					</div>
+
+					<div class="gallery p-l p-l-r-xl" style="--gallery-h: 600px;" data-drag-scroll="true" aria-label="Галерея изображений UI">
+						<figure class="gallery__figure">
+							<img class="gallery__img" src="./shape-move/02-shape-move-lib-01.svg" alt="Shape Move — примеры (1)" loading="lazy">
+							<figcaption class="gallery__caption">Примеры Shape Move<br>Экспорт в формате SVG</figcaption>
+						</figure>
+						<figure class="gallery__figure">
+							<img class="gallery__img" src="./shape-move/02-shape-move-lib-02.svg" alt="Shape Move — примеры (2)" loading="lazy">
+							<figcaption class="gallery__caption">Примеры Shape Move<br>Экспорт в формате SVG</figcaption>
+						</figure>
+						<figure class="gallery__figure">
+							<img class="gallery__img" src="./shape-move/02-shape-move-lib-03.svg" alt="Shape Move — примеры (3)" loading="lazy">
+							<figcaption class="gallery__caption">Примеры Shape Move<br>Экспорт в формате SVG</figcaption>
+						</figure>
+						<figure class="gallery__figure">
+							<img class="gallery__img" src="./shape-move/02-shape-move-lib-04.svg" alt="Shape Move — примеры (3)" loading="lazy">
+							<figcaption class="gallery__caption">Примеры Shape Move<br>Экспорт в формате SVG</figcaption>
+						</figure>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<p class="p-primary center">Используя настройки смещения и задержки движения каждого отдельно элемента, можно добиться интересных эффектов.</p>
+					</div>
+
+					<div class="p-l w-l">       
+						<figure class="figure mt-xl ">
+							<video class="media" src="./shape-move/03-shape-move-video.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Пример анимации Shape Move"></video>
+						</figure>
+					</div>
+					<div class="p-l-r-l w-m">
+						<p class="p-primary center"> <b><a href="https://www.figma.com/community/plugin/1173969737969388954/shape-move">Shape move </a> установлен у 29 тыс. пользователей</b><br> за 2 года органического роста без рекламного бюджета</p>
+					</div>
+				</div>
+			</section>
+
+		<!-- monetization-conversion -->
+			<section class="section chapter section--chapter container-xxl p-t-b-xl" aria-labelledby="svg-motion-title">
+				<div class="flex-c" >
+					<div class="p-l-r-l w-m">
+						<h1 id="davv-h1" class="h1 w-m" style="text-transform: uppercase;">
+							<i>Исследование </i> <br>монетизации <br>и конверсии
+						</h1>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<h2 class="h2">Цена</h2>
+						<p class="p-primary ">Пользователи писали, что цена кажется высокой. <br> Логичное ожидание было таким: <b>ниже цена → больше покупок.</b></p>
+					</div>
+
+					<div class="p-l-r-l w-m p-t-b-l">
+						<div class="tbl-wrap">
+							<table class="tbl">
+							  <colgroup>
+								<col style="width:15%">
+								<col style="width:15%">
+								<col style="width:40%">
+								<col style="width:15%">
+								<col style="width:15%">
+							  </colgroup>
+						  
+							  <thead>
+								<tr>
+								  <th class="left">Период</th>
+								  <th>Цена</th>
+								  <th>Просмотров в магазине</th>
+								  <th>Покупки</th>
+								  <th>Прибыль</th>
+								</tr>
+							  </thead>
+						  
+							  <tbody>
+								<tr>
+								  <td class="left">1 месяца</td>
+								  <td class="strong">9$</td>
+								  <td>749</td>
+								  <td>107</td>
+								  <td class="strong">963$</td>
+								</tr>
+						  
+								<tr>
+								  <td class="left">1 месяца</td>
+								  <td class="strong">39$</td>
+								  <td>772</td>
+								  <td>102</td>
+								  <td class="strong">3&nbsp;978$</td>
+								</tr>
+							  </tbody>
+							</table>
+						  </div>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<p class="p-primary ">Изменение цены почти <b>не повлияло на количество покупок.</b><br>
+							<b>Вывод:</b> решение о покупке принималось <b>не из-за цены.</b></p>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<h3 class="h3">Подписка vs разовая покупка</h3>
+						<p class="p-primary ">Мы внедрили модель подписки на плагины и сравнили её с разовыми покупками.</b></p>
+					</div>
+
+					<div class="p-l-r-l w-m p-t-b-l">
+						<div class="tbl-wrap">
+							<table class="tbl">
+							  <colgroup>
+								<col style="width:15%">
+								<col style="width:15%">
+								<col style="width:25%">
+								<col style="width:15%">
+								<col style="width:15%">
+								<col style="width:15%">
+							  </colgroup>
+						  
+							  <thead>
+								<tr>
+								  <th class="left">Период</th>
+								  <th>Цена</th>
+								  <th>Просмотры</th>
+								  <th>Покупки</th>
+								  <th>Отмена</th>
+								  <th>Прибыль</th>
+								</tr>
+							  </thead>
+						  
+							  <tbody>
+								<tr>
+								  <td class="left">3 месяца</td>
+								  <td class="strong">8$/mo</td>
+								  <td>2&nbsp;214</td>
+								  <td>430</td>
+								  <td class="mid">≈78%</td>
+								  <td class="strong">≈4&nbsp;953$</td>
+								</tr>
+						  
+								<tr>
+								  <td class="left">3 месяца</td>
+								  <td class="strong">39$</td>
+								  <td>1&nbsp;989</td>
+								  <td>396</td>
+								  <td class="mid">-</td>
+								  <td class="strong">15&nbsp;444$</td>
+								</tr>
+							  </tbody>
+							</table>
+						  </div>
+					</div>
+
+					<div class="p-l-r-l w-m">   
+						<h3 class="h3 ">Результат</h3>
+						<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+							<li>Разовые продажи приносили больше денег</li>
+							<li>Подписка вызывала больше сомнений и сопротивления</li>
+							<li>Пользователи воспринимали плагины как формат «купить и владеть»</li>
+						</ul>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<h2 class="h2">Путь к оплате</h2>
+						<p class="p-primary ">Типичный сценарий выглядел так:</p>
+						<p class="p-primary ">Узнал про плагин → Установил плагин → Сделал анимацию в плагине → Экспорт <i>(требуется Pro-аккаунт)</i> → <del><b>Переходит на сайт продукта</b></del>→ Корзина Gumroad → Оплачивает → Активирует ключ →...</p>
+						<p class="p-primary ">Если из цепочки <b>убрать сайт, конверсия падает на ≈30%.</b></p>
+					</div>
+
+					<div class="p-l-r-l w-m">   
+						<h3 class="h3 ">Тестирование сайта</h3>
+						<p class="p-primary ">Мы тестировали разные версии страницы продукта</p>
+						<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+							<li>Разные структуры</li>
+							<li>Разные формулировки</li>
+							<li>Разный визуальный стиль</li>
+							<li>Классические лендинги с call-to-action</li>
+						</ul>
+					</div>
+
+					<div class="p-l w-m">       
+						<figure class="figure mt-xl ">
+							<img class="" src="./monetization-conversion/monetization-conversion.png" alt="Пример использования — PayPal" loading="lazy" width="1120">
+						</figure>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<p class="p-primary ">Ожидание: «правильный» лендинг повысит конверсию.<br>
+						<b>Фактический результат: конверсия не менялась.</b></p>
+						<p class="p-primary "> <b>Вывод:</b> пользователь принимает <b>решение о покупке ещё внутри плагина,</b>, когда видит результат своей работы. Сайт не продаёт — он подтверждает уже принятое решение.</p>
+					</div>
+
+					<div class="p-l-r-l w-m">   
+						<h2 class="h2 ">Влияние изменений UI на конверсию</h2>
+						<p class="p-primary ">Мы тестировали не только цену и путь к оплате, но и сам UI продукта</p>  
+						<!-- <h3 class="h3 ">Мы экспериментировали:</h3> -->
+						<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+							<li>Разным набором шаблонов анимаций</li>
+							<li>Перестановкой и группировкой шаблонов на основе рейтинга</li>
+							<li>Радикальными изменениями визуального стиля UI</li>
+						</ul>
+						<p class="p-primary "><b>Результат:</b> ни одно из этих изменений не оказывало заметного влияния на продажи.</p>
+					</div>
+
+					<div class="p-l-r-l w-m">   
+						<h2 class="h2 ">Фичи, которые повлияли на конверсию</h2>
+						<p class="p-primary ">Это заняло очень много времени разработки, но мы добавили в SVG motion и Physics animation экспорт в <b>формат Lottie</b> — это была самая частая просьба пользователей.</p>
+						<p class="p-primary "><b>Результат:</b> конверсия в покупку выросла примерно <b>на 15%.</b></p>
+					</div>
+					
+					<div class="p-l-r-l w-m p-t-b-l"">   
+						<blockquote class="p-quote" style="border-left:1px solid var(--link-secondary); padding-left: var(--gap-l);">
+							На конверсию влияли не косметические улучшения, а функциональные возможности.
+						</blockquote>
+					</div>
+
+				</div>
+			</section>	
+
+		<!-- marketing -->
+			<section class="section chapter section--chapter container-xxl p-t-b-xl" aria-labelledby="svg-motion-title">
+				<div class="flex-c" >
+					<div class="p-l-r-l w-m">
+						<h1 id="davv-h1" class="h1 w-m" style="text-transform: uppercase;">
+							<i>Маркетинг,</i> рост <br>и развитие продукта
+						</h1>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<p class="p-primary ">Весь рост продукта строился вокруг одного вопроса:<br>как продукт может распространяться сам?</p>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<h2 class="h2">Стартовый канал роста</h2>
+						<p class="p-primary ">Первым и ключевым каналом роста стала Figma Community.<br>
+							Именно там дизайнеры и блогеры начали узнавать о плагинах.</p>
+						<p class="p-primary ">Большинство публикаций и обзоров не инициировались нами напрямую.
+							Авторы контента находили плагины сами, дизайнеры рекомендовали их друг другу в чатах и сообществах.</p>
+					</div>
+
+					<div class="gallery-news p-l p-l-r-xl" style="--gallery-h: 600px;" data-drag-scroll="true" aria-label="Галерея изображений UI">
+						<figure class="gallery__figure">
+							<img class="gallery__img-news" src="./marketing/news/01-marketing-news-01.jpg" alt="News" loading="lazy">
+							<img class="gallery__img-news" src="./marketing/news/01-marketing-news-02.jpg" alt="News" loading="lazy">
+						</figure>
+						<figure class="gallery__figure">
+							<img class="gallery__img-news" src="./marketing/news/02-marketing-news-01.jpg" alt="News" loading="lazy">
+							<img class="gallery__img-news" src="./marketing/news/02-marketing-news-02.jpg" alt="News" loading="lazy">
+						</figure>
+						<figure class="gallery__figure">
+							<img class="gallery__img-news" src="./marketing/news/03-marketing-news-01.jpg" alt="News" loading="lazy">
+							<img class="gallery__img-news" src="./marketing/news/03-marketing-news-02.jpg" alt="News" loading="lazy">
+						</figure>
+						<figure class="gallery__figure">
+							<img class="gallery__img-news" src="./marketing/news/04-marketing-news-01.jpg" alt="News" loading="lazy">
+							<img class="gallery__img-news" src="./marketing/news/04-marketing-news-02.jpg" alt="News" loading="lazy">
+							<img class="gallery__img-news" src="./marketing/news/04-marketing-news-03.jpg" alt="News" loading="lazy">
+						</figure>
+						<figure class="gallery__figure">
+							<img class="gallery__img-news" src="./marketing/news/05-marketing-news-01.jpg" alt="News" loading="lazy">
+						</figure>
+						<figure class="gallery__figure">
+							<img class="gallery__img-news" src="./marketing/news/06-marketing-news-01.jpg" alt="News" loading="lazy">
+						</figure>
+						<figure class="gallery__figure">
+							<img class="gallery__img-news" src="./marketing/news/07-marketing-news-01.jpg" alt="News" loading="lazy">
+						</figure>
+						<figure class="gallery__figure">
+							<img class="gallery__img-news" src="./marketing/news/08-marketing-news-01.jpg" alt="News" loading="lazy">
+						</figure>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<h3 class="h3">Короткие видео — основной двигатель роста</h3>
+						<p class="p-primary ">Демонстрация возможностей плагинов запускали цепную реакцию</p>
+						<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+							<li>Повторение формата блогерами</li>
+							<li>Собственные версии и разборы</li>
+							<li>Пародии</li>
+						</ul>
+						<p class="p-primary ">Чем лучше видео «залетало», тем больше появлялось производного контента.
+							Для нас это была <b>полностью органическая и бесплатная реклама.</b></p>
+					</div>
+
+					<div class="p-l w-l">       
+						<div class="reels grid grid-3 w-l" data-sound-group aria-label="Видео-примеры (можно включить звук)">
+							<div class="reel">
+								<video id="reel-1" class="reel__video" src="./marketing/video/02-marketing-video-01.mp4" autoplay muted loop playsinline preload="metadata"></video>
+								<figcaption class="gallery__caption center">Оригинал</figcaption>
+								<button class="sound-btn" type="button" data-sound-toggle aria-controls="reel-1" aria-pressed="false" aria-label="Включить звук">
+									<img class="sound-btn__icon" alt="" src="./icons/volume_up_24dp_E3E3E3_FILL0_wght300_GRAD0_opsz24.svg">
+								</button>
+							</div>
+							<div class="reel">
+								<video id="reel-2" class="reel__video" src="./marketing/video/02-marketing-video-02.mp4" autoplay muted loop playsinline preload="metadata"></video>
+								<figcaption class="gallery__caption center">Пародия</figcaption>
+								<button class="sound-btn" type="button" data-sound-toggle aria-controls="reel-2" aria-pressed="false" aria-label="Включить звук">
+									<img class="sound-btn__icon" alt="" src="./icons/volume_up_24dp_E3E3E3_FILL0_wght300_GRAD0_opsz24.svg">
+								</button>
+							</div>
+							<div class="reel">
+								<video id="reel-3" class="reel__video" src="./marketing/video/02-marketing-video-03.mp4" autoplay muted loop playsinline preload="metadata"></video>
+								<figcaption class="gallery__caption center">Пародия</figcaption>
+								<button class="sound-btn" type="button" data-sound-toggle aria-controls="reel-3" aria-pressed="false" aria-label="Включить звук">
+									<img class="sound-btn__icon" alt="" src="./icons/volume_up_24dp_E3E3E3_FILL0_wght300_GRAD0_opsz24.svg">
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<p class="p-primary center ">Со временем блогеры начали повторять контент друг за другом, фактически распространяя продукт без нашего участия.</p>
+					</div>
+					
+					<div class="p-l w-l">       
+						<div class="reels grid grid-3 w-l" data-sound-group aria-label="Видео-примеры (можно включить звук)">
+							<div class="reel">
+								<video id="reel-1" class="reel__video" src="./marketing/video/03-marketing-video-01.mp4" autoplay muted loop playsinline preload="metadata"></video>
+								<figcaption class="gallery__caption center">Оригинал</figcaption>
+								<button class="sound-btn" type="button" data-sound-toggle aria-controls="reel-1" aria-pressed="false" aria-label="Включить звук">
+									<img class="sound-btn__icon" alt="" src="./icons/volume_up_24dp_E3E3E3_FILL0_wght300_GRAD0_opsz24.svg">
+								</button>
+							</div>
+							<div class="reel">
+								<video id="reel-2" class="reel__video" src="./marketing/video/03-marketing-video-02.mp4" autoplay muted loop playsinline preload="metadata"></video>
+								<figcaption class="gallery__caption center">Пародия</figcaption>
+								<button class="sound-btn" type="button" data-sound-toggle aria-controls="reel-2" aria-pressed="false" aria-label="Включить звук">
+									<img class="sound-btn__icon" alt="" src="./icons/volume_up_24dp_E3E3E3_FILL0_wght300_GRAD0_opsz24.svg">
+								</button>
+							</div>
+							<div class="reel">
+								<video id="reel-3" class="reel__video" src="./marketing/video/03-marketing-video-03.mp4" autoplay muted loop playsinline preload="metadata"></video>
+								<figcaption class="gallery__caption center">-</figcaption>
+								<button class="sound-btn" type="button" data-sound-toggle aria-controls="reel-3" aria-pressed="false" aria-label="Включить звук">
+									<img class="sound-btn__icon" alt="" src="./icons/volume_up_24dp_E3E3E3_FILL0_wght300_GRAD0_opsz24.svg">
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<h2 class="h2">Работа с блогерами</h2>
+						<p class="p-primary ">Заметив интерес со стороны контент-креаторов, мы начали предлагать сотрудничество.</p>
+						<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+							<li>Небольшие блогеры охотно соглашались на бартер</li>
+							<li>Мы предоставляли ключи доступа</li>
+							<li>Блогеры снимали видео с реальным использованием продукта</li>
+						</ul>
+						<p class="p-primary "><b>Результат:</b> контент выглядел нативно и не воспринимался как реклама.</p>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<h3 class="h3">Работа с блогерами</h3>
+						<p class="p-primary ">Мы также тестировали классические механики роста «процент с продаж».
+							</b>Результат:</b> существенного роста продаж это не дало.</p>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<h3 class="h3">Плагины для образования</h3>
+						<p class="p-primary ">Нам писали блогеры и просили скидки для студентов их курсов. Также нам написал <b>университет <a href="https://www.luca-arts.be/en" target="_blank" rel="noopener"> LUCA | School of Arts</a></b>, который хотел добавить плагины в свою программу обучения. Мы никогда не отказывали давать скидки или ключи для обучения. </p>
+					</div>
+
+					<div class="p-l w-l">       
+						<figure class="figure mt-xl ">
+							<img class="media" src="./marketing/04-marketing-video-LUCA-School-of-Arts.svg" alt="Пример использования — PayPal" loading="lazy" width="1120">
+						</figure>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<h2 class="h2">Практический инсайт</h2>
+						<p class="p-primary ">Регулярная съёмка коротких видео с возможностями плагинов оказалась самым устойчивым и каналом роста. Именно такой контент стимулировал пользователей и блогеров продвигать продукт самостоятельно. </p>
+					</div>
+
+				</div>
+			</section>	
+		
+		<!-- parallax -->
+			<section class="section chapter section--chapter container-xxl" aria-labelledby="svg-motion-title">
+				<div class="p-s">
+					<figure class="figure">
+						<iframe class="iframe-size-parallax" src="./parallax/01-parallax-home-section.html" scrolling="no" title="Parallax" loading="lazy"></iframe>
+					</figure>				
+				</div>
+				<div class="flex-c">
+					<div class="p-l-r-l w-m">
+						<h2 class="h2 center">Основная идея</h2>
+						<p class="p-primary center">Плагин автоматически упорядочивает слои в 3D-перспективе и позволяет  легко преобразовать любые движения мыши в анимацию параллакса.</p>
+					</div>
+
+					<div class="p-l w-m">       
+						<figure class="figure mt-xl ">
+							<img class="media" src="./parallax/02-parallax-2.svg" alt="Parallax" loading="lazy" width="1120">
+						</figure>
+					</div>
+
+					<div class="p-l w-l">
+						<div class="embed youtube" style="--embed-ratio: 16/12;">
+							<div class="yt-lite" data-youtube-id="HYgwaos0vy8">
+								<img class="yt-lite__thumb" src="./parallax/03-3-parallax.svg" alt="" loading="lazy">
+								<button class="yt-lite__play" type="button" aria-label="Воспроизвести видео"></button>
+							</div>
+						</div>
+					</div>
+					
+
+					<div class="p-l-r-l w-m">
+						<p class="p-primary center">Плагин быстро набрал свою популярность из-за свой простоты и эффектности.</p>
+					</div>
+
+					<div class="p-l w-l">       
+						<figure class="figure mt-xl">
+							<iframe class="iframe-size-parallax-3" src="./parallax/03-parallax.html" scrolling="no" title="Parallax" loading="lazy"></iframe>
+						</figure>
+					</div>
+
+					<div class="p-l w-l">       
+						<figure class="figure mt-xl">
+							<iframe class="iframe-size-parallax-3" src="./parallax/04-parallax.html" scrolling="no" title="Parallax" loading="lazy"></iframe>
+						</figure>
+					</div>
+
+					<div class="p-l w-l">       
+						<figure class="figure mt-xl">
+							<iframe class="iframe-size-parallax-3" src="./parallax/05-parallax.html" scrolling="no" title="Parallax" loading="lazy"></iframe>
+						</figure>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<p class="p-primary center"> <b><a href="https://www.figma.com/community/plugin/1166980815207476504/parallax">Parallax</a> установлен у 65 тыс. пользователей</b><br> за 2 года органического роста без рекламного бюджета</p>
+					</div>
+				</div>
+			</section>
+
+		<!-- ecosystem -->
+			<section class="section chapter section--chapter container-xxl p-t-b-xl" aria-labelledby="svg-motion-title">
+				<div class="flex-c" >
+					<div class="p-l-r-l w-m">
+						<h1 id="davv-h1" class="h1 w-m" style="text-transform: uppercase;">
+							<i>Экосистема</i><br>плагинов
+						</h1>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<p class="p-primary ">Ключевой принцип: результат, созданный в одном плагине, должен быть переиспользуемым в других.</p>
+					</div>
+
+
+					<div class="p-l-r-l w-m">
+						<h2 class="h2">Пример реального сценария</h2>
+						<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+							<li>Пользователь настраивает анимацию в <b>SVG Motion</b></li>
+							<li>Затем открывает <b>Parallax</b></li>
+							<li>Видит, что созданная анимация продолжает работать в новом контексте — уже как часть параллакс-сцены или композиции</li>
+						</ul>
+						<p class="p-primary ">Для пользователя это ощущалось как единый инструмент.</p>
+					</div>
+
+					<div class="gallery p-l p-l-r-xl" style="--gallery-h: 600px;" data-drag-scroll="true" aria-label="Галерея изображений UI">
+						<figure class="gallery__figure">
+							<iframe class="parallax-svg-motion" src="./ecosystem/01-ecosystem.html" scrolling="no" title="Parallax" loading="lazy"></iframe>
+						</figure>
+						<figure class="gallery__figure">
+							<iframe class="parallax-svg-motion" src="./ecosystem/02-ecosystem.html" scrolling="no" title="Parallax" loading="lazy"></iframe>
+						</figure>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<h2 class="h2">Продуктовый эффект экосистемы</h2>
+						<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+							<li>Чаще покупали несколько плагинов</li>
+							<li>Выбирали весь набор целиком</li>
+						</ul>
+						<p class="p-primary ">Экосистема усиливала ценность каждого отдельного продукта за счёт их совместного использования.</p>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<h2 class="h2">Экосистема создавала и дополнительные сложности</h2>
+						<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+							<li>Не в каждый плагин можно было корректно встроить анимации из других</li>
+							<li>Изменения в одном плагине могли приводить к тому, что анимации переставали корректно работать в других</li>
+						</ul>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<p class="p-primary "><b>Это требовало:</b> постоянной поддержки совместимости и
+							компромиссов между гибкостью и стабильностью.</p>
+					</div>
+
+					<div class="p-l-r-l w-m">
+						<p class="p-primary "><b>Вывод:</b> экосистема плагинов стала мультипликатором ценности продукта, но одновременно повысила сложность архитектуры и сопровождения.</p>
+					</div>
+
+				</div>
+			</section>	
+
+		<!-- limitations -->
+				<section class="section chapter section--chapter container-xxl p-t-b-xl" aria-labelledby="svg-motion-title">
+					<div class="flex-c" >
+						<div class="p-l-r-l w-m">
+							<h1 id="davv-h1" class="h1 w-m" style="text-transform: uppercase;">
+								<i>Ограничения,</i> в которых существует продукт
+							</h1>
+						</div>
+
+						<div class="p-l-r-l w-m">
+							<p class="p-primary ">Продукт существует внутри чужой платформы и напрямую зависит от её решений.</p>
+							<p class="p-primary ">Через API Figma мы получали только экспортированный <b>SVG — без информации о том, как он был создан.</b></p>
+							<p class="p-primary ">Один и тот же визуально идентичный макет в Figma мог превращаться в принципиально разные SVG</p>
+							<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+								<li>Разная структура слоёв</li>
+								<li>Разные типы объектов</li>
+								<li>Различная вложенность</li>
+								<li>Маски, группы, векторы</li>
+							</ul>
+						</div>
+
+						<div class="p-l w-m">       
+							<div class="reels grid grid-3 w-m" data-sound-group aria-label="Видео-примеры (можно включить звук)">
+								<div class="reel">
+									<img class="" src="./limitations/01-limitations-ellipse.svg" alt="Shape Move — примеры (1)" loading="lazy">
+								</div>
+								<div class="reel">
+									<img class="" src="./limitations/02-limitations-flatten.svg" alt="Shape Move — примеры (1)" loading="lazy">
+								</div>
+								<div class="reel">
+									<img class="" src="./limitations/03-limitations-rectangle.svg" alt="Shape Move — примеры (1)" loading="lazy">
+								</div>
+							</div>
+						</div>
+
+						<div class="p-l-r-l w-m">
+							<p class="p-primary center">Для пример один и тот же эллипс для пользователя выглядит одинаково, но для движка плагина это были <b>совершенно разные входные данные.</b><p>
+						</div>
+
+						<div class="p-l-r-l w-m">
+							<h2 class="h2">Последствия для движка</h2>
+							<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+								<li>Сложной и хрупкой логике парсинга SVG</li>
+								<li>Большому количеству edge-кейсов</li>
+								<li>Багам, которые невозможно воспроизвести в других файлах</li>
+								<li>Ситуациям, когда «у пользователя не работает», а в тестах всё корректно</li>
+							</ul>
+							<p class="p-primary ">При этом пользователь видел только результат, но не ограничения платформы, которые к нему привели.</p>
+						</div>
+
+						<div class="p-l-r-l w-m">
+							<h2 class="h2">Недостаточно контекста действий пользователя</h2>
+							<p class="p-primary ">Плагин не имел информации о том, <b>какие действия пользователь совершал в Figma до его запуска.</b></p>
+							<p class="p-primary ">Пользователь в одном фрейме поворачивает объект на 135°, но плагин не знает, был ли объект повернут трансформацией или изменением координат якорных точек.</p>
+							<p class="p-primary ">Из-за этого одно и то же визуальное состояние могло интерпретироваться по-разному.</p>
+						</div>
+
+						<div class="p-l w-m">       
+							<div class="reels grid grid-3 w-m" data-sound-group aria-label="Видео-примеры (можно включить звук)">
+								<div class="reel-center">
+									<img class="" src="./limitations/04-limitations-01.svg" alt="Shape Move — примеры (1)" loading="lazy">
+									<figcaption class="gallery__caption-center">Что пользователь <br>ожидает увидеть</figcaption>
+								</div>
+								<div class="reel-center">
+									<img class="" src="./limitations/04-limitations-02.svg" alt="Shape Move — примеры (1)" loading="lazy">
+									<figcaption class="gallery__caption-center">Что пользователь <br>видит на самом деле</figcaption>
+								</div>
+							</div>
+						</div>
+
+						<div class="p-l-r-l w-m">
+							<h2 class="h2">Figma регулярно меняла API и правила использования</h2>
+							<p class="p-primary ">На раннем этапе мы использовали FFmpeg:</p>
+							<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+								<li>Быстрый рендер</li>
+								<li>Экспорт в MP4</li>
+							</ul>
+							<p class="p-primary ">Позже Figma запретила использование FFmpeg.
+								<br>Экспорт видео стал возможен только в WebM.</p>
+							<h3 class="h3">Это означало</h3>
+							<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+								<li>Переписывание части движка</li>
+								<li>Потерю привычного пользователям формата</li>
+								<li>Необходимость объяснять новые ограничения</li>
+							</ul>
+							<p class="p-primary ">Из-за внезапных изменений API, о которых Figma не уведомляла, мы периодически сталкивались <b>с негативной обратной связью от пользователей.</b></p>
+						</div>
+
+						<div class="p-l w-m">       
+							<figure class="figure mt-xl ">
+								<img class="media" src="./limitations/05-limitations-01.png" alt="Пример использования — PayPal" loading="lazy" width="1120">
+							</figure>
+						</div>
+						
+
+						<div class="p-l-r-l w-m">
+							<h2 class="h2">Влияние Google Chrome и изменения SVG-рендера</h2>
+							<p class="p-primary ">Ещё одной сложностью стали изменения в браузерных движках.</p>
+							<p class="p-primary ">В частности, Google Chrome изменил поведение SVG-рендера. Это приводило к ситуациям, когда анимация корректно работала в одном браузере, но вела себя иначе в другом.</p>
+							<h3 class="h3">В результате нам пришлось</h3>
+							<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+								<li>Переписать весь движок</li>
+								<li>Уйти от transform к CSS-анимациям</li>
+							</ul>
+						</div>
+
+
+					</div>
+				</section>	
+
+		<!-- shapelax -->
+				<section class="section chapter section--chapter container-xxl" aria-labelledby="svg-motion-title">
+					<div class="p-s">
+						<figure class="figure">
+							<iframe class="iframe-size-shapelax" src="./shapelax/01-shapelax-head.html" scrolling="no" title="Parallax" loading="lazy"></iframe>
+						</figure>				
+					</div>
+					<div class="flex-c">
+						<div class="p-l-r-l w-m">
+						
+							<p class="p-primary center">Пользователь создает фреймы с векторными фигурами, копирует его и меняет координаты якорных точек. Затем выделяет два фреймы и открывает плагин. </p>
+						</div>
+	
+						<div class="p-l w-l">
+							<div class="embed youtube " style="--embed-ratio: 16/12;">
+								<div class="yt-lite" data-youtube-id="knxK_P1nPB8">
+									<img class="yt-lite__thumb" src="./shapelax/03-3-shapelax.svg" alt="" loading="lazy">
+									<button class="yt-lite__play" type="button" aria-label="Воспроизвести видео"></button>
+								</div>
+							</div>
+						</div>
+	
+						<div class="p-l-r-l w-m">
+							<p class="p-primary center">Shapelax — это смесь плагинов Shape Move и Parallax.</b></p>
+						</div>
+	
+						<div class="p-l w-l">       
+							<figure class="figure mt-xl">
+								<iframe class="iframe-size-shapelax-3" src="./shapelax/02-shapelax-lib.html" scrolling="no" title="Parallax" loading="lazy"></iframe>
+							</figure>
+						</div>
+	
+						<div class="p-l w-l">       
+							<figure class="figure mt-xl">
+								<iframe class="iframe-size-shapelax-3" src="./shapelax/03-shapelax-lib.html" scrolling="no" title="Parallax" loading="lazy"></iframe>
+							</figure>
+						</div>
+	
+						<div class="p-l w-l">       
+							<figure class="figure mt-xl">
+								<iframe class="iframe-size-shapelax-3" src="./shapelax/04-shapelax-lib.html" scrolling="no" title="Parallax" loading="lazy"></iframe>
+							</figure>
+						</div>
+
+						<div class="p-l-r-l w-m">
+							<h2 class="h2 center">Самое большое количество просмотров</h2>
+							<p class="p-primary center">Короткое видео с этим плагином набрало самое большое количество просмотров.</p>
+						</div>
+
+						<div class="p-l w-l">       
+							<div class="reels grid grid-3 w-l" data-sound-group aria-label="Видео-примеры (можно включить звук)">
+								<div class="reel">
+									<video id="reel-1" class="reel__video" src="./marketing/video/02-marketing-video-01.mp4" autoplay muted loop playsinline preload="metadata"></video>
+									<figcaption class="gallery__caption center">Оригинал</figcaption>
+									<button class="sound-btn" type="button" data-sound-toggle aria-controls="reel-1" aria-pressed="false" aria-label="Включить звук">
+										<img class="sound-btn__icon" alt="" src="./icons/volume_up_24dp_E3E3E3_FILL0_wght300_GRAD0_opsz24.svg">
+									</button>
+								</div>
+								<div class="reel">
+									<img class="media" src="./shapelax/03-shapelax.png" alt="Parallax" loading="lazy" width="1120">
+									<figcaption class="gallery__caption center">Статистика</figcaption>
+								</div>
+								<div class="reel">
+									<p class="p-primary">Видео с эффектом 3D, работающим от героскопа телефона, <b>собрало 1,8 млн просмотров и 14 тыс. новых подписчиков</b></p>
+								</div>
+							</div>
+						</div>
+	
+						<div class="p-l-r-l w-m">
+							<p class="p-primary center"> <b><a href="https://www.figma.com/community/plugin/1465969362363264594/shapelax">Shapelax</a> установлен у 7 тыс. пользователей</b><br> Рост за 1 год. Несмотря на небольшое количество установок этот <b>плагин с самой большой конверсией.</b><br><br><b>PS.</b> К выходу этого плагина Figma убрала обязательную установку плагинов, 
+								теперь плагинами можно пользоваться без установки. Это сказалось на количестве установок.</p>
+						</div>
+					</div>
+				</section>
+
+		<!-- design-system -->
+				<section class="section chapter section--chapter container-xxl p-t-b-xl" aria-labelledby="svg-motion-title">
+					<div class="flex-c" >
+						<div class="p-l-r-l w-m">
+							<h1 id="davv-h1" class="h1 w-m" style="text-transform: uppercase;">
+								<i>Дизайн-система</i><br>и внедрение AI <br>в разработку
+							</h1>
+						</div>
+	
+						<div class="p-l-r-l w-m">
+							<p class="p-primary ">Когда DAVV перестал быть «одним плагином» и превратился в набор продуктов, возникла системная проблема.</p>
+							<p class="p-primary ">Любое изменение — скидка, модальное окно, правки в парсере или UI — нужно было <b>вручную вносить в каждый плагин отдельно.</b> Это плохо масштабировалось и замедляло развитие продукта.</p>
+						</div>
+	
+						<div class="p-l-r-l w-m">
+							<h2 class="h2">Архитектура и договорённости</h2>
+							<p class="p-primary ">Совместно с разработчиками мы</p>
+							<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+								<li>Согласовали единый архитектурный подход,</li>
+								<li>Договорились, что <b>дизайн и код должны зеркалить друг друга.</b></li>
+							</ul>
+						</div>
+
+						<div class="p-l-r-l w-m">
+							<h3 class="h3">Дизайн-токены и примитивы</h3>
+							<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+								<li>Цвета поверхностей</li>
+								<li>Обводки</li>
+								<li>Типографику</li>
+								<li>Отступы и состояния</li>
+								<li>И другое</li>
+							</ul>
+						</div>
+	
+						<div class="gallery p-l p-l-r-xl" style="--gallery-h: 600px;" data-drag-scroll="true" aria-label="Галерея изображений UI">
+							<figure class="gallery__figure">
+								<img class="gallery__img" src="./design-system/02-design-system.jpg" alt="Shape Move — примеры (1)" loading="lazy">
+							</figure>
+							<figure class="gallery__figure">
+								<img class="gallery__img" src="./design-system/03-design-system.jpg" alt="Shape Move — примеры (2)" loading="lazy">
+							</figure>
+						</div>
+
+						<div class="p-l-r-l w-m">
+							<h3 class="h3">Далее мы договорились о чёткой иерархии</h3>
+							<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+								<li>Атомы (иконки, свичи, радиокнопки, чекбоксы)</li>
+								<li>Компоненты (собранные из атомов)</li>
+								<li>Виджеты (логически законченные блоки UI)</li>
+								<li>Эмулятор плагина (собранный из виджетов)</li>
+							</ul>
+							<p class="p-primary ">Если компонент содержал вложенные компоненты, он автоматически переходил на следующий уровень абстракции.</p>
+							<p class="p-primary ">Та же структура, те же названия и та же вложенность <b>использовались и в дизайне, и в коде.</b></p>
+						</div>
+
+						<div class="p-l-r-l w-m">
+							<h3 class="h3">Результат внедрения дизайн-системы</h3>
+							<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+								<li>Любое изменение UI автоматически применялось ко всем плагинам</li>
+								<li>Снизилось количество рассинхронов между дизайном и реализацией</li>
+								<li>Ускорилась разработка новых продуктов</li>
+								<li>Упростилось масштабирование экосистемы</li>
+							</ul>
+						</div>
+
+						<div class="p-l-r-l w-m">
+							<h3 class="h3">Внедрение AI в процесс разработки</h3>
+							<p class="p-primary ">Разработчик Алексей описал набор правил и соглашений для работы с AI в Cursor, включая:</p>
+							<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+								<li>Структуру компонентов</li>
+								<li>Архитектурные ограничения</li>
+								<li>Требования к неймингу</li>
+								<li>Правила вложенности</li>
+							</ul>
+						
+						</div>
+
+						<div class="p-l-r-l w-m">
+							<h3 class="h3">Благодаря этим правилам я смог:</h3>
+							<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+								<li>Самостоятельно собирать прототипы плагинов сразу <b>внутри Figma</b></li>
+								<li>Быстро проверять идеи без участия разработки</li>
+								<li>Показывать рабочие примеры пользователям</li>
+								<li>Принимать продуктовые решения на основе фидбэка</li>
+							</ul>
+							<p class="p-primary ">Это сократило время от идеи до тестируемого прототипа и позволило быстрее валидировать гипотезы.</p>
+						</div>
+	
+					</div>
+				</section>	
+
+		<!-- adobe -->
+				<section class="section chapter section--chapter container-xxl p-t-b-xl" aria-labelledby="svg-motion-title">
+					<div class="flex-c" >
+						<div class="p-l-r-l w-m">
+							<h1 id="davv-h1" class="h1 w-m" style="text-transform: uppercase;">
+								Проект вызвал <br>интерес <i>Adobe <br>и Awwwards</i>
+							</h1>
+						</div>
+
+						<div class="p-l-r-l w-m">
+							<h3 class="h3">С нами связалась команда Adobe.</h3>
+						</div>
+	
+						<div class="p-l-r-l w-m">
+							<p class="p-primary ">Инициатором диалога стал <b>Alex Castanheira</b>, на тот момент отвечавший за часть продуктов <b>Creative Cloud.</b><p>
+						</div>
+	
+						<div class="p-l w-l">       
+							<figure class="figure mt-xl ">
+								<img class="media" src="./adobe/01-adobe.svg" alt="Пример использования — PayPal" loading="lazy" width="1120">
+							</figure>
+						</div>
+
+						<div class="p-l-r-l w-m">
+							<h3 class="h3">Что обсуждали</h3>
+							<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+								<li>Возможность создания инструментов, близких по духу к DAVV</li>
+								<li>Развитие motion-инструментов для комьюнити Adobe</li>
+								<li>Интеграцию нашего подхода в их экосистему</li>
+							</ul>
+						</div>
+
+						<div class="p-l-r-l w-m">
+							<h3 class="h3">Мы провели три встречи, на которых:</h3>
+							<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+								<li>Показывали, как работают плагины DAVV</li>
+								<li>Обсуждали, как их можно интегровать в <b>Adobe</b></li>
+								<li>Разбирали ограничения платформ и API</li>
+							</ul>
+						</div>
+
+						<div class="p-l w-l">       
+							<figure class="figure mt-xl ">
+								<video class="media" src="./adobe/03-adobe-video-2.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Пример анимации Shape Move"></video>
+							</figure>
+						</div>
+
+						<div class="p-l-r-l w-m">
+							<h3 class="h3">Итоги обсуждений</h3>
+							<ul class="p-primary" style="padding-left: 1.4em; list-style: disc;">
+								<li>Существенные ограничения в API</li>
+								<li>Недостаточная гибкость платформы для реализации подобных инструментов</li>
+							</ul>
+							<p class="p-primary ">В результате Adobe приняла решение взять паузу на развитии API. Интерес к продуктам DAVV был подтверждён.</p>
+						</div>
+
+						<div class="p-l w-m">       
+							<div class="reels grid grid-2 w-m" data-sound-group aria-label="Видео-примеры (можно включить звук)">
+								<div class="reel">
+									<h2 class="h2">Нам также написали из Awwwards.</h2>
+									<p class="p-primary">Они предложили сотрудничество. Правда наша встреча так и не состоялась.</p>
+									<p class="p-primary">После они опубликован на сайте <b><a href="https://www.awwwards.com/market/davv-parallax-plugin-for-figma">Awwwards плагин Parallax</a></b> для вдохновения и экспериментов 
+										с motion-дизайном, что дополнительно усилило узнаваемость продукта в профессиональном сообществе.</p>
+								</div>
+								<div class="reel">
+									<img class="media" src="./adobe/03-adobe.jpg" alt="Parallax" loading="lazy" width="1120">
+									<figcaption class="gallery__caption center">статистика</figcaption>
+								</div>
+							</div>
+						</div>
+	
+					</div>
+				</section>	
+		</div>
+
+		<section class="container gap-l" aria-labelledby="davv-h1">
+			<h1 id="davv-h1" class="h1 results" style="text-transform: uppercase;">
+				 <i>Результаты</i>
+			</h1>
+
+			<blockquote class="p-quote" style="border-left:1px solid var(--link-secondary); padding-left: var(--gap-xl);">
+				Во время работы в крупных командах мне не всегда удавалось чётко увидеть вклад собственных решений в общий результат. Этот проект стал точкой валидации моих продуктовых и дизайнерских гипотез — они оказались востребованы и принесли измеримый результат.
+			</blockquote>
+
+            <div class="py-m">
+                <h4 id="metrics-title" class="h4 mt-l">Метрики и рост за 3 года</h4>
+                <div class="grid grid-5">
+                    <div>
+                        <div class="h3">263 000+</div>
+                        <p class="p-secondary">пользователей (установки, активны сейчас)</p>
+                    </div>
+                    <div>
+                        <div class="h3">≈ 46 350</div>
+                        <p class="p-secondary">открытий плагинов в месяц</p>
+                    </div>
+                    <div>
+                        <div class="h3">40 000+</div>
+                        <p class="p-secondary">подписчиков в <a href="https://www.instagram.com/davv_svgmotion/">Instagram</a></p>
+						<p class="p-little">Instagram — продукт компании Meta Platforms Inc., признанной экстремистской организацией в РФ.</p>
+                    </div>
+                    <div>
+                        <div class="h3">1,8 млн</div>
+                        <p class="p-secondary">просмотров у <a href="https://www.instagram.com/reel/DQTkM9YDD-i/">лучшего рилса</a></p>
+                    </div>
+                    <div>
+                        <div class="h3">0$</div>
+                        <p class="p-secondary">рекламного бюджета</p>
+                    </div>
+                </div>    
+            </div>  
+            </div>
+		</section>
+
+		<section class="container section case-list" aria-label="Кейсы">
+			<div class="case">
+				<div class="title"><a href="./mts.html" style="text-decoration:none;">Мобильный <i>ассистент</i> · МТС</a></div>
+				<div class="arrow" aria-hidden="true">→</div>
+			</div>
+			<hr class="divider">
+			<div class="case muted">
+				<div class="title"><i>Портал</i> телемаркетологов · МТС</div>
+				<div class="status">в работе</div>
+			</div>
+			<hr class="divider">
+			<div class="case muted">
+				<div class="title">Распределение <i>платежей</i> · билайн</div>
+				<div class="status">в работе</div>
+			</div>
+			<hr class="divider">
+			<div class="case muted">
+				<div class="title"><i>Взыскание</i> задолженностей · билайн</div>
+				<div class="status">в работе</div>
+			</div>
+		</section>
+
+
+		<footer class="container section section--tight">
+			<nav class="menu">
+				<a class="button" href="./index.html">Шведюк Д.А.</a>
+				<a class="button" href="../Designer_Denis_Shvedyuk.pdf" download="Designer_Denis_Shvedyuk.pdf">Резюме</a>
+				<a class="button" href="https://t.me/Shved_art" target="_blank" rel="noopener">
+					TG @Shved_art <span class="lottie-inline lottie-inline--after tg-sticker" aria-hidden="true" data-lottie-idle="./tgs/telegram.json" data-lottie-hover="./tgs/telegram_orange.json"></span>
+				</a>
+			</nav>
+		</footer>
+	</main>
+</body>
+</html>
+
+
