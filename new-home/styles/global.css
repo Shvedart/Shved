@@ -428,7 +428,9 @@ a:hover{
 figcaption.gallery__caption {
 	padding-left: 34px;
 	font-style: italic
-
+}
+figcaption.center-text-p {
+	padding-left: 0px;
 }
 .dark {
 	background-color: var(--surface-dark-bg);
