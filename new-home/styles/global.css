@@ -321,7 +321,8 @@ a:hover{
 	font-size: var(--p-quote-size);
 	line-height: var(--p-quote-line);
     margin: 0px;
-    padding-top: var(--gap-xl);
+	margin-top: var(--gap-l);
+    padding-top: var(--gap-m);
     padding-bottom: var(--gap-m);
 }
 .muted { color: var(--text-color-secondary); }
