@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<!-- data-theme="dark" — тёмная тема принудительно, независимо от системной.
+     Работает только на этой странице: атрибут живёт в разметке, а не в CSS,
+     и components-new.css подключён тоже только отсюда -->
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- панель браузера и резинка скролла в тон странице -->
+<meta name="theme-color" content="#000000">
+<title>Лента — путешествия (новые товары)</title>
+<link rel="stylesheet" href="feed/components-new.css">
+</head>
+<body>
+
+<div class="feed" id="feed"></div>
+
+<script src="feed/components-new.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════
+   Полная лента: путешествия и афиша вместе.
+   Порядок: оферы, Яндекс Плюс, Хиты Hoff, билеты,
+   Сборы в дорогу, События для вас, оферы.
+   ═══════════════════════════════════════════════════ */
+const FEED = [
+  {
+    type: 'offers',
+    caption: 'Вкусный кэшбэк от Магнита',
+    header: 'Actimuno «Арбуз» в Магните',
+    moreButton: 'Посмотреть все',
+    cards: [
+      {
+        img: 'feed/assets/offers/magnit.jpg',
+        cashback: 'Кэшбэк 30%',
+        until: 'До 31 декабря',
+        avatar: 'feed/assets/offers/av-magnit.png',
+        name: 'Магнит Плюс Премиум',
+        kind: 'Подписка в приложении Т-Банка',
+      },
+      {
+        img: 'feed/assets/offers/ekzo.jpg',
+        cashback: 'Кэшбэк 30%',
+        until: 'До 15 сентября',
+        avatar: 'feed/assets/offers/av-ekzo.png',
+        name: 'Ведро Эkzo «Арбуз-дыня»',
+        kind: 'Мороженое',
+      },
+      {
+        img: 'feed/assets/offers/actimuno.jpg',
+        cashback: 'Кэшбэк 30%',
+        until: 'До 31 августа',
+        light: true,      // тёмная подложка — текст светлый
+        avatar: 'feed/assets/offers/av-actimuno.png',
+        name: 'Actimuno «Арбуз» в Магнит',
+        kind: 'Кисломолочные напитки',
+      },
+    ],
+  },
+  {
+    type: 'activities',
+    header: 'Яндекс Плюс',
+    subheader: 'Подписка на сервисы',
+    avatar: 'yandex/yandex-logo.png',
+    cards: [
+      { color: '#eae1ff', title: 'Скидка 99%', lines: ['На опцию', '«Пакет от X5»'], img: 'yandex/PLUS_ TRAVEL_ M _ ANGLE-1245263265.png' },
+      { color: '#eae1ff', title: 'Скидка 99%', lines: ['На опцию', '«Пакет от X5»'], img: 'yandex/Phone_gradient-front_RGB 1--723632988.png' },
+      { color: '#eae1ff', title: 'Скидка 99%', lines: ['На опцию', '«Пакет от X5»'], img: 'yandex/PLUS_ TRAVEL_ M _ ANGLE-1245263265.png' },
+    ],
+  },
+  {
+    type: 'productGrid',
+    caption: 'Товары для дома',
+    header: 'Хиты Hoff',
+    avatar: 'feed/assets/brand-avatar.png',
+    moreButton: 'Посмотреть все',
+    products: [
+      {
+        img: 'shop/image 2.png',
+        oldPrice: '27 990 ₽', discount: '−11%',
+        price: '24 990 ₽', cashback: '1 250 ₽',
+        name: 'Кресло Леон', kind: 'Садовая мебель',
+      },
+      {
+        img: 'shop/image 3.png',
+        oldPrice: '9 990 ₽', discount: '−15%',
+        price: '8 490 ₽', cashback: '420 ₽',
+        name: 'Кресло Корфу', kind: 'Садовая мебель',
+      },
+      {
+        img: 'shop/image 4.png',
+        oldPrice: '7 990 ₽', discount: '−13%',
+        price: '6 990 ₽', cashback: '350 ₽',
+        name: 'Кресло Акапулько', kind: 'Садовая мебель',
+      },
+      {
+        img: 'shop/image 5.png',
+        oldPrice: '16 990 ₽', discount: '−6%',
+        price: '15 990 ₽', cashback: '800 ₽',
+        name: 'Кресло Папасан', kind: 'Садовая мебель',
+      },
+    ],
+  },
+  {
+    type: 'merchantGrid',
+    header: 'Доставка из ресторанов\nс кэшбэком до 20%',
+    moreButton: 'Посмотреть все',
+    // первая половина — верхний ряд, вторая — нижний
+    items: [
+      { logo: 'feed/assets/merchants/burger-king.png', cashback: '15%', name: 'Burger King', time: '45 минут' },
+      { logo: 'feed/assets/merchants/samokat.png',     cashback: '15%', name: 'Самокат',     time: '15 минут' },
+      { logo: 'feed/assets/merchants/rostiks.png',     cashback: '15%', name: 'Rostiks',     time: '15 – 35 минут' },
+      { logo: 'feed/assets/merchants/yakitoriya.png',  cashback: '12%', name: 'Якитория',    time: '1–2 часа' },
+      { logo: 'feed/assets/merchants/vkusno.png',      cashback: '10%', name: 'Вкусно и точка', time: '45 минут' },
+      { logo: 'feed/assets/merchants/chizhik.png',     cashback: '10%', name: 'Чижик',       time: '60 – 70 минут' },
+    ],
+  },
+  {
+    type: 'travelTicket',
+    // доводка: с 50% раскрытия страница дотягивает блок сама
+    autoSnap: true,
+    autoSnapFrom: 0.5,
+    // header не задан — блок идёт без заголовка;
+    // добавьте header: 'Путешествия', чтобы вернуть шапку
+    // фон карточки при свайпе: 'scale' — растёт вместе с карточкой,
+    // 'reveal' — прибит к блоку, карточка раздвигается как окно
+    bgMode: 'scale',
+    // подсказка-доскролл: если карусель не тронули, карточки через
+    // 5 секунд слегка отъезжают и возвращаются (дальше каждые 10)
+    // autoplay: true — вместо подсказки листать самим раз в 3 секунды
+    autoplay: false,
+    // peek: true — вернуть выглядывающую справа карточку
+    // заголовки: 'fade' — сменяются на месте, 'slide' — едут с карточками
+    items: [
+      {
+        img: 'feed/assets/travel/phuket.webp',
+        place: 'Пхукет',
+        trigger: 'вода +29°',
+        cashback: '7%',
+        price: 'от 5 240 ₽',
+        oldPrice: '7 900 ₽',
+      },
+      {
+        img: 'feed/assets/travel/alanya.webp',
+        place: 'Аланья',
+        trigger: 'пляж Клеопатры',
+        cashback: '5%',
+        price: 'от 3 180 ₽',
+        oldPrice: '4 900 ₽',
+      },
+      {
+        img: 'feed/assets/travel/makhachkala.webp',
+        place: 'Махачкала',
+        trigger: 'озёра выше облаков',
+        cashback: '10%',
+        price: 'от 12 450 ₽',
+        oldPrice: '18 300 ₽',
+      },
+      {
+        img: 'feed/assets/travel/barnaul.jpg',
+        place: 'Барнаул',
+        trigger: 'степи до горизонта',
+        cashback: '5%',
+        price: 'от 28 940 ₽',
+        oldPrice: '41 200 ₽',
+      },
+      {
+        img: 'feed/assets/travel/orenburg.webp',
+        place: 'Оренбург',
+        trigger: 'бархатные холмы',
+        cashback: '7%',
+        price: 'от 19 380 ₽',
+        oldPrice: '27 900 ₽',
+      },
+      {
+        img: 'feed/assets/travel/perm.webp',
+        place: 'Пермь',
+        trigger: 'запах хвои и тумана',
+        cashback: '5%',
+        price: 'от 6 480 ₽',
+        oldPrice: '9 200 ₽',
+      },
+      // финальная карточка — переход в сервис (макет 77:3524)
+      {
+        cta: true,
+        img: 'feed/assets/travel/stavropol.webp',
+        title: 'Скидки до 30%\nна горящие билеты',
+        desc: 'Подберём даты и цену под вас',
+        button: 'Смотреть билеты',
+      },
+    ],
+  },
+  {
+    type: 'productGrid',
+    caption: 'Товары для путешествий',
+    header: 'Сборы в дорогу',
+    moreButton: 'Посмотреть все',
+    products: [
+      {
+        img: 'feed/assets/products-new/glasses.png',
+        oldPrice: '4 490 ₽', discount: '−22%',
+        price: '3 490 ₽', cashback: '170 ₽',
+        name: 'Очки солнцезащитные', kind: 'Аксессуары',
+      },
+      {
+        img: 'feed/assets/products-new/hat.png',
+        oldPrice: '3 190 ₽', discount: '−22%',
+        price: '2 490 ₽', cashback: '120 ₽',
+        name: 'Шляпа соломенная', kind: 'Головные уборы',
+      },
+      {
+        img: 'feed/assets/products-new/suitcase.png',
+        oldPrice: '12 990 ₽', discount: '−23%',
+        price: '9 990 ₽', cashback: '500 ₽',
+        name: 'Чемодан Ultra 75 см', kind: 'Чемоданы',
+      },
+      {
+        img: 'feed/assets/products-new/cream.png',
+        oldPrice: '1 690 ₽', discount: '−24%',
+        price: '1 290 ₽', cashback: '60 ₽',
+        name: 'Крем SPF 50+', kind: 'Уход за кожей',
+      },
+    ],
+  },
+  {
+    type: 'heroCarousel',
+    header: 'События для вас',
+    scrollDrift: false, // намёк на горизонтальный скролл: карусель подъезжает при скролле страницы (true — включить)
+    loop: true,         // карусель закольцована: с последней снова на первую
+    items: [
+      {
+        img: 'feed/assets/afisha/basta.jpg',
+        category: 'Хип-хоп',
+        title: 'Баста',
+        place: 'ОК «Лужники», Большая арена',
+        date: '30 августа',
+        price: 'От 4 850 ₽',
+        cashback: 'До 20%',
+      },
+      {
+        img: 'feed/assets/afisha/madam-boom.jpg',
+        category: 'Концерт',
+        title: 'Бурлеск кабаре шоу МАДАМ БУМ',
+        place: 'Гримёрка Gastro Club & Karaoke Bar',
+        date: '4 сентября',
+        price: 'От 4 500 ₽',
+        cashback: 'До 20%',
+      },
+      {
+        img: 'feed/assets/afisha/lazarev.jpg',
+        category: 'Поп',
+        title: 'Сергей Лазарев. Шоумен',
+        place: 'На 3 площадках',
+        date: '23 октября',
+        price: 'От 12 000 ₽',
+        cashback: 'До 35%',
+      },
+      {
+        img: 'feed/assets/afisha/vernuvshiesya.jpg',
+        category: 'Иммерсивный',
+        title: 'Вернувшиеся: Новая реальность',
+        place: 'Особняк «Дашков 5»',
+        date: '3 сентября',
+        price: 'От 8 000 ₽',
+        cashback: 'До 20%',
+      },
+      {
+        img: 'feed/assets/afisha/savicheva.jpg',
+        category: 'Поп',
+        title: 'Юлия Савичева',
+        place: 'Petter — Петровка, 21, стр. 1',
+        date: '7 ноября',
+        price: 'От 5 500 ₽',
+        cashback: 'До 10%',
+      },
+      {
+        img: 'feed/assets/afisha/rock-hits.jpg',
+        category: 'Рок',
+        title: 'Рок-хиты с симфоническим оркестром',
+        place: 'На 3 площадках',
+        date: '10 октября',
+        price: 'От 4 500 ₽',
+        cashback: 'До 15%',
+      },
+      {
+        img: 'feed/assets/afisha/orlov.jpg',
+        category: 'Стендап',
+        title: 'Сергей Орлов «Звезда»',
+        place: 'ЦСКА АРЕНА',
+        date: '28 ноября',
+        price: 'От 4 000 ₽',
+        cashback: 'До 25%',
+      },
+      {
+        img: 'feed/assets/afisha/enrique-iglesias.jpg',
+        category: 'Поп',
+        title: 'Enrique Iglesias',
+        place: 'Астана Арена (Астана, Казахстан)',
+        date: '5 сентября',
+        price: 'От 9 400 ₽',
+        cashback: 'До 15%',
+      },
+    ],
+  },
+  {
+    type: 'offers',
+    caption: 'Вкусный кэшбэк от Магнита',
+    header: 'Actimuno «Арбуз» в Магните',
+    moreButton: 'Посмотреть все',
+    cards: [
+      {
+        img: 'feed/assets/offers/magnit.jpg',
+        cashback: 'Кэшбэк 30%',
+        until: 'До 31 декабря',
+        avatar: 'feed/assets/offers/av-magnit.png',
+        name: 'Магнит Плюс Премиум',
+        kind: 'Подписка в приложении Т-Банка',
+      },
+      {
+        img: 'feed/assets/offers/ekzo.jpg',
+        cashback: 'Кэшбэк 30%',
+        until: 'До 15 сентября',
+        avatar: 'feed/assets/offers/av-ekzo.png',
+        name: 'Ведро Эkzo «Арбуз-дыня»',
+        kind: 'Мороженое',
+      },
+      {
+        img: 'feed/assets/offers/actimuno.jpg',
+        cashback: 'Кэшбэк 30%',
+        until: 'До 31 августа',
+        light: true,      // тёмная подложка — текст светлый
+        avatar: 'feed/assets/offers/av-actimuno.png',
+        name: 'Actimuno «Арбуз» в Магнит',
+        kind: 'Кисломолочные напитки',
+      },
+    ],
+  },
+];
+
+Feed.mount(FEED, document.getElementById('feed'));
+</script>
+
+</body>
+</html>
