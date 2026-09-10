@@ -692,6 +692,9 @@ const Feed = (() => {
         col.innerHTML = it.cta ? ctaHtml(it) : colHtml(it);
       };
       const headOf = col => col.querySelector('[data-role="head"]');
+      // бейдж кэшбэка ведёт себя как заголовок: на компактной карточке
+      // его нет, проявляется вместе с заголовком, пока она занимает место героя
+      const chipOf = col => col.querySelector('.fc-trip-chip');
       const fillCard = (card, it, idx) => {
         mountImg(card, idx, '');
         // у карточки-перехода фон чистый, без затемнения (макет 77:3524)
@@ -832,6 +835,8 @@ const Feed = (() => {
           // заголовок появляется, пока карточка занимает место героя
           const nh = headOf(next.querySelector('.fc-trip-col'));
           if (nh) nh.style.opacity = t.toFixed(3);
+          const nc = chipOf(next.querySelector('.fc-trip-col'));
+          if (nc) nc.style.opacity = t.toFixed(3);
           glue(next, left, top, W, H, h);
         }
 
@@ -852,6 +857,8 @@ const Feed = (() => {
           incoming.style.transform = `translate(${left.toFixed(1)}px, ${CARD_TOP}px)`;
           const ih = headOf(incoming.querySelector('.fc-trip-col'));
           if (ih) ih.style.opacity = '0';
+          const ic = chipOf(incoming.querySelector('.fc-trip-col'));
+          if (ic) ic.style.opacity = '0';
           glue(incoming, left, CARD_TOP, W, H, 280);
         }
       }
@@ -1024,7 +1031,7 @@ const Feed = (() => {
          но не до конца, страница сама дотягивает остаток. Только
          когда палец отпущен и скролл встал: дёргать страницу
          под пальцем — худшее, что можно сделать. */
-      const snapOn = block.autoSnap === true;
+      const snapOn = block.autoSnap === true && block.alwaysOpen !== true;
       const SNAP_FROM = block.autoSnapFrom || 0.8;
       const SNAP_WAIT = 140;   // мс тишины, после которых считаем, что встали
       let snapTimer = 0, snapped = false, touchingPage = false;
@@ -1060,6 +1067,7 @@ const Feed = (() => {
          инерции, а вот кадры анимации там останавливаются — по ним
          остановку не поймать. */
       function armSnap() {
+        if (opened) return;   // блок уже открыт насовсем — доводить нечего
         if (!snapOn || snapped || touchingPage) return;
         clearTimeout(snapTimer);
         snapTimer = setTimeout(doSnap, SNAP_WAIT);
@@ -1070,6 +1078,7 @@ const Feed = (() => {
          длительность зависит от остатка пути, а замедление к концу
          делает остановку мягкой. */
       function doSnap() {
+        if (opened) return;
         snapTimer = 0;
         if (touchingPage || snapped) return;
         const e = progressNow();
@@ -1090,6 +1099,23 @@ const Feed = (() => {
         snapRaf = requestAnimationFrame(step);
       }
 
+      /* alwaysOpen: true — блок сразу раскрыт, раскрытия при скролле
+         нет вовсе. Для записи экрана и демонстраций. */
+      /* openOnce: true — раскрытие одноразовое. Дойдя до конца, блок
+         остаётся открытым: те же классы, что у alwaysOpen, снимают
+         анимацию, и прокрутка вверх уже не сворачивает его обратно.
+         Последний кадр анимации совпадает с зафиксированным видом,
+         поэтому момент защёлкивания глазом не виден. */
+      const openOnce = block.openOnce === true;
+      let opened = false;
+      function latchOpen() {
+        if (opened) return;
+        opened = true;
+        section.classList.add('fc-trip--open');
+        if (below) below.classList.add('fc-trip-below--open');
+      }
+      if (block.alwaysOpen === true) latchOpen();
+
       let lastH = -1;
       function updateReveal() {
         tickingY = false;
@@ -1099,7 +1125,9 @@ const Feed = (() => {
         const vh = window.innerHeight;
         const top = section.getBoundingClientRect().top;
         const startTop = vh * 0.85;             // поднялся на 15% снизу
-        const e = Math.min(1, Math.max(0, (startTop - top) / REVEAL_SPAN));
+        const e = opened
+          ? 1
+          : Math.min(1, Math.max(0, (startTop - top) / REVEAL_SPAN));
         // целые пиксели: дробные дают субпиксельное дрожание
         const h = Math.round(H_CLOSED + (H_OPEN - H_CLOSED) * e);
         if (!cssReveal && h !== lastH) {
@@ -1119,6 +1147,7 @@ const Feed = (() => {
         }
         revealScale = cssReveal ? 1 : 1 + REVEAL_ZOOM * (1 - e);
         revealE = e;
+        if (openOnce && e >= 0.999) latchOpen();
         if (snapOn && e < SNAP_FROM) snapped = false;   // ушли назад — можно снова
         // подсказку отсчитываем, только пока блок раскрыт и на экране
         if ((hintOn || autoOn) && !userSwiped) {

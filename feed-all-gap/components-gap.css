@@ -16,6 +16,12 @@
   --product-bg: #f6f7f8;
   --button-bg: rgba(0, 16, 36, 0.03);
   --card-shadow: 0 6px 17px rgba(0, 0, 0, 0.12);
+  /* Поверхность карточек. Отдельно от фона страницы: в тёмной теме
+     они расходятся, в светлой совпадают */
+  --surface: #ffffff;
+  /* Текст на фиксированных подложках — на фотографии, на белой
+     таблетке, на жёлтом бейдже. Тему не слушается никогда */
+  --on-light: #333333;
 
   --pad-screen: 16px;
   --gap-cards: 12px;
@@ -23,6 +29,46 @@
   /* Параллакс: на сколько px картинка может уехать внутри карточки */
   --parallax-shift: 84px;
 }
+
+/* ── Тёмная тема ──────────────────────────────────────
+   Меняются только токены, компоненты о теме не знают.
+   Не трогаем то, что лежит на фотографиях и бейджах:
+   у них своя подложка, и она от темы не зависит. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #000000;
+    --surface: #141414;
+    --text-primary: #e6eaed;
+    --text-secondary: #8a949c;
+    --text-black: #f0f3f5;
+    --text-positive: #3ad96a;
+    --accent-link: #63a4ff;
+    --poster-placeholder: #262c33;
+    /* плитку под фотографией товара не трогаем: снимки сняты
+     на светлом, на тёмной подложке они смотрятся вырезанными */
+    --button-bg: rgba(255, 255, 255, 0.07);
+    --card-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  }
+}
+/* тот же набор для явного переключения — удобно проверять */
+:root[data-theme="dark"] {
+  --bg: #000000;
+  --surface: #141414;
+  --text-primary: #e6eaed;
+  --text-secondary: #8a949c;
+  --text-black: #f0f3f5;
+  --text-positive: #3ad96a;
+  --accent-link: #63a4ff;
+  --poster-placeholder: #262c33;
+  /* плитку под фотографией товара не трогаем: снимки сняты
+     на светлом, на тёмной подложке они смотрятся вырезанными */
+  --button-bg: rgba(255, 255, 255, 0.07);
+  --card-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* принудительно светлая: <html data-theme="light"> перекрывает системную
+   тёмную (медиа-блок выше пропускает страницу с этим атрибутом) */
+:root[data-theme="light"] { color-scheme: light; }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -178,14 +224,14 @@ html, body {
 .fc-offer-card {
   border-radius: 24px;
   overflow: hidden;
-  background: #fff;
+  background: var(--surface);
   box-shadow: 0 6px 34px rgba(0, 0, 0, 0.12);
 }
 /* Верх карточки: фотография на всю ширину, поверх неё кэшбэк и срок */
 .fc-offer-top {
   position: relative;
   height: 180px;
-  color: var(--text-primary);
+  color: var(--on-light);
 }
 .fc-offer-top > img {
   position: absolute;
@@ -258,7 +304,7 @@ html, body {
   padding: 0 var(--pad-screen);
 }
 .fc-offer .fc-card {
-  background: #fff;
+  background: var(--surface);
   border-radius: 29px;
   box-shadow: var(--card-shadow);
   padding: 8px 8px 16px;
@@ -353,7 +399,9 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  color: var(--text-primary);
+  /* подложка карточки задана в конфиге и от темы не зависит —
+     текст на ней тоже остаётся тёмным */
+  color: var(--on-light);
 }
 .fc-brand-card .fc-title {
   font-size: 15px;
@@ -587,7 +635,7 @@ html, body {
   border: none;
   border-radius: 20px;
   background: #fff;
-  color: var(--text-primary);
+  color: var(--on-light);
   font-family: inherit;
   font-size: 13px;
   font-weight: 600;
@@ -608,7 +656,7 @@ html, body {
   font-size: 13px;
   font-weight: 600;
   line-height: normal;
-  color: var(--text-primary);
+  color: var(--on-light);
   white-space: nowrap;
 }
 
@@ -641,7 +689,7 @@ html, body {
   font-size: 13px;
   font-weight: 600;
   line-height: normal;
-  color: var(--text-primary);
+  color: var(--on-light);
   padding-bottom: 1px;
   white-space: nowrap;
 }
@@ -780,7 +828,7 @@ html, body {
   font-weight: 700;
   letter-spacing: -0.1px;
   line-height: normal;
-  color: var(--text-primary);
+  color: var(--on-light);
   white-space: nowrap;
 }
 .fc-product-card .fc-name {
@@ -1133,7 +1181,7 @@ html, body {
      от другой. Хвост уходит вглубь соседнего блока и там не виден:
      соседи рисуются поверх билета. */
   height: 264px;
-  background: #fff;
+  background: var(--bg);
   pointer-events: none;
   z-index: 3;
   will-change: transform, border-radius;
@@ -1151,7 +1199,7 @@ html, body {
   right: 0;
   top: -24px;         /* 8 зазора + 16 нахлёста на билет */
   height: 240px;      /* и 200 хвоста вниз, вглубь соседнего блока */
-  background: #fff;
+  background: var(--bg);
   border-radius: 16px 16px 0 0;
   pointer-events: none;
 }
@@ -1249,6 +1297,23 @@ html, body {
    прокрутка живёт в отдельном потоке, и любой расчёт из скрипта
    приходит с опозданием — отсюда дрожь. JS остаётся запасным
    путём для браузеров без поддержки (см. cssReveal). */
+/* Блок всегда раскрыт: анимацию раскрытия снимаем и фиксируем
+   конечный вид. Включается флагом alwaysOpen в конфиге. */
+.fc-trip--open .fc-trip-band {
+  animation: none !important;
+  clip-path: none;
+  transform: none;
+}
+.fc-trip--open .fc-trip-bgwrap {
+  animation: none !important;
+  transform: scale(1.0526);
+}
+.fc-trip--open .fc-trip-dash { display: none; }
+.fc-trip-below--open {
+  animation: none !important;
+  transform: none;
+}
+
 @supports (animation-timeline: view()) {
   .feed { timeline-scope: --fc-trip; }
   .fc-trip {

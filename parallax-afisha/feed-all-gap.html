@@ -1,8 +1,11 @@
 <!DOCTYPE html>
-<html lang="ru">
+<!-- data-theme="light" — светлая тема принудительно, даже если в системе тёмная.
+     Только эта страница: атрибут в разметке, components-gap.css подключён только отсюда -->
+<html lang="ru" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
 <title>Лента — путешествия (зазор 1px)</title>
 <link rel="stylesheet" href="feed/components-gap.css">
 </head>
@@ -97,6 +100,8 @@ const FEED = [
   },
   {
     type: 'travelTicket',
+    // раскрытие один раз: дальше блок остаётся открытым и при скролле вверх
+    openOnce: true,
     // доводка: с 50% раскрытия страница дотягивает блок сама
     autoSnap: true,
     autoSnapFrom: 0.5,
