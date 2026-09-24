@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Redirect</title>
+<script>
+  // SPA fallback for GitHub Pages deep links under /tabbar/
+  sessionStorage.setItem('tabbar-redirect', location.pathname + location.search + location.hash);
+  location.replace('/tabbar/');
+</script>
+</head>
+<body></body>
+</html>

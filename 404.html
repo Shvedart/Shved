@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>404</title>
+<script>
+  // Deep-link fallback for the TabBar SPA under /tabbar/
+  if (location.pathname.indexOf('/tabbar/') === 0) {
+    sessionStorage.setItem('tabbar-redirect', location.pathname + location.search + location.hash);
+    location.replace('/tabbar/');
+  }
+</script>
+</head>
+<body style="font-family:system-ui;padding:2rem;color:#333">
+  <p>Страница не найдена.</p>
+  <p><a href="/">На главную</a></p>
+</body>
+</html>
