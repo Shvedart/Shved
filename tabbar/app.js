@@ -27,7 +27,6 @@ const BASE = (() => {
   let i = parts.length;
   while (i > 0 && /^\d+$/.test(parts[i - 1])) i--;
   if (i > 0 && TAB_IDS.has(parts[i - 1])) i--;
-  // index.html в конце пути тоже отбрасываем
   if (i > 0 && parts[i - 1] === 'index.html') i--;
   return i > 0 ? '/' + parts.slice(0, i).join('/') : '';
 })();
@@ -80,6 +79,13 @@ function tileHue(seed, i) {
   return (Math.abs(hashStr(seed)) + i * 61) % 360;
 }
 
+function randomTileSpanClass() {
+  const r = Math.random();
+  if (r < 0.12) return 'tile-span-3';
+  if (r < 0.5) return 'tile-span-2';
+  return '';
+}
+
 /* ============ построение экрана ============ */
 
 function createScreenEl(tabId, segs) {
@@ -129,9 +135,11 @@ function createScreenEl(tabId, segs) {
   grid.className = 'tile-grid';
   const seed = tabId + ':' + segs.join('.');
   const tiles = [];
-  for (let i = 0; i < 6; i++) {
+  const TILE_COUNT = 20;
+  for (let i = 0; i < TILE_COUNT; i++) {
     const tile = document.createElement('button');
-    tile.className = 'tile';
+    const spanClass = randomTileSpanClass();
+    tile.className = 'tile' + (spanClass ? ' ' + spanClass : '');
     tile.disabled = true;
     const hue = tileHue(seed, i);
     tile.style.background = `linear-gradient(135deg, hsl(${hue} 85% 62%), hsl(${(hue + 35) % 360} 85% 42%))`;
@@ -165,7 +173,7 @@ function scheduleSkeletonReveal(tiles) {
         () => skeleton.remove(),
         { once: true }
       );
-    }, baseDelay + i * 60);
+    }, baseDelay + i * 30);
   });
 }
 
@@ -209,7 +217,29 @@ function switchTabInstant(tabId) {
 
 /* ============ push / pop анимации (внутри активного таба) ============ */
 
-function doPush(tabId, newSegs) {
+/* Очередь для push/pop-анимаций: нативный жест "назад" (трекпад/свайп) в
+   браузере иногда роняет popstate чаще, чем успевает доиграть наша
+   анимация — без очереди второй doPop() стартовал поверх ещё не
+   доигравшего первого, и переход визуально "срабатывал дважды". Теперь
+   каждая анимация ждёт, пока предыдущая полностью не закончится
+   (transitionend), и только потом стартует следующая. */
+let screenAnimating = false;
+const pendingScreenActions = [];
+
+function queueScreenAnimation(action) {
+  if (screenAnimating) {
+    pendingScreenActions.push(action);
+    return;
+  }
+  screenAnimating = true;
+  action(() => {
+    screenAnimating = false;
+    const next = pendingScreenActions.shift();
+    if (next) queueScreenAnimation(next);
+  });
+}
+
+function doPush(tabId, newSegs, onDone) {
   const stack = tabStacks[tabId];
   const prev = stack[stack.length - 1];
 
@@ -222,6 +252,13 @@ function doPush(tabId, newSegs) {
   el.style.transition = '';
   if (prev) prev.el.classList.add('behind');
 
+  const finish = (e) => {
+    if (e && (e.target !== el || e.propertyName !== 'transform')) return;
+    el.removeEventListener('transitionend', finish);
+    if (onDone) onDone();
+  };
+  el.addEventListener('transitionend', finish);
+
   requestAnimationFrame(() => {
     if (prev) prev.el.style.transform = 'translateX(-25%)';
     el.style.transform = 'translateX(0)';
@@ -230,9 +267,12 @@ function doPush(tabId, newSegs) {
   stack.push({ segs: newSegs, el });
 }
 
-function doPop() {
+function doPop(onDone) {
   const stack = tabStacks[activeTabId];
-  if (stack.length <= 1) return;
+  if (stack.length <= 1) {
+    if (onDone) onDone();
+    return;
+  }
 
   const top = stack.pop();
   const newTop = stack[stack.length - 1];
@@ -247,6 +287,7 @@ function doPop() {
     if (e.target !== top.el || e.propertyName !== 'transform') return;
     top.el.removeEventListener('transitionend', cleanup);
     top.el.remove();
+    if (onDone) onDone();
   };
   top.el.addEventListener('transitionend', cleanup);
 }
@@ -256,7 +297,7 @@ function doPop() {
 function onTileClick(tabId, curSegs, tileIndex) {
   const newSegs = [...curSegs, tileIndex];
   history.pushState({ tabId, segs: newSegs }, '', pathFor(tabId, newSegs));
-  doPush(tabId, newSegs);
+  queueScreenAnimation((done) => doPush(tabId, newSegs, done));
 }
 
 function onTabClick(tabId) {
@@ -286,9 +327,9 @@ window.addEventListener('popstate', () => {
   if (segsEqual(curSegs, segs)) return;
 
   if (segs.length === curSegs.length - 1 && isPrefix(segs, curSegs)) {
-    doPop();
+    queueScreenAnimation((done) => doPop(done));
   } else if (segs.length === curSegs.length + 1 && isPrefix(curSegs, segs)) {
-    doPush(tabId, segs);
+    queueScreenAnimation((done) => doPush(tabId, segs, done));
   } else {
     rebuildStackInstant(tabId, segs);
   }
@@ -314,6 +355,198 @@ function updateTabBarActive(tabId) {
   });
 }
 
+/* ============ Liquid Glass: настоящее преломление через карту смещения ============
+ * Вместо шумового feTurbulence — физически рассчитанная (закон Снеллиуса)
+ * карта смещения для выпуклого профиля стекла, как в
+ * https://kube.io/blog/liquid-glass-css-svg/. Считаем один раз 1D-профиль
+ * преломления по радиусу бортика, затем для каждого пикселя таб-бара
+ * (через SDF скруглённого прямоугольника) берём расстояние до края,
+ * смотрим в профиль и кодируем направление+величину смещения в
+ * красный/зелёный каналы картинки — её и подставляем в feDisplacementMap.
+ */
+
+let liquidGlassProfileCache = null;
+
+function computeRefractionProfile(samples = 96, n1 = 1, n2 = 1.5) {
+  // выпуклый профиль бортика (четверть окружности): 0 у самого края, 1 на
+  // границе плоской середины
+  const height = (t) => Math.sqrt(Math.max(0, 1 - (1 - t) * (1 - t)));
+  const delta = 1 / samples;
+  const profile = [];
+  for (let i = 0; i < samples; i++) {
+    const t = i / (samples - 1);
+    const t0 = Math.max(0, t - delta);
+    const t1 = Math.min(1, t + delta);
+    const deriv = (height(t1) - height(t0)) / (t1 - t0 || 1);
+    const theta1 = Math.atan(Math.abs(deriv));
+    const sinTheta2 = Math.min(1, (n1 / n2) * Math.sin(theta1));
+    const theta2 = Math.asin(sinTheta2);
+    const bend = Math.max(0, theta1 - theta2);
+    profile.push(height(t) * Math.tan(bend));
+  }
+  const max = Math.max(...profile, 1e-6);
+  return { profile, max };
+}
+
+function roundedBoxSDF(x, y, w, h, radius) {
+  const cx = w / 2;
+  const cy = h / 2;
+  const halfW = w / 2;
+  const halfH = h / 2;
+  const dx = Math.abs(x - cx) - (halfW - radius);
+  const dy = Math.abs(y - cy) - (halfH - radius);
+  const ox = Math.max(dx, 0);
+  const oy = Math.max(dy, 0);
+  const outside = Math.hypot(ox, oy);
+  const inside = Math.min(Math.max(dx, dy), 0);
+  return outside + inside - radius;
+}
+
+function buildDisplacementDataURL(w, h, radius, bezelPx, refraction) {
+  const canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  const imgData = ctx.createImageData(w, h);
+  const { profile, max } = refraction;
+  const e = 1;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const sdf = roundedBoxSDF(x, y, w, h, radius);
+      const distIn = -sdf;
+      let r = 128;
+      let g = 128;
+      if (distIn > 0) {
+        const t = Math.min(1, distIn / bezelPx);
+        const idx = Math.min(profile.length - 1, Math.round(t * (profile.length - 1)));
+        const magNorm = profile[idx] / max;
+        const gx1 = roundedBoxSDF(x + e, y, w, h, radius);
+        const gx0 = roundedBoxSDF(x - e, y, w, h, radius);
+        const gy1 = roundedBoxSDF(x, y + e, w, h, radius);
+        const gy0 = roundedBoxSDF(x, y - e, w, h, radius);
+        let gx = gx1 - gx0;
+        let gy = gy1 - gy0;
+        const glen = Math.hypot(gx, gy) || 1;
+        gx /= glen;
+        gy /= glen;
+        r = 128 + gx * magNorm * 127;
+        g = 128 + gy * magNorm * 127;
+      }
+      const i = (y * w + x) * 4;
+      imgData.data[i] = r;
+      imgData.data[i + 1] = g;
+      imgData.data[i + 2] = 128;
+      imgData.data[i + 3] = 255;
+    }
+  }
+  ctx.putImageData(imgData, 0, 0);
+  return canvas.toDataURL();
+}
+
+function buildSpecularDataURL(w, h, radius, bezelPx) {
+  const canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  const imgData = ctx.createImageData(w, h);
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const sdf = roundedBoxSDF(x, y, w, h, radius);
+      const distIn = -sdf;
+      let v = 0;
+      if (distIn > 0) {
+        const t = Math.min(1, distIn / bezelPx);
+        // рим-блик: ярче у самого края, быстро гаснет к середине
+        v = Math.pow(1 - t, 3);
+      }
+      const i = (y * w + x) * 4;
+      const c = Math.round(v * 255);
+      imgData.data[i] = c;
+      imgData.data[i + 1] = c;
+      imgData.data[i + 2] = c;
+      imgData.data[i + 3] = 255;
+    }
+  }
+  ctx.putImageData(imgData, 0, 0);
+  return canvas.toDataURL();
+}
+
+function setFeImageHref(el, url) {
+  el.setAttribute('href', url);
+  el.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', url);
+}
+
+function buildLiquidGlass() {
+  const glass = document.getElementById('tabbar-glass');
+  const filterEl = document.getElementById('liquid-glass-distortion');
+  const dispImg = document.getElementById('liquid-glass-displacement-map');
+  const dispMap = document.getElementById('liquid-glass-displace');
+  const specImg = document.getElementById('liquid-glass-specular-map');
+  if (!glass || !filterEl) return;
+
+  const rect = glass.getBoundingClientRect();
+  const w = Math.max(1, Math.round(rect.width));
+  const h = Math.max(1, Math.round(rect.height));
+  const radius = 29;
+  const bezel = Math.min(22, h / 2);
+
+  if (!liquidGlassProfileCache) liquidGlassProfileCache = computeRefractionProfile();
+
+  filterEl.setAttribute('x', '0');
+  filterEl.setAttribute('y', '0');
+  filterEl.setAttribute('width', w);
+  filterEl.setAttribute('height', h);
+  filterEl.setAttribute('filterUnits', 'userSpaceOnUse');
+  filterEl.setAttribute('primitiveUnits', 'userSpaceOnUse');
+
+  [dispImg, specImg].forEach((img) => {
+    img.setAttribute('x', '0');
+    img.setAttribute('y', '0');
+    img.setAttribute('width', w);
+    img.setAttribute('height', h);
+  });
+
+  setFeImageHref(dispImg, buildDisplacementDataURL(w, h, radius, bezel, liquidGlassProfileCache));
+  setFeImageHref(specImg, buildSpecularDataURL(w, h, radius, bezel));
+  dispMap.setAttribute('scale', Math.round(bezel * 1.3));
+}
+
+function initLiquidGlass() {
+  buildLiquidGlass();
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(buildLiquidGlass, 120);
+  });
+}
+
+/* блик на стекле таб-бара следует за курсором/пальцем, как будто это
+   настоящая жидкая поверхность, ловящая свет */
+function initTabBarSheen() {
+  const tabbar = document.getElementById('tabbar');
+  const glass = document.getElementById('tabbar-glass');
+  let raf = null;
+
+  const setSheen = (clientX, clientY) => {
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = null;
+      const rect = tabbar.getBoundingClientRect();
+      const x = ((clientX - rect.left) / rect.width) * 100;
+      const y = ((clientY - rect.top) / rect.height) * 100;
+      glass.style.setProperty('--sheen-x', x + '%');
+      glass.style.setProperty('--sheen-y', y + '%');
+    });
+  };
+
+  tabbar.addEventListener('pointermove', (e) => setSheen(e.clientX, e.clientY));
+  tabbar.addEventListener('pointerdown', (e) => setSheen(e.clientX, e.clientY));
+  tabbar.addEventListener('pointerleave', () => {
+    glass.style.removeProperty('--sheen-x');
+    glass.style.removeProperty('--sheen-y');
+  });
+}
+
 function buildTabContainers() {
   const root = document.getElementById('screens');
   TABS.forEach((tab) => {
@@ -330,6 +563,8 @@ function buildTabContainers() {
 function init() {
   buildTabBar();
   buildTabContainers();
+  initTabBarSheen();
+  initLiquidGlass();
 
   // восстановление deep-link после 404.html fallback на GitHub Pages
   const redirected = sessionStorage.getItem('tabbar-redirect');

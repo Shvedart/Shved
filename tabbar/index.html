@@ -7,6 +7,18 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Карта смещения и блика генерируются в JS (canvas, по формуле
+       преломления Снеллиуса для выпуклого профиля стекла) и подставляются
+       сюда через feImage — см. buildLiquidGlass() в app.js -->
+  <svg style="position:absolute; width:0; height:0; overflow:hidden" aria-hidden="true">
+    <filter id="liquid-glass-distortion" color-interpolation-filters="sRGB">
+      <feImage id="liquid-glass-displacement-map" result="dispMap" preserveAspectRatio="none" />
+      <feDisplacementMap id="liquid-glass-displace" in="SourceGraphic" in2="dispMap" scale="0" xChannelSelector="R" yChannelSelector="G" result="refracted" />
+      <feImage id="liquid-glass-specular-map" result="specMap" preserveAspectRatio="none" />
+      <feBlend in="refracted" in2="specMap" mode="screen" />
+    </filter>
+  </svg>
+
   <div id="app">
     <div id="screens"></div>
 
