@@ -77,7 +77,25 @@ const CATEGORIES = [
   },
 ];
 
-const PICKER_CATEGORIES = ['Еда', 'Одежда', 'Электроника', 'Путешествия', 'Техника', 'Аптеки', 'Рестораны', 'АЗС и авто'];
+const PICKER_MAX = 4;
+const PICKER_CATEGORIES = [
+  { name: 'Жд билеты', icon: 'assets/icons/picker/0.png', percent: 15 },
+  { name: 'Аптеки', icon: 'assets/icons/picker/1.png', percent: 10 },
+  { name: 'Ремонт и стройка', icon: 'assets/icons/picker/2.png', percent: 12 },
+  { name: 'Ювелирные украшения', icon: 'assets/icons/picker/3.png', percent: 8 },
+  { name: 'Шопинг', icon: 'assets/icons/picker/4.png', percent: 10 },
+  { name: 'Путешествия', icon: 'assets/icons/picker/5.png', percent: 20 },
+  { name: 'Общественный транспорт', icon: 'assets/icons/picker/6.png', percent: 15 },
+  { name: 'АЗС и авто', icon: 'assets/icons/picker/7.png', percent: 10 },
+  { name: 'Рестораны', icon: 'assets/icons/picker/8.png', percent: 12 },
+  { name: 'Красота', icon: 'assets/icons/picker/9.png', percent: 15 },
+  { name: 'Дом и мебель', icon: 'assets/icons/picker/10.png', percent: 10 },
+  { name: 'Одежда и обувь', icon: 'assets/icons/picker/11.png', percent: 10 },
+  { name: 'Продукты', icon: 'assets/icons/picker/12.png', percent: 5 },
+  { name: 'Автосервис', icon: 'assets/icons/picker/13.png', percent: 10 },
+  { name: 'Развлечения', icon: 'assets/icons/picker/14.png', percent: 20 },
+  { name: 'Детские товары', icon: 'assets/icons/picker/15.png', percent: 15 },
+];
 const OCT_AVATARS = ['assets/icons/avatars/0.png', 'assets/icons/avatars/1.png', 'assets/icons/avatars/2.png', 'assets/icons/avatars/3.png'];
 
 /* ============================== утилиты ============================== */
@@ -225,14 +243,17 @@ function buildCashbackScreen() {
           <div class="avatars" id="octAvatars"></div>
         </div>
       </div>
-      <div class="headline">До хуя кэшбэка,<br>отметь, что нравится</div>
+      <div class="headline-block">
+        <div class="headline">До хуя кэшбэка,<br>отметь, что нравится</div>
+        <div class="headline-sub">В конце подарим +500 бонусов</div>
+      </div>
       <div class="chips-sticky-wrap"><div class="chips-row" id="chipsRow"></div></div>
       <div class="offers-wrap" id="offersWrap"></div>
       <div class="scroll-bottom-spacer"></div>
     </div>
     <div class="bottom-fixed">
       <button class="btn-primary" id="nextBtn"></button>
-      <div class="bottom-caption">${ICONS.heartFilled}<span>Можно выбрать без ограничений</span></div>
+      <div class="bottom-caption">${ICONS.heartFilled}<span class="bottom-caption-text-wrap" id="bottomCaptionWrap"><span class="bottom-caption-text" id="bottomCaptionText">Можно выбрать без ограничений</span></span></div>
     </div>
   `;
   return el;
@@ -401,12 +422,57 @@ function updateNextBtn(root) {
   btn.textContent = cat.nextLabel ? ('Дальше ' + cat.nextLabel) : 'Забрать награду';
 }
 
+const STEP_CAPTIONS = [
+  'Можно выбрать без ограничений',
+  'Отличное начало, двигаемся дальше',
+  'Ещё немного — ты почти у цели',
+  'Совсем чуть-чуть — подарок уже твой',
+];
+
+function updateBottomCaption(root, animate) {
+  const wrap = root.querySelector('#bottomCaptionWrap');
+  const newText = STEP_CAPTIONS[state.step] || STEP_CAPTIONS[STEP_CAPTIONS.length - 1];
+  const existing = wrap.querySelectorAll('.bottom-caption-text');
+  const old = existing[existing.length - 1];
+
+  if (!animate || !old) {
+    wrap.innerHTML = `<span class="bottom-caption-text" id="bottomCaptionText">${esc(newText)}</span>`;
+    wrap.style.width = '';
+    return;
+  }
+  if (old.textContent === newText) return;
+
+  // drop any stale, already-finished exit spans left over from a previous transition
+  for (let i = 0; i < existing.length - 1; i++) existing[i].remove();
+
+  const probe = document.createElement('span');
+  probe.className = 'bottom-caption-text';
+  probe.style.visibility = 'hidden';
+  probe.style.position = 'absolute';
+  probe.textContent = newText;
+  wrap.appendChild(probe);
+  wrap.style.width = Math.max(old.offsetWidth, probe.offsetWidth) + 'px';
+  probe.remove();
+
+  old.removeAttribute('id');
+  old.classList.remove('slide-in-up');
+  old.classList.add('slide-out-up');
+  old.addEventListener('animationend', () => old.remove(), { once: true });
+
+  const next = document.createElement('span');
+  next.className = 'bottom-caption-text slide-in-up';
+  next.id = 'bottomCaptionText';
+  next.textContent = newText;
+  wrap.appendChild(next);
+}
+
 function advanceToStep(root) {
   updateProgress(root);
   updateChipsActive(root);
   scrollActiveChipIntoView(root);
   renderOffers(root, state.step, true);
   updateNextBtn(root);
+  updateBottomCaption(root, true);
 }
 
 function onNextClick(root) {
@@ -447,13 +513,14 @@ function mountCashbackScreen(root) {
   buildOctAvatars(root);
   updateProgress(root);
   updateNextBtn(root);
+  updateBottomCaption(root);
   renderOffers(root, state.step, false);
   setupNavbarScrollBg(root);
 
   root.querySelectorAll('.tile').forEach((t, i) => {
     setTimeout(() => t.classList.add('anim-in'), i * 40);
   });
-  setTimeout(() => root.querySelector('.headline').classList.add('anim-in'), 110);
+  setTimeout(() => root.querySelector('.headline-block').classList.add('anim-in'), 110);
   setTimeout(() => root.querySelector('.chips-row').classList.add('anim-in'), 190);
   setTimeout(() => root.querySelector('#offersWrap').classList.add('anim-in'), 260);
 
@@ -492,8 +559,8 @@ function buildPickerScreen() {
     </div>
     <div class="picker-scroll">
       <div class="picker-title">Выбери категории<br>с доп. кэшбэком</div>
-      <div class="picker-sub">Можно выбрать несколько категорий — кэшбэк по ним будет повышен весь ноябрь</div>
-      <div class="picker-grid" id="pickerGrid"></div>
+      <div class="picker-sub">Можно выбрать до ${PICKER_MAX} категорий — кэшбэк по ним будет повышен весь ноябрь</div>
+      <div class="picker-list" id="pickerGrid"></div>
     </div>
     <div class="bottom-fixed">
       <button class="btn-primary" id="pickerDone">Выбрать</button>
@@ -502,25 +569,49 @@ function buildPickerScreen() {
   return el;
 }
 
+function updatePickerDoneState(root) {
+  root.querySelector('#pickerDone').classList.toggle('disabled', pickerSelected.size === 0);
+}
+
+function updatePickerCap(root) {
+  const atMax = pickerSelected.size >= PICKER_MAX;
+  root.querySelectorAll('.picker-list-item').forEach((item) => {
+    const i = parseInt(item.dataset.i, 10);
+    item.classList.toggle('disabled', atMax && !pickerSelected.has(i));
+  });
+}
+
 function mountPickerScreen(root) {
   const grid = root.querySelector('#pickerGrid');
-  grid.innerHTML = PICKER_CATEGORIES.map((name, i) =>
-    `<button class="picker-chip" data-i="${i}">${ICONS.check}<span>${esc(name)}</span></button>`
-  ).join('');
+  grid.innerHTML = PICKER_CATEGORIES.map((cat, i) => `
+    <button class="picker-list-item" data-i="${i}">
+      <img class="picker-item-icon" src="${cat.icon}" alt="" loading="lazy">
+      <span class="picker-item-label"><b>${cat.percent}%</b> ${esc(cat.name)}</span>
+      <span class="picker-checkbox">${ICONS.check}</span>
+    </button>
+  `).join('');
 
-  grid.querySelectorAll('.picker-chip').forEach((chip) => {
-    chip.addEventListener('click', () => {
-      haptic(8);
-      const i = parseInt(chip.dataset.i, 10);
+  grid.querySelectorAll('.picker-list-item').forEach((item) => {
+    item.addEventListener('click', () => {
+      if (item.classList.contains('disabled')) return;
+      const i = parseInt(item.dataset.i, 10);
       if (pickerSelected.has(i)) {
         pickerSelected.delete(i);
-        chip.classList.remove('selected');
+        item.classList.remove('selected');
+        haptic(8);
       } else {
+        if (pickerSelected.size >= PICKER_MAX) return;
         pickerSelected.add(i);
-        chip.classList.add('selected');
+        item.classList.add('selected');
+        haptic([10, 20, 10]);
       }
+      updatePickerCap(root);
+      updatePickerDoneState(root);
     });
   });
+
+  updatePickerCap(root);
+  updatePickerDoneState(root);
 
   root.querySelector('#pickBack').addEventListener('click', () => {
     haptic(8);
@@ -528,14 +619,7 @@ function mountPickerScreen(root) {
   });
 
   root.querySelector('#pickerDone').addEventListener('click', () => {
-    const btn = root.querySelector('#pickerDone');
-    if (pickerSelected.size === 0) {
-      haptic([15, 40, 15]);
-      btn.classList.remove('shake');
-      void btn.offsetWidth;
-      btn.classList.add('shake');
-      return;
-    }
+    if (pickerSelected.size === 0) return;
     haptic([10, 30, 10]);
     state.novemberChosen = true;
     if (cashbackRoot) renderNovTile(cashbackRoot);
