@@ -232,8 +232,9 @@ function buildStartScreen() {
   el.className = 'screen screen-start';
   el.innerHTML = `
     <div class="dim"></div>
-    <div class="start-badge">${ICONS.percent}</div>
-    <button class="btn-start" id="startBtn">Кэшбэки и бонусы</button>
+    <button class="start-bg-btn" id="startBtn" aria-label="Кэшбэки и бонусы">
+      <img class="start-bg-img" src="assets/start-bg.png" alt="">
+    </button>
   `;
   el.querySelector('#startBtn').addEventListener('click', () => {
     haptic(10);
@@ -519,6 +520,7 @@ function staticOffsetTopWithin(el, ancestor) {
 
 function snapScrollToChips(root) {
   const scrollEl = root.querySelector('#cbScroll');
+  if (scrollEl.scrollTop < 1) return; // пользователь не скроллил — оставляем как есть
   const chipsWrap = root.querySelector('.chips-sticky-wrap');
   const navbar = document.getElementById('globalNavbar');
   const target = Math.max(0, staticOffsetTopWithin(chipsWrap, scrollEl) - navbar.offsetHeight);

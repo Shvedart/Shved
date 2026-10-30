@@ -165,59 +165,26 @@ button { font-family: inherit; }
 /* ---------- start screen ---------- */
 
 .screen-start {
-  align-items: center;
-  justify-content: center;
   background: #fff;
-  gap: 18px;
 }
 
-.start-badge {
-  width: 84px;
-  height: 84px;
-  border-radius: 26px;
-  background: linear-gradient(135deg, var(--yellow), #ffc700);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 14px 28px -10px rgba(255, 199, 0, 0.55);
-  margin-bottom: 6px;
-}
-
-.start-badge svg { width: 40px; height: 40px; }
-
-.start-title {
-  font-family: "SF Pro Display", sans-serif;
-  font-weight: 700;
-  font-size: 22px;
-  letter-spacing: 0.2px;
-  text-align: center;
-  padding: 0 32px;
-}
-
-.start-sub {
-  font-size: 15px;
-  color: var(--text-secondary);
-  text-align: center;
-  padding: 0 40px;
-  margin-bottom: 10px;
-}
-
-.btn-start {
+.start-bg-btn {
   appearance: none;
   border: none;
-  background: var(--yellow);
-  color: var(--text);
-  font-size: 17px;
-  font-weight: 600;
-  letter-spacing: -0.41px;
-  padding: 16px 28px;
-  border-radius: 100px;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
   cursor: pointer;
-  box-shadow: 0 10px 24px -10px rgba(255, 221, 45, 0.9);
-  transition: transform 0.12s ease;
+  display: block;
 }
 
-.btn-start:active { transform: scale(0.96); }
+.start-bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 
 /* ---------- navbar (floating glass pills) ---------- */
 
