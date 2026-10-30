@@ -146,8 +146,11 @@ button { font-family: inherit; }
   gap: 16px;
   height: var(--navbar-h);
   padding: calc(var(--safe-top) + 6px) 16px 10px;
-  background: var(--bg);
+  background: transparent;
+  transition: background-color 0.2s ease;
 }
+
+.navbar.solid { background: var(--bg); }
 
 .glass-pill {
   appearance: none;
@@ -170,9 +173,9 @@ button { font-family: inherit; }
 
 .glass-pill:active { transform: scale(0.9); }
 
-.glass-pill svg { width: 20px; height: 20px; }
+.glass-pill svg { width: 24px; height: 24px; }
 
-.nav-heart svg { width: 19px; height: 19px; color: var(--text); transition: color 0.15s ease; }
+.nav-heart svg { width: 23px; height: 23px; color: var(--text); transition: color 0.15s ease; }
 .nav-heart.liked svg { color: var(--red); }
 .nav-heart.pulse { animation: navHeartPulse 0.38s var(--ease-ios); }
 
@@ -582,7 +585,7 @@ button { font-family: inherit; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 16px 16px calc(32px + var(--safe-bottom));
+  padding: 16px 16px calc(16px + var(--safe-bottom));
   background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, #fff 40%);
 }
 

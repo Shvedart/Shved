@@ -427,6 +427,18 @@ function onNextClick(root) {
   }
 }
 
+function setupNavbarScrollBg(root) {
+  const scrollEl = root.querySelector('#cbScroll');
+  const navbar = root.querySelector('.navbar');
+  const chipsWrap = root.querySelector('.chips-sticky-wrap');
+  function update() {
+    const stuck = chipsWrap.getBoundingClientRect().top <= navbar.getBoundingClientRect().bottom;
+    navbar.classList.toggle('solid', stuck);
+  }
+  scrollEl.addEventListener('scroll', update, { passive: true });
+  update();
+}
+
 function mountCashbackScreen(root) {
   cashbackRoot = root;
 
@@ -436,6 +448,7 @@ function mountCashbackScreen(root) {
   updateProgress(root);
   updateNextBtn(root);
   renderOffers(root, state.step, false);
+  setupNavbarScrollBg(root);
 
   root.querySelectorAll('.tile').forEach((t, i) => {
     setTimeout(() => t.classList.add('anim-in'), i * 40);
