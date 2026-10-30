@@ -1,5 +1,7 @@
 :root {
   color-scheme: light;
+
+  /* color tokens */
   --bg: #ffffff;
   --text: #333333;
   --text-secondary: rgba(51, 51, 51, 0.55);
@@ -8,12 +10,95 @@
   --yellow: #ffdd2d;
   --blue: #428bf9;
   --red: #f52222;
+  --green: #34c759;
   --glass-bg: rgba(255, 255, 255, 0.6);
   --glass-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  --card-shadow: 0 14px 30px -12px rgba(0, 16, 36, 0.18);
+
+  /* radius scale */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 100px;
+
+  /* spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --navbar-h: calc(52px + var(--safe-top));
   --ease-ios: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* ====================================================================
+   Reusable components — built on the tokens above. New screens (offer
+   detail, favorites) should reach for these instead of one-off CSS.
+   Existing screens are left as-is to avoid visual regressions on
+   already-matched designs.
+   ==================================================================== */
+
+/* circular logo/photo, any size via --avatar-size, e.g. style="--avatar-size: 72px" */
+.avatar {
+  --avatar-size: 56px;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  border-radius: 50%;
+  flex-shrink: 0;
+  object-fit: cover;
+  background: #f6f7f8;
+  display: block;
+}
+
+/* pill-shaped badge, e.g. cashback %. Color via modifier class. */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 24px;
+  padding: 3.5px 10px 4.5px;
+  border-radius: var(--radius-pill);
+  background: var(--yellow);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.08px;
+  white-space: nowrap;
+}
+
+.badge svg { width: 16px; height: 16px; flex-shrink: 0; }
+.badge.badge-blue { background: var(--blue); color: #fff; }
+.badge.badge-green { background: var(--green); color: #fff; }
+.badge.badge-neutral { background: var(--tile-bg); color: var(--text); }
+
+/* secondary (outline) button — for actions alongside .btn-primary, e.g. "Перейти" */
+.btn-secondary {
+  appearance: none;
+  border: 1.5px solid rgba(0, 16, 36, 0.12);
+  background: none;
+  width: 100%;
+  color: var(--text);
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: -0.21px;
+  padding: 16.5px 10px;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+
+.btn-secondary:active { transform: scale(0.98); }
+.btn-secondary.disabled { opacity: 0.4; pointer-events: none; }
+
+/* flat content card — bg block with rounded corners, e.g. offer detail sections */
+.card {
+  background: var(--tile-bg);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -137,9 +222,11 @@ button { font-family: inherit; }
 /* ---------- navbar (floating glass pills) ---------- */
 
 .navbar {
-  position: sticky;
+  position: absolute;
   top: 0;
-  z-index: 20;
+  left: 0;
+  right: 0;
+  z-index: 30;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -151,6 +238,7 @@ button { font-family: inherit; }
 }
 
 .navbar.solid { background: var(--bg); }
+.navbar.hide-progress .progress-track { visibility: hidden; }
 
 .glass-pill {
   appearance: none;
@@ -177,7 +265,9 @@ button { font-family: inherit; }
 
 .nav-heart svg { width: 23px; height: 23px; color: var(--text); transition: color 0.15s ease; }
 .nav-heart.liked svg { color: var(--red); }
+.nav-heart.liked svg path { fill: var(--red); }
 .nav-heart.pulse { animation: navHeartPulse 0.38s var(--ease-ios); }
+.nav-heart.pop svg { animation: heartPop 0.38s var(--ease-ios); }
 
 @keyframes navHeartPulse {
   0% { transform: scale(1); }
@@ -212,6 +302,8 @@ button { font-family: inherit; }
 }
 
 .scroll::-webkit-scrollbar { display: none; }
+
+.navbar-spacer { height: var(--navbar-h); flex-shrink: 0; }
 
 .tiles-row {
   display: flex;
@@ -390,6 +482,7 @@ button { font-family: inherit; }
   justify-content: space-between;
   padding-left: 16px;
   width: 100%;
+  cursor: pointer;
 }
 
 .offer-item-main {
@@ -436,6 +529,14 @@ button { font-family: inherit; }
   font-size: 13px;
   letter-spacing: -0.08px;
   color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.offer-urgent {
+  color: var(--red);
+  font-weight: 600;
 }
 
 .heart-btn {
@@ -456,7 +557,7 @@ button { font-family: inherit; }
 .heart-btn.liked svg { color: var(--red); }
 .heart-btn.liked svg path { fill: var(--red); }
 
-.heart-btn.jitter svg { animation: heartJitter 0.5s ease; color: var(--red); }
+.heart-btn.jitter svg { animation: heartJitter 1s ease; color: var(--red); }
 .heart-btn.jitter svg path { fill: var(--red); }
 .heart-btn.pop svg { animation: heartPop 0.38s var(--ease-ios); }
 
@@ -488,6 +589,7 @@ button { font-family: inherit; }
 .offer-card {
   display: flex;
   flex-direction: column;
+  cursor: pointer;
 }
 
 .offer-card-image {
@@ -795,6 +897,171 @@ button { font-family: inherit; }
 .picker-list-item.selected .picker-checkbox svg {
   opacity: 1;
   transform: scale(1);
+}
+
+/* ---------- offer detail screen ---------- */
+
+.offer-hero {
+  position: relative;
+  height: 380px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: #f6f7f8;
+}
+
+.offer-hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.offer-hero-fade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 32%),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0) 50%, #fff 100%);
+}
+
+.offer-hero-text {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--navbar-h) + 8px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 16px;
+}
+
+.offer-hero-heading {
+  display: flex;
+  flex-direction: column;
+}
+
+.offer-hero-title,
+.offer-hero-cashback {
+  font-family: "SF Pro Display", sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  letter-spacing: 0.36px;
+  line-height: 1.16;
+  color: #fff;
+}
+
+.offer-hero-line {
+  font-size: 15px;
+  letter-spacing: -0.24px;
+  color: #fff;
+}
+
+.offer-body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 16px 16px 0;
+  margin-top: -32px;
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+.offer-card-block {
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 6px 17px rgba(0, 0, 0, 0.12);
+}
+
+.offer-card-block-title {
+  font-family: "SF Pro Display", sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.36px;
+  color: var(--text);
+  padding: 20px 16px 12px;
+}
+
+.offer-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 20px;
+}
+
+.offer-step-num {
+  width: 40px;
+  height: 40px;
+  border-radius: 100px;
+  background: var(--blue);
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.offer-step-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.offer-step-title {
+  font-size: 17px;
+  letter-spacing: -0.41px;
+  color: var(--text);
+}
+
+.offer-step-sub {
+  font-size: 13px;
+  letter-spacing: -0.08px;
+  color: var(--text-secondary);
+}
+
+.offer-note {
+  margin: 0 20px 20px;
+  padding: 18px 16px;
+  border-radius: 16px;
+  background: rgba(66, 139, 249, 0.16);
+  font-size: 17px;
+  letter-spacing: -0.41px;
+  color: var(--text);
+}
+
+.offer-bullets-block { padding-bottom: 12px; }
+
+.offer-bullet {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 20px;
+}
+
+.offer-bullet-dot-wrap {
+  display: flex;
+  align-items: center;
+  padding: 6px 0;
+  flex-shrink: 0;
+}
+
+.offer-bullet-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 100px;
+  background: var(--blue);
+}
+
+.offer-bullet-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 17px;
+  letter-spacing: -0.41px;
+  color: var(--text);
 }
 
 /* ---------- success screen ---------- */
