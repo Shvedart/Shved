@@ -239,6 +239,24 @@ button { font-family: inherit; }
 
 .navbar.solid { background: var(--bg); }
 .navbar.hide-progress .progress-track { visibility: hidden; }
+.navbar.hide-heart .nav-heart { visibility: hidden; }
+
+.navbar-title {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: var(--navbar-h);
+  align-items: center;
+  justify-content: center;
+  font-family: "SF Pro Text", sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.43px;
+  color: var(--text);
+  pointer-events: none;
+}
 
 .glass-pill {
   appearance: none;
@@ -472,6 +490,13 @@ button { font-family: inherit; }
   padding-top: 12px;
   opacity: 0;
   transform: translateY(18px);
+}
+
+.favorites-empty {
+  padding: 60px 32px;
+  text-align: center;
+  font-size: 15px;
+  color: var(--text-secondary);
 }
 
 /* list layout */

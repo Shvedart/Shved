@@ -136,6 +136,9 @@ let pickerSelected = new Set();
 let cashbackRoot = null;
 let navHeartOfferCtx = null;
 let cashbackNavbarUpdate = null;
+let favoritesRoot = null;
+let favoritesFilterStep = null;
+let favoritesNavbarUpdate = null;
 
 function resetState() {
   state.step = 0;
@@ -156,7 +159,7 @@ function syncGlobalNavbarVisibility() {
   const navbar = document.getElementById('globalNavbar');
   if (!navbar) return;
   const top = screens[screens.length - 1];
-  const show = top && (top.el.classList.contains('screen-cashback') || top.el.classList.contains('screen-offer'));
+  const show = top && (top.el.classList.contains('screen-cashback') || top.el.classList.contains('screen-offer') || top.el.classList.contains('screen-favorites'));
   navbar.style.display = show ? '' : 'none';
 }
 
@@ -368,7 +371,7 @@ function setOfferLiked(stepIndex, idx, liked) {
   const set = state.likes[stepIndex];
   if (liked) set.add(idx); else set.delete(idx);
 
-  if (cashbackRoot) {
+  if (cashbackRoot && state.step === stepIndex) {
     const rowBtn = cashbackRoot.querySelector(`#offersWrap .heart-btn[data-idx="${idx}"]`);
     if (rowBtn) rowBtn.classList.toggle('liked', liked);
   }
@@ -678,6 +681,8 @@ function mountOfferScreen(root, stepIndex, idx) {
   const navHeart = document.getElementById('navHeart');
 
   navbar.classList.add('hide-progress');
+  navbar.classList.remove('hide-heart');
+  document.getElementById('navbarTitle').style.display = 'none';
   navHeartOfferCtx = { stepIndex, idx };
   navHeart.innerHTML = ICONS.heart;
   navHeart.classList.remove('pop');
@@ -700,11 +705,145 @@ function openOfferScreen(stepIndex, idx) {
 
 function closeOfferScreen() {
   navHeartOfferCtx = null;
-  const navbar = document.getElementById('globalNavbar');
-  navbar.classList.remove('hide-progress');
   const navHeart = document.getElementById('navHeart');
   navHeart.classList.remove('liked', 'pop', 'pulse');
   navHeart.innerHTML = ICONS.heartFilled;
+  popScreen();
+
+  const top = screens[screens.length - 1];
+  const navbar = document.getElementById('globalNavbar');
+  const title = document.getElementById('navbarTitle');
+  if (top && top.el.classList.contains('screen-favorites')) {
+    navbar.classList.add('hide-progress', 'hide-heart');
+    title.style.display = 'flex';
+    if (favoritesNavbarUpdate) favoritesNavbarUpdate();
+    if (favoritesRoot) renderFavoritesContent(favoritesRoot, false);
+  } else {
+    navbar.classList.remove('hide-progress', 'hide-heart');
+    title.style.display = 'none';
+    if (cashbackNavbarUpdate) cashbackNavbarUpdate();
+  }
+}
+
+/* ============================== экран избранного ============================== */
+
+function favoritesEntries() {
+  const entries = [];
+  CATEGORIES.forEach((cat, stepIndex) => {
+    cat.items.forEach((it, idx) => {
+      if (state.likes[stepIndex].has(idx)) entries.push({ stepIndex, idx, item: it, type: cat.type });
+    });
+  });
+  return entries;
+}
+
+function buildFavoritesScreen() {
+  const el = document.createElement('div');
+  el.className = 'screen screen-favorites';
+  el.innerHTML = `
+    <div class="dim"></div>
+    <div class="scroll" id="favoritesScroll">
+      <div class="navbar-spacer"></div>
+      <div class="chips-sticky-wrap"><div class="chips-row" id="favoritesChipsRow"></div></div>
+      <div class="offers-wrap" id="favoritesWrap"></div>
+      <div class="scroll-bottom-spacer"></div>
+    </div>
+  `;
+  return el;
+}
+
+function renderFavoritesContent(root, animate) {
+  const wrap = root.querySelector('#favoritesWrap');
+  const all = favoritesEntries();
+  const entries = favoritesFilterStep === null ? all : all.filter((e) => e.stepIndex === favoritesFilterStep);
+  const listEntries = entries.filter((e) => e.type === 'list');
+  const gridEntries = entries.filter((e) => e.type !== 'list');
+  const renderedOrder = listEntries.concat(gridEntries);
+
+  if (!entries.length) {
+    wrap.innerHTML = `<div class="favorites-empty">Пока нет избранных предложений</div>`;
+  } else {
+    let html = '';
+    if (listEntries.length) html += `<div class="offer-list">${listEntries.map((e) => offerListItemHTML(e.stepIndex, e.idx, e.item)).join('')}</div>`;
+    if (gridEntries.length) html += `<div class="offer-grid">${gridEntries.map((e) => offerCardHTML(e.stepIndex, e.idx, e.item)).join('')}</div>`;
+    wrap.innerHTML = html;
+  }
+
+  wrap.querySelectorAll('.heart-btn').forEach((btn, i) => {
+    const { stepIndex, idx } = renderedOrder[i];
+    btn.classList.add('liked');
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      setOfferLiked(stepIndex, idx, false);
+      haptic(8);
+      renderFavoritesContent(root, false);
+    });
+  });
+
+  wrap.querySelectorAll('.offer-item, .offer-card').forEach((el, i) => {
+    const { stepIndex, idx } = renderedOrder[i];
+    el.addEventListener('click', () => openOfferScreen(stepIndex, idx));
+  });
+
+  if (animate) triggerAnim(wrap);
+}
+
+function buildFavoritesChipsRow(root) {
+  const row = root.querySelector('#favoritesChipsRow');
+  const labels = ['Все', ...CATEGORIES.map((c) => c.label)];
+  row.innerHTML = labels.map((label, i) =>
+    `<button class="chip${i === 0 ? ' active' : ''}" data-step="${i - 1}">${esc(label)}</button>`
+  ).join('');
+  row.querySelectorAll('.chip').forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const stepAttr = parseInt(chip.dataset.step, 10);
+      const next = stepAttr === -1 ? null : stepAttr;
+      if (next === favoritesFilterStep) return;
+      haptic(8);
+      row.querySelectorAll('.chip').forEach((c) => c.classList.remove('active'));
+      chip.classList.add('active');
+      favoritesFilterStep = next;
+      renderFavoritesContent(root, true);
+    });
+  });
+}
+
+function mountFavoritesScreen(root) {
+  favoritesRoot = root;
+  favoritesFilterStep = null;
+
+  buildFavoritesChipsRow(root);
+  renderFavoritesContent(root, false);
+
+  const scrollEl = root.querySelector('#favoritesScroll');
+  const chipsWrap = root.querySelector('.chips-sticky-wrap');
+  const navbar = document.getElementById('globalNavbar');
+  favoritesNavbarUpdate = bindNavbarScroll(scrollEl, () =>
+    chipsWrap.getBoundingClientRect().top <= navbar.getBoundingClientRect().bottom
+  );
+
+  setTimeout(() => root.querySelector('.chips-row').classList.add('anim-in'), 60);
+  setTimeout(() => root.querySelector('#favoritesWrap').classList.add('anim-in'), 140);
+}
+
+function openFavoritesScreen() {
+  favoritesRoot = null;
+  const el = buildFavoritesScreen();
+  pushScreen(el);
+  mountFavoritesScreen(el);
+
+  const navbar = document.getElementById('globalNavbar');
+  navbar.classList.add('hide-progress', 'hide-heart');
+  const title = document.getElementById('navbarTitle');
+  title.textContent = 'Избранное';
+  title.style.display = 'flex';
+}
+
+function closeFavoritesScreen() {
+  favoritesRoot = null;
+  const navbar = document.getElementById('globalNavbar');
+  navbar.classList.remove('hide-progress', 'hide-heart');
+  document.getElementById('navbarTitle').style.display = 'none';
   if (cashbackNavbarUpdate) cashbackNavbarUpdate();
   popScreen();
 }
@@ -857,6 +996,7 @@ function buildGlobalNavbar() {
   el.innerHTML = `
     <button class="glass-pill nav-back" id="gnbBack" aria-label="Назад">${ICONS.chevronLeft}</button>
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="navbar-title" id="navbarTitle"></div>
     <button class="glass-pill nav-heart" id="navHeart" aria-label="Избранное">${ICONS.heartFilled}</button>
   `;
   document.getElementById('app').appendChild(el);
@@ -866,6 +1006,8 @@ function buildGlobalNavbar() {
     const top = screens[screens.length - 1];
     if (top && top.el.classList.contains('screen-offer')) {
       closeOfferScreen();
+    } else if (top && top.el.classList.contains('screen-favorites')) {
+      closeFavoritesScreen();
     } else {
       popScreen();
     }
@@ -887,6 +1029,7 @@ function buildGlobalNavbar() {
       }
     } else {
       haptic(8);
+      openFavoritesScreen();
     }
   });
 }
