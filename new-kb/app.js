@@ -164,6 +164,21 @@ function syncGlobalNavbarVisibility() {
   navbar.style.pointerEvents = show ? '' : 'none';
 }
 
+/* will-change ставим только на время самой анимации и снимаем сразу после —
+   если оставить его включённым постоянно, WebKit на реальных iOS-устройствах
+   иногда "подвисает" с устаревшим hit-test прямоугольником у промотированного
+   слоя, и тапы по экрану/навбару начинают попадать мимо визуальных элементов. */
+function animateScreenTransform(el, value) {
+  el.style.willChange = 'transform';
+  const onEnd = (e) => {
+    if (e.target !== el || e.propertyName !== 'transform') return;
+    el.removeEventListener('transitionend', onEnd);
+    el.style.willChange = 'auto';
+  };
+  el.addEventListener('transitionend', onEnd);
+  el.style.transform = value;
+}
+
 function pushScreen(el) {
   const prev = screens[screens.length - 1];
   el.style.transition = 'none';
@@ -174,8 +189,8 @@ function pushScreen(el) {
   if (prev) prev.el.classList.add('behind');
 
   requestAnimationFrame(() => {
-    if (prev) prev.el.style.transform = 'translateX(-25%)';
-    el.style.transform = 'translateX(0)';
+    if (prev) animateScreenTransform(prev.el, 'translateX(-25%)');
+    animateScreenTransform(el, 'translateX(0)');
   });
 
   screens.push({ el });
@@ -189,8 +204,8 @@ function popScreen() {
   syncGlobalNavbarVisibility();
 
   requestAnimationFrame(() => {
-    top.el.style.transform = 'translateX(100%)';
-    newTop.el.style.transform = 'translateX(0)';
+    animateScreenTransform(top.el, 'translateX(100%)');
+    animateScreenTransform(newTop.el, 'translateX(0)');
     newTop.el.classList.remove('behind');
   });
 
@@ -213,8 +228,8 @@ function popToRoot() {
   syncGlobalNavbarVisibility();
 
   requestAnimationFrame(() => {
-    top.el.style.transform = 'translateX(100%)';
-    bottom.el.style.transform = 'translateX(0)';
+    animateScreenTransform(top.el, 'translateX(100%)');
+    animateScreenTransform(bottom.el, 'translateX(0)');
     bottom.el.classList.remove('behind');
   });
 
@@ -1048,18 +1063,3 @@ function init() {
 }
 
 init();
-
-/* На холодном старте PWA (standalone, black-translucent) iOS иногда применяет
-   реальную высоту вьюпорта/safe-area только после первого взаимодействия —
-   из-за этого экран открывается с зазором снизу и "доезжает" до полного
-   размера только после тапа. Форсируем пересчёт лэйаута сразу и при возврате
-   приложения на передний план. */
-function nudgeViewportLayout() {
-  const app = document.getElementById('app');
-  app.style.transform = 'translateZ(0)';
-  requestAnimationFrame(() => { app.style.transform = ''; });
-}
-window.addEventListener('pageshow', nudgeViewportLayout);
-document.addEventListener('visibilitychange', () => {
-  if (!document.hidden) nudgeViewportLayout();
-});
