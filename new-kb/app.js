@@ -12,6 +12,7 @@ const ICONS = {
   coin: `<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" fill="#333" opacity="0.12"/><path d="M12 6.5v11M9 9.2c0-1 1.1-1.8 3-1.8s3 .8 3 1.8c0 2.4-6 1.2-6 3.7 0 1 1.1 1.9 3 1.9s3-.8 3-1.9" stroke="#333" stroke-width="1.6" stroke-linecap="round"/></svg>`,
   percent: `<svg viewBox="0 0 24 24" fill="none"><circle cx="7" cy="7" r="2.6" stroke="#333" stroke-width="2"/><circle cx="17" cy="17" r="2.6" stroke="#333" stroke-width="2"/><path d="M18 6L6 18" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg>`,
   bigCheck: `<svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  pin: `<svg viewBox="0 0 16 16" fill="none"><path d="M8.94167 7.60833C9.20278 7.34722 9.33333 7.03333 9.33333 6.66667C9.33333 6.3 9.20278 5.98611 8.94167 5.725C8.68056 5.46389 8.36667 5.33333 8 5.33333C7.63333 5.33333 7.31944 5.46389 7.05833 5.725C6.79722 5.98611 6.66667 6.3 6.66667 6.66667C6.66667 7.03333 6.79722 7.34722 7.05833 7.60833C7.31944 7.86944 7.63333 8 8 8C8.36667 8 8.68056 7.86944 8.94167 7.60833ZM8 14.6667C6.21111 13.1444 4.875 11.7306 3.99167 10.425C3.10833 9.11944 2.66667 7.91111 2.66667 6.8C2.66667 5.13333 3.20278 3.80556 4.275 2.81667C5.34722 1.82778 6.58889 1.33333 8 1.33333C9.41111 1.33333 10.6528 1.82778 11.725 2.81667C12.7972 3.80556 13.3333 5.13333 13.3333 6.8C13.3333 7.91111 12.8917 9.11944 12.0083 10.425C11.125 11.7306 9.78889 13.1444 8 14.6667Z" fill="#333"/></svg>`,
 };
 
 /* ============================== данные ============================== */
@@ -20,7 +21,8 @@ const UNTIL_TEXT = 'На покупки онлайн до 6 ноября';
 
 const CATEGORIES = [
   {
-    id: 'food', label: 'Еда', type: 'list', nextLabel: 'Одежда',
+    id: 'food', label: 'Еда', type: 'list', nextLabel: 'Любимые бренды', moreNote: 'И ещё 100 предложений покажем в ленте',
+    headline: 'Настройте<br>кэшбэк под себя', headlineSub: 'Сохраняйте то, что пригодится',
     items: [
       { id: 'food-gotovaya-eda-v-samokate-v-gorode-20', percent: '20%', name: 'Готовая еда в Самокате в Городе', icon: 'https://ms-static-images.t-static.ru/partner-5405-image280-79f9494b.png', until: 'На одну покупку онлайн', offerType: 'кэшбэк', expiration: '1 день', urgency: 'горящий', background: 'https://ms-static-images.t-static.ru/partner-image1252-c14c0afb0c654eb286e0b16e531ab025.png', description: 'Доставка из магазинов' },
       { id: 'food-lenta-dostavka-do-35', percent: 'до 35%', name: 'Лента Доставка', icon: 'https://ms-static-images.t-static.ru/partner-9663-image280-39f63a9e.png', until: 'На одну покупку онлайн от 1 500 ₽', offerType: 'кэшбэк', expiration: 'До 6 ноября', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-41357af878564e0fa4cecd60021d94c8.png', description: 'Сервис доставки продуктов' },
@@ -40,48 +42,35 @@ const CATEGORIES = [
     ],
   },
   {
-    id: 'clothes', label: 'Одежда', type: 'list', nextLabel: 'Электроника',
+    id: 'brands', label: 'Любимые бренды', type: 'list', nextLabel: 'Кэшбэк на районе', moreNote: 'И ещё больше 1000 предложений покажем в ленте',
+    headline: 'Магазины,<br>где вы покупаете', headlineSub: 'Проверяйте кэшбэк перед покупкой',
     items: [
       { id: 'clothes-lamoda-20', percent: '20%', name: 'Lamoda', icon: 'https://ms-static-images.t-static.ru/partner-image280-03d259e7907440edb337f76a0a164016.png', until: 'На покупки онлайн', offerType: 'кэшбэк', expiration: '1 день', urgency: 'горящий', background: 'https://ms-static-images.t-static.ru/partner-image1252-b9c0cbe3077c4c66bfc0fd617f413af8.png', description: 'Маркетплейс одежды, обуви, товаров для дома и красоты' },
-      { id: 'clothes-no-one-15', percent: '15%', name: 'NO ONE', icon: 'https://ms-static-images.t-static.ru/merchant-image280-merchant_4493.png', until: 'На одну покупку онлайн', offerType: 'скидка', expiration: 'До 6 ноября', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-c9d5b03bd30447248d5e3dea63e51281.png', description: 'Одежда, обувь и аксессуары' },
-      { id: 'clothes-detskiy-mir-7', percent: '7%', name: 'Детский мир', icon: 'https://ms-static-images.t-static.ru/partner-10903-image280-883ef19b.png', until: 'На одну покупку онлайн', offerType: 'кэшбэк', expiration: '1 день', urgency: 'горящий', background: 'https://ms-static-images.t-static.ru/partner-image1252-37c36c1e2d4a4378a89943b4cc9a8001.png', description: 'Товары для детей' },
       { id: 'clothes-sportmaster-10', percent: '10%', name: 'Спортмастер', icon: 'https://ms-static-images.t-static.ru/partner-10172-image280-9cdc1142.png', until: 'На одну покупку', offerType: 'кэшбэк', expiration: 'До 6 ноября', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-62b5b70dfc924bbd91a06cf43d8505e4.png', description: 'Спортивные товары' },
-      { id: 'clothes-odezhda-i-obuv-v-shopinge-30', percent: '30%', name: 'Одежда и обувь в Шопинге', icon: 'https://ms-static-images.t-static.ru/partner-image280-3b7db1b4d2654c36a2ff4f3a0779bcee.png', until: 'На одну покупку', offerType: 'кэшбэк', expiration: 'До 6 ноября', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-9181b071c3f64fa5a1c49396c126eef3.png', description: 'Одежда и обувь' },
-      { id: 'clothes-t-bank-shop-3', percent: '3%', name: 'Т-Банк Шоп', icon: 'https://ms-static-images.t-static.ru/partner-image280-064bf70a1403445fa5d89eb64dee209a.png', until: 'На покупки онлайн', offerType: 'кэшбэк', expiration: 'До 31 января', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-017be060510d475ab20b590b9b206d9a.png', description: 'Онлайн-магазин одежды и аксессуаров от Т-Банка' },
-      { id: 'clothes-gloria-jeans-10', percent: '10%', name: 'Gloria Jeans', icon: 'https://ms-static-images.t-static.ru/partner-15133-image280-d766bd3d.png', until: 'На одну покупку онлайн', offerType: 'кэшбэк', expiration: 'До 6 ноября', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/offer-image1252-d8cdab0d35704e19808d848c32b1b821.png', description: 'Одежда, обувь и аксессуары' },
-      { id: 'clothes-tom-tailor-10', percent: '10%', name: 'Tom Tailor', icon: 'https://ms-static-images.t-static.ru/partner-image280-66233bea6df34ce59735835d52a4081e.png', until: 'На покупки на кассе', offerType: 'кэшбэк', expiration: 'До 6 ноября', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-22758b4180a14c33ae31dc4af4f288af.png', description: 'Мужская, женская и детская одежда' },
-      { id: 'clothes-cave-15', percent: '15%', name: 'Cave', icon: 'https://ms-static-images.t-static.ru/partner-image280-1c1701d486d4491fa52af1202c753bb5.png', until: 'На покупки онлайн', offerType: 'кэшбэк', expiration: 'До 13 февраля', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-96a15b0750534725949aab59c53a48a8.png', description: 'Мужская одежда' },
-      { id: 'clothes-playtoday-10', percent: '10%', name: 'PlayToday', icon: 'https://ms-static-images.t-static.ru/partner-image280-5b546f8dc5e44008b65c6278e4b423a2.png', until: 'На одну покупку онлайн от 3 000 ₽', offerType: 'скидка', expiration: 'До 6 ноября', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-92917f38f6d3471ea34622e6ce1e4628.png', description: 'Семейная одежда и обувь' },
-      { id: 'clothes-km20-10', percent: '10%', name: 'KM20', icon: 'https://ms-static-images.t-static.ru/partner-image280-6cd1980954584a8896b1767ef44c7873.png', until: '', offerType: 'кэшбэк', expiration: 'До 10 июня', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/offer-image1252-2fc2d1e7902944dbbc0d67616fe4af09.png', description: 'Шопинг и рестораны' },
-    ],
-  },
-  {
-    id: 'electronics', label: 'Электроника', type: 'list', nextLabel: 'Товары с кешбэком',
-    items: [
       { id: 'electronics-sitilink-5', percent: '5%', name: 'Ситилинк', icon: 'https://ms-static-images.t-static.ru/partner-5703-image280-992774a3.png', until: 'На покупки онлайн', offerType: 'кэшбэк', expiration: '1 день', urgency: 'горящий', background: 'https://ms-static-images.t-static.ru/partner-image1252-db5c248a22894688b05646133476b2a5.png', description: 'Магазин электроники и бытовой техники' },
       { id: 'electronics-m-video-v-shopinge-10', percent: '10%', name: 'М.Видео в Шопинге', icon: 'https://ms-static-images.t-static.ru/partner-image280-45f6829ab80b492dbde2751a7cfe140b.png', until: '', offerType: 'кэшбэк', expiration: 'До 30 ноября', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-b788766712504276b0384c2899b2119d.png', description: 'Шопинг в Т-Банке' },
       { id: 'electronics-restore-3', percent: '3%', name: 'restore:', icon: 'https://ms-static-images.t-static.ru/partner-355-image280-acf03bad.png', until: 'На покупки онлайн', offerType: 'кэшбэк', expiration: '1 день', urgency: 'горящий', background: 'https://ms-static-images.t-static.ru/partner-image1252-7bea9204976b4fd29e4c3fa842720273.png', description: 'Магазин техники и электроники' },
-      { id: 'electronics-megamarket-20', percent: '20%', name: 'Мегамаркет', icon: 'https://ms-static-images.t-static.ru/partner-image280-2fde6c084b244617b5ce3c2884adf716.png', until: 'На одну покупку онлайн', offerType: 'скидка', expiration: 'До 6 ноября', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-78c651c4abda413bbcf1a6a3d9779532.png', description: 'Маркетплейс' },
-      { id: 'electronics-tehnika-i-elektronika-v-shopinge-20', percent: '20%', name: 'Техника и Электроника в Шопинге', icon: 'https://ms-static-images.t-static.ru/partner-image280-f65b9d3d6a07467bacb639d7aabc454f.png', until: 'На одну покупку', offerType: 'кэшбэк', expiration: 'До 30 ноября', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-1cbe660bab4b480dbfd55cbd0ecae5c0.png', description: 'Бытовая техника' },
-      { id: 'electronics-tefal-12', percent: '12%', name: 'Tefal', icon: 'https://ms-static-images.t-static.ru/partner-image280-3c1ab099aa444be1ae1b775ffe2bee27.png', until: 'На три покупки онлайн', offerType: 'кэшбэк', expiration: 'До 30 ноября', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-e80a75085de640ad87f486727c08d7da.png', description: 'Бытовая техника и посуда' },
-      { id: 'electronics-bilayn-5', percent: '5%', name: 'Билайн', icon: 'https://ms-static-images.t-static.ru/partner-image280-4e099d6ca45747c6bed5060c33578c9b.png', until: 'На две покупки онлайн от 1 000 ₽', offerType: 'кэшбэк', expiration: 'До 6 ноября', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-2f0e1a0ff31e497c84ba5fec966331d9.png', description: 'Бытовая техника и электроника' },
-      { id: 'electronics-galaxystore-5', percent: '5%', name: 'galaxystore', icon: 'https://ms-static-images.t-static.ru/partner-image280-14612c1ca39342038f1dd7af9010194e.png', until: 'На покупки онлайн', offerType: 'кэшбэк', expiration: 'До 6 ноября', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-68eb2e565f5342ffb6594b52fdf9a069.png', description: 'Электроника и техника' },
-      { id: 'electronics-megafon-4', percent: '4%', name: 'МегаФон', icon: 'https://ms-static-images.t-static.ru/partner-4344-image280-d565bc34.png', until: 'На две покупки онлайн', offerType: 'кэшбэк', expiration: 'До 6 ноября', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-57c8367fbf0b452d90cf5b7bad41d127.png', description: 'Интернет-магазин электроники' },
-      { id: 'electronics-dl-audio-25', percent: '25%', name: 'DL Audio', icon: 'https://ms-static-images.t-static.ru/partner-image280-8009f43962d74ef79657baad35469fcb.png', until: 'На покупки от 500 ₽', offerType: 'кэшбэк', expiration: 'До 23 марта', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-e1cf09eba51444d18f5bc017fe4a5f1f.png', description: 'Аудиотехника и акустика' },
+      { id: 'clothes-detskiy-mir-7', percent: '7%', name: 'Детский мир', icon: 'https://ms-static-images.t-static.ru/partner-10903-image280-883ef19b.png', until: 'На одну покупку онлайн', offerType: 'кэшбэк', expiration: '1 день', urgency: 'горящий', background: 'https://ms-static-images.t-static.ru/partner-image1252-37c36c1e2d4a4378a89943b4cc9a8001.png', description: 'Товары для детей' },
     ],
   },
   {
-    id: 'goods', label: 'Товары с кешбэком', type: 'grid', nextLabel: null,
+    id: 'district', label: 'Кэшбэк на районе', type: 'list', nextLabel: null,
+    headline: 'Бонусы<br>прямо у дома', headlineSub: 'Кофейни, салоны и магазины рядом',
+    nearbyStreet: 'Турмалиновская ул',
+    chainLabel: 'Кэшбэк в Пятёрочек',
+    chainStreet: 'ул. Ленина, 14',
+    chainAvatar: 'assets/district/pyaterochka-avatar.png',
     items: [
-      { id: 'product-blade-deep-chill-v-pyaterochke-50', percent: '50%', name: 'BLADE Deep Chill в Пятёрочке', icon: 'https://ms-static-images.t-static.ru/partner-13008-image280-b7b23f14.png', photo: 'https://ms-static-images.t-static.ru/partner-image780-95aedc3620fe4a2e8377d3be3342c84b.png', until: '', offerType: 'кэшбэк', expiration: 'До 8 ноября', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-9f614a3d9f79467ea7b6d1bbb09adb42.png', description: 'Дезодоранты' },
-      { id: 'product-haus-herz-v-fix-price-15', percent: '15%', name: 'Haus Herz в Fix Price', icon: 'https://ms-static-images.t-static.ru/partner-image280-5578570c05554d04937c3990ac10061b.png', photo: 'https://ms-static-images.t-static.ru/partner-image780-015857387ae849f59baafcad0a3a5fdc.png', until: '', offerType: 'кэшбэк', expiration: 'Последний день', urgency: 'горящий', background: 'https://ms-static-images.t-static.ru/partner-image1252-7d19f432f5a04afd843fbbc6302a17ed.png', description: 'Бытовая химия' },
-      { id: 'product-gls-pharmaceuticals-15', percent: '15%', name: 'GLS Pharmaceuticals', icon: 'https://ms-static-images.t-static.ru/partner-image280-4423975b62344cba85ca00857f8e42b8.png', photo: 'https://ms-static-images.t-static.ru/partner-image780-5a442e85f64f46399b77b3aa7b76baa4.png', until: '', offerType: 'кэшбэк', expiration: 'До 30 ноября', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-f92de464e45f4b7899530b4e85351eff.png', description: 'БАДы' },
-      { id: 'product-kuhonnaya-mashina-ot-kenwood-3-000', percent: '3 000 ₽', name: 'Кухонная машина от Kenwood', icon: 'https://ms-static-images.t-static.ru/partner-13739-image280-b5a6e767.png', photo: 'https://ms-static-images.t-static.ru/partner-image780-4123eb315b974809b6c3c8be92af1650.png', until: 'На покупки онлайн', offerType: 'кэшбэк', expiration: 'Последний день', urgency: 'горящий', background: 'https://ms-static-images.t-static.ru/partner-image1252-5076162bee774f758aa2a4679a959bd5.png', description: 'Кухонные машины' },
-      { id: 'product-tvorozhnye-syrki-savushkin-90', percent: '90%', name: 'Творожные сырки «Савушкин»', icon: 'https://ms-static-images.t-static.ru/partner-image280-88b662255662465aa75d4f7c6ed78c7b.png', photo: 'https://ms-static-images.t-static.ru/partner-image780-5670dd774bef48829a1e3bcd5ce67955.png', until: '', offerType: 'кэшбэк', expiration: 'До 30 ноября', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-d8d8074959c7491a8114b25698fb892a.png', description: 'Творожные сырки' },
-      { id: 'product-kofemashiny-delonghi-5-000', percent: '5 000 ₽', name: 'Кофемашины Delonghi', icon: 'https://ms-static-images.t-static.ru/partner-13740-image280-438e7823.png', photo: 'https://ms-static-images.t-static.ru/partner-image780-9b551778ec0c4d0884cbcadd778190d8.png', until: 'На покупки онлайн', offerType: 'кэшбэк', expiration: 'Последний день', urgency: 'горящий', background: 'https://ms-static-images.t-static.ru/partner-image1252-79ca04d1107c4b0b9f5b8b06e94e49dd.png', description: 'Кофемашины' },
-      { id: 'product-kofe-v-drip-paketah-lebo-40', percent: '40%', name: 'Кофе в дрип-пакетах LEBO', icon: 'https://ms-static-images.t-static.ru/partner-image280-d11f68112eca411ebca2ad5a0f6b1bbf.png', photo: 'https://ms-static-images.t-static.ru/partner-image780-109de695a9f447b2995d8d8faca4a9a2.png', until: '', offerType: 'кэшбэк', expiration: 'Последний день', urgency: 'горящий', background: 'https://ms-static-images.t-static.ru/partner-image1252-f118cac8145b4cd3a0624fc2956e74b4.png', description: 'Кофе в дрип-пакетах' },
-      { id: 'product-planto-banan-v-pyaterochke-40', percent: '40%', name: 'Planto «Банан» в Пятёрочке', icon: 'https://ms-static-images.t-static.ru/partner-image280-3e356b4eeae74e34946ac74fb4fde9d2.png', photo: 'https://ms-static-images.t-static.ru/partner-image780-291ed1782ef94136b2fb4fc9d9f940b9.png', until: 'На одну покупку', offerType: 'кэшбэк', expiration: 'Последний день', urgency: 'горящий', background: 'https://ms-static-images.t-static.ru/partner-image1252-31116500a7c94a7c95ee47a9d7df7c15.png', description: 'Растительные напитки' },
-      { id: 'product-ararat-25', percent: '25%', name: 'Арарат', icon: 'https://ms-static-images.t-static.ru/partner-image280-77fd237f76094700af670a68f4ce8dc8.png', photo: 'https://ms-static-images.t-static.ru/partner-image780-5da4427aaae84c849255315066047675.png', until: 'На покупки на кассе', offerType: 'кэшбэк', expiration: '1 день', urgency: 'горящий', background: 'https://ms-static-images.t-static.ru/partner-image1252-690c840f3a664b1d94451bba70e4f946.png', description: 'Напитки' },
+      { id: 'district-cut-barbershop-20', group: 'nearby', percent: '20%', name: 'Cut Barbershop', icon: 'assets/district/barbershop-icon.png', until: 'пр-кт Михаила Нагибина, 12А', offerType: 'кэшбэк', expiration: 'До 6 ноября', urgency: 'стандартный', background: 'assets/district/barbershop-icon.png', description: 'Барбершоп' },
+      { id: 'district-surf-coffee-20', group: 'nearby', percent: '20%', name: 'Кофейня Surf Coffee', icon: 'assets/district/surfcoffee-icon.png', until: 'пр-кт Михаила Нагибина, 13', offerType: 'кэшбэк', expiration: 'До 6 ноября', urgency: 'стандартный', background: 'assets/district/surfcoffee-icon.png', description: 'Кофейня' },
+      { id: 'product-blade-deep-chill-v-pyaterochke-50', group: 'chain', percent: '50%', name: 'BLADE Deep Chill в Пятёрочке', icon: 'https://ms-static-images.t-static.ru/partner-13008-image280-b7b23f14.png', photo: 'https://ms-static-images.t-static.ru/partner-image780-95aedc3620fe4a2e8377d3be3342c84b.png', until: '', offerType: 'кэшбэк', expiration: 'До 8 ноября', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-9f614a3d9f79467ea7b6d1bbb09adb42.png', description: 'Дезодоранты' },
+      { id: 'product-haus-herz-v-fix-price-15', group: 'chain', percent: '15%', name: 'Haus Herz в Fix Price', icon: 'https://ms-static-images.t-static.ru/partner-image280-5578570c05554d04937c3990ac10061b.png', photo: 'https://ms-static-images.t-static.ru/partner-image780-015857387ae849f59baafcad0a3a5fdc.png', until: '', offerType: 'кэшбэк', expiration: 'Последний день', urgency: 'горящий', background: 'https://ms-static-images.t-static.ru/partner-image1252-7d19f432f5a04afd843fbbc6302a17ed.png', description: 'Бытовая химия' },
+      { id: 'product-gls-pharmaceuticals-15', group: 'chain', percent: '15%', name: 'GLS Pharmaceuticals', icon: 'https://ms-static-images.t-static.ru/partner-image280-4423975b62344cba85ca00857f8e42b8.png', photo: 'https://ms-static-images.t-static.ru/partner-image780-5a442e85f64f46399b77b3aa7b76baa4.png', until: '', offerType: 'кэшбэк', expiration: 'До 30 ноября', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-f92de464e45f4b7899530b4e85351eff.png', description: 'БАДы' },
+      { id: 'district-gold-bier-chizhik', group: 'chain', percent: 'до 50%', name: 'GOLD в Чижике', icon: 'assets/district/gold-bier.png', photo: 'assets/district/gold-bier.png', until: 'На покупки на кассе', offerType: 'кэшбэк', expiration: 'До 6 ноября', urgency: 'стандартный', background: 'assets/district/gold-bier.png', description: 'Напиток' },
+      { id: 'product-tvorozhnye-syrki-savushkin-90', group: 'chain', percent: '90%', name: 'Творожные сырки «Савушкин»', icon: 'https://ms-static-images.t-static.ru/partner-image280-88b662255662465aa75d4f7c6ed78c7b.png', photo: 'https://ms-static-images.t-static.ru/partner-image780-5670dd774bef48829a1e3bcd5ce67955.png', until: '', offerType: 'кэшбэк', expiration: 'До 30 ноября', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-d8d8074959c7491a8114b25698fb892a.png', description: 'Творожные сырки' },
+      { id: 'product-kofe-v-drip-paketah-lebo-40', group: 'chain', percent: '40%', name: 'Кофе в дрип-пакетах LEBO', icon: 'https://ms-static-images.t-static.ru/partner-image280-d11f68112eca411ebca2ad5a0f6b1bbf.png', photo: 'https://ms-static-images.t-static.ru/partner-image780-109de695a9f447b2995d8d8faca4a9a2.png', until: '', offerType: 'кэшбэк', expiration: 'Последний день', urgency: 'горящий', background: 'https://ms-static-images.t-static.ru/partner-image1252-f118cac8145b4cd3a0624fc2956e74b4.png', description: 'Кофе в дрип-пакетах' },
+      { id: 'product-planto-banan-v-pyaterochke-40', group: 'chain', percent: '40%', name: 'Planto «Банан» в Пятёрочке', icon: 'https://ms-static-images.t-static.ru/partner-image280-3e356b4eeae74e34946ac74fb4fde9d2.png', photo: 'https://ms-static-images.t-static.ru/partner-image780-291ed1782ef94136b2fb4fc9d9f940b9.png', until: 'На одну покупку', offerType: 'кэшбэк', expiration: 'Последний день', urgency: 'горящий', background: 'https://ms-static-images.t-static.ru/partner-image1252-31116500a7c94a7c95ee47a9d7df7c15.png', description: 'Растительные напитки' },
+      { id: 'product-ararat-25', group: 'chain', percent: '25%', name: 'Арарат', icon: 'https://ms-static-images.t-static.ru/partner-image280-77fd237f76094700af670a68f4ce8dc8.png', photo: 'https://ms-static-images.t-static.ru/partner-image780-5da4427aaae84c849255315066047675.png', until: 'На покупки на кассе', offerType: 'кэшбэк', expiration: '1 день', urgency: 'горящий', background: 'https://ms-static-images.t-static.ru/partner-image1252-690c840f3a664b1d94451bba70e4f946.png', description: 'Напитки' },
     ],
   },
 ];
@@ -126,9 +115,13 @@ function triggerAnim(el) {
 
 /* ============================== состояние ============================== */
 
+function freshLikes() {
+  return CATEGORIES.map(() => new Set());
+}
+
 const state = {
   step: 0,
-  likes: [new Set(), new Set(), new Set(), new Set()],
+  likes: freshLikes(),
   novemberChosen: false,
   novemberCategories: [],
 };
@@ -140,16 +133,25 @@ let cashbackNavbarUpdate = null;
 let favoritesRoot = null;
 let favoritesFilterStep = null;
 let favoritesNavbarUpdate = null;
+let successNavbarUpdate = null;
 
 function resetState() {
   state.step = 0;
-  state.likes = [new Set(), new Set(), new Set(), new Set()];
+  state.likes = freshLikes();
   state.novemberChosen = false;
   state.novemberCategories = [];
 }
 
 function totalLikedCount() {
   return state.likes.reduce((a, s) => a + s.size, 0);
+}
+
+function pluralizeRu(n, one, few, many) {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return one;
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return few;
+  return many;
 }
 
 /* ============================== стек экранов (push/pop как в iOS) ============================== */
@@ -161,7 +163,7 @@ function syncGlobalNavbarVisibility() {
   const navbar = document.getElementById('globalNavbar');
   if (!navbar) return;
   const top = screens[screens.length - 1];
-  const show = top && (top.el.classList.contains('screen-cashback') || top.el.classList.contains('screen-offer') || top.el.classList.contains('screen-favorites'));
+  const show = top && (top.el.classList.contains('screen-cashback') || top.el.classList.contains('screen-offer') || top.el.classList.contains('screen-favorites') || top.el.classList.contains('screen-success'));
   navbar.style.visibility = show ? 'visible' : 'hidden';
   navbar.style.pointerEvents = show ? '' : 'none';
 }
@@ -356,8 +358,12 @@ function buildCashbackScreen() {
         </div>
       </div>
       <div class="headline-block">
-        <div class="headline">Сохраните,<br>что нравится</div>
-        <div class="headline-sub">Все предложения уже действуют</div>
+        <div class="headline-content">
+          <div class="headline-pane" data-text="Настройте<br>кэшбэк под себя">
+            <div class="headline">Настройте<br>кэшбэк под себя</div>
+            <div class="headline-sub">Сохраняйте то, что пригодится</div>
+          </div>
+        </div>
       </div>
       <div class="chips-sticky-wrap"><div class="chips-row" id="chipsRow"></div></div>
       <div class="offers-wrap" id="offersWrap"></div>
@@ -438,14 +444,72 @@ function offerCardHTML(stepIndex, i, it) {
   `;
 }
 
+const OFFERS_SHOWN_LIMIT = 6;
+
+function districtNearbyItemHTML(i, it) {
+  return `
+    <div class="offer-item">
+      <div class="offer-item-main">
+        <img class="offer-icon" src="${it.icon}" alt="" loading="lazy">
+        <div class="offer-info">
+          <div class="offer-top-line">
+            <span class="offer-percent">${esc(it.percent)}</span>
+            <span class="offer-dot">•</span>
+            <span class="offer-name">${esc(it.name)}</span>
+          </div>
+          <div class="offer-until">${esc(it.until)}</div>
+        </div>
+      </div>
+      <button class="heart-btn" data-idx="${i}" aria-label="Нравится">${ICONS.heart}</button>
+    </div>
+  `;
+}
+
+function renderDistrictHTML(cat) {
+  const nearby = [];
+  const chain = [];
+  cat.items.forEach((it, i) => (it.group === 'nearby' ? nearby : chain).push([i, it]));
+
+  return `
+    <div class="district-section">
+      <div class="district-section-head">
+        <div class="district-section-head-text">
+          <div class="district-section-title">Кэшбэк вокруг вас</div>
+          <div class="district-section-loc">${ICONS.pin}${esc(cat.nearbyStreet)}</div>
+        </div>
+      </div>
+      <div class="offer-list">${nearby.map(([i, it]) => districtNearbyItemHTML(i, it)).join('')}</div>
+    </div>
+    <div class="district-section">
+      <div class="district-section-head district-section-head-row">
+        <div class="district-section-head-text">
+          <div class="district-section-title">${esc(cat.chainLabel)}</div>
+          <div class="district-section-loc">${ICONS.pin}${esc(cat.chainStreet)}</div>
+        </div>
+        <img class="district-chain-avatar" src="${cat.chainAvatar}" alt="">
+      </div>
+      <div class="offer-grid">${chain.map(([i, it]) => offerCardHTML(0, i, it)).join('')}</div>
+    </div>
+  `;
+}
+
 function renderOffers(root, stepIndex, animate) {
   const wrap = root.querySelector('#offersWrap');
   const cat = CATEGORIES[stepIndex];
+  const shown = cat.items.slice(0, OFFERS_SHOWN_LIMIT);
 
-  if (cat.type === 'list') {
-    wrap.innerHTML = `<div class="offer-list">${cat.items.map((it, i) => offerListItemHTML(stepIndex, i, it)).join('')}</div>`;
+  if (cat.id === 'district') {
+    wrap.innerHTML = renderDistrictHTML(cat);
+  } else if (!cat.items.length) {
+    wrap.innerHTML = `<div class="favorites-empty">Раздел в разработке — скоро здесь появятся предложения</div>`;
+  } else if (cat.type === 'list') {
+    wrap.innerHTML = `<div class="offer-list">${shown.map((it, i) => offerListItemHTML(stepIndex, i, it)).join('')}</div>`;
   } else {
-    wrap.innerHTML = `<div class="offer-grid">${cat.items.map((it, i) => offerCardHTML(stepIndex, i, it)).join('')}</div>`;
+    wrap.innerHTML = `<div class="offer-grid">${shown.map((it, i) => offerCardHTML(stepIndex, i, it)).join('')}</div>`;
+  }
+
+  if (cat.moreNote) {
+    wrap.insertAdjacentHTML('beforeend', `<div class="offers-more-note">${esc(cat.moreNote)}</div>`);
   }
 
   wrap.querySelectorAll('.heart-btn').forEach((btn) => {
@@ -475,6 +539,7 @@ function setOfferLiked(stepIndex, idx, liked) {
   if (navHeartOfferCtx && navHeartOfferCtx.stepIndex === stepIndex && navHeartOfferCtx.idx === idx) {
     document.getElementById('navHeart').classList.toggle('liked', liked);
   }
+  if (cashbackRoot) updateBottomCaption(cashbackRoot, true);
 }
 
 function toggleLike(root, stepIndex, idx, btn) {
@@ -551,19 +616,22 @@ function updateProgress(root) {
 function updateNextBtn(root) {
   const btn = root.querySelector('#nextBtn');
   const cat = CATEGORIES[state.step];
-  btn.textContent = cat.nextLabel ? ('Дальше ' + cat.nextLabel) : 'Забрать награду';
+  btn.textContent = cat.nextLabel ? ('Дальше ' + cat.nextLabel) : 'Собрать мою подборку';
 }
 
-const STEP_CAPTIONS = [
-  'Можно выбрать без ограничений',
-  'Отличное начало, двигаемся дальше',
-  'Ещё немного — ты почти у цели',
-  'Совсем чуть-чуть — подарок уже твой',
-];
+const DEFAULT_CAPTION = 'Можно выбрать без ограничений';
+
+function bottomCaptionText() {
+  if (state.step === CATEGORIES.length - 1) return 'Почти готово — осталось собрать подборку';
+  const count = totalLikedCount();
+  if (count === 0) return DEFAULT_CAPTION;
+  const word = pluralizeRu(count, 'предложение', 'предложения', 'предложений');
+  return `Уже сохранили ${count} ${word}`;
+}
 
 function updateBottomCaption(root, animate) {
   const wrap = root.querySelector('#bottomCaptionWrap');
-  const newText = STEP_CAPTIONS[state.step] || STEP_CAPTIONS[STEP_CAPTIONS.length - 1];
+  const newText = bottomCaptionText();
   const existing = wrap.querySelectorAll('.bottom-caption-text');
   const old = existing[existing.length - 1];
 
@@ -617,10 +685,50 @@ function staticOffsetTopWithin(el, ancestor) {
 function snapScrollToChips(root) {
   const scrollEl = root.querySelector('#cbScroll');
   if (scrollEl.scrollTop < 1) return; // пользователь не скроллил — оставляем как есть
-  const chipsWrap = root.querySelector('.chips-sticky-wrap');
+  const headline = root.querySelector('.headline-block');
   const navbar = document.getElementById('globalNavbar');
-  const target = Math.max(0, staticOffsetTopWithin(chipsWrap, scrollEl) - navbar.offsetHeight);
+  const target = Math.max(0, staticOffsetTopWithin(headline, scrollEl) - navbar.offsetHeight);
   scrollEl.scrollTo({ top: target, behavior: 'smooth' });
+}
+
+function headlinePaneHTML(cat) {
+  return `
+    <div class="headline">${cat.headline}</div>
+    <div class="headline-sub">${esc(cat.headlineSub)}</div>
+  `;
+}
+
+function updateHeadline(root, animate) {
+  const cat = CATEGORIES[state.step];
+  const wrap = root.querySelector('.headline-content');
+  const panes = wrap.querySelectorAll('.headline-pane');
+  const current = panes[panes.length - 1];
+
+  if (current && current.dataset.text === cat.headline) return;
+
+  // при быстром переключении могли остаться панели, не успевшие доиграть
+  // прошлый переход — убираем их сразу, иначе на элементе одновременно
+  // окажутся классы slide-in-up и slide-out-up и каскад перепутает анимации
+  for (let i = 0; i < panes.length - 1; i++) panes[i].remove();
+
+  const next = document.createElement('div');
+  next.className = 'headline-pane';
+  next.dataset.text = cat.headline;
+  next.innerHTML = headlinePaneHTML(cat);
+
+  if (!animate || !current) {
+    wrap.innerHTML = '';
+    wrap.appendChild(next);
+    return;
+  }
+
+  current.classList.remove('slide-in-up');
+  void current.offsetWidth;
+  current.classList.add('slide-out-up');
+  current.addEventListener('animationend', () => current.remove(), { once: true });
+
+  next.classList.add('slide-in-up');
+  wrap.appendChild(next);
 }
 
 function advanceToStep(root) {
@@ -630,6 +738,7 @@ function advanceToStep(root) {
   renderOffers(root, state.step, true);
   updateNextBtn(root);
   updateBottomCaption(root, true);
+  updateHeadline(root, true);
   snapScrollToChips(root);
 }
 
@@ -663,11 +772,7 @@ function bindNavbarScroll(scrollEl, stuckTestFn) {
 
 function setupNavbarScrollBg(root) {
   const scrollEl = root.querySelector('#cbScroll');
-  const navbar = document.getElementById('globalNavbar');
-  const chipsWrap = root.querySelector('.chips-sticky-wrap');
-  cashbackNavbarUpdate = bindNavbarScroll(scrollEl, () =>
-    chipsWrap.getBoundingClientRect().top <= navbar.getBoundingClientRect().bottom
-  );
+  cashbackNavbarUpdate = bindNavbarScroll(scrollEl, () => scrollEl.scrollTop > 0);
 }
 
 function mountCashbackScreen(root) {
@@ -679,6 +784,7 @@ function mountCashbackScreen(root) {
   updateProgress(root);
   updateNextBtn(root);
   updateBottomCaption(root);
+  updateHeadline(root, false);
   renderOffers(root, state.step, false);
   setupNavbarScrollBg(root);
 
@@ -814,6 +920,10 @@ function closeOfferScreen() {
     title.style.display = 'flex';
     if (favoritesNavbarUpdate) favoritesNavbarUpdate();
     if (favoritesRoot) renderFavoritesContent(favoritesRoot, false);
+  } else if (top && top.el.classList.contains('screen-success')) {
+    navbar.classList.add('hide-progress', 'hide-heart');
+    title.style.display = 'none';
+    if (successNavbarUpdate) successNavbarUpdate();
   } else {
     navbar.classList.remove('hide-progress', 'hide-heart');
     title.style.display = 'none';
@@ -934,11 +1044,26 @@ function openFavoritesScreen() {
 
 function closeFavoritesScreen() {
   favoritesRoot = null;
+  popScreen();
+
+  const top = screens[screens.length - 1];
+  const navbar = document.getElementById('globalNavbar');
+  document.getElementById('navbarTitle').style.display = 'none';
+  if (top && top.el.classList.contains('screen-success')) {
+    navbar.classList.add('hide-progress', 'hide-heart');
+    if (successNavbarUpdate) successNavbarUpdate();
+  } else {
+    navbar.classList.remove('hide-progress', 'hide-heart');
+    if (cashbackNavbarUpdate) cashbackNavbarUpdate();
+  }
+}
+
+function closeSuccessScreen() {
+  popScreen();
   const navbar = document.getElementById('globalNavbar');
   navbar.classList.remove('hide-progress', 'hide-heart');
   document.getElementById('navbarTitle').style.display = 'none';
   if (cashbackNavbarUpdate) cashbackNavbarUpdate();
-  popScreen();
 }
 
 /* ============================== экран выбора кэшбэка на ноябрь ============================== */
@@ -952,7 +1077,7 @@ function buildPickerScreen() {
       <button class="glass-pill" id="pickBack" aria-label="Назад">${ICONS.chevronLeft}</button>
       <div class="picker-header-title">Кэшбэк на ноябрь</div>
     </div>
-    <div class="picker-scroll">
+    <div class="picker-scroll" id="pickerScroll">
       <div class="picker-title">Выбери категории<br>с доп. кэшбэком</div>
       <div class="picker-sub">Выбери ${PICKER_MAX} категории — кэшбэк по ним будет повышен весь ноябрь</div>
       <div class="picker-list" id="pickerGrid"></div>
@@ -1032,26 +1157,106 @@ function openPickerScreen() {
 
 /* ============================== success-экран ============================== */
 
+function pickCardHTML(stepIndex, idx, it) {
+  return `
+    <div class="pick-card" data-step="${stepIndex}" data-idx="${idx}">
+      <div class="pick-card-box">
+        <img class="pick-card-icon" src="${it.icon}" alt="" loading="lazy">
+        <button class="heart-btn pick-card-heart liked" aria-label="Убрать из избранного">${ICONS.heart}</button>
+        <div class="pick-card-text">
+          <div class="pick-card-stat">
+            <div class="pick-card-percent">${esc(it.percent)}</div>
+            <div class="pick-card-cb-label">Кэшбэк</div>
+          </div>
+          <div class="pick-card-meta">
+            <div>${esc(it.until || UNTIL_TEXT)}</div>
+            ${it.expiration ? `<div>${esc(it.expiration)}</div>` : ''}
+          </div>
+        </div>
+      </div>
+      <div class="pick-card-info">
+        <div class="pick-card-name">${esc(it.name)}</div>
+        ${it.description ? `<div class="pick-card-desc">${esc(it.description)}</div>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function renderPickRow(root) {
+  const section = root.querySelector('#pickSection');
+  const row = root.querySelector('#pickRow');
+  const entries = favoritesEntries();
+
+  if (!entries.length) {
+    section.style.display = 'none';
+    return;
+  }
+  section.style.display = '';
+  row.innerHTML = entries.map((e) => pickCardHTML(e.stepIndex, e.idx, e.item)).join('');
+
+  row.querySelectorAll('.pick-card-heart').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const card = btn.closest('.pick-card');
+      const stepIndex = parseInt(card.dataset.step, 10);
+      const idx = parseInt(card.dataset.idx, 10);
+      setOfferLiked(stepIndex, idx, false);
+      haptic(8);
+      renderPickRow(root);
+    });
+  });
+
+  row.querySelectorAll('.pick-card').forEach((card) => {
+    card.addEventListener('click', () => {
+      openOfferScreen(parseInt(card.dataset.step, 10), parseInt(card.dataset.idx, 10));
+    });
+  });
+}
+
 function buildSuccessScreen() {
-  const reminderNeeded = !state.novemberChosen;
   const el = document.createElement('div');
   el.className = 'screen screen-success';
   el.innerHTML = `
     <div class="dim"></div>
-    <div class="success-scroll">
-      <div class="success-ring">${ICONS.bigCheck}</div>
-      <div class="success-title">Готово!</div>
-      <div class="success-points">${ICONS.coin}<span>+500 баллов кэшбэка</span></div>
-      <div class="success-sub">Баллы уже зачислены на счёт. Выбранные категории можно поменять в любой момент.</div>
-      ${reminderNeeded ? `
-      <div class="reminder-card">
-        <div class="reminder-title">${ICONS.bell}<span>Не забудь про ноябрь</span></div>
-        <div class="reminder-text">Ты ещё не выбрал повышенный кэшбэк на ноябрь — успей сделать это, пока категории доступны.</div>
-        <button class="reminder-btn" id="reminderBtn">Выбрать сейчас</button>
-      </div>` : ''}
-    </div>
-    <div class="success-bottom">
-      <button class="btn-primary" id="successDone">Готово</button>
+    <div class="scroll" id="successScroll">
+      <div class="navbar-spacer"></div>
+      <div class="tiles-row">
+        <div class="tile" id="tileNovember">
+          <div class="tile-top">
+            <div class="tile-label">Повышенный кэшбэк в ноябре</div>
+            <div class="tile-badge" id="novBadge">1</div>
+          </div>
+          <button class="tile-pick-btn" id="novPickBtn">Выбрать</button>
+          <div class="avatars" id="novAvatars" style="display:none"></div>
+        </div>
+        <div class="tile">
+          <div class="tile-label">Повышенный кэшбэк в октябре</div>
+          <div class="avatars" id="octAvatars"></div>
+        </div>
+      </div>
+      <div class="headline-block">
+        <div class="headline-content">
+          <div class="headline-pane" data-text="pick">
+            <div class="headline">Заглядывайте<br>перед покупкой</div>
+            <div class="headline-sub">Новые акции появляются каждый день</div>
+          </div>
+        </div>
+      </div>
+      <div class="pick-section" id="pickSection">
+        <div class="pick-section-head">
+          <div class="pick-section-title">Ваша подборка</div>
+          <button class="pick-section-all" id="pickSeeAll">Все</button>
+        </div>
+        <div class="pick-row" id="pickRow"></div>
+        <div class="pick-more-wrap">
+          <button class="pick-more-btn" id="pickMoreBtn">${ICONS.heart}<span>Дополнить избранное</span></button>
+        </div>
+      </div>
+      <div class="pick-subheadline">
+        <div class="pick-subheadline-title">Больше кэшбэка</div>
+        <div class="pick-subheadline-sub">Новые акции появляются каждый день</div>
+      </div>
+      <div class="success-bottom-spacer"></div>
     </div>
   `;
   return el;
@@ -1060,18 +1265,34 @@ function buildSuccessScreen() {
 function mountSuccessScreen(root) {
   haptic([10, 50, 10, 50, 20]);
 
-  const reminderBtn = root.querySelector('#reminderBtn');
-  if (reminderBtn) {
-    reminderBtn.addEventListener('click', () => {
-      haptic(10);
-      openPickerScreen();
-    });
-  }
+  const navbar = document.getElementById('globalNavbar');
+  navbar.classList.add('hide-progress', 'hide-heart');
+  document.getElementById('navbarTitle').style.display = 'none';
+  const successScrollEl = root.querySelector('#successScroll');
+  successNavbarUpdate = bindNavbarScroll(successScrollEl, () => successScrollEl.scrollTop > 0);
 
-  root.querySelector('#successDone').addEventListener('click', () => {
+  renderNovTile(root);
+  buildOctAvatars(root);
+  renderPickRow(root);
+
+  root.querySelector('#novPickBtn').addEventListener('click', () => {
     haptic(10);
-    popToRoot();
+    openPickerScreen();
   });
+
+  root.querySelector('#pickSeeAll').addEventListener('click', () => {
+    haptic(8);
+    openFavoritesScreen();
+  });
+
+  root.querySelector('#pickMoreBtn').addEventListener('click', () => {
+    haptic(10);
+    popScreen();
+  });
+
+  setTimeout(() => root.querySelectorAll('.tile').forEach((t, i) => t.classList.add('anim-in')), 0);
+  setTimeout(() => root.querySelector('.headline-block').classList.add('anim-in'), 110);
+  setTimeout(() => root.querySelector('#pickSection').classList.add('anim-in'), 190);
 }
 
 function openSuccessScreen() {
@@ -1103,6 +1324,8 @@ function buildGlobalNavbar() {
       closeOfferScreen();
     } else if (top && top.el.classList.contains('screen-favorites')) {
       closeFavoritesScreen();
+    } else if (top && top.el.classList.contains('screen-success')) {
+      closeSuccessScreen();
     } else {
       popScreen();
     }
