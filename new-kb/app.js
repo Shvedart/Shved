@@ -160,7 +160,8 @@ function syncGlobalNavbarVisibility() {
   if (!navbar) return;
   const top = screens[screens.length - 1];
   const show = top && (top.el.classList.contains('screen-cashback') || top.el.classList.contains('screen-offer') || top.el.classList.contains('screen-favorites'));
-  navbar.style.display = show ? '' : 'none';
+  navbar.style.visibility = show ? 'visible' : 'hidden';
+  navbar.style.pointerEvents = show ? '' : 'none';
 }
 
 function pushScreen(el) {
@@ -994,7 +995,8 @@ function buildGlobalNavbar() {
   const el = document.createElement('div');
   el.className = 'navbar';
   el.id = 'globalNavbar';
-  el.style.display = 'none';
+  el.style.visibility = 'hidden';
+  el.style.pointerEvents = 'none';
   el.innerHTML = `
     <button class="glass-pill nav-back" id="gnbBack" aria-label="Назад">${ICONS.chevronLeft}</button>
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
@@ -1046,3 +1048,18 @@ function init() {
 }
 
 init();
+
+/* На холодном старте PWA (standalone, black-translucent) iOS иногда применяет
+   реальную высоту вьюпорта/safe-area только после первого взаимодействия —
+   из-за этого экран открывается с зазором снизу и "доезжает" до полного
+   размера только после тапа. Форсируем пересчёт лэйаута сразу и при возврате
+   приложения на передний план. */
+function nudgeViewportLayout() {
+  const app = document.getElementById('app');
+  app.style.transform = 'translateZ(0)';
+  requestAnimationFrame(() => { app.style.transform = ''; });
+}
+window.addEventListener('pageshow', nudgeViewportLayout);
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) nudgeViewportLayout();
+});
