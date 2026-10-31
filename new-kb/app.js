@@ -130,6 +130,7 @@ const state = {
   step: 0,
   likes: [new Set(), new Set(), new Set(), new Set()],
   novemberChosen: false,
+  novemberCategories: [],
 };
 
 let pickerSelected = new Set();
@@ -144,6 +145,7 @@ function resetState() {
   state.step = 0;
   state.likes = [new Set(), new Set(), new Set(), new Set()];
   state.novemberChosen = false;
+  state.novemberCategories = [];
 }
 
 function totalLikedCount() {
@@ -241,6 +243,77 @@ function popToRoot() {
   top.el.addEventListener('transitionend', cleanup);
 }
 
+/* ---------- свайп "назад" от левого края экрана (как в iOS) ---------- */
+
+(function setupSwipeBack() {
+  const EDGE = 24; // зона начала жеста от левого края, px
+  const COMMIT_RATIO = 0.33; // после какой доли ширины экрана свайп считается завершённым
+
+  let active = false;
+  let decided = false;
+  let startX = 0, startY = 0, lastX = 0, width = 0;
+  let topEl = null, prevEl = null;
+
+  stackEl.addEventListener('touchstart', (e) => {
+    if (screens.length <= 1) return;
+    const t = e.touches[0];
+    if (t.clientX > EDGE) return;
+    const top = screens[screens.length - 1];
+    const prev = screens[screens.length - 2];
+    topEl = top.el;
+    prevEl = prev ? prev.el : null;
+    startX = lastX = t.clientX;
+    startY = t.clientY;
+    width = topEl.offsetWidth;
+    active = true;
+    decided = false;
+  }, { passive: true });
+
+  stackEl.addEventListener('touchmove', (e) => {
+    if (!active) return;
+    const t = e.touches[0];
+    const dx = t.clientX - startX;
+    const dy = t.clientY - startY;
+    if (!decided) {
+      if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+      if (Math.abs(dy) > Math.abs(dx)) { active = false; return; }
+      decided = true;
+      topEl.style.transition = 'none';
+      topEl.style.borderRadius = '55px 0 0 55px';
+      if (prevEl) prevEl.style.transition = 'none';
+    }
+    lastX = t.clientX;
+    const clamped = Math.max(0, Math.min(dx, width));
+    topEl.style.transform = `translateX(${clamped}px)`;
+    if (prevEl) {
+      const progress = clamped / width;
+      prevEl.style.transform = `translateX(${-25 + 25 * progress}%)`;
+    }
+  }, { passive: true });
+
+  function finish() {
+    if (!active) return;
+    active = false;
+    if (!decided) return;
+    const dx = Math.max(0, Math.min(lastX - startX, width));
+    topEl.style.transition = '';
+    if (prevEl) prevEl.style.transition = '';
+    if (dx > width * COMMIT_RATIO) {
+      const backBtn = document.getElementById('gnbBack');
+      if (backBtn) backBtn.click();
+    } else {
+      topEl.style.borderRadius = '0';
+      animateScreenTransform(topEl, 'translateX(0)');
+      if (prevEl) animateScreenTransform(prevEl, 'translateX(-25%)');
+    }
+    topEl = null;
+    prevEl = null;
+  }
+
+  stackEl.addEventListener('touchend', finish);
+  stackEl.addEventListener('touchcancel', finish);
+})();
+
 /* ============================== старт-экран ============================== */
 
 function buildStartScreen() {
@@ -275,6 +348,7 @@ function buildCashbackScreen() {
             <div class="tile-badge" id="novBadge">1</div>
           </div>
           <button class="tile-pick-btn" id="novPickBtn">Выбрать</button>
+          <div class="avatars" id="novAvatars" style="display:none"></div>
         </div>
         <div class="tile">
           <div class="tile-label">Повышенный кэшбэк в октябре</div>
@@ -300,12 +374,18 @@ function buildCashbackScreen() {
 function renderNovTile(root) {
   const badge = root.querySelector('#novBadge');
   const btn = root.querySelector('#novPickBtn');
+  const avatars = root.querySelector('#novAvatars');
   if (state.novemberChosen) {
     badge.classList.add('hidden');
-    btn.textContent = 'Изменить';
+    btn.style.display = 'none';
+    avatars.style.display = '';
+    avatars.innerHTML = state.novemberCategories.map((i, idx) =>
+      `<img class="avatar" style="z-index:${4 - idx}" src="${PICKER_CATEGORIES[i].icon}" alt="">`
+    ).join('');
   } else {
     badge.classList.remove('hidden');
-    btn.textContent = 'Выбрать';
+    btn.style.display = '';
+    avatars.style.display = 'none';
   }
 }
 
@@ -706,9 +786,7 @@ function mountOfferScreen(root, stepIndex, idx) {
   navHeart.classList.remove('pop');
   navHeart.classList.toggle('liked', state.likes[stepIndex].has(idx));
 
-  const scrollEl = root.querySelector('#offerScroll');
-  const hero = root.querySelector('.offer-hero');
-  bindNavbarScroll(scrollEl, () => scrollEl.scrollTop >= hero.offsetHeight - 60);
+  navbar.classList.remove('solid');
 
   root.querySelector('#offerCta').addEventListener('click', () => haptic(10));
 
@@ -833,12 +911,9 @@ function mountFavoritesScreen(root) {
   buildFavoritesChipsRow(root);
   renderFavoritesContent(root, false);
 
-  const scrollEl = root.querySelector('#favoritesScroll');
-  const chipsWrap = root.querySelector('.chips-sticky-wrap');
   const navbar = document.getElementById('globalNavbar');
-  favoritesNavbarUpdate = bindNavbarScroll(scrollEl, () =>
-    chipsWrap.getBoundingClientRect().top <= navbar.getBoundingClientRect().bottom
-  );
+  navbar.classList.remove('solid');
+  favoritesNavbarUpdate = () => navbar.classList.remove('solid');
 
   setTimeout(() => root.querySelector('.chips-row').classList.add('anim-in'), 60);
   setTimeout(() => root.querySelector('#favoritesWrap').classList.add('anim-in'), 140);
@@ -879,18 +954,18 @@ function buildPickerScreen() {
     </div>
     <div class="picker-scroll">
       <div class="picker-title">Выбери категории<br>с доп. кэшбэком</div>
-      <div class="picker-sub">Можно выбрать до ${PICKER_MAX} категорий — кэшбэк по ним будет повышен весь ноябрь</div>
+      <div class="picker-sub">Выбери ${PICKER_MAX} категории — кэшбэк по ним будет повышен весь ноябрь</div>
       <div class="picker-list" id="pickerGrid"></div>
     </div>
     <div class="bottom-fixed">
-      <button class="btn-primary" id="pickerDone">Выбрать</button>
+      <button class="btn-primary picker-hide" id="pickerDone">Выбрать</button>
     </div>
   `;
   return el;
 }
 
 function updatePickerDoneState(root) {
-  root.querySelector('#pickerDone').classList.toggle('disabled', pickerSelected.size === 0);
+  root.querySelector('#pickerDone').classList.toggle('picker-hide', pickerSelected.size < PICKER_MAX);
 }
 
 function updatePickerCap(root) {
@@ -939,9 +1014,10 @@ function mountPickerScreen(root) {
   });
 
   root.querySelector('#pickerDone').addEventListener('click', () => {
-    if (pickerSelected.size === 0) return;
+    if (pickerSelected.size !== PICKER_MAX) return;
     haptic([10, 30, 10]);
     state.novemberChosen = true;
+    state.novemberCategories = Array.from(pickerSelected);
     if (cashbackRoot) renderNovTile(cashbackRoot);
     popScreen();
   });

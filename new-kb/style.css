@@ -125,15 +125,6 @@ button { font-family: inherit; }
   background: var(--bg);
 }
 
-@media (min-width: 640px) {
-  html, body { background: #dcdce1; }
-  #app {
-    max-width: 430px;
-    margin: 0 auto;
-    box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 30px 60px rgba(0,0,0,0.25);
-  }
-}
-
 #stack { position: absolute; inset: 0; }
 
 /* ---------- generic screen / push-pop ---------- */
@@ -143,7 +134,7 @@ button { font-family: inherit; }
   inset: 0;
   background: var(--bg);
   transform: translateX(0);
-  transition: transform 0.42s var(--ease-ios);
+  transition: transform 0.42s var(--ease-ios), border-radius 0.42s var(--ease-ios);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -714,6 +705,7 @@ button { font-family: inherit; }
 
 .btn-primary:active { transform: scale(0.98); }
 .btn-primary.disabled { opacity: 0.4; pointer-events: none; }
+.btn-primary.picker-hide { opacity: 0; transform: translateY(12px); pointer-events: none; }
 
 .bottom-caption {
   display: flex;
@@ -781,10 +773,7 @@ button { font-family: inherit; }
   gap: 12px;
   height: var(--navbar-h);
   padding: calc(var(--safe-top) + 6px) 16px 10px;
-  background: rgba(255,255,255,0.85);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border-bottom: 0.5px solid rgba(0,0,0,0.08);
+  background: transparent;
 }
 
 .picker-header-title {
