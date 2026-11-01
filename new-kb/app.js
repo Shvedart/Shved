@@ -13,6 +13,7 @@ const ICONS = {
   percent: `<svg viewBox="0 0 24 24" fill="none"><circle cx="7" cy="7" r="2.6" stroke="#333" stroke-width="2"/><circle cx="17" cy="17" r="2.6" stroke="#333" stroke-width="2"/><path d="M18 6L6 18" stroke="#333" stroke-width="2" stroke-linecap="round"/></svg>`,
   bigCheck: `<svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   pin: `<svg viewBox="0 0 16 16" fill="none"><path d="M8.94167 7.60833C9.20278 7.34722 9.33333 7.03333 9.33333 6.66667C9.33333 6.3 9.20278 5.98611 8.94167 5.725C8.68056 5.46389 8.36667 5.33333 8 5.33333C7.63333 5.33333 7.31944 5.46389 7.05833 5.725C6.79722 5.98611 6.66667 6.3 6.66667 6.66667C6.66667 7.03333 6.79722 7.34722 7.05833 7.60833C7.31944 7.86944 7.63333 8 8 8C8.36667 8 8.68056 7.86944 8.94167 7.60833ZM8 14.6667C6.21111 13.1444 4.875 11.7306 3.99167 10.425C3.10833 9.11944 2.66667 7.91111 2.66667 6.8C2.66667 5.13333 3.20278 3.80556 4.275 2.81667C5.34722 1.82778 6.58889 1.33333 8 1.33333C9.41111 1.33333 10.6528 1.82778 11.725 2.81667C12.7972 3.80556 13.3333 5.13333 13.3333 6.8C13.3333 7.91111 12.8917 9.11944 12.0083 10.425C11.125 11.7306 9.78889 13.1444 8 14.6667Z" fill="#333"/></svg>`,
+  gift: `<svg viewBox="0 0 16 16" fill="none"><path d="M2.667 7.333h10.666v5.334a1 1 0 01-1 1H3.667a1 1 0 01-1-1V7.333z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M2 5.333a1 1 0 011-1h10a1 1 0 011 1v1.334a.667.667 0 01-.667.666H2.667A.667.667 0 012 6.667V5.333z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 4.333V13.667M8 4.333C8 4.333 5.833 1 4.333 2.2 2.833 3.4 5 4.333 8 4.333zM8 4.333C8 4.333 10.167 1 11.667 2.2 13.167 3.4 11 4.333 8 4.333z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>`,
 };
 
 /* ============================== данные ============================== */
@@ -96,6 +97,19 @@ const PICKER_CATEGORIES = [
 ];
 const OCT_AVATARS = ['assets/icons/avatars/0.png', 'assets/icons/avatars/1.png', 'assets/icons/avatars/2.png', 'assets/icons/avatars/3.png'];
 
+const CASHBACK_OF_DAY = {
+  title: 'Кэшбэк дня',
+  sub: 'Самое выгодное сегодня',
+  avatars: [
+    'https://ms-static-images.t-static.ru/partner-15121-image280-43810688.png',
+    'https://ms-static-images.t-static.ru/partner-9663-image280-39f63a9e.png',
+    'https://ms-static-images.t-static.ru/partner-image280-45f6829ab80b492dbde2751a7cfe140b.png',
+  ],
+  giftLabel: 'До подарка',
+  giftMeta: 'Ещё 4 дня',
+  steps: 5,
+};
+
 /* ============================== утилиты ============================== */
 
 function haptic(pattern) {
@@ -132,6 +146,7 @@ const state = {
   likes: freshLikes(),
   novemberChosen: false,
   novemberCategories: [],
+  successMode: false,
 };
 
 let pickerSelected = new Set();
@@ -141,13 +156,14 @@ let cashbackNavbarUpdate = null;
 let favoritesRoot = null;
 let favoritesFilterStep = null;
 let favoritesNavbarUpdate = null;
-let successNavbarUpdate = null;
+let codProgressTimer = null;
 
 function resetState() {
   state.step = 0;
   state.likes = freshLikes();
   state.novemberChosen = false;
   state.novemberCategories = [];
+  state.successMode = false;
 }
 
 function totalLikedCount() {
@@ -171,7 +187,7 @@ function syncGlobalNavbarVisibility() {
   const navbar = document.getElementById('globalNavbar');
   if (!navbar) return;
   const top = screens[screens.length - 1];
-  const show = top && (top.el.classList.contains('screen-cashback') || top.el.classList.contains('screen-offer') || top.el.classList.contains('screen-favorites') || top.el.classList.contains('screen-success'));
+  const show = top && (top.el.classList.contains('screen-cashback') || top.el.classList.contains('screen-offer') || top.el.classList.contains('screen-favorites'));
   navbar.style.visibility = show ? 'visible' : 'hidden';
   navbar.style.pointerEvents = show ? '' : 'none';
 }
@@ -373,11 +389,51 @@ function buildCashbackScreen() {
           </div>
         </div>
       </div>
-      <div class="chips-sticky-wrap"><div class="chips-row" id="chipsRow"></div></div>
+      <div class="chips-sticky-wrap" id="chipsStickyWrap"><div class="chips-row" id="chipsRow"></div></div>
       <div class="offers-wrap" id="offersWrap"></div>
-      <div class="scroll-bottom-spacer"></div>
+      <div class="scroll-bottom-spacer" id="scrollBottomSpacer"></div>
+      <div class="pick-section" id="pickSection" style="display:none">
+        <div class="pick-section-head">
+          <div class="pick-section-title">Ваша подборка</div>
+          <button class="pick-section-all" id="pickSeeAll">Все</button>
+        </div>
+        <div class="pick-row" id="pickRow"></div>
+        <div class="pick-more-wrap">
+          <button class="pick-more-btn" id="pickMoreBtn">${ICONS.heart}<span>Дополнить избранное</span></button>
+        </div>
+      </div>
+      <div class="cod-wrap" id="codWrap" style="display:none">
+        <div class="cod-card">
+          <div class="cod-bg"></div>
+          <div class="cod-head">
+            <div class="cod-head-text">
+              <div class="cod-title">${esc(CASHBACK_OF_DAY.title)}</div>
+              <div class="cod-sub">${esc(CASHBACK_OF_DAY.sub)}</div>
+            </div>
+            <div class="cod-avatars">
+              ${CASHBACK_OF_DAY.avatars.map((src) => `<img class="cod-avatar" src="${src}" alt="" loading="lazy">`).join('')}
+            </div>
+          </div>
+          <div class="cod-panel-wrap">
+            <div class="cod-panel">
+              <div class="cod-panel-row">
+                <div class="cod-panel-label">${esc(CASHBACK_OF_DAY.giftLabel)}</div>
+                <div class="cod-panel-meta"><span>${esc(CASHBACK_OF_DAY.giftMeta)}</span>${ICONS.gift}</div>
+              </div>
+              <div class="cod-progress" id="codProgress">
+                ${Array.from({ length: CASHBACK_OF_DAY.steps }).map(() => `<div class="cod-progress-step"><div class="cod-progress-step-fill"></div></div>`).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pick-subheadline" id="pickSubheadline" style="display:none">
+        <div class="pick-subheadline-title">Больше кэшбэка</div>
+        <div class="pick-subheadline-sub">Новые акции появляются каждый день</div>
+      </div>
+      <div class="success-bottom-spacer" id="successBottomSpacer" style="display:none"></div>
     </div>
-    <div class="bottom-fixed">
+    <div class="bottom-fixed" id="bottomFixed">
       <button class="btn-primary" id="nextBtn"></button>
       <div class="bottom-caption">${ICONS.heartFilled}<span class="bottom-caption-text-wrap" id="bottomCaptionWrap"><span class="bottom-caption-text" id="bottomCaptionText">Можно выбрать без ограничений</span></span></div>
     </div>
@@ -699,6 +755,12 @@ function snapScrollToChips(root) {
   scrollEl.scrollTo({ top: target, behavior: 'smooth' });
 }
 
+const SUCCESS_HEADLINE = { headline: 'Заглядывайте<br>перед покупкой', headlineSub: 'Новые акции появляются каждый день' };
+
+function currentHeadlineData() {
+  return state.successMode ? SUCCESS_HEADLINE : CATEGORIES[state.step];
+}
+
 function headlinePaneHTML(cat) {
   return `
     <div class="headline">${cat.headline}</div>
@@ -707,7 +769,7 @@ function headlinePaneHTML(cat) {
 }
 
 function updateHeadline(root, animate) {
-  const cat = CATEGORIES[state.step];
+  const cat = currentHeadlineData();
   const wrap = root.querySelector('.headline-content');
   const panes = wrap.querySelectorAll('.headline-pane');
   const current = panes[panes.length - 1];
@@ -764,7 +826,7 @@ function onNextClick(root) {
     state.step++;
     advanceToStep(root);
   } else {
-    openSuccessScreen();
+    enterSuccessMode(root);
   }
 }
 
@@ -811,6 +873,15 @@ function mountCashbackScreen(root) {
     openPickerScreen();
   });
   root.querySelector('#nextBtn').addEventListener('click', () => onNextClick(root));
+
+  root.querySelector('#pickSeeAll').addEventListener('click', () => {
+    haptic(8);
+    openFavoritesScreen();
+  });
+  root.querySelector('#pickMoreBtn').addEventListener('click', () => {
+    haptic(10);
+    exitSuccessMode(root);
+  });
 }
 
 function openCashbackScreen() {
@@ -928,12 +999,9 @@ function closeOfferScreen() {
     title.style.display = 'flex';
     if (favoritesNavbarUpdate) favoritesNavbarUpdate();
     if (favoritesRoot) renderFavoritesContent(favoritesRoot, false);
-  } else if (top && top.el.classList.contains('screen-success')) {
-    navbar.classList.add('hide-progress', 'hide-heart');
-    title.style.display = 'none';
-    if (successNavbarUpdate) successNavbarUpdate();
   } else {
-    navbar.classList.remove('hide-progress', 'hide-heart');
+    navbar.classList.toggle('hide-progress', state.successMode);
+    navbar.classList.toggle('hide-heart', state.successMode);
     title.style.display = 'none';
     if (cashbackNavbarUpdate) cashbackNavbarUpdate();
   }
@@ -1054,23 +1122,10 @@ function closeFavoritesScreen() {
   favoritesRoot = null;
   popScreen();
 
-  const top = screens[screens.length - 1];
   const navbar = document.getElementById('globalNavbar');
   document.getElementById('navbarTitle').style.display = 'none';
-  if (top && top.el.classList.contains('screen-success')) {
-    navbar.classList.add('hide-progress', 'hide-heart');
-    if (successNavbarUpdate) successNavbarUpdate();
-  } else {
-    navbar.classList.remove('hide-progress', 'hide-heart');
-    if (cashbackNavbarUpdate) cashbackNavbarUpdate();
-  }
-}
-
-function closeSuccessScreen() {
-  popScreen();
-  const navbar = document.getElementById('globalNavbar');
-  navbar.classList.remove('hide-progress', 'hide-heart');
-  document.getElementById('navbarTitle').style.display = 'none';
+  navbar.classList.toggle('hide-progress', state.successMode);
+  navbar.classList.toggle('hide-heart', state.successMode);
   if (cashbackNavbarUpdate) cashbackNavbarUpdate();
 }
 
@@ -1182,10 +1237,6 @@ function pickCardHTML(stepIndex, idx, it) {
           </div>
         </div>
       </div>
-      <div class="pick-card-info">
-        <div class="pick-card-name">${esc(it.name)}</div>
-        ${it.description ? `<div class="pick-card-desc">${esc(it.description)}</div>` : ''}
-      </div>
     </div>
   `;
 }
@@ -1221,92 +1272,62 @@ function renderPickRow(root) {
   });
 }
 
-function buildSuccessScreen() {
-  const el = document.createElement('div');
-  el.className = 'screen screen-success';
-  el.innerHTML = `
-    <div class="dim"></div>
-    <div class="scroll" id="successScroll">
-      <div class="navbar-spacer"></div>
-      <div class="tiles-row">
-        <div class="tile" id="tileNovember">
-          <div class="tile-top">
-            <div class="tile-label">Повышенный кэшбэк в ноябре</div>
-            <div class="tile-badge" id="novBadge">1</div>
-          </div>
-          <button class="tile-pick-btn" id="novPickBtn">Выбрать</button>
-          <div class="avatars" id="novAvatars" style="display:none"></div>
-        </div>
-        <div class="tile">
-          <div class="tile-label">Повышенный кэшбэк в октябре</div>
-          <div class="avatars" id="octAvatars"></div>
-        </div>
-      </div>
-      <div class="headline-block">
-        <div class="headline-content">
-          <div class="headline-pane" data-text="pick">
-            <div class="headline">Заглядывайте<br>перед покупкой</div>
-            <div class="headline-sub">Новые акции появляются каждый день</div>
-          </div>
-        </div>
-      </div>
-      <div class="pick-section" id="pickSection">
-        <div class="pick-section-head">
-          <div class="pick-section-title">Ваша подборка</div>
-          <button class="pick-section-all" id="pickSeeAll">Все</button>
-        </div>
-        <div class="pick-row" id="pickRow"></div>
-        <div class="pick-more-wrap">
-          <button class="pick-more-btn" id="pickMoreBtn">${ICONS.heart}<span>Дополнить избранное</span></button>
-        </div>
-      </div>
-      <div class="pick-subheadline">
-        <div class="pick-subheadline-title">Больше кэшбэка</div>
-        <div class="pick-subheadline-sub">Новые акции появляются каждый день</div>
-      </div>
-      <div class="success-bottom-spacer"></div>
-    </div>
-  `;
-  return el;
-}
-
-function mountSuccessScreen(root) {
+function enterSuccessMode(root) {
+  state.successMode = true;
   haptic([10, 50, 10, 50, 20]);
+
+  root.querySelector('.headline-block').style.display = 'none';
+  root.querySelector('#chipsStickyWrap').style.display = 'none';
+  root.querySelector('#offersWrap').style.display = 'none';
+  root.querySelector('#scrollBottomSpacer').style.display = 'none';
+  root.querySelector('#bottomFixed').style.display = 'none';
+  root.querySelector('#codWrap').style.display = '';
+  root.querySelector('#pickSubheadline').style.display = '';
+  root.querySelector('#successBottomSpacer').style.display = '';
 
   const navbar = document.getElementById('globalNavbar');
   navbar.classList.add('hide-progress', 'hide-heart');
-  document.getElementById('navbarTitle').style.display = 'none';
-  const successScrollEl = root.querySelector('#successScroll');
-  successNavbarUpdate = bindNavbarScroll(successScrollEl, () => successScrollEl.scrollTop > 0);
 
-  renderNovTile(root);
-  buildOctAvatars(root);
   renderPickRow(root);
 
-  root.querySelector('#novPickBtn').addEventListener('click', () => {
-    haptic(10);
-    openPickerScreen();
-  });
+  setTimeout(() => root.querySelector('#pickSection').classList.add('anim-in'), 90);
+  setTimeout(() => root.querySelector('#codWrap').classList.add('anim-in'), 130);
+  setTimeout(() => root.querySelector('#pickSubheadline').classList.add('anim-in'), 160);
 
-  root.querySelector('#pickSeeAll').addEventListener('click', () => {
-    haptic(8);
-    openFavoritesScreen();
-  });
-
-  root.querySelector('#pickMoreBtn').addEventListener('click', () => {
-    haptic(10);
-    popScreen();
-  });
-
-  setTimeout(() => root.querySelectorAll('.tile').forEach((t, i) => t.classList.add('anim-in')), 0);
-  setTimeout(() => root.querySelector('.headline-block').classList.add('anim-in'), 110);
-  setTimeout(() => root.querySelector('#pickSection').classList.add('anim-in'), 190);
+  clearTimeout(codProgressTimer);
+  const firstStepFill = root.querySelector('#codProgress .cod-progress-step-fill');
+  if (firstStepFill) {
+    firstStepFill.classList.remove('filled');
+    codProgressTimer = setTimeout(() => firstStepFill.classList.add('filled'), 1500);
+  }
 }
 
-function openSuccessScreen() {
-  const el = buildSuccessScreen();
-  pushScreen(el);
-  mountSuccessScreen(el);
+function exitSuccessMode(root) {
+  state.successMode = false;
+  haptic(8);
+
+  clearTimeout(codProgressTimer);
+  const firstStepFill = root.querySelector('#codProgress .cod-progress-step-fill');
+  if (firstStepFill) firstStepFill.classList.remove('filled');
+
+  root.querySelector('#pickSection').classList.remove('anim-in');
+  root.querySelector('#codWrap').classList.remove('anim-in');
+  root.querySelector('#pickSubheadline').classList.remove('anim-in');
+  root.querySelector('#codWrap').style.display = 'none';
+  root.querySelector('#pickSubheadline').style.display = 'none';
+  root.querySelector('#successBottomSpacer').style.display = 'none';
+  root.querySelector('.headline-block').style.display = '';
+  root.querySelector('#chipsStickyWrap').style.display = '';
+  root.querySelector('#offersWrap').style.display = '';
+  root.querySelector('#scrollBottomSpacer').style.display = '';
+  root.querySelector('#bottomFixed').style.display = '';
+
+  const navbar = document.getElementById('globalNavbar');
+  navbar.classList.remove('hide-progress', 'hide-heart');
+
+  updateHeadline(root, true);
+  updateNextBtn(root);
+  updateBottomCaption(root, true);
 }
 
 /* ============================== глобальный апп-бар ============================== */
@@ -1332,8 +1353,8 @@ function buildGlobalNavbar() {
       closeOfferScreen();
     } else if (top && top.el.classList.contains('screen-favorites')) {
       closeFavoritesScreen();
-    } else if (top && top.el.classList.contains('screen-success')) {
-      closeSuccessScreen();
+    } else if (top && top.el.classList.contains('screen-cashback') && state.successMode) {
+      exitSuccessMode(cashbackRoot);
     } else {
       popScreen();
     }
