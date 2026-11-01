@@ -110,6 +110,16 @@ const CASHBACK_OF_DAY = {
   steps: 5,
 };
 
+const DISTRICT_CASHBACK = {
+  title: 'Кэшбэк<br>на районе',
+  sub: 'Выгода рядом с вами',
+  avatars: [
+    'assets/cod/district-avatar-1.png',
+    'assets/cod/district-avatar-2.png',
+    'assets/cod/district-avatar-3.png',
+  ],
+};
+
 /* ============================== утилиты ============================== */
 
 function haptic(pattern) {
@@ -358,7 +368,7 @@ function buildStartScreen() {
           <img class="start-avatar" src="assets/start/avatar.png" alt="">
           <div class="start-search">
             <span class="start-search-icon"><img src="assets/start/icon-search.svg" alt=""></span>
-            <span>Поиск</span>
+            <span class="start-search-text">Поиск</span>
           </div>
           <button class="start-gift-btn" aria-label="Подарки"><img src="assets/start/icon-gift.svg" alt=""></button>
         </div>
@@ -472,11 +482,16 @@ function buildCashbackScreen() {
           <button class="pick-section-all" id="pickSeeAll">Все</button>
         </div>
         <div class="pick-row" id="pickRow"></div>
+        <div class="pick-row-compact" id="pickRowCompact"></div>
         <div class="pick-more-wrap">
           <button class="pick-more-btn" id="pickMoreBtn">${ICONS.heart}<span>Дополнить избранное</span></button>
         </div>
       </div>
       <div class="cod-wrap" id="codWrap" style="display:none">
+        <div class="cod-headline">
+          <div class="cod-headline-title">На <img class="cod-headline-num" src="assets/cod/headline-70.svg" alt="70%"><br>больше кэшбэка</div>
+          <div class="cod-headline-sub">Получают люди, которые заходят<br>в раздел каждый день</div>
+        </div>
         <div class="cod-card">
           <div class="cod-bg"></div>
           <div class="cod-head">
@@ -497,6 +512,18 @@ function buildCashbackScreen() {
               <div class="cod-progress" id="codProgress">
                 ${Array.from({ length: CASHBACK_OF_DAY.steps }).map(() => `<div class="cod-progress-step"><div class="cod-progress-step-fill"></div></div>`).join('')}
               </div>
+            </div>
+          </div>
+        </div>
+        <div class="district-card">
+          <div class="district-bg"></div>
+          <div class="district-head">
+            <div class="district-head-text">
+              <div class="district-title">${DISTRICT_CASHBACK.title}</div>
+              <div class="district-sub">${esc(DISTRICT_CASHBACK.sub)}</div>
+            </div>
+            <div class="cod-avatars">
+              ${DISTRICT_CASHBACK.avatars.map((src) => `<img class="cod-avatar" src="${src}" alt="" loading="lazy">`).join('')}
             </div>
           </div>
         </div>
@@ -1075,7 +1102,7 @@ function closeOfferScreen() {
     if (favoritesRoot) renderFavoritesContent(favoritesRoot, false);
   } else {
     navbar.classList.toggle('hide-progress', state.successMode);
-    navbar.classList.toggle('hide-heart', state.successMode);
+    navbar.classList.remove('hide-heart');
     title.style.display = 'none';
     if (cashbackNavbarUpdate) cashbackNavbarUpdate();
   }
@@ -1091,6 +1118,32 @@ function favoritesEntries() {
     });
   });
   return entries;
+}
+
+const RECOMMEND_LIMIT = 6;
+
+// Кандидаты на "Рекомендуем вам": непролайканные офферы. При фильтре по
+// конкретной категории — рекомендации только из неё; при "Все" — вперемешку
+// по кругу из каждой категории, чтобы раздел не был однобоким.
+function recommendedEntries(filterStep, limit) {
+  limit = limit || RECOMMEND_LIMIT;
+  const cats = filterStep === null ? CATEGORIES : [CATEGORIES[filterStep]];
+  const perCat = cats.map((cat) => {
+    const stepIndex = CATEGORIES.indexOf(cat);
+    return cat.items
+      .map((it, idx) => ({ stepIndex, idx, item: it, type: cat.type }))
+      .filter((e) => !state.likes[stepIndex].has(e.idx));
+  });
+
+  if (filterStep !== null) return perCat[0].slice(0, limit);
+
+  const result = [];
+  for (let i = 0; result.length < limit && perCat.some((arr) => i < arr.length); i++) {
+    perCat.forEach((arr) => {
+      if (result.length < limit && arr[i]) result.push(arr[i]);
+    });
+  }
+  return result;
 }
 
 function buildFavoritesScreen() {
@@ -1114,19 +1167,32 @@ function renderFavoritesContent(root, animate) {
   const entries = favoritesFilterStep === null ? all : all.filter((e) => e.stepIndex === favoritesFilterStep);
   const listEntries = entries.filter((e) => e.type === 'list');
   const gridEntries = entries.filter((e) => e.type !== 'list');
-  const renderedOrder = listEntries.concat(gridEntries);
 
+  let likedHtml = '';
   if (!entries.length) {
-    wrap.innerHTML = `<div class="favorites-empty">Пока нет избранных предложений</div>`;
+    likedHtml = `<div class="favorites-empty">Пока нет избранных предложений</div>`;
   } else {
-    let html = '';
-    if (listEntries.length) html += `<div class="offer-list">${listEntries.map((e) => offerListItemHTML(e.stepIndex, e.idx, e.item)).join('')}</div>`;
-    if (gridEntries.length) html += `<div class="offer-grid">${gridEntries.map((e) => offerCardHTML(e.stepIndex, e.idx, e.item)).join('')}</div>`;
-    wrap.innerHTML = html;
+    if (listEntries.length) likedHtml += `<div class="offer-list">${listEntries.map((e) => offerListItemHTML(e.stepIndex, e.idx, e.item)).join('')}</div>`;
+    if (gridEntries.length) likedHtml += `<div class="offer-grid">${gridEntries.map((e) => offerCardHTML(e.stepIndex, e.idx, e.item)).join('')}</div>`;
   }
 
-  wrap.querySelectorAll('.heart-btn').forEach((btn, i) => {
-    const { stepIndex, idx } = renderedOrder[i];
+  const recEntries = recommendedEntries(favoritesFilterStep);
+  const recListEntries = recEntries.filter((e) => e.type === 'list');
+  const recGridEntries = recEntries.filter((e) => e.type !== 'list');
+  const recHtml = recEntries.length ? `
+    <div class="fav-recommend">
+      <div class="fav-recommend-title">Рекомендуем вам</div>
+      ${recListEntries.length ? `<div class="offer-list">${recListEntries.map((e) => offerListItemHTML(e.stepIndex, e.idx, e.item)).join('')}</div>` : ''}
+      ${recGridEntries.length ? `<div class="offer-grid">${recGridEntries.map((e) => offerCardHTML(e.stepIndex, e.idx, e.item)).join('')}</div>` : ''}
+    </div>
+  ` : '';
+
+  wrap.innerHTML = `<div class="fav-liked-wrap">${likedHtml}</div>${recHtml}`;
+
+  const likedOrder = listEntries.concat(gridEntries);
+  const likedWrap = wrap.querySelector('.fav-liked-wrap');
+  likedWrap.querySelectorAll('.heart-btn').forEach((btn, i) => {
+    const { stepIndex, idx } = likedOrder[i];
     btn.classList.add('liked');
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -1135,11 +1201,28 @@ function renderFavoritesContent(root, animate) {
       renderFavoritesContent(root, false);
     });
   });
-
-  wrap.querySelectorAll('.offer-item, .offer-card').forEach((el, i) => {
-    const { stepIndex, idx } = renderedOrder[i];
+  likedWrap.querySelectorAll('.offer-item, .offer-card').forEach((el, i) => {
+    const { stepIndex, idx } = likedOrder[i];
     el.addEventListener('click', () => openOfferScreen(stepIndex, idx));
   });
+
+  const recOrder = recListEntries.concat(recGridEntries);
+  const recWrap = wrap.querySelector('.fav-recommend');
+  if (recWrap) {
+    recWrap.querySelectorAll('.heart-btn').forEach((btn, i) => {
+      const { stepIndex, idx } = recOrder[i];
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setOfferLiked(stepIndex, idx, true);
+        haptic([10, 20, 10]);
+        renderFavoritesContent(root, false);
+      });
+    });
+    recWrap.querySelectorAll('.offer-item, .offer-card').forEach((el, i) => {
+      const { stepIndex, idx } = recOrder[i];
+      el.addEventListener('click', () => openOfferScreen(stepIndex, idx));
+    });
+  }
 
   if (animate) triggerAnim(wrap);
 }
@@ -1172,8 +1255,8 @@ function mountFavoritesScreen(root) {
   renderFavoritesContent(root, false);
 
   const navbar = document.getElementById('globalNavbar');
-  navbar.classList.remove('solid');
-  favoritesNavbarUpdate = () => navbar.classList.remove('solid');
+  navbar.classList.add('solid');
+  favoritesNavbarUpdate = () => navbar.classList.add('solid');
 
   setTimeout(() => root.querySelector('.chips-row').classList.add('anim-in'), 60);
   setTimeout(() => root.querySelector('#favoritesWrap').classList.add('anim-in'), 140);
@@ -1199,7 +1282,7 @@ function closeFavoritesScreen() {
   const navbar = document.getElementById('globalNavbar');
   document.getElementById('navbarTitle').style.display = 'none';
   navbar.classList.toggle('hide-progress', state.successMode);
-  navbar.classList.toggle('hide-heart', state.successMode);
+  navbar.classList.remove('hide-heart');
   if (cashbackNavbarUpdate) cashbackNavbarUpdate();
 }
 
@@ -1318,6 +1401,7 @@ function pickCardHTML(stepIndex, idx, it) {
 function renderPickRow(root) {
   const section = root.querySelector('#pickSection');
   const row = root.querySelector('#pickRow');
+  const rowCompact = root.querySelector('#pickRowCompact');
   const entries = favoritesEntries();
 
   if (!entries.length) {
@@ -1325,6 +1409,41 @@ function renderPickRow(root) {
     return;
   }
   section.style.display = '';
+
+  // 1-2 выбранных оффера показываем строчным списком (как в избранном),
+  // от 3 и больше — горизонтальной прокруткой карточек.
+  if (entries.length <= 2) {
+    row.style.display = 'none';
+    row.innerHTML = '';
+    rowCompact.style.display = 'block';
+    const listEntries = entries.filter((e) => e.type === 'list');
+    const gridEntries = entries.filter((e) => e.type !== 'list');
+    rowCompact.innerHTML = [
+      listEntries.length ? `<div class="offer-list">${listEntries.map((e) => offerListItemHTML(e.stepIndex, e.idx, e.item)).join('')}</div>` : '',
+      gridEntries.length ? `<div class="offer-grid">${gridEntries.map((e) => offerCardHTML(e.stepIndex, e.idx, e.item)).join('')}</div>` : '',
+    ].join('');
+
+    const order = listEntries.concat(gridEntries);
+    rowCompact.querySelectorAll('.heart-btn').forEach((btn, i) => {
+      const { stepIndex, idx } = order[i];
+      btn.classList.add('liked');
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setOfferLiked(stepIndex, idx, false);
+        haptic(8);
+        renderPickRow(root);
+      });
+    });
+    rowCompact.querySelectorAll('.offer-item, .offer-card').forEach((el, i) => {
+      const { stepIndex, idx } = order[i];
+      el.addEventListener('click', () => openOfferScreen(stepIndex, idx));
+    });
+    return;
+  }
+
+  rowCompact.style.display = 'none';
+  rowCompact.innerHTML = '';
+  row.style.display = '';
   row.innerHTML = entries.map((e) => pickCardHTML(e.stepIndex, e.idx, e.item)).join('');
 
   row.querySelectorAll('.pick-card-heart').forEach((btn) => {
@@ -1358,9 +1477,11 @@ function enterSuccessMode(root) {
   root.querySelector('#codWrap').style.display = '';
   root.querySelector('#pickSubheadline').style.display = '';
   root.querySelector('#successBottomSpacer').style.display = '';
+  root.querySelector('#cbScroll').scrollTop = 0;
 
   const navbar = document.getElementById('globalNavbar');
-  navbar.classList.add('hide-progress', 'hide-heart');
+  navbar.classList.add('hide-progress');
+  navbar.classList.remove('hide-heart');
 
   renderPickRow(root);
 
@@ -1428,7 +1549,7 @@ function buildGlobalNavbar() {
     } else if (top && top.el.classList.contains('screen-favorites')) {
       closeFavoritesScreen();
     } else if (top && top.el.classList.contains('screen-cashback') && state.successMode) {
-      exitSuccessMode(cashbackRoot);
+      popToRoot();
     } else {
       popScreen();
     }

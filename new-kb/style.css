@@ -241,6 +241,8 @@ button { font-family: inherit; }
 
 .start-search-icon img { width: 20px; height: 20px; }
 
+.start-search-text { opacity: 0.5; }
+
 .start-gift-btn {
   appearance: none;
   border: none;
@@ -318,7 +320,7 @@ button { font-family: inherit; }
   height: 133px;
   margin-bottom: -65px;
   border-radius: 30px;
-  background: #000;
+  background: #000 url('assets/start/card.png') center / cover no-repeat;
 }
 
 .start-actions {
@@ -784,6 +786,17 @@ button { font-family: inherit; }
   text-align: center;
   font-size: 13px;
   color: var(--text-secondary);
+}
+
+.fav-recommend { padding-top: 28px; }
+
+.fav-recommend-title {
+  padding: 0 16px 12px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.36px;
+  color: var(--text);
 }
 
 /* list layout */
@@ -1462,6 +1475,8 @@ button { font-family: inherit; }
 
 .pick-row::-webkit-scrollbar { display: none; }
 
+.pick-row-compact { display: none; padding: 8px 0 16px; }
+
 .pick-card {
   flex-shrink: 0;
   width: 155px;
@@ -1530,7 +1545,7 @@ button { font-family: inherit; }
   white-space: nowrap;
 }
 
-.pick-more-wrap { padding: 0 16px; }
+.pick-more-wrap { padding: 0 16px; display: none; }
 
 .pick-more-btn {
   appearance: none;
@@ -1581,10 +1596,44 @@ button { font-family: inherit; }
 /* ---------- "Кэшбэк дня" card ---------- */
 
 .cod-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   padding: 0 16px;
   margin-top: 20px;
   opacity: 0;
   transform: translateY(18px);
+}
+
+.cod-headline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.cod-headline-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 30px;
+  letter-spacing: 0.36px;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+.cod-headline-num {
+  width: 52px;
+  height: auto;
+  vertical-align: middle;
+  margin: -10px -2px 0;
+}
+
+.cod-headline-sub {
+  font-size: 15px;
+  letter-spacing: -0.24px;
+  color: var(--text);
+  opacity: 0.5;
 }
 
 .cod-card {
@@ -1598,14 +1647,16 @@ button { font-family: inherit; }
   position: absolute;
   inset: -60%;
   pointer-events: none;
-  background: conic-gradient(from 0deg, #ffd6e8, #d6e4ff, #d6fff0, #fff3d6, #ffd6f6, #d6e8ff, #ffd6e8);
-  opacity: 0.55;
-  filter: blur(30px);
-  animation: codSpin 18s linear infinite;
+  background: conic-gradient(from 0deg, #ffb8dd, #b8d0ff, #b8f5dd, #fff0b8, #ffb8f0, #b8c8ff, #ffb8dd);
+  opacity: 0.68;
+  filter: blur(26px);
+  animation: codSpin 13s linear infinite;
 }
 
 @keyframes codSpin {
-  to { transform: rotate(360deg); }
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.06); }
+  100% { transform: rotate(360deg) scale(1); }
 }
 
 .cod-head {
@@ -1720,3 +1771,60 @@ button { font-family: inherit; }
 }
 
 .cod-progress-step-fill.filled { width: 100%; }
+
+/* ---------- "Кэшбэк на районе" card ---------- */
+
+.district-card {
+  position: relative;
+  overflow: hidden;
+  height: 120px;
+  border-radius: 20px;
+  background: var(--tile-bg);
+}
+
+.district-bg {
+  position: absolute;
+  inset: 0;
+  background: url('assets/cod/district-map.png') center / cover no-repeat;
+}
+
+.district-head {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 16px 12px 20px;
+}
+
+.district-head-text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.district-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.2;
+  letter-spacing: 0.36px;
+  color: var(--text);
+}
+
+.district-sub {
+  font-size: 15px;
+  letter-spacing: -0.24px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* иконки для этой карточки уже содержат свою обводку в самом файле */
+.district-card .cod-avatar {
+  border: none;
+  box-shadow: none;
+}
