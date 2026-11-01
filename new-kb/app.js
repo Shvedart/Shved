@@ -99,7 +99,15 @@ const OCT_AVATARS = ['assets/icons/avatars/0.png', 'assets/icons/avatars/1.png',
 /* ============================== утилиты ============================== */
 
 function haptic(pattern) {
-  try { if ('vibrate' in navigator) navigator.vibrate(pattern); } catch (e) { /* no-op */ }
+  try {
+    if ('vibrate' in navigator) { navigator.vibrate(pattern); return; }
+  } catch (e) { /* no-op */ }
+  // iOS 18+ / Safari 18+: нет Vibration API, но нативный <input switch>
+  // вызывает системный Taptic Engine при тапе через связанный label.
+  try {
+    const trigger = document.getElementById('hapticTrigger');
+    if (trigger) trigger.click();
+  } catch (e) { /* no-op */ }
 }
 
 function esc(str) {
