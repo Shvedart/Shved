@@ -25,7 +25,7 @@ const CATEGORIES = [
     id: 'food', label: 'Еда', type: 'list', nextLabel: 'Любимые бренды', moreNote: 'И ещё 100 предложений покажем в ленте',
     headline: 'Настройте<br>кэшбэк под себя', headlineSub: 'Сохраняйте то, что пригодится',
     items: [
-      { id: 'food-gotovaya-eda-v-samokate-v-gorode-20', percent: '20%', name: 'Готовая еда в Самокате в Городе', icon: 'https://ms-static-images.t-static.ru/partner-5405-image280-79f9494b.png', until: 'На одну покупку онлайн', offerType: 'кэшбэк', expiration: '1 день', urgency: 'горящий', background: 'https://ms-static-images.t-static.ru/partner-image1252-c14c0afb0c654eb286e0b16e531ab025.png', description: 'Доставка из магазинов' },
+      { id: 'food-gotovaya-eda-v-samokate-v-gorode-20', percent: '20%', name: 'Самокат: готовая еда в Городе', icon: 'https://ms-static-images.t-static.ru/partner-5405-image280-79f9494b.png', until: 'На одну покупку онлайн', offerType: 'кэшбэк', expiration: '1 день', urgency: 'горящий', background: 'https://ms-static-images.t-static.ru/partner-image1252-c14c0afb0c654eb286e0b16e531ab025.png', description: 'Доставка из магазинов' },
       { id: 'food-lenta-dostavka-do-35', percent: 'до 35%', name: 'Лента Доставка', icon: 'https://ms-static-images.t-static.ru/partner-9663-image280-39f63a9e.png', until: 'На одну покупку онлайн от 1 500 ₽', offerType: 'кэшбэк', expiration: 'До 6 ноября', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-41357af878564e0fa4cecd60021d94c8.png', description: 'Сервис доставки продуктов' },
       { id: 'food-yandeks-lavka-12', percent: '12%', name: 'Яндекс Лавка', icon: 'https://ms-static-images.t-static.ru/partner-11589-image280-26eb9606.png', until: 'На одну покупку онлайн от 1 000 ₽', offerType: 'кэшбэк', expiration: 'До 6 ноября', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-d09ad658d287407c95154cb949ecd93a.png', description: 'Онлайн-магазин с доставкой' },
       { id: 'food-vkusvill-300', percent: '300 ₽', name: 'ВкусВилл', icon: 'https://ms-static-images.t-static.ru/partner-5613-image280-ef90c02e.png', until: 'На одну покупку онлайн от 1 500 ₽', offerType: 'скидка', expiration: 'До 6 ноября', urgency: 'стандартный', background: 'https://ms-static-images.t-static.ru/partner-image1252-f8aee6e9a15b455ba6a2b6f734b52e02.png', description: 'Скидка по промокоду на доставку продуктов для здорового питания' },
@@ -58,7 +58,7 @@ const CATEGORIES = [
     id: 'district', label: 'Кэшбэк на районе', type: 'list', nextLabel: null,
     headline: 'Бонусы<br>прямо у дома', headlineSub: 'Кофейни, салоны и магазины рядом',
     nearbyStreet: 'Турмалиновская ул',
-    chainLabel: 'Кэшбэк в Пятёрочек',
+    chainLabel: 'Кэшбэк в Пятёрочке',
     chainStreet: 'ул. Ленина, 14',
     chainAvatar: 'assets/district/pyaterochka-avatar.png',
     items: [
@@ -78,7 +78,7 @@ const CATEGORIES = [
 
 const PICKER_MAX = 4;
 const PICKER_CATEGORIES = [
-  { name: 'Жд билеты', icon: 'assets/icons/picker/0.png', percent: 15 },
+  { name: 'ЖД билеты', icon: 'assets/icons/picker/0.png', percent: 15 },
   { name: 'Аптеки', icon: 'assets/icons/picker/1.png', percent: 10 },
   { name: 'Ремонт и стройка', icon: 'assets/icons/picker/2.png', percent: 12 },
   { name: 'Ювелирные украшения', icon: 'assets/icons/picker/3.png', percent: 8 },
@@ -1002,7 +1002,7 @@ const OFFER_STEPS = [
 
 const OFFER_BULLETS = [
   'Спецпредложение действует на покупки только в точках, отмеченных на карте',
-  'Не суммируется с другими акциями партнёра в разделе «Кэшбэк и бонусы»',
+  'Не суммируется с другими акциями партнёра в разделе «Кэшбэки и бонусы»',
   'Акция суммируется с программой лояльности партнёра. Для получения дополнительных бонусов отсканируйте карту лояльности',
 ];
 
@@ -1103,7 +1103,12 @@ function closeOfferScreen() {
   } else {
     navbar.classList.toggle('hide-progress', state.successMode);
     navbar.classList.remove('hide-heart');
-    title.style.display = 'none';
+    if (state.successMode) {
+      title.textContent = 'Кэшбэки и бонусы';
+      title.style.display = 'flex';
+    } else {
+      title.style.display = 'none';
+    }
     if (cashbackNavbarUpdate) cashbackNavbarUpdate();
   }
 }
@@ -1280,7 +1285,13 @@ function closeFavoritesScreen() {
   popScreen();
 
   const navbar = document.getElementById('globalNavbar');
-  document.getElementById('navbarTitle').style.display = 'none';
+  const title = document.getElementById('navbarTitle');
+  if (state.successMode) {
+    title.textContent = 'Кэшбэки и бонусы';
+    title.style.display = 'flex';
+  } else {
+    title.style.display = 'none';
+  }
   navbar.classList.toggle('hide-progress', state.successMode);
   navbar.classList.remove('hide-heart');
   if (cashbackNavbarUpdate) cashbackNavbarUpdate();
@@ -1386,12 +1397,9 @@ function pickCardHTML(stepIndex, idx, it) {
         <div class="pick-card-text">
           <div class="pick-card-stat">
             <div class="pick-card-percent">${esc(it.percent)}</div>
-            <div class="pick-card-cb-label">Кэшбэк</div>
+            <div class="pick-card-cb-label">${esc(it.name)}</div>
           </div>
-          <div class="pick-card-meta">
-            <div>${esc(it.until || UNTIL_TEXT)}</div>
-            ${it.expiration ? `<div>${esc(it.expiration)}</div>` : ''}
-          </div>
+          ${it.expiration ? `<div class="pick-card-meta"><div>${esc(it.expiration)}</div></div>` : ''}
         </div>
       </div>
     </div>
@@ -1482,6 +1490,9 @@ function enterSuccessMode(root) {
   const navbar = document.getElementById('globalNavbar');
   navbar.classList.add('hide-progress');
   navbar.classList.remove('hide-heart');
+  const title = document.getElementById('navbarTitle');
+  title.textContent = 'Кэшбэки и бонусы';
+  title.style.display = 'flex';
 
   renderPickRow(root);
 
@@ -1519,6 +1530,7 @@ function exitSuccessMode(root) {
 
   const navbar = document.getElementById('globalNavbar');
   navbar.classList.remove('hide-progress', 'hide-heart');
+  document.getElementById('navbarTitle').style.display = 'none';
 
   updateHeadline(root, true);
   updateNextBtn(root);

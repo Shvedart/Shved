@@ -1531,6 +1531,9 @@ button { font-family: inherit; }
   letter-spacing: -0.24px;
   color: var(--text);
   margin-top: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .pick-card-meta {
