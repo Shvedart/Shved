@@ -347,11 +347,85 @@ function buildStartScreen() {
   el.className = 'screen screen-start';
   el.innerHTML = `
     <div class="dim"></div>
-    <button class="start-bg-btn" id="startBtn" aria-label="Кэшбэки и бонусы">
-      <img class="start-bg-img" src="assets/start-bg.png" alt="">
-    </button>
+    <div class="scroll start-scroll">
+      <div class="start-safe-spacer"></div>
+      <div class="start-notif-bar">
+        <span class="start-notif-icon"><img src="assets/start/icon-bell.svg" alt=""></span>
+        <span>Все уведомления</span>
+      </div>
+      <div class="start-main">
+        <div class="start-header">
+          <img class="start-avatar" src="assets/start/avatar.png" alt="">
+          <div class="start-search">
+            <span class="start-search-icon"><img src="assets/start/icon-search.svg" alt=""></span>
+            <span>Поиск</span>
+          </div>
+          <button class="start-gift-btn" aria-label="Подарки"><img src="assets/start/icon-gift.svg" alt=""></button>
+        </div>
+        <div class="start-dots"><span class="active"></span><span></span><span></span></div>
+        <div class="start-balance-wrap">
+          <div class="start-crown-pill"><img src="assets/start/icon-crown.svg" alt=""><span>2 450 ₽</span></div>
+          <div class="start-balance">12 424 ₽</div>
+        </div>
+        <div class="start-card-area">
+          <div class="start-card-black"></div>
+          <div class="start-actions">
+            <div class="start-action">
+              <div class="start-action-btn"><img src="assets/start/icon-add.svg" alt=""></div>
+              <span>Пополнить</span>
+            </div>
+            <div class="start-action">
+              <div class="start-action-btn"><img src="assets/start/icon-flip.svg" alt=""></div>
+              <span>Скан</span>
+            </div>
+            <div class="start-action">
+              <div class="start-action-btn"><img src="assets/start/icon-arrow-forward.svg" alt=""></div>
+              <span>Перевести</span>
+            </div>
+            <div class="start-action">
+              <div class="start-action-btn"><img src="assets/start/icon-prem.svg" alt=""></div>
+              <span>Прем</span>
+            </div>
+          </div>
+        </div>
+        <div class="start-tiles">
+          <div class="start-tile">
+            <div class="start-tile-text">
+              <div class="start-tile-title">Операции</div>
+              <div class="start-tile-sub">Траты в октябре 43 746 ₽</div>
+            </div>
+            <div class="start-ops-bars"><span></span><span></span><span></span></div>
+          </div>
+          <button class="start-tile start-tile-cashback" id="startCashbackTile" aria-label="Кэшбэки и бонусы">
+            <div class="start-tile-text">
+              <div class="start-tile-title">Кэшбэки<br>и бонусы</div>
+            </div>
+            <div class="start-tile-badge">1</div>
+            <div class="start-tile-icons">
+              <img src="assets/start/icon-m.png" alt="">
+              <img src="assets/start/icon-bird.png" alt="">
+              <img src="assets/start/icon-chicken.png" alt="">
+            </div>
+          </button>
+          <div class="start-tile start-tile-row">
+            <div class="start-tile-icon-sq"></div>
+            <div class="start-tile-text">
+              <div class="start-tile-title">120 000 ₽</div>
+              <div class="start-tile-sub">Накопления</div>
+            </div>
+          </div>
+          <div class="start-tile start-tile-row">
+            <div class="start-tile-icon-sq"></div>
+            <div class="start-tile-text">
+              <div class="start-tile-title">Кредиты</div>
+              <div class="start-tile-sub">Деньги от банка и рейтинг</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   `;
-  el.querySelector('#startBtn').addEventListener('click', () => {
+  el.querySelector('#startCashbackTile').addEventListener('click', () => {
     haptic(10);
     openCashbackScreen();
   });

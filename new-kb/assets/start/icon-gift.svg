@@ -1,0 +1,15 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Icon">
+<mask id="mask0_0_14" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="2" y="2" width="20" height="20">
+<g id="Mask">
+<path id="Mask_2" d="M2 7.00003V11H22V7.00003H2Z" fill="black" style="fill:black;fill-opacity:1;"/>
+<path id="Mask_3" opacity="0.7" fill-rule="evenodd" clip-rule="evenodd" d="M7.09091 2.00002H6V4.00002C6 5.65687 7.34315 7.00002 9 7.00002H12H15C16.6569 7.00002 18 5.65687 18 4.00002V2.00002H15C13.3431 2.00002 12 3.34316 12 5.00002C12 3.34316 10.6569 2.00002 9 2.00002H7.09091Z" fill="black" style="fill:black;fill-opacity:1;"/>
+<path id="Mask_4" opacity="0.8" fill-rule="evenodd" clip-rule="evenodd" d="M10 11H3V22H10V11ZM14 11V19C14 20.6569 12.6569 22 11 22H17C19.2091 22 21 20.2092 21 18V11H14Z" fill="black" style="fill:black;fill-opacity:1;"/>
+<path id="Mask_5" opacity="0.3" d="M14 11H10V22H11C12.6569 22 14 20.6569 14 19V11Z" fill="black" style="fill:black;fill-opacity:1;"/>
+</g>
+</mask>
+<g mask="url(#mask0_0_14)">
+<path id="Color" d="M0 0H24V24H0V0Z" fill="#663FFF" style="fill:#663FFF;fill:color(display-p3 0.3987 0.2484 1.0000);fill-opacity:1;"/>
+</g>
+</g>
+</svg>

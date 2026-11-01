@@ -1,0 +1,10 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="notifications">
+<mask id="mask0_0_21" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+<rect id="Bounding box" width="24" height="24" fill="#D9D9D9" style="fill:#D9D9D9;fill:color(display-p3 0.8510 0.8510 0.8510);fill-opacity:1;"/>
+</mask>
+<g mask="url(#mask0_0_21)">
+<path id="notifications_2" d="M4.00028 19V17H6.00028V9.99998C6.00028 8.61665 6.41695 7.38748 7.25028 6.31248C8.08361 5.23748 9.16695 4.53332 10.5003 4.19998V3.49998C10.5003 3.08332 10.6461 2.72915 10.9378 2.43748C11.2294 2.14582 11.5836 1.99998 12.0003 1.99998C12.4169 1.99998 12.7711 2.14582 13.0628 2.43748C13.3544 2.72915 13.5003 3.08332 13.5003 3.49998V4.19998C14.8336 4.53332 15.9169 5.23748 16.7503 6.31248C17.5836 7.38748 18.0003 8.61665 18.0003 9.99998V17H20.0003V19H4.00028ZM12.0003 22C11.4503 22 10.9794 21.8041 10.5878 21.4125C10.1961 21.0208 10.0003 20.55 10.0003 20H14.0003C14.0003 20.55 13.8044 21.0208 13.4128 21.4125C13.0211 21.8041 12.5503 22 12.0003 22Z" fill="#1C1B1F" style="fill:#1C1B1F;fill:color(display-p3 0.1098 0.1059 0.1216);fill-opacity:1;"/>
+</g>
+</g>
+</svg>

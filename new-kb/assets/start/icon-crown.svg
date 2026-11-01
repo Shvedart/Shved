@@ -1,0 +1,16 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="tui-ic-medium / crown">
+<mask id="mask0_0_27" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="1" width="12" height="9">
+<g id="Mask">
+<g id="Mask_2">
+<path d="M6.00049 1.50098L9.45092 9.501C9.27324 9.6565 9.04144 9.74849 8.79248 9.74854H6.00049H3.20752C2.75401 9.74845 2.35744 9.44326 2.24121 9.00488L0.75 3.38086L4.28418 5.47314L4.28662 5.47412L5.99951 1.50098L6 1.5L6.00049 1.50098Z" fill="#D7D7D7" style="fill:#D7D7D7;fill:color(display-p3 0.8420 0.8420 0.8420);fill-opacity:1;"/>
+<path d="M6.00049 1.50098L9.45092 9.501C9.27324 9.6565 9.04144 9.74849 8.79248 9.74854H6.00049H3.20752C2.75401 9.74845 2.35744 9.44326 2.24121 9.00488L0.75 3.38086L4.28418 5.47314L4.28662 5.47412L5.99951 1.50098L6 1.5L6.00049 1.50098Z" fill="black" style="fill:black;fill-opacity:1;"/>
+</g>
+<path id="Mask_3" d="M9.75879 9.00488C9.70635 9.20268 9.59626 9.37271 9.4502 9.50049L7.71387 5.47363L11.25 3.38086L9.75879 9.00488Z" fill="black" fill-opacity="0.65" style="fill:black;fill-opacity:0.65;"/>
+</g>
+</mask>
+<g mask="url(#mask0_0_27)">
+<path id="Color" d="M0 0H12V12H0V0Z" fill="white" style="fill:white;fill-opacity:1;"/>
+</g>
+</g>
+</svg>
