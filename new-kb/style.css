@@ -31,7 +31,7 @@
 
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --navbar-h: calc(52px + var(--safe-top));
+  --navbar-h: calc(52px + var(--safe-top) + 14px);
   --ease-ios: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
@@ -104,10 +104,16 @@
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 html, body {
+  position: fixed;
+  inset: 0;
+  width: 100%;
   height: 100%;
+  /* iOS PWA: тянем layout до физического низа, включая home-indicator */
+  height: -webkit-fill-available;
+  overflow: hidden;
   margin: 0;
   overscroll-behavior: none;
-  background: #e9e9ec;
+  background: #ffffff;
 }
 
 body {
@@ -118,9 +124,12 @@ body {
 
 button { font-family: inherit; }
 
+/* Только inset:0 — без height:100vh/--vh. На iOS standalone innerHeight
+   часто короче экрана на safe-area снизу; жёсткая высота оставляла серый зазор. */
 #app {
   position: fixed;
   inset: 0;
+  width: 100%;
   overflow: hidden;
   background: var(--bg);
 }
@@ -189,7 +198,7 @@ button { font-family: inherit; }
   justify-content: space-between;
   gap: 16px;
   height: var(--navbar-h);
-  padding: calc(var(--safe-top) + 6px) 16px 10px;
+  padding: calc(var(--safe-top) + 20px) 16px 10px;
   background: transparent;
   border-bottom: 0.5px solid transparent;
   transition: background-color 0.2s ease, border-color 0.2s ease;
@@ -859,7 +868,7 @@ button { font-family: inherit; }
   align-items: center;
   gap: 12px;
   height: var(--navbar-h);
-  padding: calc(var(--safe-top) + 6px) 16px 10px;
+  padding: calc(var(--safe-top) + 20px) 16px 10px;
   background: transparent;
 }
 
