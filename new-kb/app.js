@@ -137,6 +137,30 @@ const NOV_CHOSEN_LAYOUT = 'inline'; // 'inline' | 'wide' | 'hidden'
 // рядом). Старый вариант не удаляется, просто не рендерится.
 const DISTRICT_LAYOUT = 'expanded'; // 'simple' | 'expanded'
 
+const POPULAR_BRANDS = {
+  title: 'Популярные бренды',
+  sub: '40% крупных сетей',
+  avatars: [
+    'assets/cod/popular-brands/avatar-1.png',
+    'assets/cod/popular-brands/avatar-2.png',
+  ],
+  lottiePath: 'assets/cod/popular-brands/animation.json',
+};
+
+const FIND_DEAL = {
+  title: 'Найди выгоду',
+  sub: 'Кэшбэк от партнёров суммируется с вашим повышенным кэшбэком на месяц',
+  searchPlaceholder: 'Поиск выгоды',
+  categories: ['Еда', 'Одежда', 'Электроника', 'Обувь', 'Путешествия', 'Авто'],
+};
+
+// Карточка "Популярные бренды": анимация не проигрывается сама по себе, а
+// "скрабится" по скроллу. 0% прогресса — самый верх скролла #cbScroll (ещё
+// до того как карточка показалась во вьюпорте), 100% — карточка уже
+// полностью видна и пользователь доскроллил ещё на эту долю высоты
+// вьюпорта ниже этой точки.
+const POPULAR_BRANDS_SCRUB_END_EXTRA_SCROLL = 1.5;
+
 const CASHBACK_STREAK = {
   title: 'Подарим кэшбэк 99%',
   sub: 'Если зайдете сюда 5 дней подряд',
@@ -201,6 +225,8 @@ let favoritesFilterStep = null;
 let favoritesNavbarUpdate = null;
 let codProgressTimer = null;
 let codStreakObserver = null;
+let popularBrandsLottie = null;
+let popularBrandsScrollHandler = null;
 
 function resetState() {
   state.step = 0;
@@ -614,6 +640,105 @@ function districtCardSimpleHTML() {
   `;
 }
 
+function popularBrandsCardHTML() {
+  return `
+    <div class="popular-brands-card">
+      <div class="popular-brands-anim" id="popularBrandsAnim"></div>
+      <div class="popular-brands-head">
+        <div class="popular-brands-head-text">
+          <div class="popular-brands-title">${esc(POPULAR_BRANDS.title)}</div>
+          <div class="popular-brands-sub">${esc(POPULAR_BRANDS.sub)}</div>
+        </div>
+        <div class="cod-avatars">
+          ${POPULAR_BRANDS.avatars.map((src) => `<img class="cod-avatar" src="${src}" alt="" loading="lazy">`).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function findDealHTML() {
+  return `
+    <div class="find-deal">
+      <div class="find-deal-headline">
+        <div class="find-deal-title">${esc(FIND_DEAL.title)}</div>
+        <div class="find-deal-sub">${esc(FIND_DEAL.sub)}</div>
+      </div>
+      <div class="find-deal-search">
+        <span class="find-deal-search-icon"><img src="assets/start/icon-search.svg" alt=""></span>
+        <span class="find-deal-search-text">${esc(FIND_DEAL.searchPlaceholder)}</span>
+      </div>
+      <div class="find-deal-chips">
+        ${FIND_DEAL.categories.map((name) => `<button class="chip">${esc(name)}</button>`).join('')}
+        <button class="chip chip-all">Все<img class="chip-all-icon" src="assets/start/icon-arrow-forward.svg" alt=""></button>
+      </div>
+    </div>
+  `;
+}
+
+// Фоновая Lottie-анимация карточки "Популярные бренды" не проигрывается сама —
+// её кадр намертво привязан к скроллу #cbScroll (см. POPULAR_BRANDS_SCRUB_END_OFFSET).
+// Сам плеер масштабируется по ширине контейнера без обрезки (preserveAspectRatio
+// "meet") и прижат к нижнему краю карточки (якорь "YMax").
+function setupPopularBrandsReveal(root) {
+  const scrollEl = root.querySelector('#cbScroll');
+  if (popularBrandsScrollHandler && scrollEl) {
+    scrollEl.removeEventListener('scroll', popularBrandsScrollHandler);
+  }
+  popularBrandsScrollHandler = null;
+  if (popularBrandsLottie) {
+    popularBrandsLottie.destroy();
+    popularBrandsLottie = null;
+  }
+
+  const container = root.querySelector('#popularBrandsAnim');
+  const card = root.querySelector('.popular-brands-card');
+  if (!container || !card || !scrollEl || typeof lottie === 'undefined') return;
+
+  const anim = lottie.loadAnimation({
+    container,
+    renderer: 'svg',
+    loop: false,
+    autoplay: false,
+    path: POPULAR_BRANDS.lottiePath,
+    rendererSettings: { preserveAspectRatio: 'xMidYMax meet' },
+  });
+  popularBrandsLottie = anim;
+
+  let totalFrames = 0;
+  let ticking = false;
+
+  function applyScrollProgress() {
+    ticking = false;
+    if (!totalFrames) return;
+
+    // 0% — самый верх скролла (scrollTop = 0). 100% — карточка уже
+    // полностью вошла во вьюпорт, плюс ещё POPULAR_BRANDS_SCRUB_END_EXTRA_SCROLL
+    // высоты вьюпорта докручено ниже этой точки.
+    const scrollRect = scrollEl.getBoundingClientRect();
+    const cardRect = card.getBoundingClientRect();
+    const cardDocTop = cardRect.top + scrollEl.scrollTop;
+    const scrollTopFullyVisible = cardDocTop - (scrollRect.height - cardRect.height);
+    const endScrollTop = scrollTopFullyVisible + POPULAR_BRANDS_SCRUB_END_EXTRA_SCROLL * scrollRect.height;
+    const progress = Math.max(0, Math.min(1, endScrollTop > 0 ? scrollEl.scrollTop / endScrollTop : 1));
+
+    anim.goToAndStop(progress * (totalFrames - 1), true);
+  }
+
+  anim.addEventListener('DOMLoaded', () => {
+    totalFrames = anim.totalFrames;
+    applyScrollProgress();
+  });
+
+  popularBrandsScrollHandler = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(applyScrollProgress);
+  };
+
+  scrollEl.addEventListener('scroll', popularBrandsScrollHandler, { passive: true });
+}
+
 function districtCardExpandedHTML() {
   const districtCat = CATEGORIES.find((c) => c.id === 'district');
   const previewItems = districtCat ? districtCat.items.filter((it) => it.group === 'nearby').slice(0, 2) : [];
@@ -692,6 +817,8 @@ function buildCashbackScreen() {
         </div>
         ${COD_LAYOUT === 'streak' ? codCardStreakHTML() : codCardClassicHTML()}
         ${DISTRICT_LAYOUT === 'expanded' ? districtCardExpandedHTML() : districtCardSimpleHTML()}
+        ${popularBrandsCardHTML()}
+        ${findDealHTML()}
       </div>
       <div class="pick-subheadline" id="pickSubheadline" style="display:none">
         <div class="pick-subheadline-title">Больше кэшбэка</div>
@@ -1696,6 +1823,7 @@ function enterSuccessMode(root) {
   }
 
   setupCodStreakReveal(root);
+  setupPopularBrandsReveal(root);
 }
 
 function exitSuccessMode(root) {
@@ -1708,6 +1836,15 @@ function exitSuccessMode(root) {
   if (codStreakObserver) {
     codStreakObserver.disconnect();
     codStreakObserver = null;
+  }
+  if (popularBrandsScrollHandler) {
+    const scrollEl = root.querySelector('#cbScroll');
+    if (scrollEl) scrollEl.removeEventListener('scroll', popularBrandsScrollHandler);
+    popularBrandsScrollHandler = null;
+  }
+  if (popularBrandsLottie) {
+    popularBrandsLottie.destroy();
+    popularBrandsLottie = null;
   }
 
   root.querySelector('#pickSection').classList.remove('anim-in');

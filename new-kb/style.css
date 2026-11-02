@@ -2109,3 +2109,144 @@ button { font-family: inherit; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* ---------- "Популярные бренды" — карточка с фоновой Lottie-анимацией ---------- */
+
+.popular-brands-card {
+  position: relative;
+  overflow: hidden;
+  height: 240px;
+  border-radius: 20px;
+  background: var(--tile-bg);
+}
+
+/* Высота блока держится в пропорции исходного Lottie-канваса (343x420), а не
+   фиксированной высоты карточки (345px) — так при масштабировании по ширине
+   содержимое не сжимается/обрезается рендерером, а просто "торчит" выше
+   верхнего края и обрезается через overflow:hidden самой карточки. */
+.popular-brands-anim {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  aspect-ratio: 343 / 420;
+}
+
+.popular-brands-anim svg {
+  display: block;
+}
+
+.popular-brands-head {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 16px 12px 20px;
+}
+
+.popular-brands-head-text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.popular-brands-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.2;
+  letter-spacing: 0.36px;
+  color: var(--text);
+}
+
+.popular-brands-sub {
+  font-size: 15px;
+  letter-spacing: -0.24px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.popular-brands-card .cod-avatar {
+  border: none;
+  box-shadow: none;
+}
+
+/* ---------- "Найди выгоду" — поиск и навигация по категориям ---------- */
+
+.find-deal {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.find-deal-headline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.find-deal-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.36px;
+  color: var(--text);
+}
+
+.find-deal-sub {
+  font-size: 15px;
+  letter-spacing: -0.24px;
+  color: var(--text);
+  opacity: 0.5;
+}
+
+.find-deal-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px;
+  background: rgba(0, 16, 36, 0.06);
+  border-radius: 100px;
+}
+
+.find-deal-search-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  opacity: 0.5;
+}
+
+.find-deal-search-icon img { width: 20px; height: 20px; }
+
+.find-deal-search-text {
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -0.41px;
+  color: #000;
+  opacity: 0.5;
+}
+
+.find-deal-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.find-deal-chips .chip-all {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-right: 12px;
+}
+
+.find-deal-chips .chip-all-icon { width: 16px; height: 16px; }
