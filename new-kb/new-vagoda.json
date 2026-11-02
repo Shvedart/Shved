@@ -593,5 +593,33 @@
     "photo": "https://ms-static-images.t-static.ru/partner-image780-5da4427aaae84c849255315066047675.png",
     "name": "Арарат",
     "description": "Напитки"
+  },
+  {
+    "id": "product-gold-v-chizhike-50",
+    "category": "товары с кэшбэком",
+    "type": "кэшбэк",
+    "benefit": "до 50%",
+    "conditions": "",
+    "expiration": "До 6 ноября",
+    "urgency": "стандартный",
+    "logo": "assets/district/gold-bier.png",
+    "background": "assets/district/gold-bier.png",
+    "photo": "https://ms-static-images.t-static.ru/partner-image780-901d10c75b0545198f10f40a196ea210.png",
+    "name": "GOLD в Чижике",
+    "description": "Напиток"
+  },
+  {
+    "id": "product-hochland-grunlander-klassicheskiy-30",
+    "category": "товары с кэшбэком",
+    "type": "кэшбэк",
+    "benefit": "30%",
+    "conditions": "",
+    "expiration": "До 6 ноября",
+    "urgency": "стандартный",
+    "logo": "https://ms-static-images.t-static.ru/partner-image780-939d0e7092b843ddb2cbcf90b4b0319c.png",
+    "background": "https://ms-static-images.t-static.ru/partner-image780-939d0e7092b843ddb2cbcf90b4b0319c.png",
+    "photo": "https://ms-static-images.t-static.ru/partner-image780-939d0e7092b843ddb2cbcf90b4b0319c.png",
+    "name": "Hochland Grünländer «Классический»",
+    "description": "Сыр"
   }
 ]

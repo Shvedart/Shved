@@ -139,7 +139,7 @@ const DISTRICT_LAYOUT = 'expanded'; // 'simple' | 'expanded'
 
 const POPULAR_BRANDS = {
   title: 'Популярные бренды',
-  sub: '40% крупных сетей',
+  sub: '30+ крупных сетей',
   avatars: [
     'assets/cod/popular-brands/avatar-1.png',
     'assets/cod/popular-brands/avatar-2.png',
@@ -154,12 +154,32 @@ const FIND_DEAL = {
   categories: ['Еда', 'Одежда', 'Электроника', 'Обувь', 'Путешествия', 'Авто'],
 };
 
+// Данные — items из new-vagoda.json с category === 'товары с кэшбэком'.
+const PRODUCTS_WITH_CASHBACK = {
+  title: 'Товары с кешбэком',
+  sub: 'Самые жирные предложения',
+  payLabel: 'Оплати картой Т-Банка',
+  items: [
+    { photo: 'https://ms-static-images.t-static.ru/partner-image780-901d10c75b0545198f10f40a196ea210.png', benefit: 'до 50%', name: 'GOLD в Чижике' },
+    { photo: 'https://ms-static-images.t-static.ru/partner-image780-939d0e7092b843ddb2cbcf90b4b0319c.png', benefit: '30%', name: 'Hochland Grünländer «Классический»' },
+    { photo: 'https://ms-static-images.t-static.ru/partner-image780-95aedc3620fe4a2e8377d3be3342c84b.png', benefit: '50%', name: 'BLADE Deep Chill в Пятёрочке' },
+    { photo: 'https://ms-static-images.t-static.ru/partner-image780-015857387ae849f59baafcad0a3a5fdc.png', benefit: '15%', name: 'Haus Herz в Fix Price' },
+    { photo: 'https://ms-static-images.t-static.ru/partner-image780-5a442e85f64f46399b77b3aa7b76baa4.png', benefit: '15%', name: 'GLS Pharmaceuticals' },
+    { photo: 'https://ms-static-images.t-static.ru/partner-image780-4123eb315b974809b6c3c8be92af1650.png', benefit: '3 000 ₽', name: 'Кухонная машина от Kenwood' },
+    { photo: 'https://ms-static-images.t-static.ru/partner-image780-5670dd774bef48829a1e3bcd5ce67955.png', benefit: '90%', name: 'Творожные сырки «Савушкин»' },
+    { photo: 'https://ms-static-images.t-static.ru/partner-image780-9b551778ec0c4d0884cbcadd778190d8.png', benefit: '5 000 ₽', name: 'Кофемашины Delonghi' },
+    { photo: 'https://ms-static-images.t-static.ru/partner-image780-109de695a9f447b2995d8d8faca4a9a2.png', benefit: '40%', name: 'Кофе в дрип-пакетах LEBO' },
+    { photo: 'https://ms-static-images.t-static.ru/partner-image780-291ed1782ef94136b2fb4fc9d9f940b9.png', benefit: '40%', name: 'Planto «Банан» в Пятёрочке' },
+    { photo: 'https://ms-static-images.t-static.ru/partner-image780-5da4427aaae84c849255315066047675.png', benefit: '25%', name: 'Арарат' },
+  ],
+};
+
 // Карточка "Популярные бренды": анимация не проигрывается сама по себе, а
 // "скрабится" по скроллу. 0% прогресса — самый верх скролла #cbScroll (ещё
 // до того как карточка показалась во вьюпорте), 100% — карточка уже
 // полностью видна и пользователь доскроллил ещё на эту долю высоты
 // вьюпорта ниже этой точки.
-const POPULAR_BRANDS_SCRUB_END_EXTRA_SCROLL = 1.5;
+const POPULAR_BRANDS_SCRUB_END_EXTRA_SCROLL = 1.9;
 
 const CASHBACK_STREAK = {
   title: 'Подарим кэшбэк 99%',
@@ -676,6 +696,48 @@ function findDealHTML() {
   `;
 }
 
+function productCardHTML(it) {
+  return `
+    <div class="offer-card product-card">
+      <div class="offer-card-image product-card-image">
+        <img src="${it.photo}" alt="" loading="lazy">
+        <button class="heart-btn" aria-label="Нравится">${ICONS.heart}</button>
+      </div>
+      <div class="offer-card-info">
+        <div class="offer-card-price-row">
+          <span class="offer-card-cashback-label">Кэшбэк</span>
+          <span class="cashback-pill-wrap">
+            <span class="cashback-pill">
+              <span class="cashback-pill-icon">${ICONS.crown}</span>
+              <span class="cashback-pill-label">${esc(it.benefit)}</span>
+            </span>
+          </span>
+        </div>
+        <div class="offer-card-name">${esc(it.name)}</div>
+        <div class="product-card-pay">
+          <img class="product-card-pay-icon" src="assets/products/icon-tbank-pay.svg" alt="">
+          <span>${esc(PRODUCTS_WITH_CASHBACK.payLabel)}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function productsWithCashbackHTML() {
+  return `
+    <div class="products-wrap">
+      <div class="products-head">
+        <div class="products-head-text">
+          <div class="products-title">${esc(PRODUCTS_WITH_CASHBACK.title)}</div>
+          <div class="products-sub">${esc(PRODUCTS_WITH_CASHBACK.sub)}</div>
+        </div>
+        <span class="products-all">Все</span>
+      </div>
+      <div class="products-row">${PRODUCTS_WITH_CASHBACK.items.map(productCardHTML).join('')}</div>
+    </div>
+  `;
+}
+
 // Фоновая Lottie-анимация карточки "Популярные бренды" не проигрывается сама —
 // её кадр намертво привязан к скроллу #cbScroll (см. POPULAR_BRANDS_SCRUB_END_OFFSET).
 // Сам плеер масштабируется по ширине контейнера без обрезки (preserveAspectRatio
@@ -818,6 +880,7 @@ function buildCashbackScreen() {
         ${COD_LAYOUT === 'streak' ? codCardStreakHTML() : codCardClassicHTML()}
         ${DISTRICT_LAYOUT === 'expanded' ? districtCardExpandedHTML() : districtCardSimpleHTML()}
         ${popularBrandsCardHTML()}
+        ${productsWithCashbackHTML()}
         ${findDealHTML()}
       </div>
       <div class="pick-subheadline" id="pickSubheadline" style="display:none">

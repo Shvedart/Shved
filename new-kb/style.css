@@ -2117,7 +2117,7 @@ button { font-family: inherit; }
   overflow: hidden;
   height: 240px;
   border-radius: 20px;
-  background: var(--tile-bg);
+  background: rgb(0 16 36 / 6%);
 }
 
 /* Высота блока держится в пропорции исходного Lottie-канваса (343x420), а не
@@ -2250,3 +2250,87 @@ button { font-family: inherit; }
 }
 
 .find-deal-chips .chip-all-icon { width: 16px; height: 16px; }
+
+/* ---------- "Товары с кешбэком" ---------- */
+
+.products-wrap {
+  margin: 0 -16px;
+}
+
+.products-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px 12px;
+}
+
+.products-head-text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.products-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.36px;
+  color: var(--text);
+}
+
+.products-sub {
+  font-size: 15px;
+  letter-spacing: -0.24px;
+  color: var(--text);
+}
+
+.products-all {
+  flex-shrink: 0;
+  font-size: 17px;
+  letter-spacing: -0.41px;
+  color: var(--blue);
+}
+
+.products-row {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 16px;
+}
+
+.products-row::-webkit-scrollbar { display: none; }
+
+.product-card { width: 200px; flex-shrink: 0; }
+
+.product-card-image { width: 200px; height: 250px; }
+
+.product-card-image img { object-fit: contain; }
+
+.product-card-pay {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  font-size: 13px;
+  letter-spacing: -0.08px;
+  color: var(--text);
+  overflow: hidden;
+}
+
+.product-card-pay span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-card-pay-icon { width: 16px; height: 16px; flex-shrink: 0; }
+
+.product-card .offer-card-name {
+  display: block;
+  -webkit-line-clamp: unset;
+  white-space: nowrap;
+}
