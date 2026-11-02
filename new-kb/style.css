@@ -585,7 +585,6 @@ button { font-family: inherit; }
 .tile {
   flex: 1;
   min-width: 0;
-  height: 115px;
   background: var(--tile-bg);
   border-radius: 20px;
   padding: 12px;
@@ -598,6 +597,8 @@ button { font-family: inherit; }
   opacity: 0;
   transform: translateY(18px);
 }
+
+.tiles-row .tile { height: 115px; }
 
 .tile-top {
   display: flex;
@@ -670,6 +671,32 @@ button { font-family: inherit; }
   flex-shrink: 0;
   object-fit: cover;
   background: #f6f7f8;
+}
+
+.avatar-sm { width: 32px; height: 32px; }
+
+/* ---------- широкая плитка "Повышенный кэшбэк в ноябре" (после выбора) ---------- */
+
+.tile-nov-wide {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  min-height: 80px;
+  margin: 10px 16px 0;
+  padding: 16px 16px 16px 20px;
+  border-radius: 24px;
+}
+
+.tile-nov-wide-label {
+  flex: 1;
+  min-width: 0;
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 1.2;
+  letter-spacing: -0.41px;
+  color: var(--text);
 }
 
 .headline-block {
@@ -1717,6 +1744,9 @@ button { font-family: inherit; }
 
 .cod-avatar:first-child { margin-left: 0; }
 
+.cod-avatar-sm { width: 32px; height: 32px; margin-left: -10px; }
+.cod-avatar-sm:first-child { margin-left: 0; }
+
 .cod-panel-wrap {
   position: relative;
   z-index: 1;
@@ -1880,7 +1910,18 @@ button { font-family: inherit; }
   height: 78px;
   border-radius: 16px;
   border: 1px solid rgba(0, 0, 0, 0.07);
+  transition: background-color 0.4s var(--ease-ios), border-color 0.4s var(--ease-ios);
 }
+
+.cod-day-top, .cod-day-icon { transition: color 0.4s var(--ease-ios); }
+
+@keyframes codDayPop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.14); }
+  100% { transform: scale(1); }
+}
+
+.cod-day.cod-day-reveal { animation: codDayPop 0.5s var(--ease-ios); }
 
 .cod-day-top {
   display: flex;
@@ -1992,4 +2033,79 @@ button { font-family: inherit; }
 .district-card .cod-avatar {
   border: none;
   box-shadow: none;
+}
+
+/* ---------- "Кэшбэк на районе" — развёрнутый вариант (с панелью офферов) ---------- */
+
+.district-card-expanded {
+  height: auto;
+}
+
+.district-panel-wrap {
+  position: relative;
+  z-index: 1;
+  padding: 0 8px 8px;
+}
+
+.district-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 12px;
+  box-shadow: 0 6px 34px rgba(0, 0, 0, 0.12);
+  padding-bottom: 8px;
+}
+
+.district-panel-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.36px;
+  color: var(--text);
+  padding: 16px 16px 12px 20px;
+}
+
+.district-panel-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding-left: 16px;
+}
+
+.district-panel-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  object-fit: cover;
+  background: #f6f7f8;
+  margin: 8px 0;
+}
+
+.district-panel-item-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.district-panel-item-top {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 17px;
+  letter-spacing: -0.41px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.district-panel-item-addr {
+  font-size: 13px;
+  letter-spacing: -0.08px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

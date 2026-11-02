@@ -125,6 +125,18 @@ const DISTRICT_CASHBACK = {
 // в коде нетронутым, чтобы можно было быстро вернуться назад.
 const COD_LAYOUT = 'streak'; // 'classic' | 'streak'
 
+// То же самое для плитки "Повышенный кэшбэк в ноябре" после выбора категорий:
+// 'inline' — старое поведение (аватарки внутри узкой плитки рядом с октябрём),
+// 'wide' — широкая плитка на всю ширину по макету Figma,
+// 'hidden' — плитка полностью скрывается, остаётся только октябрь.
+const NOV_CHOSEN_LAYOUT = 'inline'; // 'inline' | 'wide' | 'hidden'
+
+// То же самое для карточки "Кэшбэк на районе": 'simple' — старый компактный
+// вариант (заголовок + подзаголовок + аватарки), 'expanded' — развёрнутый
+// по макету Figma (заголовок + аватарки, под ними панель со списком офферов
+// рядом). Старый вариант не удаляется, просто не рендерится.
+const DISTRICT_LAYOUT = 'expanded'; // 'simple' | 'expanded'
+
 const CASHBACK_STREAK = {
   title: 'Подарим кэшбэк 99%',
   sub: 'Если зайдете сюда 5 дней подряд',
@@ -132,7 +144,7 @@ const CASHBACK_STREAK = {
   partnerName: 'Яндекс Плюс',
   panelTitle: 'Ещё 4 дня, и подарок ваш',
   days: [
-    { label: 'Пн', date: '29', state: 'done' },
+    { label: 'Пн', date: '29', state: 'locked' },
     { label: 'Вт', date: '30', state: 'locked' },
     { label: 'Ср', date: '31', state: 'locked' },
     { label: 'Чт', date: '30', state: 'locked' },
@@ -188,6 +200,7 @@ let favoritesRoot = null;
 let favoritesFilterStep = null;
 let favoritesNavbarUpdate = null;
 let codProgressTimer = null;
+let codStreakObserver = null;
 
 function resetState() {
   state.step = 0;
@@ -538,6 +551,93 @@ function codCardStreakHTML() {
   `;
 }
 
+// Первый день в блоке "Кэшбэк дня" (streak) становится отмеченным, когда
+// карточка целиком появляется в вьюпорте скролла — а не сразу по таймеру.
+function setupCodStreakReveal(root) {
+  if (codStreakObserver) {
+    codStreakObserver.disconnect();
+    codStreakObserver = null;
+  }
+  if (COD_LAYOUT !== 'streak') return;
+
+  const scrollEl = root.querySelector('#cbScroll');
+  const firstDay = root.querySelector('.cod-card-streak .cod-day');
+  if (!scrollEl || !firstDay || !firstDay.classList.contains('cod-day-locked')) return;
+
+  codStreakObserver = new IntersectionObserver((entries) => {
+    const entry = entries[0];
+    if (!entry || entry.intersectionRatio < 0.999) return;
+
+    firstDay.classList.remove('cod-day-locked');
+    firstDay.classList.add('cod-day-done', 'cod-day-reveal');
+    const icon = firstDay.querySelector('.cod-day-icon');
+    if (icon) icon.src = COD_DAY_ICONS.done;
+    haptic([10, 30, 10]);
+
+    codStreakObserver.disconnect();
+    codStreakObserver = null;
+  }, { root: scrollEl, threshold: 1 });
+
+  codStreakObserver.observe(firstDay.closest('.cod-card-streak'));
+}
+
+function districtPreviewItemHTML(it) {
+  return `
+    <div class="district-panel-item">
+      <img class="district-panel-icon" src="${it.icon}" alt="" loading="lazy">
+      <div class="district-panel-item-info">
+        <div class="district-panel-item-top">
+          <span class="offer-percent">${esc(it.percent)}</span>
+          <span class="offer-dot">•</span>
+          <span class="offer-name">${esc(it.name)}</span>
+        </div>
+        <div class="district-panel-item-addr">${esc(it.until)}</div>
+      </div>
+    </div>
+  `;
+}
+
+function districtCardSimpleHTML() {
+  return `
+    <div class="district-card">
+      <div class="district-bg"></div>
+      <div class="district-head">
+        <div class="district-head-text">
+          <div class="district-title">${DISTRICT_CASHBACK.title}</div>
+          <div class="district-sub">${esc(DISTRICT_CASHBACK.sub)}</div>
+        </div>
+        <div class="cod-avatars">
+          ${DISTRICT_CASHBACK.avatars.map((src) => `<img class="cod-avatar" src="${src}" alt="" loading="lazy">`).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function districtCardExpandedHTML() {
+  const districtCat = CATEGORIES.find((c) => c.id === 'district');
+  const previewItems = districtCat ? districtCat.items.filter((it) => it.group === 'nearby').slice(0, 2) : [];
+  return `
+    <div class="district-card district-card-expanded">
+      <div class="district-bg"></div>
+      <div class="district-head">
+        <div class="district-head-text">
+          <div class="district-title">${DISTRICT_CASHBACK.title}</div>
+        </div>
+        <div class="cod-avatars">
+          ${DISTRICT_CASHBACK.avatars.map((src) => `<img class="cod-avatar" src="${src}" alt="" loading="lazy">`).join('')}
+        </div>
+      </div>
+      <div class="district-panel-wrap">
+        <div class="district-panel">
+          <div class="district-panel-title">${esc(DISTRICT_CASHBACK.sub)}</div>
+          ${previewItems.map(districtPreviewItemHTML).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function buildCashbackScreen() {
   const el = document.createElement('div');
   el.className = 'screen screen-cashback';
@@ -545,7 +645,11 @@ function buildCashbackScreen() {
     <div class="dim"></div>
     <div class="scroll" id="cbScroll">
       <div class="navbar-spacer"></div>
-      <div class="tiles-row">
+      <div class="tile tile-nov-wide" id="tileNovemberWide" style="display:none">
+        <div class="tile-nov-wide-label">Повышенный<br>кэшбэк в ноябре</div>
+        <div class="avatars" id="novAvatarsWide"></div>
+      </div>
+      <div class="tiles-row" id="tilesRow">
         <div class="tile" id="tileNovember">
           <div class="tile-top">
             <div class="tile-label">Повышенный кэшбэк в ноябре</div>
@@ -554,7 +658,7 @@ function buildCashbackScreen() {
           <button class="tile-pick-btn" id="novPickBtn">Выбрать</button>
           <div class="avatars" id="novAvatars" style="display:none"></div>
         </div>
-        <div class="tile">
+        <div class="tile" id="tileOctober">
           <div class="tile-label">Повышенный кэшбэк в октябре</div>
           <div class="avatars" id="octAvatars"></div>
         </div>
@@ -587,18 +691,7 @@ function buildCashbackScreen() {
           <div class="cod-headline-sub">Получают люди, которые заходят<br>в раздел каждый день</div>
         </div>
         ${COD_LAYOUT === 'streak' ? codCardStreakHTML() : codCardClassicHTML()}
-        <div class="district-card">
-          <div class="district-bg"></div>
-          <div class="district-head">
-            <div class="district-head-text">
-              <div class="district-title">${DISTRICT_CASHBACK.title}</div>
-              <div class="district-sub">${esc(DISTRICT_CASHBACK.sub)}</div>
-            </div>
-            <div class="cod-avatars">
-              ${DISTRICT_CASHBACK.avatars.map((src) => `<img class="cod-avatar" src="${src}" alt="" loading="lazy">`).join('')}
-            </div>
-          </div>
-        </div>
+        ${DISTRICT_LAYOUT === 'expanded' ? districtCardExpandedHTML() : districtCardSimpleHTML()}
       </div>
       <div class="pick-subheadline" id="pickSubheadline" style="display:none">
         <div class="pick-subheadline-title">Больше кэшбэка</div>
@@ -615,6 +708,27 @@ function buildCashbackScreen() {
 }
 
 function renderNovTile(root) {
+  const tilesRow = root.querySelector('#tilesRow');
+  const tileNarrow = root.querySelector('#tileNovember');
+  const tileWide = root.querySelector('#tileNovemberWide');
+  const useHidden = state.novemberChosen && NOV_CHOSEN_LAYOUT === 'hidden';
+  const useWide = state.novemberChosen && NOV_CHOSEN_LAYOUT === 'wide';
+
+  // В варианте 'wide' выбранный ноябрь заменяет собой весь ряд плашек
+  // (и ноябрь, и октябрь) — остаётся только одна широкая плашка.
+  tilesRow.style.display = useWide ? 'none' : '';
+  tileNarrow.style.display = useHidden ? 'none' : '';
+  tileWide.style.display = useWide ? '' : 'none';
+
+  if (useHidden) return;
+
+  if (useWide) {
+    root.querySelector('#novAvatarsWide').innerHTML = state.novemberCategories.map((i) =>
+      `<img class="cod-avatar cod-avatar-sm" src="${PICKER_CATEGORIES[i].icon}" alt="">`
+    ).join('');
+    return;
+  }
+
   const badge = root.querySelector('#novBadge');
   const btn = root.querySelector('#novPickBtn');
   const avatars = root.querySelector('#novAvatars');
@@ -1580,6 +1694,8 @@ function enterSuccessMode(root) {
     firstStepFill.classList.remove('filled');
     codProgressTimer = setTimeout(() => firstStepFill.classList.add('filled'), 1500);
   }
+
+  setupCodStreakReveal(root);
 }
 
 function exitSuccessMode(root) {
@@ -1589,6 +1705,10 @@ function exitSuccessMode(root) {
   clearTimeout(codProgressTimer);
   const firstStepFill = root.querySelector('#codProgress .cod-progress-step-fill');
   if (firstStepFill) firstStepFill.classList.remove('filled');
+  if (codStreakObserver) {
+    codStreakObserver.disconnect();
+    codStreakObserver = null;
+  }
 
   root.querySelector('#pickSection').classList.remove('anim-in');
   root.querySelector('#codWrap').classList.remove('anim-in');
