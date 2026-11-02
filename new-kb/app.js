@@ -120,6 +120,27 @@ const DISTRICT_CASHBACK = {
   ],
 };
 
+// Блок "Кэшбэк дня" имеет два варианта оформления — переключаются этой
+// константой, старый вариант (классические карточки-партнёры) остаётся
+// в коде нетронутым, чтобы можно было быстро вернуться назад.
+const COD_LAYOUT = 'streak'; // 'classic' | 'streak'
+
+const CASHBACK_STREAK = {
+  title: 'Подарим кэшбэк 99%',
+  sub: 'Если зайдете сюда 5 дней подряд',
+  partnerLogo: 'assets/cod/streak/partner-logo.png',
+  partnerName: 'Яндекс Плюс',
+  panelTitle: 'Ещё 4 дня, и подарок ваш',
+  days: [
+    { label: 'Пн', date: '29', state: 'done' },
+    { label: 'Вт', date: '30', state: 'locked' },
+    { label: 'Ср', date: '31', state: 'locked' },
+    { label: 'Чт', date: '30', state: 'locked' },
+    { label: 'Пт', date: '30', state: 'gift' },
+  ],
+  caption: '1 день! Вы зашли — мы вам кэшбэк.<br>Хорошая сделка',
+};
+
 /* ============================== утилиты ============================== */
 
 function haptic(pattern) {
@@ -444,6 +465,79 @@ function buildStartScreen() {
 
 /* ============================== экран категорий кэшбэка ============================== */
 
+function codCardClassicHTML() {
+  return `
+    <div class="cod-card">
+      <div class="cod-bg"></div>
+      <div class="cod-head">
+        <div class="cod-head-text">
+          <div class="cod-title">${esc(CASHBACK_OF_DAY.title)}</div>
+          <div class="cod-sub">${esc(CASHBACK_OF_DAY.sub)}</div>
+        </div>
+        <div class="cod-avatars">
+          ${CASHBACK_OF_DAY.avatars.map((src) => `<img class="cod-avatar" src="${src}" alt="" loading="lazy">`).join('')}
+        </div>
+      </div>
+      <div class="cod-panel-wrap">
+        <div class="cod-panel">
+          <div class="cod-panel-row">
+            <div class="cod-panel-label">${esc(CASHBACK_OF_DAY.giftLabel)}</div>
+            <div class="cod-panel-meta"><span>${esc(CASHBACK_OF_DAY.giftMeta)}</span>${ICONS.gift}</div>
+          </div>
+          <div class="cod-progress" id="codProgress">
+            ${Array.from({ length: CASHBACK_OF_DAY.steps }).map(() => `<div class="cod-progress-step"><div class="cod-progress-step-fill"></div></div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+const COD_DAY_ICONS = {
+  done: 'assets/cod/streak/check.svg',
+  locked: 'assets/cod/streak/lock.svg',
+  gift: 'assets/cod/streak/gift.svg',
+};
+
+function codDayCellHTML(day) {
+  return `
+    <div class="cod-day cod-day-${day.state}">
+      <div class="cod-day-top">
+        <div class="cod-day-label">${esc(day.label)}</div>
+        <div class="cod-day-date">${esc(day.date)}</div>
+      </div>
+      <img class="cod-day-icon" src="${COD_DAY_ICONS[day.state]}" alt="">
+    </div>
+  `;
+}
+
+function codCardStreakHTML() {
+  return `
+    <div class="cod-card cod-card-streak">
+      <div class="cod-bg"></div>
+      <div class="cod-streak-head">
+        <div class="cod-streak-headline">
+          <div class="cod-streak-title">${esc(CASHBACK_STREAK.title)}</div>
+          <div class="cod-streak-sub">${esc(CASHBACK_STREAK.sub)}</div>
+        </div>
+        <div class="cod-streak-partner">
+          <img class="cod-streak-partner-logo" src="${CASHBACK_STREAK.partnerLogo}" alt="">
+          <span>${esc(CASHBACK_STREAK.partnerName)}</span>
+        </div>
+      </div>
+      <div class="cod-streak-panel-wrap">
+        <div class="cod-streak-panel">
+          <div class="cod-streak-panel-title">${esc(CASHBACK_STREAK.panelTitle)}</div>
+          <div class="cod-streak-days">
+            ${CASHBACK_STREAK.days.map(codDayCellHTML).join('')}
+          </div>
+          <div class="cod-streak-caption">${CASHBACK_STREAK.caption}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function buildCashbackScreen() {
   const el = document.createElement('div');
   el.className = 'screen screen-cashback';
@@ -492,29 +586,7 @@ function buildCashbackScreen() {
           <div class="cod-headline-title">На <img class="cod-headline-num" src="assets/cod/headline-70.svg" alt="70%"><br>больше кэшбэка</div>
           <div class="cod-headline-sub">Получают люди, которые заходят<br>в раздел каждый день</div>
         </div>
-        <div class="cod-card">
-          <div class="cod-bg"></div>
-          <div class="cod-head">
-            <div class="cod-head-text">
-              <div class="cod-title">${esc(CASHBACK_OF_DAY.title)}</div>
-              <div class="cod-sub">${esc(CASHBACK_OF_DAY.sub)}</div>
-            </div>
-            <div class="cod-avatars">
-              ${CASHBACK_OF_DAY.avatars.map((src) => `<img class="cod-avatar" src="${src}" alt="" loading="lazy">`).join('')}
-            </div>
-          </div>
-          <div class="cod-panel-wrap">
-            <div class="cod-panel">
-              <div class="cod-panel-row">
-                <div class="cod-panel-label">${esc(CASHBACK_OF_DAY.giftLabel)}</div>
-                <div class="cod-panel-meta"><span>${esc(CASHBACK_OF_DAY.giftMeta)}</span>${ICONS.gift}</div>
-              </div>
-              <div class="cod-progress" id="codProgress">
-                ${Array.from({ length: CASHBACK_OF_DAY.steps }).map(() => `<div class="cod-progress-step"><div class="cod-progress-step-fill"></div></div>`).join('')}
-              </div>
-            </div>
-          </div>
-        </div>
+        ${COD_LAYOUT === 'streak' ? codCardStreakHTML() : codCardClassicHTML()}
         <div class="district-card">
           <div class="district-bg"></div>
           <div class="district-head">
@@ -739,6 +811,8 @@ function jitterHearts(root) {
   const hearts = root.querySelectorAll('#offersWrap .heart-btn');
   hearts.forEach((h, i) => {
     setTimeout(() => {
+      // пользователь уже успел лайкнуть это сердечко сам — не дёргаем его
+      if (h.classList.contains('liked')) return;
       h.classList.remove('jitter');
       void h.offsetWidth;
       h.classList.add('jitter');
