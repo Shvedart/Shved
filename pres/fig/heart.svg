@@ -1,0 +1,14 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="Frame">
+<g id="Vector">
+<use xlink:href="#stroke0_0_25" fill="white" style="fill:white;fill-opacity:1;"/>
+<mask id="stroke1_0_25" fill="white">
+<use xlink:href="#stroke0_0_25"/>
+</mask>
+<path d="M21.428 7.463C22.581 10.019 21.953 13.04 19.883 14.904L12.01 21.992V22L12.006 21.996L12 22V21.992L4.12 14.903C2.047 13.04 1.419 10.018 2.57 7.461C4.239 3.761 8.979 2.843 11.869 5.608C11.913 5.65 11.956 5.692 11.999 5.736C12.042 5.692 12.085 5.65 12.129 5.608C15.019 2.844 19.76 3.762 21.428 7.463Z" stroke-width="4" stroke="#333333" style="stroke:#333333;stroke:color(display-p3 0.2000 0.2000 0.2000);stroke-opacity:1;" mask="url(#stroke1_0_25)"/>
+</g>
+</g>
+<defs>
+<path id="stroke0_0_25" d="M21.428 7.463C22.581 10.019 21.953 13.04 19.883 14.904L12.01 21.992V22L12.006 21.996L12 22V21.992L4.12 14.903C2.047 13.04 1.419 10.018 2.57 7.461C4.239 3.761 8.979 2.843 11.869 5.608C11.913 5.65 11.956 5.692 11.999 5.736C12.042 5.692 12.085 5.65 12.129 5.608C15.019 2.844 19.76 3.762 21.428 7.463Z"/>
+</defs>
+</svg>
