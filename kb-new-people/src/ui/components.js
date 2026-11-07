@@ -182,7 +182,7 @@ export function productCard(offer) {
   const main = button({ class: 'pcard-main', 'aria-label': `${offer.name}, кэшбэк ${offer.short}` },
     h('div', { class: 'pcard-tile' }, img(offer.image, { cls: 'pcard-image', alt: '' })),
     h('div', { class: 'pcard-caption' },
-      h('div', { class: 'pcard-price' }, h('span', null, 'Кэшбэк'), h('span', { class: 'pcard-pill' }, iconImg('crown', { size: 16 }), offer.short)),
+      h('div', { class: 'pcard-price' }, h('span', null, 'Кэшбэк'), h('span', { class: 'pcard-pill' }, icon('crown', { size: 16 }), offer.short)),
       h('div', { class: 'pcard-name' }, offer.name),
       h('div', { class: 'pcard-pay' }, iconImg('premium-yellow', { size: 16 }), 'Оплати картой Т-Банка')));
   main.addEventListener('click', () => app.nav.push(`/offer/${offer.id}`));

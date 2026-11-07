@@ -1040,7 +1040,16 @@
   filter: grayscale(0.7);
 }
 
-.main.is-touring .streak.is-focus [data-tour]:not(.is-focus) {
+/* шаг серии: фокус на днях, «Доступно уже сегодня» приглушено */
+.main.is-touring .streak.is-focus .streak-today {
+  opacity: 0.3;
+  filter: grayscale(0.7);
+  transition: opacity 360ms ease, filter 360ms ease;
+}
+
+/* финал тура: экран не приглушён */
+.main.is-touring.is-tour-clear [data-tour],
+.main.is-touring.is-tour-clear .main-top {
   opacity: 1;
   filter: none;
 }

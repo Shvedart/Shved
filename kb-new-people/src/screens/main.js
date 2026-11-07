@@ -7,6 +7,7 @@ import { haptics } from '../core/haptics.js';
 import { toast } from '../ui/toast.js';
 import { cardMini, cardHeader, offerCard, productCard } from '../ui/components.js';
 import { favCard } from '../ui/favcard.js';
+import { scratchCard } from '../ui/scratch.js';
 import { startTour, stopViewMarks } from './tour.js';
 import { openSheet } from '../ui/sheet.js';
 import { app } from '../app.js';
@@ -120,8 +121,8 @@ export function mainScreen({ el, params, nav, entry }) {
         h('h2', { class: 'card-title' }, streakCfg.title[0], h('br'), streakCfg.title[1], ' ', img('assets/img/yandex-plus.png', { cls: 'inline-logo', alt: '', width: 16, height: 16 }), ' ', streakCfg.title[2]),
         h('p', { class: 'card-subtitle' }, streakCfg.subtitle))),
     h('div', { class: 'days', role: 'list', 'aria-label': 'Серия заходов' }, dayEls),
-    h('div', { class: 'card-header card-header-tight', dataset: { tour: 'today' } }, h('h2', { class: 'card-title' }, 'Доступно уже сегодня')),
-    h('div', { class: 'hscroll' }, today.map((o) => offerCard(o, { size: 'm' }))));
+    h('div', { class: 'card-header card-header-tight streak-today' }, h('h2', { class: 'card-title' }, 'Доступно уже сегодня')),
+    h('div', { class: 'hscroll streak-today' }, today.map((o) => offerCard(o, { size: 'm' }))));
 
   const nearby = h('section', { class: 'card nearby', dataset: { tour: 'nearby' } },
     cardHeader({ title: 'Выгода рядом с вами', subtitle: 'Кэшбэк на районе', aside: h('span', { class: 'map-pin', 'aria-hidden': 'true' }, icon('location', { size: 22 })) }),
@@ -142,12 +143,37 @@ export function mainScreen({ el, params, nav, entry }) {
     return all.filter((o) => o && o.image && !liked.has(o.brandId) && !seen.has(o.id) && seen.add(o.id));
   }
 
+  // Скретч-карточки с крутыми призами: первая — в 8-м ряду (её стирают в туре), остальные разбросаны ниже.
+  const SCRATCH_PRIZES = [
+    { percent: '75%', title: 'Скидка в Самокате', sub: 'на первый заказ до конца недели' },
+    { percent: '60%', title: 'Кэшбэк в Лавке', sub: 'на заказ от 1 500 ₽ сегодня' },
+    { percent: '70%', title: 'Скидка в Ленте', sub: 'на доставку продуктов до пятницы' },
+    { percent: '50%', title: 'Кэшбэк в Пятёрочке', sub: 'на одну покупку до воскресенья' },
+    { percent: '65%', title: 'Кэшбэк в Перекрёстке', sub: 'на первый онлайн-заказ' },
+    { percent: '80%', title: 'Скидка на кофе', sub: 'в Джаз Кофе до конца дня' },
+    { percent: '55%', title: 'Кэшбэк в Магните', sub: 'на доставку до конца недели' },
+    { percent: '90%', title: 'Кэшбэк на Плюс', sub: 'за первый месяц подписки' },
+    { percent: '70%', title: 'Скидка в Спортмастере', sub: 'на вторую вещь в чеке' },
+    { percent: '1 000 ₽', title: 'Кэшбэк в Lamoda', sub: 'за первый заказ от 3 000 ₽' },
+  ];
+  // индексы в сетке из двух колонок: чётный — слева, нечётный — справа
+  const SCRATCH_SLOTS = [14, 25, 34, 47, 56, 69, 78, 91, 100, 113];
+  const scratches = SCRATCH_PRIZES.map((prize) => scratchCard({ prize }));
+  scratches[0].dataset.tourScratch = '';
+  cleanups.push(() => scratches.forEach((c) => c.destroy()));
+
   const selection = h('section', { class: 'selection', dataset: { tour: 'selection' } },
     cardHeader({ title: 'Ваша подборка', subtitle: '40% крупных сетей', link: 'Все', onLink: () => nav.push('/favorites') }),
-    h('div', { class: 'grid', dataset: { tourCards: 'selection' } }, selectionOffers().map((o) => offerCard(o, { size: 's' }))));
+    h('div', { class: 'grid', dataset: { tourCards: 'selection' } }, withScratch(selectionOffers().map((o) => offerCard(o, { size: 's' })))));
+
+  function withScratch(cards) {
+    scratches.forEach((c, i) => cards.splice(Math.min(SCRATCH_SLOTS[i], cards.length), 0, c));
+    return cards;
+  }
 
   const blocks = [pk, favBlock, streak, nearby, products, selection];
   el.append(h('div', { class: 'main-inner' }, top, ...blocks));
+  scratches.forEach((c) => c.mount(el));
 
   // ---------- Апп-бар при скролле ----------
   let raf = 0;
@@ -226,7 +252,7 @@ export function mainScreen({ el, params, nav, entry }) {
     onInactive() {
       tour?.destroy();
       tour = null;
-      el.classList.remove('is-touring', 'is-tour-intro');
+      el.classList.remove('is-touring', 'is-tour-intro', 'is-tour-clear');
       for (const b of el.querySelectorAll('.is-focus')) b.classList.remove('is-focus');
     },
     destroy() {

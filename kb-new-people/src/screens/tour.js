@@ -9,8 +9,10 @@ const STEPS = [
   { target: null, text: 'Привет! За минуту покажем, как здесь получать больше выгоды и лутать кэшбэк каждый день', cta: 'Погнали' },
   { target: 'streak', text: 'Заходите сюда 5 дней подряд — и мы подарим 99% кэшбэка на Яндекс Плюс' },
   { target: 'selection', cards: 'selection', views: 6, text: 'Листайте ленту вниз и соберите 6 просмотров: увидели предложение — оно уже засчитано за вами' },
-  { target: 'selection', hearts: 'selection', likes: 1, text: 'Понравилось предложение? Поставьте сердечко — оно сохранится в избранном и всегда будет под рукой' },
-  { target: null, text: 'Кто заходит сюда каждый день, получает на 70% больше кэшбэка. Лутайте!', cta: 'Лутать кэшбэк', last: true },
+  { target: 'selection', hearts: 'selection', likes: 1, keepScroll: true, text: 'Понравилось предложение? Поставьте сердечко — оно сохранится в избранном и всегда будет под рукой' },
+  { target: 'selection', scratch: true, text: 'Стирайте карточки и ищите крутую выгоду' },
+  // финал без прокрутки наверх: страница остаётся там, где пользователь стирал карточку
+  { target: null, stay: true, text: 'Кто заходит сюда каждый день, получает на 70% больше кэшбэка', cta: 'Лутать кэшбэк', last: true },
 ];
 
 export function startTour({ el, entry, scenario }) {
@@ -41,15 +43,17 @@ export function startTour({ el, entry, scenario }) {
   animate(sheet, [{ transform: 'translateY(100%)' }, { transform: 'none' }], { duration: 520, easing: EASE.ios });
   go(0);
 
-  function focusBlock(name) {
-    // шаг-знакомство: ничего не подсвечиваем, экран чуть приглушён целиком
-    el.classList.toggle('is-tour-intro', !name);
+  function focusBlock(name, { stay = false, scroll = true } = {}) {
+    // шаг-знакомство: ничего не подсвечиваем, экран чуть приглушён целиком; финал — без приглушения
+    el.classList.toggle('is-tour-intro', !name && !stay);
+    el.classList.toggle('is-tour-clear', !name && stay);
     if (!name) {
       for (const b of el.querySelectorAll('.is-focus')) b.classList.remove('is-focus');
-      el.scrollTo({ top: 0, behavior: reducedMotion() ? 'auto' : 'smooth' });
+      if (!stay) el.scrollTo({ top: 0, behavior: reducedMotion() ? 'auto' : 'smooth' });
       return;
     }
     for (const b of el.querySelectorAll('[data-tour]')) b.classList.toggle('is-focus', b.dataset.tour === name);
+    if (!scroll) return;
     const target = el.querySelector(`[data-tour="${name}"]`);
     const appbarH = parseFloat(getComputedStyle(el).paddingTop);
     const r = target.getBoundingClientRect();
@@ -59,6 +63,29 @@ export function startTour({ el, entry, scenario }) {
     if (r.top >= top + appbarH && r.bottom <= sheetTop) return;
     const y = r.top - top + el.scrollTop - appbarH - 12;
     el.scrollTo({ top: Math.max(0, y), behavior: reducedMotion() ? 'auto' : 'smooth' });
+  }
+
+  // Докручиваем ленту так, чтобы скретч-карточка встала посередине между апп-баром и шторкой.
+  function scrollToCard(card) {
+    const top = el.getBoundingClientRect().top;
+    const appbarH = parseFloat(getComputedStyle(el).paddingTop);
+    const sheetTop = sheet.getBoundingClientRect().top + 60;
+    const r = card.getBoundingClientRect();
+    const free = sheetTop - top - appbarH;
+    const y = r.top - top + el.scrollTop - appbarH - Math.max(12, (free - r.height) / 2);
+    el.scrollTo({ top: Math.max(0, y), behavior: reducedMotion() ? 'auto' : 'smooth' });
+  }
+
+  // Шаг со скретч-карточкой: показываем, как стирать, и ждём, пока пользователь сотрёт фольгу сам.
+  function waitForScratch(card, i) {
+    const hintTimer = setTimeout(() => card.playHint(), reducedMotion() ? 200 : 1100);
+    // приз уже «вспыхнул» — даём его рассмотреть и открываем «Далее»
+    const onReveal = () => setTimeout(() => { if (active && index === i) unlock(); }, 400);
+    card.addEventListener('scratchreveal', onReveal, { once: true });
+    return () => {
+      clearTimeout(hintTimer);
+      card.removeEventListener('scratchreveal', onReveal);
+    };
   }
 
   function typeWords(text) {
@@ -90,12 +117,22 @@ export function startTour({ el, entry, scenario }) {
     index = i;
     const step = STEPS[i];
     counter.textContent = `Шаг ${i + 1} из ${STEPS.length}`;
-    nextBtn.disabled = Boolean(step.views || step.likes);
+    const card = step.scratch ? el.querySelector('[data-tour-scratch]') : null;
+    const scratchDone = card?.revealed;
+    nextBtn.disabled = Boolean(step.views || step.likes || (card && !scratchDone));
     if (step.views) setLabel(`Просмотрено 0 из ${step.views}`);
     else if (step.likes) setLabel('Поставьте сердечко');
+    else if (card && !scratchDone) setLabel('Сотрите карточку');
     else setLabel(step.cta || (step.last ? 'Понятно' : 'Далее'));
-    focusBlock(step.target);
+    if (card) {
+      focusBlock(step.target, { scroll: false });
+      scrollToCard(card);
+    } else focusBlock(step.target, { stay: step.stay, scroll: !step.keepScroll });
     typeWords(step.text);
+    if (card && !scratchDone) {
+      stepCleanup = waitForScratch(card, i);
+      return;
+    }
     if (step.cards || step.hearts) {
       // ждём, пока страница докрутится до ленты
       await wait(reducedMotion() ? 0 : 750);
@@ -154,6 +191,8 @@ export function startTour({ el, entry, scenario }) {
     let seen = 0;
     trackViews(el, list, {
       bottom: () => (sheet.isConnected ? sheet.getBoundingClientRect().top + 60 : null),
+      // анимация и хаптик — только пока идёт сбор просмотров; дальше галочки ставятся сразу маленькими
+      lively: () => active && Boolean(STEPS[index]?.views),
       onView(count) {
         if (!active || !STEPS[index]?.views || seen >= goal) return;
         seen = Math.min(goal, seen + count);
@@ -170,7 +209,7 @@ export function startTour({ el, entry, scenario }) {
     active = false;
     clearTimeout(wordsTimer);
     store.completeTour(scenario);
-    el.classList.remove('is-touring', 'is-tour-intro');
+    el.classList.remove('is-touring', 'is-tour-intro', 'is-tour-clear');
     for (const b of el.querySelectorAll('.is-focus')) b.classList.remove('is-focus');
     await animate(sheet, [{ transform: 'none' }, { transform: 'translateY(100%)' }], { duration: 360, easing: EASE.ios });
     sheet.remove();
@@ -193,15 +232,16 @@ export function startTour({ el, entry, scenario }) {
 // Трекер живёт на странице и после тура: засчитываются все карточки, до которых долистали.
 const trackers = new WeakMap();
 
-function trackViews(page, list, { bottom, onView }) {
+function trackViews(page, list, { bottom, onView, lively }) {
   const prev = trackers.get(page);
   if (prev) {
     prev.onView = onView;
     prev.bottom = bottom;
+    prev.lively = lively;
     prev.collect();
     return;
   }
-  const t = { onView, bottom, raf: 0 };
+  const t = { onView, bottom, lively, raf: 0 };
   t.collect = () => {
     const appbarBottom = page.getBoundingClientRect().top + parseFloat(getComputedStyle(page).paddingTop);
     const sheetTop = t.bottom?.();
@@ -211,8 +251,8 @@ function trackViews(page, list, { bottom, onView }) {
       const r = card.querySelector('.ocard-tile').getBoundingClientRect();
       return r.top >= appbarBottom - r.height / 2 && r.bottom <= limit;
     });
-    // хаптик только во время тура — после него галочки ставятся молча
-    fresh.forEach((card, i) => markViewed(card, i * 180, sheetTop != null));
+    const live = Boolean(t.lively?.());
+    fresh.forEach((card, i) => markViewed(card, live ? i * 180 : 0, live));
     if (fresh.length) t.onView?.(fresh.length);
   };
   t.onScroll = () => {
@@ -224,10 +264,11 @@ function trackViews(page, list, { bottom, onView }) {
   t.collect();
 }
 
-function markViewed(card, delay, tick) {
+function markViewed(card, delay, live) {
   card.classList.add('is-viewed');
   const mark = h('span', { class: 'counted', 'aria-hidden': 'true' }, iconImg('success', { size: 28 }));
   card.querySelector('.ocard-tile').append(mark);
+  if (!live) return; // в CSS галочка уже 16px
   const small = 'scale(0.5714)'; // 28px → 16px
   animate(mark, [
     { opacity: 0, transform: 'scale(.3) rotate(-30deg)', offset: 0 },
@@ -236,7 +277,7 @@ function markViewed(card, delay, tick) {
     { opacity: 1, transform: 'scale(1)', offset: 0.72 },
     { opacity: 1, transform: small, offset: 1 },
   ], { duration: 1700, delay, easing: 'cubic-bezier(.33,0,.2,1)' });
-  if (tick) setTimeout(() => haptics.light(), delay);
+  setTimeout(() => haptics.light(), delay);
 }
 
 export function stopViewMarks(page) {
