@@ -7,6 +7,7 @@ import { haptics } from '../core/haptics.js';
 import { store } from '../core/store.js';
 import { fmt } from '../domain/catalog.js';
 import { app } from '../app.js';
+import { toast } from './toast.js';
 
 // ---------- Избранное ----------
 
@@ -178,15 +179,21 @@ export function offerCard(offer, { size = 'm', onOpen, locked = false, lockLabel
 
 // ---------- Карточка товара ----------
 
-export function productCard(offer) {
-  const main = button({ class: 'pcard-main', 'aria-label': `${offer.name}, кэшбэк ${offer.short}` },
-    h('div', { class: 'pcard-tile' }, img(offer.image, { cls: 'pcard-image', alt: '' })),
+// item — товар из каталога (catalog.products) или оффер: у товара свой id, а детали открывает его offerId
+export function productCard(item) {
+  const offerId = item.offerId !== undefined ? item.offerId : item.id;
+  const main = button({ class: 'pcard-main', 'aria-label': `${item.name}, кэшбэк ${item.short}` },
+    h('div', { class: 'pcard-tile' }, img(item.image, { cls: 'pcard-image', alt: '' })),
     h('div', { class: 'pcard-caption' },
-      h('div', { class: 'pcard-price' }, h('span', null, 'Кэшбэк'), h('span', { class: 'pcard-pill' }, icon('crown', { size: 16 }), offer.short)),
-      h('div', { class: 'pcard-name' }, offer.name),
+      h('div', { class: 'pcard-price' }, h('span', null, 'Кэшбэк'), h('span', { class: 'pcard-pill' }, icon('crown', { size: 16 }), item.short)),
+      h('div', { class: 'pcard-name' }, item.name),
       h('div', { class: 'pcard-pay' }, iconImg('premium-yellow', { size: 16 }), 'Оплати картой Т-Банка')));
-  main.addEventListener('click', () => app.nav.push(`/offer/${offer.id}`));
-  return h('div', { class: 'pcard', dataset: { offer: offer.id } }, main, heartButton(offer.brandId, { size: 24, cls: 'pcard-heart' }));
+  main.addEventListener('click', () => {
+    if (offerId) app.nav.push(`/offer/${offerId}`);
+    else toast('Недоступно в прототипе');
+  });
+  return h('div', { class: 'pcard', dataset: { offer: item.id } }, main,
+    item.brandId ? heartButton(item.brandId, { size: 24, cls: 'pcard-heart' }) : null);
 }
 
 // ---------- Заголовок секции в карточке ----------

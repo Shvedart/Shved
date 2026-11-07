@@ -1,10 +1,10 @@
 // Лента после тура сценария 03: офферы собираются в смысловые полки по 4 (или 3 + скретч-карточка),
 // между ними — полки «Путешествия» и «События для вас» из прототипа афиши.
 
-import { h } from '../core/dom.js';
+import { h, button, img } from '../core/dom.js';
 import { animate, EASE, stagger, fadeUpIn } from '../core/motion.js';
 import { haptics } from '../core/haptics.js';
-import { cardHeader, chip, setChipActive } from '../ui/components.js';
+import { cardHeader } from '../ui/components.js';
 import { travelShelf, afishaShelf } from '../ui/shelves.js';
 
 // Порядок ленты. offers — смысловая полка: категория каталога, при необходимости — фильтр по названию;
@@ -32,6 +32,27 @@ const LAYOUT = [
   { title: 'Питомцам', sub: 'Корм, ветеринары и страховка', cat: 'pets' },
   { title: 'Цветы', sub: 'Букеты с доставкой', cat: 'flowers' },
   { title: 'Шопинг', sub: 'Маркетплейсы и сервисы покупок', cat: 'shopping' },
+];
+
+// навигация ленты: порядок, подписи и иллюстрации из макета 654:145600;
+// crop — высота и сдвиг картинки в процентах, как в макете (часть иллюстраций выходит за плитку)
+const NAV = [
+  { id: 'food', label: 'Еда', img: 'assets/img/cats/food.png' },
+  { id: 'travel', label: 'Путешествия', img: 'assets/img/cats/travel.png' },
+  { id: 'health', label: 'Здоровье', img: 'assets/img/cats/health.png' },
+  { id: 'beauty', label: 'Красота', img: 'assets/img/cats/beauty.png' },
+  { id: 'electronics', label: 'Электроника и техника', img: 'assets/img/cats/electronics.png' },
+  { id: 'kids', label: 'Дети', img: 'assets/img/cats/kids.png', crop: [103.83, -3.83] },
+  { id: 'clothes', label: 'Одежда', img: 'assets/img/cats/clothes.png', crop: [104.11, -4.11] },
+  { id: 'fun', label: 'Развлечения', img: 'assets/img/cats/fun.png', crop: [110.14, -4.35] },
+  { id: 'auto', label: 'Авто', img: 'assets/img/cats/auto.png', crop: [114.46, -6.33] },
+  { id: 'pets', label: 'Животные', img: 'assets/img/cats/pets.png', crop: [114.46, -6.93] },
+  { id: 'home', label: 'Дом', img: 'assets/img/cats/home.png' },
+  { id: 'education', label: 'Образование', img: 'assets/img/cats/education.png', crop: [113.1, -6.55] },
+  { id: 'shopping', label: 'Шопинг', img: 'assets/img/cats/shopping.png', crop: [105.56, -2.75] },
+  { id: 'telecom', label: 'Связь', img: 'assets/img/cats/telecom.png', crop: [106.15, -4.22] },
+  { id: 'sport', label: 'Спорт', img: 'assets/img/cats/sport.png', crop: [102.7, -2.7] },
+  { id: 'flowers', label: 'Цветы', img: 'assets/img/cats/flowers.png', crop: [104.4, -4.4] },
 ];
 
 const TRAVEL = [
@@ -117,29 +138,48 @@ export function buildShelves({ catalog, cards, scratches, onLink }) {
 
   const root = h('div', { class: 'shelves', dataset: { tourCards: 'selection' } }, parts);
 
-  // ---------- Чипсы категорий: оставляют в ленте только полки выбранной категории ----------
-  // чипсы — только у категорий, у которых есть свои полки
-  const present = new Set(parts.map((p) => p.dataset.cat));
-  const cats = [{ id: 'all', title: 'Все' }, ...catalog.categories.filter((c) => present.has(c.id))];
-  let current = 'all';
-  const chipEls = cats.map((c) => {
-    const el = chip({ label: c.title, size: 'm', active: c.id === current, onClick: () => select(c.id) });
-    el.dataset.cat = c.id;
+  // ---------- Навигация по категориям (макет 654:145600): плитка-иллюстрация и подпись ----------
+  // Тап оставляет в ленте только полки категории, повторный тап — снова вся лента.
+  const catOf = new Map();
+  for (const c of catalog.categories) for (const id of c.offerIds) catOf.set(id, c.id);
+  const navItems = NAV.filter((n) => catalog.getCategory(n.id)).map((n) => {
+    const el = button({ class: 'feed-nav-item', role: 'tab', 'aria-selected': 'false', dataset: { cat: n.id } },
+      h('span', { class: 'feed-nav-pic' }, img(n.img, { cls: 'feed-nav-img', alt: '', width: 80, height: 76, lazy: false })),
+      h('span', { class: 'feed-nav-label' }, n.label));
+    if (n.crop) Object.assign(el.querySelector('.feed-nav-img').style, { height: `${n.crop[0]}%`, top: `${n.crop[1]}%`, objectFit: 'fill' });
+    el.addEventListener('click', () => select(current === n.id ? 'all' : n.id));
     return el;
   });
-  const chipsBar = h('div', { class: 'feed-chips chips-scroll' },
-    h('div', { class: 'chips-line', role: 'tablist', 'aria-label': 'Категории ленты' }, chipEls));
+  const chipsBar = h('div', { class: 'feed-nav', role: 'tablist', 'aria-label': 'Категории ленты' }, navItems);
+  let current = 'all';
 
   let pageEl = null;
   function select(id) {
     if (id === current) return;
     current = id;
     haptics.selection();
-    for (const el of chipEls) setChipActive(el, el.dataset.cat === id);
+    chipsBar.classList.toggle('has-active', id !== 'all');
+    for (const el of navItems) {
+      const on = el.dataset.cat === id;
+      el.classList.toggle('is-active', on);
+      el.setAttribute('aria-selected', String(on));
+    }
+    // у категории есть свои полки — показываем их; если своих нет (спорт, связь),
+    // показываем её карточки из сборных полок «Ещё для вас»
+    const own = parts.some((p) => p.dataset.cat === id);
     const shown = [];
     for (const part of parts) {
-      // общие полки «Ещё для вас» — сборные, в фильтре категории их не показываем
-      part.hidden = !(id === 'all' || part.dataset.cat === id);
+      if (part.dataset.cat === 'mix') {
+        let any = false;
+        for (const card of part.querySelectorAll('.ocard')) {
+          const ok = id === 'all' || (!own && catOf.get(card.dataset.offer) === id);
+          card.hidden = !ok;
+          any ||= ok;
+        }
+        part.hidden = !any;
+      } else {
+        part.hidden = !(id === 'all' || part.dataset.cat === id);
+      }
       if (!part.hidden) shown.push(part);
     }
     // интерактивная полка (путешествия, афиша) не встаёт первой: в категории она идёт второй
@@ -151,9 +191,9 @@ export function buildShelves({ catalog, cards, scratches, onLink }) {
       shown[1].style.order = '0';
       [shown[0], shown[1]] = [shown[1], shown[0]];
     }
-    // билет прижат к соседям отрицательным отступом — первым под чипсами ему нужен обычный
+    // билет прижат к соседям отрицательным отступом — первым под навигацией ему нужен обычный
     root.classList.toggle('starts-with-trip', !!shown[0]?.classList.contains('fc-trip'));
-    // лента встаёт к чипсам, видимые полки проявляются по очереди
+    // лента встаёт к навигации, видимые полки проявляются по очереди
     if (pageEl) {
       const y = wrap.getBoundingClientRect().top - pageEl.getBoundingClientRect().top + pageEl.scrollTop - parseFloat(getComputedStyle(pageEl).paddingTop) - 8;
       if (pageEl.scrollTop > y) pageEl.scrollTo({ top: Math.max(0, y), behavior: 'auto' });
@@ -162,7 +202,11 @@ export function buildShelves({ catalog, cards, scratches, onLink }) {
     animate(root, [{ opacity: 0.4 }, { opacity: 1 }], { duration: 220, fill: 'none' });
   }
 
-  const wrap = h('div', { class: 'feed-shelves' }, chipsBar, root);
+  // заголовок отделяет верхние блоки главной от ленты
+  const head = h('div', { class: 'feed-head' },
+    h('h2', { class: 'feed-head-title' }, 'Лента выгоды'),
+    h('p', { class: 'feed-head-sub' }, 'Кэшбэк во всех категориях'));
+  const wrap = h('div', { class: 'feed-shelves' }, head, chipsBar, root);
   let cleanups = [];
   wrap.mount = (page) => { pageEl = page; cleanups = extras.map((x) => x.mount(page)); };
   wrap.destroy = () => cleanups.forEach((fn) => fn?.());

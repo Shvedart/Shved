@@ -12,7 +12,8 @@ const STEPS = [
   { target: 'selection', scratch: true, text: 'Стирайте карточки и ищите крутую выгоду' },
   { target: 'selection', hearts: 'selection', keepScroll: true, nudgeRows: 2, text: 'Понравилось предложение? Поставьте сердечко' },
   // финал без прокрутки наверх: страница остаётся там, где пользователь закончил
-  { target: null, stay: true, text: 'Кто заходит сюда каждый день, получает на 70% больше кэшбэка', cta: 'Лутать кэшбэк', last: true },
+  // hero — картинка в центре: шторка растягивается почти на весь экран и становится белой
+  { target: null, stay: true, hero: 'assets/img/tour/final-70.webp', text: 'Кто заходит сюда каждый день, получает на 70% больше кэшбэка', cta: 'Лутать кэшбэк', last: true },
 ];
 
 export function startTour({ el, entry, scenario }) {
@@ -26,10 +27,15 @@ export function startTour({ el, entry, scenario }) {
   const nextBtn = button({ class: 'btn btn-dark btn-l tour-next' }, h('span', { class: 'btn-label' }, 'Далее'));
   const closeBtn = button({ class: 'btn-link tour-close' }, 'Закрыть');
   const counter = h('span', { class: 'visually-hidden' });
+  const heroEl = h('div', { class: 'tour-hero', 'aria-hidden': 'true' });
   const sheet = h('div', { class: 'tour', role: 'dialog', 'aria-label': 'Как получать больше кэшбэка' },
     h('div', { class: 'tour-glow', 'aria-hidden': 'true' }),
-    h('div', { class: 'tour-body' }, counter, textEl, nextBtn, closeBtn));
-  stage.append(sheet);
+    h('div', { class: 'tour-body' }, heroEl, counter, textEl, nextBtn, closeBtn));
+  /* Шторка — внутри прокручиваемой страницы, прилеплена к низу (sticky): свайп по ней листает
+     ленту нативно, с инерцией. Отдельный слой поверх страницы на iPhone перехватывал скролл
+     даже с pointer-events: none. Отрицательный отступ — чтобы она не добавляла высоту ленте. */
+  el.append(sheet);
+  sheet.style.marginTop = `${-sheet.offsetHeight}px`;
   el.classList.add('is-touring');
   entry.el.inert = false;
 
@@ -76,16 +82,39 @@ export function startTour({ el, entry, scenario }) {
     el.scrollTo({ top: Math.max(0, y), behavior: reducedMotion() ? 'auto' : 'smooth' });
   }
 
-  // Шаг со скретч-карточкой: показываем, как стирать, и ждём, пока пользователь сотрёт фольгу сам.
-  function waitForScratch(card, i) {
+  // Шаг со скретч-карточкой: показываем, как стирать; стирать или нет — решает пользователь.
+  function waitForScratch(card) {
     const hintTimer = setTimeout(() => card.playHint(), reducedMotion() ? 200 : 1100);
-    // приз уже «вспыхнул» — даём его рассмотреть и открываем «Далее»
-    const onReveal = () => setTimeout(() => { if (active && index === i) unlock(); }, 400);
-    card.addEventListener('scratchreveal', onReveal, { once: true });
-    return () => {
-      clearTimeout(hintTimer);
-      card.removeEventListener('scratchreveal', onReveal);
-    };
+    return () => clearTimeout(hintTimer);
+  }
+
+  // Финал: шторка вырастает почти на весь экран, фон белый, по центру — картинка.
+  // Высоту меняем анимацией и следом пересчитываем отрицательный отступ, чтобы лента не сдвинулась.
+  async function showHero(src) {
+    const from = sheet.offsetHeight;
+    const to = Math.max(from, el.clientHeight - 24);
+    heroEl.replaceChildren(h('img', { src, alt: '', draggable: 'false', decoding: 'async' }));
+    sheet.classList.add('is-full');
+    sheet.style.height = `${to}px`;
+    sheet.style.marginTop = `${-to}px`;
+    if (reducedMotion()) return;
+    animate(sheet, [{ height: `${from}px`, marginTop: `${-from}px` }, { height: `${to}px`, marginTop: `${-to}px` }], { duration: 520, easing: EASE.ios, fill: 'none' });
+    animate(heroEl, [{ opacity: 0, transform: 'scale(.8) translateY(24px)' }, { opacity: 1, transform: 'none' }], { duration: 620, delay: 220, easing: EASE.spring });
+  }
+
+  // Ждём, пока страница перестанет прокручиваться (scrollTop не меняется 150 мс), но не дольше 1,6 с.
+  function scrollIdle(page) {
+    return new Promise((resolve) => {
+      const t0 = performance.now();
+      let last = page.scrollTop;
+      let still = t0;
+      const tick = (now) => {
+        if (page.scrollTop !== last) { last = page.scrollTop; still = now; }
+        if (now - still > 150 || now - t0 > 1600) resolve();
+        else requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
   }
 
   function typeWords(text) {
@@ -104,14 +133,6 @@ export function startTour({ el, entry, scenario }) {
     nextBtn.querySelector('.btn-label').textContent = text;
   }
 
-  // Задание шага выполнено — кнопка снова ведёт дальше.
-  function unlock() {
-    nextBtn.disabled = false;
-    setLabel('Далее');
-    haptics.success();
-    animate(nextBtn, [{ transform: 'scale(1)' }, { transform: 'scale(1.05)' }, { transform: 'scale(1)' }], { duration: 380, easing: EASE.spring, fill: 'none' });
-  }
-
   async function go(i) {
     // сначала завершаем прошлый шаг (поднятая карточка возвращается на место), потом показываем новый
     const leaving = stepCleanup?.();
@@ -127,27 +148,47 @@ export function startTour({ el, entry, scenario }) {
     counter.textContent = `Шаг ${i + 1} из ${STEPS.length}`;
     const card = step.scratch ? el.querySelector('[data-tour-scratch]') : null;
     const scratchDone = card?.revealed;
-    nextBtn.disabled = Boolean(card && !scratchDone);
-    if (card && !scratchDone) setLabel('Сотрите карточку');
-    else setLabel(step.cta || (step.last ? 'Понятно' : 'Далее'));
+    // стирать не обязательно: «Далее» доступна сразу, стирашка лишь показывает, как это делается
+    nextBtn.disabled = false;
+    setLabel(step.cta || (step.last ? 'Понятно' : 'Далее'));
     if (card) {
       focusBlock(step.target, { scroll: false });
       scrollToCard(card);
+    } else if (step.spotlight) {
+      // лента встаёт так, чтобы первая карточка была сверху экрана, под апп-баром,
+      // а не за градиентом: поднимаем именно её
+      focusBlock(step.target, { scroll: false });
+      const first = el.querySelector(`[data-tour-cards="${step.spotlight}"] .ocard`);
+      if (first) {
+        const appbarH = parseFloat(getComputedStyle(el).paddingTop);
+        const y = first.getBoundingClientRect().top - el.getBoundingClientRect().top + el.scrollTop - appbarH - 12;
+        el.scrollTo({ top: Math.max(0, y), behavior: reducedMotion() ? 'auto' : 'smooth' });
+      }
     } else focusBlock(step.target, { stay: step.stay, scroll: !step.keepScroll });
-    // докручиваем ленту вниз на пару рядов офферов от текущего места — к свежим карточкам с сердечками
+    // докручиваем ленту вниз к следующему ряду офферов и ставим его наверх экрана, под апп-бар:
+    // сердечки, которые подсвечиваем, оказываются у пользователя перед глазами
     if (step.nudgeRows) {
-      const grid = el.querySelector('[data-tour-cards]');
-      const row = (grid?.querySelector('.ocard')?.offsetHeight || 260) + (parseFloat(getComputedStyle(grid).rowGap) || 0);
-      el.scrollBy({ top: row * step.nudgeRows, behavior: reducedMotion() ? 'auto' : 'smooth' });
+      const appbarBottom = el.getBoundingClientRect().top + parseFloat(getComputedStyle(el).paddingTop);
+      const cards = [...el.querySelectorAll('[data-tour-cards] .ocard')].filter((c) => c.offsetParent);
+      const row = cards[0]?.offsetHeight || 260;
+      const target = cards.find((c) => c.getBoundingClientRect().top > appbarBottom + row * (step.nudgeRows - 1) + 40);
+      if (target) {
+        const y = target.getBoundingClientRect().top - appbarBottom + el.scrollTop - 12;
+        el.scrollTo({ top: Math.max(0, y), behavior: reducedMotion() ? 'auto' : 'smooth' });
+      }
     }
+    if (step.hero) showHero(step.hero);
     const typing = typeWords(step.text);
     if (card && !scratchDone) {
-      stepCleanup = waitForScratch(card, i);
+      stepCleanup = waitForScratch(card);
       return;
     }
     if (step.spotlight || step.hearts) {
       // ждём, пока страница докрутится до ленты; сердечки загораются, когда текст шага допечатан
       await wait(reducedMotion() ? 0 : Math.max(750, step.hearts ? typing + 700 : 0));
+      if (index !== i || !active) return;
+      // на iPhone плавная докрутка длится дольше — ждём, пока лента встанет, иначе карточка сразу вернётся
+      if (step.spotlight) await scrollIdle(el);
       if (index !== i || !active) return;
       if (step.spotlight) stepCleanup = spotlight(step.spotlight);
       if (step.hearts) stepCleanup = waitForLike(step.hearts);
@@ -218,7 +259,7 @@ export function startTour({ el, entry, scenario }) {
       h('span', { class: 'spot-shine' }));
     const tile = clone.querySelector('.ocard-tile');
     tile.append(mark);
-    stage.insertBefore(clone, sheet);
+    stage.append(clone);
     card.style.visibility = 'hidden';
     el.classList.add('is-tour-spot');
 
@@ -247,12 +288,21 @@ export function startTour({ el, entry, scenario }) {
       const bx = back.left - r.left;
       const by = back.top - r.top;
       animate(mark, [{ opacity: 1 }, { opacity: 0 }], { duration: 200 });
-      restored = animate(clone, [{ transform: out }, { transform: `translate(${bx}px, ${by}px)` }], { duration: 560, easing: EASE.ios }).then(() => {
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
         clone.remove();
         card.style.visibility = '';
         markViewed(card);
         trackViews(el, list);
-      });
+      };
+      // страховка: если анимация не отчиталась (бывает в Safari), карточка всё равно встанет на место
+      const safety = new Promise((r) => setTimeout(r, 800));
+      restored = Promise.race([
+        animate(clone, [{ transform: out }, { transform: `translate(${bx}px, ${by}px)` }], { duration: 560, easing: EASE.ios }),
+        safety,
+      ]).then(finish);
       return restored;
     }
     return restore;
@@ -296,7 +346,7 @@ function trackViews(page, list) {
   t.collect = () => {
     const pr = page.getBoundingClientRect();
     const appbarBottom = pr.top + parseFloat(getComputedStyle(page).paddingTop);
-    const sheet = page.parentElement.querySelector('.tour');
+    const sheet = page.querySelector(':scope > .tour');
     const bottom = sheet ? sheet.getBoundingClientRect().top + 60 : pr.bottom;
     const mid = (appbarBottom + bottom) / 2;
     const band = (bottom - appbarBottom) * 0.2;

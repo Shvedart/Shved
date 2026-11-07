@@ -88,7 +88,8 @@ export function mainScreen({ el, params, nav, entry }) {
 
   const dayEls = streakCfg.days.map((d, i) => {
     const done = i === 0 && store.state.streak.day1;
-    const mark = d.gift ? iconImg('priz', { size: 16, cls: 'day-mark' }) : icon('lock', { size: 16, cls: 'day-mark day-lock' });
+    // у засчитанного первого дня замка нет вовсе — только галочка
+    const mark = d.gift ? iconImg('priz', { size: 16, cls: 'day-mark' }) : done ? null : icon('lock', { size: 16, cls: 'day-mark day-lock' });
     // первый день: до активации — замочек, как у остальных; после — галочка
     const content = [h('span', { class: 'day-dow' }, d.dow), h('span', { class: 'day-num' }, d.day), mark,
       i === 0 ? iconImg('check', { size: 16, cls: 'day-mark day-check' }) : null];
@@ -135,7 +136,8 @@ export function mainScreen({ el, params, nav, entry }) {
 
   const products = h('section', { class: 'card products', dataset: { tour: 'products' } },
     cardHeader({ title: 'Товары с кэшбэком', subtitle: 'Самые жирные предложения' }),
-    h('div', { class: 'hscroll' }, cfg.products.map((id) => catalog.getOffer(id)).filter(Boolean).map((o) => productCard(o))));
+    // реальные товары из data/products.json; если их нет — прежние офферы из overrides
+    h('div', { class: 'hscroll' }, (catalog.products.length ? catalog.products : cfg.products.map((id) => catalog.getOffer(id)).filter(Boolean)).map((p) => productCard(p))));
 
   // Подборка: сначала избранные редакцией, затем все остальные офферы без лайка.
   // Список фиксируется при входе — лайк не убирает карточку из-под пальца.
@@ -179,7 +181,7 @@ export function mainScreen({ el, params, nav, entry }) {
   el.append(h('div', { class: 'main-inner' }, top, ...blocks));
   scratches.forEach((c) => c.mount(el));
 
-  // ---------- Лента полками: в 01 и 02 сразу, в 03 — после тура ----------
+  // ---------- Лента полками ----------
   let shelves = null;
   function toShelves({ animated }) {
     if (shelves) return;
@@ -191,21 +193,19 @@ export function mainScreen({ el, params, nav, entry }) {
       shelves.mount(el);
     };
     if (!animated || reducedMotion()) { swap(); return; }
-    // старая сетка гаснет, лента подъезжает к началу подборки, полки появляются по очереди
-    animate(selectionGrid, [{ opacity: 1 }, { opacity: 0, transform: 'translateY(12px)' }], { duration: 260, easing: EASE.in }).then(() => {
+    // лента не прыгает: запоминаем карточку, что сейчас на экране, и после пересборки
+    // возвращаем её на то же место; полки вокруг проявляются плавно
+    const pageTop = el.getBoundingClientRect().top + parseFloat(getComputedStyle(el).paddingTop);
+    const anchor = cards.find((c) => c.getBoundingClientRect().bottom > pageTop + 40) || null;
+    const anchorY = anchor ? anchor.getBoundingClientRect().top : 0;
+    animate(selectionGrid, [{ opacity: 1 }, { opacity: 0 }], { duration: 220, easing: EASE.in }).then(() => {
       swap();
-      const y = selection.getBoundingClientRect().top - el.getBoundingClientRect().top + el.scrollTop - parseFloat(getComputedStyle(el).paddingTop) - 12;
-      el.scrollTo({ top: Math.max(0, y), behavior: 'auto' });
-      stagger([shelves.firstElementChild, ...[...shelves.lastElementChild.children].slice(0, 3)], fadeUpIn, { duration: 460, step: 90, easing: EASE.out });
+      if (anchor?.isConnected) el.scrollTop += anchor.getBoundingClientRect().top - anchorY;
+      animate(shelves, [{ opacity: 0 }, { opacity: 1 }], { duration: 360, easing: EASE.out });
     });
   }
-  // в сценариях 01 и 02 на главную приходят после онбординга — полки сразу
-  if (scenario !== 's3' || store.state.tour?.s3) toShelves({ animated: false });
-  if (scenario === 's3') {
-    cleanups.push(store.subscribe((_, change) => {
-      if (change.type === 'tour' && change.scenario === 's3') setTimeout(() => toShelves({ animated: true }), 380);
-    }));
-  }
+  // лента полками во всех сценариях сразу — в 03 тур проходит уже по ней
+  toShelves({ animated: false });
   cleanups.push(() => shelves?.destroy());
 
   // ---------- Апп-бар при скролле ----------
@@ -236,6 +236,8 @@ export function mainScreen({ el, params, nav, entry }) {
       setTimeout(() => {
         const day = dayEls[0];
         day.classList.add('is-done');
+        // замок убираем из разметки, а не только стилем: в Safari на iPhone он оставался рядом с галочкой
+        day.querySelector('.day-lock')?.remove();
         day.setAttribute('aria-label', `${streakCfg.days[0].dow} ${streakCfg.days[0].day}: засчитан`);
         animate(day, [{ transform: 'scale(.9)' }, { transform: 'scale(1.06)' }, { transform: 'scale(1)' }], { duration: 480, easing: EASE.spring });
         animate(day.querySelector('.day-check'), [{ opacity: 0, transform: 'scale(0) rotate(-30deg)' }, { opacity: 1, transform: 'scale(1.3)' }, { opacity: 1, transform: 'none' }], { duration: 520, delay: 120, easing: EASE.spring });

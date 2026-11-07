@@ -3,11 +3,12 @@
 
 import { buildCatalog } from '../domain/catalog.js';
 
-export function createLocalSource({ catalogUrl = 'cashback-web.json', overridesUrl = 'data/overrides.json' } = {}) {
+export function createLocalSource({ catalogUrl = 'cashback-web.json', overridesUrl = 'data/overrides.json', productsUrl = 'data/products.json' } = {}) {
   return {
     async load() {
-      const [raw, overrides] = await Promise.all([fetchJson(catalogUrl), fetchJson(overridesUrl)]);
-      return { raw, overrides };
+      // товары с кэшбэком — необязательный источник: без него блок берёт офферы из overrides
+      const [raw, overrides, products] = await Promise.all([fetchJson(catalogUrl), fetchJson(overridesUrl), fetchJson(productsUrl).catch(() => null)]);
+      return { raw, overrides, products };
     },
   };
 }
@@ -29,6 +30,6 @@ async function fetchJson(url) {
 }
 
 export async function loadCatalog(source) {
-  const { raw, overrides } = await source.load();
-  return buildCatalog(raw, overrides);
+  const { raw, overrides, products } = await source.load();
+  return buildCatalog(raw, overrides, products);
 }

@@ -6,7 +6,7 @@ import { plural } from '../core/dom.js';
 const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
 const DAY_MS = 86400000;
 
-export function buildCatalog(raw, cfg) {
+export function buildCatalog(raw, cfg, productsRaw = null) {
   const today = new Date(`${cfg.today}T00:00:00`);
   const matchIndex = new Map();
   for (const [brandId, b] of Object.entries(cfg.brands || {})) {
@@ -56,13 +56,48 @@ export function buildCatalog(raw, cfg) {
     brand.offerIds.sort((a, b) => offers.get(b).rank - offers.get(a).rank);
   }
 
-  return createCatalogApi({ categories, offers, brands, cfg });
+  const products = buildProducts(productsRaw, offers, brands);
+  return createCatalogApi({ categories, offers, brands, cfg, products });
 }
 
-function createCatalogApi({ categories, offers, brands, cfg }) {
+/* Товары с кэшбэком (формат land → payload.items[]: фото, название, кэшбэк).
+   Товар привязываем к офферу с тем же названием или к бренду, чьё имя есть в названии товара, —
+   тогда работают переход в детали и сердечко. */
+function buildProducts(productsRaw, offers, brands) {
+  const list = [];
+  const byName = new Map([...offers.values()].map((o) => [normName(o.name).toLowerCase(), o]));
+  const brandList = [...brands.values()].sort((a, b) => b.name.length - a.name.length);
+  for (const entry of productsRaw?.land || []) {
+    for (const item of entry.payload?.items || []) {
+      const name = normName(item.texts?.name || '');
+      if (!name) continue;
+      const cashback = item.texts?.cashback || '';
+      const lower = name.toLowerCase();
+      let offer = byName.get(lower) || null;
+      if (!offer) {
+        const brand = brandList.find((b) => b.name.length > 2 && lower.includes(normName(b.name).toLowerCase()));
+        offer = brand ? offers.get(brand.offerIds[0]) : null;
+      }
+      list.push({
+        id: `product-${item.entity?.id || entry.id}`,
+        name,
+        image: item.images?.photo || '',
+        cashback,
+        // в плашке — без слова «Кэшбэк»: оно уже стоит перед ней
+        short: cashback.replace(/^кэшбэк\s*/i, ''),
+        offerId: offer?.id || null,
+        brandId: offer?.brandId || null,
+      });
+    }
+  }
+  return list;
+}
+
+function createCatalogApi({ categories, offers, brands, cfg, products = [] }) {
   const api = {
     config: cfg,
     categories,
+    products,
     getOffer: (id) => offers.get(id) || null,
     getBrand: (id) => brands.get(id) || null,
     getCategory: (id) => categories.find((c) => c.id === id) || null,

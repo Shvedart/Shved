@@ -11,12 +11,93 @@
   position: relative;
 }
 
-/* ---------- Чипсы категорий над полками ---------- */
-.feed-chips {
-  margin-bottom: 24px;
+/* ---------- Заголовок ленты: отделяет её от верхних блоков ---------- */
+.feed-head {
+  padding: 32px var(--gutter) 16px 20px;
 }
 
-/* билет первым под чипсами — без отрицательного отступа сверху */
+.feed-head-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.36px;
+  line-height: 1.15;
+  color: var(--c-text);
+}
+
+.feed-head-sub {
+  margin-top: 4px;
+  font-size: 15px;
+  letter-spacing: -0.24px;
+  color: var(--c-text-muted);
+}
+
+/* ---------- Навигация по категориям над полками (макет 654:145600) ---------- */
+.feed-nav {
+  display: flex;
+  gap: 8px;
+  /* слева 12px до первой иллюстрации: она уже колонки на 2–3px */
+  padding: 0 var(--gutter) 8px 10px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.feed-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.feed-nav-item {
+  flex: none;
+  width: 85px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: opacity var(--dur-fast) ease, transform var(--dur-press) var(--ease-out);
+}
+
+/* иллюстрация 80×76 по центру колонки 85px; лишнее у вытянутых картинок обрезается рамкой */
+.feed-nav-pic {
+  position: relative;
+  width: 80px;
+  height: 76px;
+  margin-left: -1px;
+  overflow: hidden;
+}
+
+.feed-nav-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.feed-nav-label {
+  width: 100%;
+  font-size: 13px;
+  letter-spacing: -0.08px;
+  color: var(--c-text);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* выбрана категория — остальные приглушены, у выбранной подпись жирнее */
+.feed-nav.has-active .feed-nav-item:not(.is-active) {
+  opacity: 0.4;
+}
+
+.feed-nav-item.is-active .feed-nav-label {
+  font-weight: 600;
+}
+
+/* билет первым под навигацией — без отрицательного отступа сверху */
 .shelves.starts-with-trip > .fc-trip:not([hidden]) {
   margin-top: -16px;
 }

@@ -1,0 +1,214 @@
+{
+  "land": [
+    {
+      "id": "product-001",
+      "payload": {
+        "code": "001",
+        "items": [
+          {
+            "entity": {
+              "id": "001",
+              "type": "PRODUCT"
+            },
+            "images": {
+              "photo": "https://ms-static-images.t-static.ru/partner-image780-607cd69f6d08427a8a022926376957dd.png"
+            },
+            "texts": {
+              "name": "Дрип-пакеты Tasty Coffee",
+              "cashback": "5%"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "product-002",
+      "payload": {
+        "code": "002",
+        "items": [
+          {
+            "entity": {
+              "id": "002",
+              "type": "PRODUCT"
+            },
+            "images": {
+              "photo": "https://ms-static-images.t-static.ru/partner-image780-a5820ff4c10d430992bc3fad4c7e2c07.png"
+            },
+            "texts": {
+              "name": "Кофе Carte Noire",
+              "cashback": "30%"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "product-003",
+      "payload": {
+        "code": "003",
+        "items": [
+          {
+            "entity": {
+              "id": "003",
+              "type": "PRODUCT"
+            },
+            "images": {
+              "photo": "https://ms-static-images.t-static.ru/partner-image780-7e6338cda6c546d99c8f366552408eea.png"
+            },
+            "texts": {
+              "name": "Hochland «Для кулинарии»",
+              "cashback": "30%"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "product-004",
+      "payload": {
+        "code": "004",
+        "items": [
+          {
+            "entity": {
+              "id": "004",
+              "type": "PRODUCT"
+            },
+            "images": {
+              "photo": "https://ms-static-images.t-static.ru/partner-image780-939d0e7092b843ddb2cbcf90b4b0319c.png"
+            },
+            "texts": {
+              "name": "Hochland Grünländer «Классический»",
+              "cashback": "30%"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "product-005",
+      "payload": {
+        "code": "005",
+        "items": [
+          {
+            "entity": {
+              "id": "005",
+              "type": "PRODUCT"
+            },
+            "images": {
+              "photo": "https://ms-static-images.t-static.ru/partner-image780-901d10c75b0545198f10f40a196ea210.png"
+            },
+            "texts": {
+              "name": "GOLD в Чижике",
+              "cashback": "Кэшбэк до 50%"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "product-006",
+      "payload": {
+        "code": "006",
+        "items": [
+          {
+            "entity": {
+              "id": "006",
+              "type": "PRODUCT"
+            },
+            "images": {
+              "photo": "https://ms-static-images.t-static.ru/partner-image780-9b551778ec0c4d0884cbcadd778190d8.png"
+            },
+            "texts": {
+              "name": "Кофемашины Delonghi",
+              "cashback": "5 000 ₽"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "product-007",
+      "payload": {
+        "code": "007",
+        "items": [
+          {
+            "entity": {
+              "id": "007",
+              "type": "PRODUCT"
+            },
+            "images": {
+              "photo": "https://ms-static-images.t-static.ru/partner-image780-5670dd774bef48829a1e3bcd5ce67955.png"
+            },
+            "texts": {
+              "name": "Творожные сырки «Савушкин»",
+              "cashback": "90%"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "product-008",
+      "payload": {
+        "code": "008",
+        "items": [
+          {
+            "entity": {
+              "id": "008",
+              "type": "PRODUCT"
+            },
+            "images": {
+              "photo": "https://ms-static-images.t-static.ru/partner-image780-385c3b80662c466eb660dcb625d42126.png"
+            },
+            "texts": {
+              "name": "PERFECT FIT™",
+              "cashback": "Кэшбэк до 15%"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "product-009",
+      "payload": {
+        "code": "009",
+        "items": [
+          {
+            "entity": {
+              "id": "009",
+              "type": "PRODUCT"
+            },
+            "images": {
+              "photo": "https://ms-static-images.t-static.ru/partner-image780-78ccb7970a7a49dfa7d551e776a6595f.png"
+            },
+            "texts": {
+              "name": "Bruto",
+              "cashback": "Кэшбэк до 35%"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "product-010",
+      "payload": {
+        "code": "010",
+        "items": [
+          {
+            "entity": {
+              "id": "010",
+              "type": "PRODUCT"
+            },
+            "images": {
+              "photo": "https://ms-static-images.t-static.ru/partner-image780-4123eb315b974809b6c3c8be92af1650.png"
+            },
+            "texts": {
+              "name": "Кухонная машина от Kenwood",
+              "cashback": "3 000 ₽"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
