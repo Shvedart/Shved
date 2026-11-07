@@ -6,10 +6,10 @@ import { haptics } from '../core/haptics.js';
 import { store } from '../core/store.js';
 
 const STEPS = [
-  { target: null, text: 'Привет! За минуту покажем, как здесь получать больше выгоды и лутать кэшбэк каждый день', cta: 'Погнали' },
-  { target: 'streak', text: 'Заходите сюда 5 дней подряд — и мы подарим 99% кэшбэка на Яндекс Плюс' },
-  { target: 'selection', cards: 'selection', views: 6, text: 'Листайте ленту вниз и соберите 6 просмотров: увидели предложение — оно уже засчитано за вами' },
-  { target: 'selection', hearts: 'selection', likes: 1, keepScroll: true, text: 'Понравилось предложение? Поставьте сердечко — оно сохранится в избранном и всегда будет под рукой' },
+  { target: null, text: 'Привет! За минуту покажем, как здесь получать больше кэшбэка', cta: 'Погнали' },
+  { target: 'streak', text: 'Заходите сюда 5 дней подряд — и мы сделаем вам крутой подарок' },
+  { target: 'selection', cards: 'selection', views: 6, text: 'Листайте ленту вниз и соберите 6 просмотров: увидел — уже твоё' },
+  { target: 'selection', hearts: 'selection', likes: 1, keepScroll: true, text: 'Понравилось предложение? Поставьте сердечко' },
   { target: 'selection', scratch: true, text: 'Стирайте карточки и ищите крутую выгоду' },
   // финал без прокрутки наверх: страница остаётся там, где пользователь стирал карточку
   { target: null, stay: true, text: 'Кто заходит сюда каждый день, получает на 70% больше кэшбэка', cta: 'Лутать кэшбэк', last: true },
@@ -58,7 +58,7 @@ export function startTour({ el, entry, scenario }) {
     const appbarH = parseFloat(getComputedStyle(el).paddingTop);
     const r = target.getBoundingClientRect();
     const top = el.getBoundingClientRect().top;
-    const sheetTop = sheet.getBoundingClientRect().top + 60; // верх шторки прозрачный
+    const sheetTop = sheet.getBoundingClientRect().top + 90; // верх шторки прозрачный
     // блок уже виден над шторкой — страницу не двигаем
     if (r.top >= top + appbarH && r.bottom <= sheetTop) return;
     const y = r.top - top + el.scrollTop - appbarH - 12;
@@ -69,7 +69,7 @@ export function startTour({ el, entry, scenario }) {
   function scrollToCard(card) {
     const top = el.getBoundingClientRect().top;
     const appbarH = parseFloat(getComputedStyle(el).paddingTop);
-    const sheetTop = sheet.getBoundingClientRect().top + 60;
+    const sheetTop = sheet.getBoundingClientRect().top + 90;
     const r = card.getBoundingClientRect();
     const free = sheetTop - top - appbarH;
     const y = r.top - top + el.scrollTop - appbarH - Math.max(12, (free - r.height) / 2);
@@ -147,7 +147,7 @@ export function startTour({ el, entry, scenario }) {
     const list = el.querySelector(`[data-tour-cards="${name}"]`);
     if (!list || !active) return [];
     const appbarBottom = el.getBoundingClientRect().top + parseFloat(getComputedStyle(el).paddingTop);
-    const sheetTop = sheet.getBoundingClientRect().top + 60;
+    const sheetTop = sheet.getBoundingClientRect().top + 90;
     return [...list.querySelectorAll('.ocard')].filter((card) => {
       const r = card.querySelector('.ocard-tile').getBoundingClientRect();
       return r.top >= appbarBottom - 10 && r.top + 60 <= sheetTop;
@@ -190,7 +190,7 @@ export function startTour({ el, entry, scenario }) {
     if (!list) return null;
     let seen = 0;
     trackViews(el, list, {
-      bottom: () => (sheet.isConnected ? sheet.getBoundingClientRect().top + 60 : null),
+      bottom: () => (sheet.isConnected ? sheet.getBoundingClientRect().top + 90 : null),
       // анимация и хаптик — только пока идёт сбор просмотров; дальше галочки ставятся сразу маленькими
       lively: () => active && Boolean(STEPS[index]?.views),
       onView(count) {

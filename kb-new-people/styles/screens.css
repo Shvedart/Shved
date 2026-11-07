@@ -1064,7 +1064,7 @@
   right: 0;
   bottom: 0;
   z-index: 25;
-  padding: 90px var(--gutter) calc(20px + var(--safe-bottom));
+  padding: 140px var(--gutter) calc(20px + var(--safe-bottom));
   overflow: hidden;
 }
 
@@ -1072,11 +1072,11 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(60% 70% at 20% 80%, rgba(203, 180, 255, 0.95), transparent 70%),
-    radial-gradient(60% 70% at 85% 70%, rgba(240, 200, 255, 0.9), transparent 70%),
-    radial-gradient(70% 60% at 50% 100%, rgba(190, 205, 255, 0.95), transparent 70%);
-  -webkit-mask: linear-gradient(to bottom, transparent 0, #000 40%);
-  mask: linear-gradient(to bottom, transparent 0, #000 40%);
+    radial-gradient(60% 70% at 20% 80%, rgba(214, 250, 208, 0.9), transparent 70%),
+    radial-gradient(60% 70% at 85% 70%, rgba(228, 255, 222, 0.85), transparent 70%),
+    radial-gradient(70% 60% at 50% 100%, rgba(204, 244, 210, 0.9), transparent 70%);
+  -webkit-mask: linear-gradient(to bottom, transparent 0, #000 30%);
+  mask: linear-gradient(to bottom, transparent 0, #000 30%);
   background-size: 140% 140%;
   animation: glow 7s ease-in-out infinite alternate;
 }
@@ -1085,7 +1085,9 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0, rgba(246, 242, 255, 0.94) 22%, rgba(236, 228, 255, 0.98) 45%, rgba(228, 218, 255, 1) 100%);
+  /* мятный градиент из макета (652:142228) */
+  /* выше и плотнее, чем в макете: текст поверх ленты должен читаться на сплошном фоне */
+  background: linear-gradient(183.5deg, rgba(238, 255, 236, 0) 0%, rgba(238, 255, 236, 0.85) 22%, rgb(238, 255, 236) 36%);
 }
 
 @keyframes glow {
