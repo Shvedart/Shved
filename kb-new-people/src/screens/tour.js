@@ -8,10 +8,10 @@ import { store } from '../core/store.js';
 const STEPS = [
   { target: null, text: 'Привет! За минуту покажем, как здесь получать больше кэшбэка', cta: 'Погнали' },
   { target: 'streak', text: 'Заходите сюда 5 дней подряд — и мы сделаем вам крутой подарок' },
-  { target: 'selection', cards: 'selection', views: 6, text: 'Листайте ленту вниз и соберите 6 просмотров: увидел — уже твоё' },
-  { target: 'selection', hearts: 'selection', likes: 1, keepScroll: true, text: 'Понравилось предложение? Поставьте сердечко' },
+  { target: 'selection', spotlight: 'selection', text: 'Галочка на карточке означает, что кэшбэк активирован', cta: 'Понятно' },
   { target: 'selection', scratch: true, text: 'Стирайте карточки и ищите крутую выгоду' },
-  // финал без прокрутки наверх: страница остаётся там, где пользователь стирал карточку
+  { target: 'selection', hearts: 'selection', keepScroll: true, nudgeRows: 2, text: 'Понравилось предложение? Поставьте сердечко' },
+  // финал без прокрутки наверх: страница остаётся там, где пользователь закончил
   { target: null, stay: true, text: 'Кто заходит сюда каждый день, получает на 70% больше кэшбэка', cta: 'Лутать кэшбэк', last: true },
 ];
 
@@ -58,7 +58,7 @@ export function startTour({ el, entry, scenario }) {
     const appbarH = parseFloat(getComputedStyle(el).paddingTop);
     const r = target.getBoundingClientRect();
     const top = el.getBoundingClientRect().top;
-    const sheetTop = sheet.getBoundingClientRect().top + 90; // верх шторки прозрачный
+    const sheetTop = sheet.getBoundingClientRect().top + 60; // верх шторки прозрачный
     // блок уже виден над шторкой — страницу не двигаем
     if (r.top >= top + appbarH && r.bottom <= sheetTop) return;
     const y = r.top - top + el.scrollTop - appbarH - 12;
@@ -69,7 +69,7 @@ export function startTour({ el, entry, scenario }) {
   function scrollToCard(card) {
     const top = el.getBoundingClientRect().top;
     const appbarH = parseFloat(getComputedStyle(el).paddingTop);
-    const sheetTop = sheet.getBoundingClientRect().top + 90;
+    const sheetTop = sheet.getBoundingClientRect().top + 60;
     const r = card.getBoundingClientRect();
     const free = sheetTop - top - appbarH;
     const y = r.top - top + el.scrollTop - appbarH - Math.max(12, (free - r.height) / 2);
@@ -93,10 +93,11 @@ export function startTour({ el, entry, scenario }) {
     const words = text.split(' ');
     textEl.setAttribute('aria-label', text);
     textEl.replaceChildren(...words.map((w) => h('span', { class: 'tour-word', 'aria-hidden': 'true' }, `${w} `)));
-    if (reducedMotion()) return;
+    if (reducedMotion()) return 0;
     [...textEl.children].forEach((w, i) => {
       animate(w, [{ opacity: 0, filter: 'blur(4px)', transform: 'translateY(4px)' }, { opacity: 1, filter: 'blur(0)', transform: 'none' }], { duration: 320, delay: i * 70, easing: EASE.out });
     });
+    return words.length * 70 + 320; // сколько печатается текст
   }
 
   function setLabel(text) {
@@ -112,32 +113,43 @@ export function startTour({ el, entry, scenario }) {
   }
 
   async function go(i) {
-    stepCleanup?.();
+    // сначала завершаем прошлый шаг (поднятая карточка возвращается на место), потом показываем новый
+    const leaving = stepCleanup?.();
     stepCleanup = null;
+    if (leaving instanceof Promise) {
+      nextBtn.disabled = true;
+      await leaving;
+      await wait(reducedMotion() ? 0 : 500); // пауза: карточка встала на место — потом новый текст
+      if (!active) return;
+    }
     index = i;
     const step = STEPS[i];
     counter.textContent = `Шаг ${i + 1} из ${STEPS.length}`;
     const card = step.scratch ? el.querySelector('[data-tour-scratch]') : null;
     const scratchDone = card?.revealed;
-    nextBtn.disabled = Boolean(step.views || step.likes || (card && !scratchDone));
-    if (step.views) setLabel(`Просмотрено 0 из ${step.views}`);
-    else if (step.likes) setLabel('Поставьте сердечко');
-    else if (card && !scratchDone) setLabel('Сотрите карточку');
+    nextBtn.disabled = Boolean(card && !scratchDone);
+    if (card && !scratchDone) setLabel('Сотрите карточку');
     else setLabel(step.cta || (step.last ? 'Понятно' : 'Далее'));
     if (card) {
       focusBlock(step.target, { scroll: false });
       scrollToCard(card);
     } else focusBlock(step.target, { stay: step.stay, scroll: !step.keepScroll });
-    typeWords(step.text);
+    // докручиваем ленту вниз на пару рядов офферов от текущего места — к свежим карточкам с сердечками
+    if (step.nudgeRows) {
+      const grid = el.querySelector('[data-tour-cards]');
+      const row = (grid?.querySelector('.ocard')?.offsetHeight || 260) + (parseFloat(getComputedStyle(grid).rowGap) || 0);
+      el.scrollBy({ top: row * step.nudgeRows, behavior: reducedMotion() ? 'auto' : 'smooth' });
+    }
+    const typing = typeWords(step.text);
     if (card && !scratchDone) {
       stepCleanup = waitForScratch(card, i);
       return;
     }
-    if (step.cards || step.hearts) {
-      // ждём, пока страница докрутится до ленты
-      await wait(reducedMotion() ? 0 : 750);
+    if (step.spotlight || step.hearts) {
+      // ждём, пока страница докрутится до ленты; сердечки загораются, когда текст шага допечатан
+      await wait(reducedMotion() ? 0 : Math.max(750, step.hearts ? typing + 700 : 0));
       if (index !== i || !active) return;
-      if (step.cards) collectViews(step.cards, step.views);
+      if (step.spotlight) stepCleanup = spotlight(step.spotlight);
       if (step.hearts) stepCleanup = waitForLike(step.hearts);
     }
   }
@@ -147,7 +159,7 @@ export function startTour({ el, entry, scenario }) {
     const list = el.querySelector(`[data-tour-cards="${name}"]`);
     if (!list || !active) return [];
     const appbarBottom = el.getBoundingClientRect().top + parseFloat(getComputedStyle(el).paddingTop);
-    const sheetTop = sheet.getBoundingClientRect().top + 90;
+    const sheetTop = sheet.getBoundingClientRect().top + 60;
     return [...list.querySelectorAll('.ocard')].filter((card) => {
       const r = card.querySelector('.ocard-tile').getBoundingClientRect();
       return r.top >= appbarBottom - 10 && r.top + 60 <= sheetTop;
@@ -168,14 +180,13 @@ export function startTour({ el, entry, scenario }) {
     });
   }
 
-  // Шаг с лайками: подсказка повторяется, пока пользователь сам не поставит сердечко.
+  // Шаг с лайками: сердечко ставить не обязательно — «Далее» доступна сразу,
+  // подсказка повторяется, пока пользователь не лайкнет что-нибудь или не пойдёт дальше.
   function waitForLike(name) {
     hintHearts(name);
     const timer = setInterval(() => hintHearts(name), 4200);
     const unsub = store.subscribe((_, change) => {
-      if (change.type !== 'fav' || !change.liked) return;
-      stop();
-      unlock();
+      if (change.type === 'fav' && change.liked) stop();
     });
     function stop() {
       clearInterval(timer);
@@ -184,23 +195,67 @@ export function startTour({ el, entry, scenario }) {
     return stop;
   }
 
-  // Шаг с просмотрами: считаем первые goal карточек, дальше отметки ставит трекер сам и после тура.
-  function collectViews(name, goal) {
+  // Шаг с галочкой: всё сереет, одна карточка выезжает в центр над шторкой, увеличивается,
+  // на ней крупная галочка и бегущий блик. «Понятно», следующий шаг или скролл возвращают её на место.
+  function spotlight(name) {
     const list = el.querySelector(`[data-tour-cards="${name}"]`);
-    if (!list) return null;
-    let seen = 0;
-    trackViews(el, list, {
-      bottom: () => (sheet.isConnected ? sheet.getBoundingClientRect().top + 90 : null),
-      // анимация и хаптик — только пока идёт сбор просмотров; дальше галочки ставятся сразу маленькими
-      lively: () => active && Boolean(STEPS[index]?.views),
-      onView(count) {
-        if (!active || !STEPS[index]?.views || seen >= goal) return;
-        seen = Math.min(goal, seen + count);
-        setLabel(seen >= goal ? 'Далее' : `Просмотрено ${seen} из ${goal}`);
-        if (seen >= goal) setTimeout(() => { if (active && STEPS[index]?.views) unlock(); }, count * 180 + 200);
-      },
-    });
-    return null;
+    const card = visibleCards(name)[0];
+    if (!list || !card) {
+      if (list) trackViews(el, list);
+      return null;
+    }
+    const sr = stage.getBoundingClientRect();
+    const r = card.getBoundingClientRect();
+    const clone = card.cloneNode(true);
+    clone.classList.add('spot-card');
+    clone.inert = true;
+    clone.setAttribute('aria-hidden', 'true');
+    Object.assign(clone.style, { left: `${r.left - sr.left}px`, top: `${r.top - sr.top}px`, width: `${r.width}px` });
+    clone.querySelector('.counted')?.remove();
+    // зелёный бейдж «Активен» растёт из угла логотипа, по нему бежит блик
+    const mark = h('span', { class: 'spot-badge', 'aria-hidden': 'true' },
+      iconImg('success', { size: 20 }), h('span', { class: 'spot-badge-text' }, 'Активен'),
+      h('span', { class: 'spot-shine' }));
+    const tile = clone.querySelector('.ocard-tile');
+    tile.append(mark);
+    stage.insertBefore(clone, sheet);
+    card.style.visibility = 'hidden';
+    el.classList.add('is-tour-spot');
+
+    // центр свободной зоны между апп-баром и плотной частью шторки
+    const appbarBottom = el.getBoundingClientRect().top + parseFloat(getComputedStyle(el).paddingTop) - sr.top;
+    const freeBottom = sheet.getBoundingClientRect().top + 60 - sr.top;
+    const scale = Math.min(1.3, (freeBottom - appbarBottom - 24) / r.height);
+    const dx = sr.width / 2 - (r.left - sr.left + r.width / 2);
+    const dy = (appbarBottom + freeBottom) / 2 - (r.top - sr.top + r.height / 2);
+    const out = `translate(${dx}px, ${dy}px) scale(${scale})`;
+    animate(clone, [{ transform: 'none' }, { transform: out }], { duration: 560, easing: EASE.ios });
+    animate(mark, [{ opacity: 0, transform: 'scale(.6)' }, { opacity: 1, transform: 'none' }], { duration: 420, delay: 380, easing: EASE.out });
+    haptics.light();
+
+    const scrollStart = el.scrollTop;
+    const onScroll = () => { if (Math.abs(el.scrollTop - scrollStart) > 8) restore(); };
+    el.addEventListener('scroll', onScroll, { passive: true });
+
+    let restored = null;
+    function restore() {
+      if (restored) return restored;
+      el.removeEventListener('scroll', onScroll);
+      el.classList.remove('is-tour-spot');
+      // карточка уезжает назад вместе со страницей, если её уже прокрутили
+      const back = card.getBoundingClientRect();
+      const bx = back.left - r.left;
+      const by = back.top - r.top;
+      animate(mark, [{ opacity: 1 }, { opacity: 0 }], { duration: 200 });
+      restored = animate(clone, [{ transform: out }, { transform: `translate(${bx}px, ${by}px)` }], { duration: 560, easing: EASE.ios }).then(() => {
+        clone.remove();
+        card.style.visibility = '';
+        markViewed(card);
+        trackViews(el, list);
+      });
+      return restored;
+    }
+    return restore;
   }
 
   async function finish() {
@@ -227,33 +282,29 @@ export function startTour({ el, entry, scenario }) {
   };
 }
 
-// Отметка «просмотрено»: карточка, попавшая во вьюпорт, получает большую зелёную галочку внизу на картинке,
-// через секунду она сжимается до 16px и остаётся — незаметная, но видно, что оффер засчитан.
-// Трекер живёт на странице и после тура: засчитываются все карточки, до которых долистали.
+// Отметка «просмотрено»: когда карточка проходит центр экрана, в углу логотипа плавно проявляется
+// маленькая зелёная галочка. Трекер живёт на странице и после тура — засчитываются все карточки ленты.
 const trackers = new WeakMap();
 
-function trackViews(page, list, { bottom, onView, lively }) {
+function trackViews(page, list) {
   const prev = trackers.get(page);
   if (prev) {
-    prev.onView = onView;
-    prev.bottom = bottom;
-    prev.lively = lively;
     prev.collect();
     return;
   }
-  const t = { onView, bottom, lively, raf: 0 };
+  const t = { raf: 0 };
   t.collect = () => {
-    const appbarBottom = page.getBoundingClientRect().top + parseFloat(getComputedStyle(page).paddingTop);
-    const sheetTop = t.bottom?.();
-    const limit = sheetTop ?? page.getBoundingClientRect().bottom;
-    const fresh = [...list.querySelectorAll('.ocard')].filter((card) => {
-      if (card.classList.contains('is-viewed')) return false;
+    const pr = page.getBoundingClientRect();
+    const appbarBottom = pr.top + parseFloat(getComputedStyle(page).paddingTop);
+    const sheet = page.parentElement.querySelector('.tour');
+    const bottom = sheet ? sheet.getBoundingClientRect().top + 60 : pr.bottom;
+    const mid = (appbarBottom + bottom) / 2;
+    const band = (bottom - appbarBottom) * 0.2;
+    // ищем по странице, а не в сохранённом списке: после тура карточки переезжают в полки
+    for (const card of page.querySelectorAll('[data-tour-cards] .ocard:not(.is-viewed)')) {
       const r = card.querySelector('.ocard-tile').getBoundingClientRect();
-      return r.top >= appbarBottom - r.height / 2 && r.bottom <= limit;
-    });
-    const live = Boolean(t.lively?.());
-    fresh.forEach((card, i) => markViewed(card, live ? i * 180 : 0, live));
-    if (fresh.length) t.onView?.(fresh.length);
+      if (Math.abs(r.top + r.height / 2 - mid) <= band) markViewed(card);
+    }
   };
   t.onScroll = () => {
     cancelAnimationFrame(t.raf);
@@ -264,20 +315,12 @@ function trackViews(page, list, { bottom, onView, lively }) {
   t.collect();
 }
 
-function markViewed(card, delay, live) {
+function markViewed(card) {
+  if (card.classList.contains('is-viewed')) return;
   card.classList.add('is-viewed');
   const mark = h('span', { class: 'counted', 'aria-hidden': 'true' }, iconImg('success', { size: 28 }));
   card.querySelector('.ocard-tile').append(mark);
-  if (!live) return; // в CSS галочка уже 16px
-  const small = 'scale(0.5714)'; // 28px → 16px
-  animate(mark, [
-    { opacity: 0, transform: 'scale(.3) rotate(-30deg)', offset: 0 },
-    { opacity: 1, transform: 'scale(1.2)', offset: 0.18 },
-    { opacity: 1, transform: 'scale(1)', offset: 0.3 },
-    { opacity: 1, transform: 'scale(1)', offset: 0.72 },
-    { opacity: 1, transform: small, offset: 1 },
-  ], { duration: 1700, delay, easing: 'cubic-bezier(.33,0,.2,1)' });
-  setTimeout(() => haptics.light(), delay);
+  animate(mark, [{ opacity: 0 }, { opacity: 1 }], { duration: 500, easing: EASE.out });
 }
 
 export function stopViewMarks(page) {

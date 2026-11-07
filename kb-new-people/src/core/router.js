@@ -6,7 +6,6 @@ import { h } from './dom.js';
 import { animate, EASE, reducedMotion } from './motion.js';
 
 const STANDALONE = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-const IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 const DUR = 460;
 
 export function createRouter({ stage, routes, appbar, fallback = '/' }) {
@@ -14,7 +13,6 @@ export function createRouter({ stage, routes, appbar, fallback = '/' }) {
   let busy = Promise.resolve();
   let lastEdgeTouch = 0;
   let pendingTarget = null;
-  let swipeProgress = 0; // откуда продолжить анимацию после отпускания свайпа
 
   const dim = h('div', { class: 'page-dim', 'aria-hidden': 'true' });
   stage.append(dim);
@@ -154,8 +152,6 @@ export function createRouter({ stage, routes, appbar, fallback = '/' }) {
 
   // Возврат к записи стека (или к новой, если её нет — после перезагрузки).
   function doPopTo(targetPath, { animateIt = true } = {}) {
-    const progress = swipeProgress;
-    swipeProgress = 0;
     return queue(async () => {
       const from = top();
       let targetIndex = -1;
@@ -178,7 +174,7 @@ export function createRouter({ stage, routes, appbar, fallback = '/' }) {
       from.el.classList.add('is-leaving');
       activate(to);
       appbar.transition('pop');
-      if (animateIt) await animatePop(from, to, { modal: from.route.modal, progress });
+      if (animateIt) await animatePop(from, to, { modal: from.route.modal });
       else to.el.classList.remove('is-covered');
       destroy(from);
     });
@@ -283,89 +279,6 @@ export function createRouter({ stage, routes, appbar, fallback = '/' }) {
     const x = e.touches[0]?.clientX ?? 100;
     if (x < 28 || x > window.innerWidth - 28) lastEdgeTouch = Date.now();
   }, { passive: true, capture: true });
-
-  // В режиме «с домашнего экрана» на iOS нет системного свайпа назад — делаем свой.
-  if ((STANDALONE && IOS) || new URLSearchParams(location.search).has('swipe')) {
-    installSwipeBack();
-  }
-
-  function installSwipeBack() {
-    let drag = null;
-    stage.addEventListener('touchstart', (e) => {
-      const t = top();
-      if (!t || t.route.modal || t.screen.swipeBack === false || e.touches.length !== 1) return;
-      const x = e.touches[0].clientX - stage.getBoundingClientRect().left;
-      if (x > 24) return;
-      drag = { x0: e.touches[0].clientX, y0: e.touches[0].clientY, dx: 0, started: false, t0: performance.now(), below: null };
-    }, { passive: true });
-
-    stage.addEventListener('touchmove', (e) => {
-      if (!drag) return;
-      const dx = e.touches[0].clientX - drag.x0;
-      const dy = e.touches[0].clientY - drag.y0;
-      if (!drag.started) {
-        if (Math.abs(dy) > Math.abs(dx) || dx < 6) { if (Math.abs(dy) > 10) drag = null; return; }
-        drag.started = true;
-        drag.below = ensureBelow();
-        drag.below.el.classList.remove('is-covered');
-      }
-      e.preventDefault();
-      drag.dx = Math.max(0, dx);
-      const w = stage.clientWidth;
-      const p = Math.min(1, drag.dx / w);
-      const t = top();
-      t.el.style.transform = `translateX(${drag.dx}px)`;
-      t.el.style.borderRadius = 'var(--r-page)';
-      t.el.style.boxShadow = '0 0 30px rgba(0,0,0,.12)';
-      drag.below.el.style.transform = `translateX(${-30 * (1 - p)}%)`;
-      dim.style.backgroundColor = shade(0.08 * (1 - p));
-    }, { passive: false });
-
-    const end = () => {
-      if (!drag) return;
-      const d = drag;
-      drag = null;
-      if (!d.started) return;
-      const t = top();
-      const w = stage.clientWidth;
-      const p = d.dx / w;
-      const velocity = d.dx / Math.max(1, performance.now() - d.t0);
-      const reset = () => {
-        for (const el of [t.el, d.below.el]) { el.style.transform = ''; el.style.borderRadius = ''; el.style.boxShadow = ''; }
-        dim.style.backgroundColor = '';
-      };
-      if (p > 0.35 || velocity > 0.6) {
-        reset();
-        swipeProgress = p;
-        api.back();
-      } else {
-        Promise.all([
-          animate(t.el, [{ transform: `translateX(${d.dx}px)` }, { transform: 'translateX(0)' }], { duration: 260, easing: EASE.ios }),
-          animate(d.below.el, [{ transform: `translateX(${-30 * (1 - p)}%)` }, { transform: 'translateX(-30%)' }], { duration: 260, easing: EASE.ios }),
-        ]).then(() => {
-          reset();
-          t.el.getAnimations().forEach((a) => a.cancel());
-          d.below.el.getAnimations().forEach((a) => a.cancel());
-          d.below.el.classList.add('is-covered');
-        });
-      }
-    };
-    stage.addEventListener('touchend', end);
-    stage.addEventListener('touchcancel', end);
-  }
-
-  // Страница под текущей (для свайпа). После перезагрузки её может не быть — монтируем родителя.
-  function ensureBelow() {
-    const t = top();
-    if (stack.length > 1) return stack[stack.length - 2];
-    const parent = parentOf(t);
-    const below = mount(parent);
-    below.idx = Math.max(0, t.idx - 1);
-    stage.insertBefore(below.el, t.el);
-    stack.splice(stack.length - 1, 0, below);
-    below.el.inert = true;
-    return below;
-  }
 
   return api;
 }

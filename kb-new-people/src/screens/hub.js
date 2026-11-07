@@ -2,8 +2,6 @@
 
 import { h, button, icon } from '../core/dom.js';
 import { store } from '../core/store.js';
-import { haptics } from '../core/haptics.js';
-import { toast } from '../ui/toast.js';
 
 const SCENARIOS = [
   { id: 's1', title: 'Онбординг через лайк оффера', sub: '01 · сценарий' },
@@ -25,15 +23,7 @@ export function hubScreen({ el, nav }) {
           return h('li', null, b);
         })),
       h('div', { class: 'hub-footer' },
-        (() => {
-          const reset = button({ class: 'btn-link hub-reset' }, 'Сбросить прототип');
-          reset.addEventListener('click', () => {
-            store.reset();
-            haptics.light();
-            toast('Избранное, категории и прогресс сброшены');
-          });
-          return reset;
-        })(),
-        h('p', { class: 'hub-note' }, 'Сохраняются избранное, выбранные категории и пройденные шаги'))));
-  return { appbar: false, swipeBack: false };
+        h('p', { class: 'hub-note' }, 'Прототип сбрасывается, когда вы возвращаетесь на этот экран'))));
+  // каждый заход на разводящую — с чистого листа: избранное, категории и прогресс сценариев обнуляются
+  return { appbar: false, onActive: () => store.reset() };
 }

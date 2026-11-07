@@ -8,6 +8,7 @@ import { toast } from '../ui/toast.js';
 import { cardMini, cardHeader, offerCard, productCard } from '../ui/components.js';
 import { favCard } from '../ui/favcard.js';
 import { scratchCard } from '../ui/scratch.js';
+import { buildShelves } from './feed.js';
 import { startTour, stopViewMarks } from './tour.js';
 import { openSheet } from '../ui/sheet.js';
 import { app } from '../app.js';
@@ -87,8 +88,10 @@ export function mainScreen({ el, params, nav, entry }) {
 
   const dayEls = streakCfg.days.map((d, i) => {
     const done = i === 0 && store.state.streak.day1;
-    const mark = d.gift ? iconImg('priz', { size: 16, cls: 'day-mark' }) : i === 0 ? iconImg('check', { size: 16, cls: 'day-mark day-check' }) : icon('lock', { size: 16, cls: 'day-mark' });
-    const content = [h('span', { class: 'day-dow' }, d.dow), h('span', { class: 'day-num' }, d.day), mark];
+    const mark = d.gift ? iconImg('priz', { size: 16, cls: 'day-mark' }) : icon('lock', { size: 16, cls: 'day-mark day-lock' });
+    // первый день: до активации — замочек, как у остальных; после — галочка
+    const content = [h('span', { class: 'day-dow' }, d.dow), h('span', { class: 'day-num' }, d.day), mark,
+      i === 0 ? iconImg('check', { size: 16, cls: 'day-mark day-check' }) : null];
     if (i === 0) {
       return h('div', { class: `day ${done ? 'is-done' : ''}`, role: 'listitem', 'aria-label': `${d.dow} ${d.day}: ${done ? 'засчитан' : 'сегодня'}` }, ...content);
     }
@@ -145,16 +148,17 @@ export function mainScreen({ el, params, nav, entry }) {
 
   // Скретч-карточки с крутыми призами: первая — в 8-м ряду (её стирают в туре), остальные разбросаны ниже.
   const SCRATCH_PRIZES = [
+    // порядок совпадает с полками после тура (LAYOUT в feed.js): каждый приз — по теме своей полки
     { percent: '75%', title: 'Скидка в Самокате', sub: 'на первый заказ до конца недели' },
-    { percent: '60%', title: 'Кэшбэк в Лавке', sub: 'на заказ от 1 500 ₽ сегодня' },
-    { percent: '70%', title: 'Скидка в Ленте', sub: 'на доставку продуктов до пятницы' },
-    { percent: '50%', title: 'Кэшбэк в Пятёрочке', sub: 'на одну покупку до воскресенья' },
-    { percent: '65%', title: 'Кэшбэк в Перекрёстке', sub: 'на первый онлайн-заказ' },
-    { percent: '80%', title: 'Скидка на кофе', sub: 'в Джаз Кофе до конца дня' },
-    { percent: '55%', title: 'Кэшбэк в Магните', sub: 'на доставку до конца недели' },
-    { percent: '90%', title: 'Кэшбэк на Плюс', sub: 'за первый месяц подписки' },
+    { percent: '70%', title: 'Скидка в Ленте', sub: 'на покупки в магазине до пятницы' },
+    { percent: '60%', title: 'Кэшбэк в Лэтуаль', sub: 'на уход и парфюмерию' },
+    { percent: '50%', title: 'Кэшбэк на анализы', sub: 'в ИНВИТРО до конца недели' },
     { percent: '70%', title: 'Скидка в Спортмастере', sub: 'на вторую вещь в чеке' },
-    { percent: '1 000 ₽', title: 'Кэшбэк в Lamoda', sub: 'за первый заказ от 3 000 ₽' },
+    { percent: '1 000 ₽', title: 'Кэшбэк в Ситилинке', sub: 'за покупку от 10 000 ₽' },
+    { percent: '90%', title: 'Кэшбэк на Плюс', sub: 'за первый месяц подписки' },
+    { percent: '55%', title: 'Кэшбэк на шиномонтаж', sub: 'до конца месяца' },
+    { percent: '60%', title: 'Скидка в Детском мире', sub: 'на игрушки до воскресенья' },
+    { percent: '65%', title: 'Кэшбэк на поезда', sub: 'в Т-Путешествиях' },
   ];
   // индексы в сетке из двух колонок: чётный — слева, нечётный — справа
   const SCRATCH_SLOTS = [14, 25, 34, 47, 56, 69, 78, 91, 100, 113];
@@ -162,9 +166,9 @@ export function mainScreen({ el, params, nav, entry }) {
   scratches[0].dataset.tourScratch = '';
   cleanups.push(() => scratches.forEach((c) => c.destroy()));
 
-  const selection = h('section', { class: 'selection', dataset: { tour: 'selection' } },
-    cardHeader({ title: 'Ваша подборка', subtitle: '40% крупных сетей', link: 'Все', onLink: () => nav.push('/favorites') }),
-    h('div', { class: 'grid', dataset: { tourCards: 'selection' } }, withScratch(selectionOffers().map((o) => offerCard(o, { size: 's' })))));
+  const selectionHeader = cardHeader({ title: 'Ваша подборка', subtitle: '40% крупных сетей', link: 'Все', onLink: () => nav.push('/favorites') });
+  const selectionGrid = h('div', { class: 'grid', dataset: { tourCards: 'selection' } }, withScratch(selectionOffers().map((o) => offerCard(o, { size: 's' }))));
+  const selection = h('section', { class: 'selection', dataset: { tour: 'selection' } }, selectionHeader, selectionGrid);
 
   function withScratch(cards) {
     scratches.forEach((c, i) => cards.splice(Math.min(SCRATCH_SLOTS[i], cards.length), 0, c));
@@ -174,6 +178,35 @@ export function mainScreen({ el, params, nav, entry }) {
   const blocks = [pk, favBlock, streak, nearby, products, selection];
   el.append(h('div', { class: 'main-inner' }, top, ...blocks));
   scratches.forEach((c) => c.mount(el));
+
+  // ---------- Лента полками: в 01 и 02 сразу, в 03 — после тура ----------
+  let shelves = null;
+  function toShelves({ animated }) {
+    if (shelves) return;
+    const cards = [...selectionGrid.querySelectorAll(':scope > .ocard')];
+    shelves = buildShelves({ catalog, cards, scratches, onLink: () => nav.push('/favorites') });
+    const swap = () => {
+      selection.classList.add('is-shelves');
+      selection.replaceChildren(shelves);
+      shelves.mount(el);
+    };
+    if (!animated || reducedMotion()) { swap(); return; }
+    // старая сетка гаснет, лента подъезжает к началу подборки, полки появляются по очереди
+    animate(selectionGrid, [{ opacity: 1 }, { opacity: 0, transform: 'translateY(12px)' }], { duration: 260, easing: EASE.in }).then(() => {
+      swap();
+      const y = selection.getBoundingClientRect().top - el.getBoundingClientRect().top + el.scrollTop - parseFloat(getComputedStyle(el).paddingTop) - 12;
+      el.scrollTo({ top: Math.max(0, y), behavior: 'auto' });
+      stagger([shelves.firstElementChild, ...[...shelves.lastElementChild.children].slice(0, 3)], fadeUpIn, { duration: 460, step: 90, easing: EASE.out });
+    });
+  }
+  // в сценариях 01 и 02 на главную приходят после онбординга — полки сразу
+  if (scenario !== 's3' || store.state.tour?.s3) toShelves({ animated: false });
+  if (scenario === 's3') {
+    cleanups.push(store.subscribe((_, change) => {
+      if (change.type === 'tour' && change.scenario === 's3') setTimeout(() => toShelves({ animated: true }), 380);
+    }));
+  }
+  cleanups.push(() => shelves?.destroy());
 
   // ---------- Апп-бар при скролле ----------
   let raf = 0;
@@ -193,9 +226,12 @@ export function mainScreen({ el, params, nav, entry }) {
   el.addEventListener('scroll', onScroll, { passive: true });
 
   // ---------- Серия: первый день засчитывается, когда блок виден на 50% ----------
+  // В сценарии 03 — только когда блок поднялся в верхнюю часть экрана: обычно это происходит
+  // на шаге тура про серию, и день засчитывается прямо на глазах.
   if (!store.state.streak.day1) {
+    const s3 = scenario === 's3';
     const io = new IntersectionObserver((items) => {
-      if (!items.some((i) => i.isIntersecting) || app.nav.top !== entry || tour?.active) return;
+      if (!items.some((i) => i.isIntersecting) || app.nav.top !== entry || (!s3 && tour?.active)) return;
       io.disconnect();
       setTimeout(() => {
         const day = dayEls[0];
@@ -204,8 +240,8 @@ export function mainScreen({ el, params, nav, entry }) {
         animate(day, [{ transform: 'scale(.9)' }, { transform: 'scale(1.06)' }, { transform: 'scale(1)' }], { duration: 480, easing: EASE.spring });
         animate(day.querySelector('.day-check'), [{ opacity: 0, transform: 'scale(0) rotate(-30deg)' }, { opacity: 1, transform: 'scale(1.3)' }, { opacity: 1, transform: 'none' }], { duration: 520, delay: 120, easing: EASE.spring });
         store.markStreakDay();
-      }, 250);
-    }, { root: el, threshold: 0.5 });
+      }, tour?.active ? 1500 : 250); // в туре — с паузой, чтобы сначала прочитали текст шага
+    }, s3 ? { root: el, rootMargin: '0px 0px -55% 0px', threshold: 0 } : { root: el, threshold: 0.5 });
     io.observe(streak);
     cleanups.push(() => io.disconnect());
   }

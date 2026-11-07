@@ -76,7 +76,8 @@ h1, h2, h3, p {
   position: fixed;
   inset: 0;
   overflow: hidden;
-  background: var(--c-bg-page);
+  /* белый, а не серый: Safari на iOS красит статус-бар по фону закреплённого элемента у верхнего края */
+  background: var(--c-bg);
 }
 
 .stage {
@@ -103,6 +104,12 @@ h1, h2, h3, p {
   /* фокус с клавиатуры не прячется под апп-баром и нижней кнопкой */
   scroll-padding-top: calc(var(--appbar-h) + 8px);
   scroll-padding-bottom: 150px;
+}
+
+/* страница получает фокус после перехода (для скринридера) — рамка вокруг неё не нужна */
+.page:focus,
+.page:focus-visible {
+  outline: none;
 }
 
 .page::-webkit-scrollbar {

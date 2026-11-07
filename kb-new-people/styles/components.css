@@ -621,7 +621,7 @@ img.is-broken {
 }
 
 .ocard-s .ocard-tile {
-  height: 200px;
+  height: 216px;
 }
 
 .ocard-image {
@@ -1064,7 +1064,7 @@ img.is-broken {
 
 .scard-zone {
   position: relative;
-  height: 200px;
+  height: 216px; /* как плитка .ocard-s */
   border-radius: var(--r-m);
   overflow: hidden;
 }
@@ -1118,34 +1118,6 @@ img.is-broken {
   color: var(--c-text-muted);
 }
 
-/* галочка спрятана под фольгой и загорается, когда приз открыт */
-.scard-check {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 32px;
-  height: 32px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: rgba(200, 200, 210, 0.55);
-  font-size: 16px;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0);
-  pointer-events: none;
-}
-
-.scard-zone.is-revealed .scard-check {
-  background: rgba(48, 209, 88, 0.92);
-  color: #fff;
-  animation: scard-check-pop 450ms cubic-bezier(0.34, 1.56, 0.64, 1) 200ms both;
-}
-
-@keyframes scard-check-pop {
-  from { transform: scale(0.5); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-
 .scard-canvas,
 .scard-particles {
   position: absolute;
@@ -1170,12 +1142,3 @@ img.is-broken {
   pointer-events: none;
 }
 
-.scard-zone.is-glow .scard-prize {
-  background: radial-gradient(circle at center, #fff 42%, rgba(0, 185, 45, 0.1) 100%);
-  animation: scard-glow-in 400ms ease both;
-}
-
-@keyframes scard-glow-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}

@@ -1,5 +1,5 @@
 // Service worker: оболочка приложения доступна офлайн, картинки партнёров кешируются по мере просмотра.
-const VERSION = 'kb-np-v7';
+const VERSION = 'kb-np-v9';
 const SHELL = [
   './',
   'index.html',
@@ -10,6 +10,7 @@ const SHELL = [
   'styles/base.css',
   'styles/components.css',
   'styles/screens.css',
+  'styles/shelves.css',
   'src/main.js',
   'src/app.js',
   'src/core/dom.js',
@@ -25,6 +26,8 @@ const SHELL = [
   'src/ui/favcard.js',
   'src/ui/sheet.js',
   'src/ui/scratch.js',
+  'src/ui/shelves.js',
+  'src/screens/feed.js',
   'src/screens/hub.js',
   'src/screens/bank.js',
   'src/screens/onboarding.js',

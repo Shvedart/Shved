@@ -1,0 +1,545 @@
+/* Полки ленты после тура сценария 03.
+   «Путешествия» и «События для вас» перенесены из прототипа «parallax афиша»
+   (feed/components-slow.css): геометрия и типографика — оттуда, токены — свои. */
+
+.fc-shelf {
+  --fc-bg: var(--c-bg);
+  --fc-pad: var(--gutter);
+  --fc-placeholder: #d9d9d9;
+  --fc-badge: #ffdd3d;
+  --fc-on-light: #333333;
+  position: relative;
+}
+
+/* ---------- Чипсы категорий над полками ---------- */
+.feed-chips {
+  margin-bottom: 24px;
+}
+
+/* билет первым под чипсами — без отрицательного отступа сверху */
+.shelves.starts-with-trip > .fc-trip:not([hidden]) {
+  margin-top: -16px;
+}
+
+/* ---------- Смысловые полки офферов ---------- */
+.shelves {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.shelf .card-header {
+  padding-left: 20px;
+}
+
+.shelf .grid {
+  row-gap: 24px;
+}
+
+/* ---------- Общее: шапка «заголовок + Все» ---------- */
+.fc-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--fc-pad) 16px 20px;
+}
+
+.fc-section-header h2 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.38px;
+  color: var(--c-text);
+}
+
+.fc-all-link {
+  font-size: 17px;
+  letter-spacing: -0.41px;
+  color: var(--c-info);
+}
+
+/* ---------- Горизонтальный скроллер ---------- */
+.fc-scroller {
+  position: relative; /* offsetLeft карточек = координата в ленте */
+  display: flex;
+  gap: 12px;
+  padding: 0 var(--fc-pad);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.fc-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.fc-scroller > * {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+
+/* карточка в фокусе по центру экрана; запас фото по бокам = отставанию в параллаксе */
+.fc-scroller--center {
+  --parallax-shift: 85px;
+  gap: 8px;
+}
+
+.fc-scroller--center > * {
+  scroll-snap-align: center;
+}
+
+.fc-par-box {
+  position: relative;
+  overflow: hidden;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  isolation: isolate;
+  background: var(--fc-placeholder);
+}
+
+.fc-par-box > img {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(-1 * var(--parallax-shift));
+  width: calc(100% + var(--parallax-shift) * 2);
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ---------- Афиша: карточки 343×428 с параллаксом ---------- */
+.fc-snap {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.fc-scroller--center > .fc-snap {
+  width: 100%;
+}
+
+.fc-hero-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 343 / 428; /* растягиваясь по ширине, растёт и в высоту */
+  border-radius: 28px;
+  transform-origin: center;
+}
+
+.fc-hero-card .fc-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.75) 100%), rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+}
+
+.fc-chip {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  border-radius: 20px;
+  /* без backdrop-filter: размытие на каждой карточке тормозило листание */
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.08px;
+  white-space: nowrap;
+}
+
+.fc-hero-card .fc-content {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: #fff;
+  letter-spacing: -0.08px;
+}
+
+/* высота текстов фиксированная: бейджи у всех карточек стоят на одной линии */
+.fc-hero-card .fc-texts {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  height: 86px;
+}
+
+.fc-hero-card .fc-title {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.41px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.fc-hero-card .fc-desc {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 15px;
+  letter-spacing: -0.24px;
+}
+
+.fc-hero-card .fc-desc > div {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fc-hero-card .fc-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fc-btn-buy {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  border-radius: 20px;
+  background: #fff;
+  color: var(--fc-on-light);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.fc-cashback {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px 0 4px;
+  border-radius: 20px;
+  background: var(--fc-badge);
+}
+
+.fc-cashback svg,
+.fc-trip-chip svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
+.fc-cashback span,
+.fc-trip-chip span {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.08px;
+  color: var(--fc-on-light);
+  white-space: nowrap;
+}
+
+/* ---------- Путешествия: «посадочный талон», раскрытый ---------- */
+.fc-trip {
+  /* билет прижат к соседям плотнее остальной ленты: его кромки сами дают зазор */
+  margin: -32px 0; /* на 16px ближе к соседям, чем просто кромки: у билета свои белые кромки */
+}
+
+.fc-trip-band {
+  position: relative;
+  height: 360px;
+  overflow: hidden;
+}
+
+/* канва на пиксель выше блока: край фото не совпадает с краем маски — без светлой линии на ретине */
+.fc-trip-canvas {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -1px;
+  height: 362px;
+  overflow: hidden;
+}
+
+.fc-trip-hero {
+  position: absolute;
+  inset: 0;
+  isolation: isolate;
+}
+
+/* слои, которые поджимаются при нажатии: фото и текст; затемнения между ними держат края */
+.fc-trip-press {
+  position: absolute;
+  inset: 0;
+  transform-origin: center;
+  transition: transform 0.18s ease;
+}
+
+.fc-trip-press:last-child {
+  z-index: 3;
+}
+
+/* 1.0526 = 1 / 0.95: при нажатии фото приходит ровно к краям блока */
+.fc-trip-bgwrap {
+  position: absolute;
+  inset: 0;
+  transform: scale(1.0526);
+}
+
+.fc-trip img {
+  max-width: none;
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+.fc-trip-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: left center;
+  will-change: transform;
+}
+
+.fc-trip-hero .fc-trip-shade {
+  transform-origin: left center;
+  will-change: transform;
+}
+
+.fc-trip-shade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 166px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.6) 100%);
+  pointer-events: none;
+}
+
+.fc-trip-shade--card {
+  height: 126px;
+}
+
+.fc-trip-cardtop {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 126px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%);
+  pointer-events: none;
+}
+
+.fc-trip-topshade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 166px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* колонка: рамка 232×280 на отметке 40px — одна у героя и у компактной карточки */
+.fc-trip-col {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  top: 40px;
+  width: 290px;
+  height: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  color: #fff;
+}
+
+.fc-trip-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 8px 0 5px;
+  border-radius: 20px;
+  background: var(--fc-badge);
+}
+
+.fc-trip-head {
+  padding: 16px 20px;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.38px;
+}
+
+.fc-trip-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 20px;
+}
+
+.fc-trip-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fc-trip-kind {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.08px;
+}
+
+.fc-trip-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.fc-trip-price {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.28px;
+}
+
+.fc-trip-old {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.08px;
+  text-decoration: line-through;
+}
+
+/* компактная карточка следующего направления 232×280 — размер и позицию ведёт JS */
+.fc-trip-card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 232px;
+  height: 280px;
+  border-radius: 26px;
+  overflow: hidden;
+  background: var(--fc-placeholder);
+  will-change: transform, width, height;
+}
+
+.fc-trip-card > img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform;
+}
+
+.fc-trip-card .fc-trip-col {
+  will-change: transform;
+}
+
+/* фото проявляется после загрузки, затемнения — вместе с ним */
+.fc-trip-bgwrap > img,
+.fc-trip-card > img {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.fc-trip-bgwrap > img[data-ready],
+.fc-trip-card > img[data-ready] {
+  opacity: 1;
+}
+
+/* кромки билета: углы соседних блоков закругляются навстречу фото */
+.fc-trip-edge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 16px;
+  background: var(--fc-bg);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.fc-trip-edge--t {
+  top: 0;
+  border-radius: 0 0 16px 16px;
+}
+
+.fc-trip-edge--b {
+  bottom: 0;
+  border-radius: 16px 16px 0 0;
+}
+
+/* прозрачный слой скролла со снапом поверх канвы */
+.fc-trip-scroller {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  z-index: 4;
+}
+
+.fc-trip-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.fc-trip-slot {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+}
+
+/* финальная карточка-переход: контент по центру */
+.fc-trip-col--cta {
+  align-items: center;
+  justify-content: center;
+}
+
+.fc-trip-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.fc-trip-cta-title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.28px;
+  text-align: center;
+  color: #fff;
+}
+
+.fc-trip-cta-desc {
+  margin-top: -8px;
+  font-size: 13px;
+  letter-spacing: -0.08px;
+  text-align: center;
+  color: #fff;
+}
+
+.fc-trip-cta-button {
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 80px;
+  background: #000;
+  color: #fff;
+  font-size: 15px;
+  letter-spacing: -0.24px;
+  white-space: nowrap;
+}

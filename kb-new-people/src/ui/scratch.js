@@ -2,7 +2,7 @@
 // её стирают пальцем — летят кусочки, под ней приз. Перенесено из прототипа ленты «Гаджеты».
 
 import { h } from '../core/dom.js';
-import { animate, EASE, reducedMotion } from '../core/motion.js';
+import { reducedMotion } from '../core/motion.js';
 import { haptics } from '../core/haptics.js';
 
 const CROWN_PATH = new Path2D('M6 9.5L9 18.5H17.5L20 9.5L15.5 13L13 7.5L10.5 13L6 9.5Z');
@@ -44,10 +44,9 @@ export function scratchCard({ prize, label = 'Скретч-карточка: с�
     h('div', { class: 'scard-prize-percent' }, prize.percent),
     h('div', { class: 'scard-prize-title' }, prize.title),
     h('div', { class: 'scard-prize-sub' }, prize.sub));
-  const check = h('span', { class: 'scard-check', 'aria-hidden': 'true' }, '✓');
-  const zone = h('div', { class: 'scard-zone' }, prizeEl, check, canvas, particlesCanvas);
+  const zone = h('div', { class: 'scard-zone' }, prizeEl, canvas, particlesCanvas);
   // подпись как у карточки оффера, чтобы ряд ленты выглядел ровно
-  const descEl = h('div', { class: 'ocard-desc' }, 'Сотрите, чтобы открыть');
+  const descEl = h('div', { class: 'ocard-desc' }, 'Сотри пальцем');
   const caption = h('div', { class: 'ocard-caption', 'aria-hidden': 'true' }, h('div', { class: 'ocard-name' }, 'Подарок'), descEl);
   // клавиатура и скринридер открывают карточку без стирания
   const root = h('div', { class: 'scard', role: 'button', tabindex: '0', 'aria-label': label }, zone, caption);
@@ -148,9 +147,6 @@ export function scratchCard({ prize, label = 'Скретч-карточка: с�
     try { ctx.letterSpacing = '-0.41px'; } catch (_) { /* старый Safari */ }
     ctx.font = `600 ${Math.round(17 * dpr)}px ${font}`;
     ['тут', 'спрятан', 'подарок'].forEach((line, i) => ctx.fillText(line, w / 2, blockY + crownSz + gap + i * lh));
-    try { ctx.letterSpacing = '0px'; } catch (_) { /* старый Safari */ }
-    ctx.font = `400 ${Math.round(13 * dpr)}px ${font}`;
-    ctx.fillText('сотри пальцем', w / 2, hgt - Math.round(28 * dpr));
 
     ctx.globalCompositeOperation = 'overlay';
     ctx.globalAlpha = 0.09;
@@ -262,11 +258,9 @@ export function scratchCard({ prize, label = 'Скретч-карточка: с�
     pCtx.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
     video.play().catch(() => {});
     stopIdle();
-    // приз «вспыхивает» чуть позже, когда фольга растворилась
+    // хаптик и событие — чуть позже, когда фольга растворилась
     setTimeout(() => {
       haptics.success();
-      zone.classList.add('is-glow');
-      animate(root, [{ transform: 'scale(1)' }, { transform: 'scale(1.038)', offset: 0.55 }, { transform: 'scale(1)' }], { duration: 450, easing: EASE.spring, fill: 'none' });
       onReveal?.();
       root.dispatchEvent(new CustomEvent('scratchreveal'));
     }, 500);

@@ -947,6 +947,10 @@
   opacity: 1;
 }
 
+.day.is-done .day-lock {
+  display: none;
+}
+
 .day.is-done .day-check {
   display: block;
   filter: brightness(0) invert(1);
@@ -1028,6 +1032,11 @@
   padding: 0 var(--gutter);
 }
 
+/* лента «Ваша подборка»: 24px между рядами карточек */
+.selection .grid {
+  row-gap: 24px;
+}
+
 /* Тур сценария 03 */
 .main.is-touring [data-tour],
 .main.is-touring .main-top {
@@ -1064,8 +1073,15 @@
   right: 0;
   bottom: 0;
   z-index: 25;
-  padding: 140px var(--gutter) calc(20px + var(--safe-bottom));
+  padding: 85px var(--gutter) calc(20px + var(--safe-bottom));
   overflow: hidden;
+  /* шторка не мешает листать ленту под ней — касания ловят только кнопки */
+  pointer-events: none;
+}
+
+.tour .tour-next,
+.tour .tour-close {
+  pointer-events: auto;
 }
 
 .tour-glow {
@@ -1108,7 +1124,12 @@
   /* 40px от краёв экрана: 16px отступ шторки + 24px */
   align-self: stretch;
   padding: 0 24px;
-  min-height: 72px;
+  /* место под три строки; короткий текст прижат к низу, отступ до кнопки всегда одинаковый */
+  min-height: 75px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: flex-end;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 20px;
@@ -1138,17 +1159,23 @@
 }
 
 .counted {
-  /* галочка «засчитано» внизу справа, на картинке оффера; после показа сжимается до 16px */
+  /* эксперимент: галочка «засчитано» в правом нижнем углу логотипа (логотип 48px, отступ плитки 12px);
+     после показа сжимается до 16px к этому углу */
   position: absolute;
-  right: 10px;
-  bottom: 10px;
+  left: calc(var(--sp-3) + 48px + 2px - 28px);
+  bottom: calc(var(--sp-3) - 2px);
   z-index: 2;
   width: 28px;
   height: 28px;
-  border-radius: 50%;
   transform-origin: 100% 100%;
   transform: scale(0.5714);
   pointer-events: none;
+}
+
+/* у иконки success градиент к краю полупрозрачный — на логотипе галочка должна быть сплошной */
+.counted stop,
+.spot-badge stop {
+  stop-opacity: 1 !important;
 }
 
 /* ---------- Выбор категорий ---------- */
@@ -1612,4 +1639,68 @@
   20% { opacity: 1; }
   80% { opacity: 1; }
   100% { left: 120%; opacity: 0; }
+}
+
+/* Шаг тура «зелёная галочка»: всё остальное скрыто, одна карточка поднята в центр */
+.main.is-touring.is-tour-spot [data-tour],
+.main.is-touring.is-tour-spot .main-top {
+  opacity: 0;
+}
+
+/* поднятая карточка серая, как закрытые офферы серии (.ocard.is-locked), — цветной остаётся только галочка */
+.spot-card .ocard-tile > :not(.spot-badge),
+.spot-card .ocard-caption,
+.spot-card .ocard-heart {
+  filter: grayscale(1);
+  opacity: 0.55;
+}
+
+.spot-card {
+  position: absolute;
+  z-index: 24; /* над страницей, под шторкой */
+  transform-origin: 50% 50%;
+  pointer-events: none;
+}
+
+/* бейдж «Активен» у поднятой карточки: начинается в углу логотипа, там же, где маленькая галочка */
+.spot-badge {
+  position: absolute;
+  left: calc(var(--sp-3) + 48px - 18px);
+  bottom: calc(var(--sp-3) - 2px);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 10px 0 2px;
+  border-radius: 12px;
+  background: #0cbc37;
+  overflow: hidden;
+  transform-origin: 0 50%;
+  pointer-events: none;
+}
+
+.spot-badge-text {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.08px;
+  color: #fff;
+  white-space: nowrap;
+}
+
+/* по бейджу бежит лёгкий блик */
+.spot-shine {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.8) 50%, transparent 65%);
+  background-size: 250% 100%;
+  animation: spot-shine 2.4s ease-in-out 600ms infinite;
+  background-position: 150% 0;
+}
+
+@keyframes spot-shine {
+  0% { background-position: 150% 0; }
+  60%, 100% { background-position: -50% 0; }
 }
