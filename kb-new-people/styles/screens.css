@@ -579,7 +579,7 @@
   z-index: 3; /* поверх растворения: карточка не бледнеет снизу */
   left: -2px;
   right: -2px;
-  top: 71px;
+  top: 98px; /* на 27px ниже, чем было */
   pointer-events: none;
 }
 
@@ -1117,26 +1117,27 @@
   margin-top: 4px;
 }
 
+/* Пока задание шага не выполнено, кнопка показывает прогресс и не нажимается */
+.tour-next:disabled {
+  opacity: 0.6;
+}
+
+.tour-next .btn-label {
+  font-variant-numeric: tabular-nums;
+}
+
 .counted {
-  /* галочка «засчитано» встаёт на место сердечка */
+  /* галочка «засчитано» внизу справа, на картинке оффера; после показа сжимается до 16px */
   position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 3;
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-items: center;
+  right: 10px;
+  bottom: 10px;
+  z-index: 2;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  transform-origin: 100% 100%;
+  transform: scale(0.5714);
   pointer-events: none;
-}
-
-.ocard .ocard-heart {
-  transition: opacity 200ms ease, transform 200ms var(--ease-out);
-}
-
-.ocard.is-counted .ocard-heart {
-  opacity: 0;
-  transform: scale(0.5);
 }
 
 /* ---------- Выбор категорий ---------- */
@@ -1402,7 +1403,7 @@
   color: #fff;
 }
 
-.offer-step-icon img {
+.offer-step-icon .ico-img {
   filter: brightness(0) invert(1);
 }
 

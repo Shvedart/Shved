@@ -22,10 +22,10 @@ export function favCard({ mode = 'live', variant: initialVariant = 'default' } =
     const list = brands();
     if (!list.some((b) => b.id === selected)) selected = list[0]?.id || null;
 
-    // пока ничего не лайкнули (сценарий 03), подсказка стоит на месте подзаголовка
+    // подзаголовка нет; пока ничего не лайкнули (сценарий 03), на его месте подсказка
     root.replaceChildren(cardHeader({
       title: 'Мое любимое',
-      subtitle: list.length ? 'Предложения выбранных брендов' : ['Отмечайте бренды сердечком —', h('br'), 'их предложения появятся здесь'],
+      subtitle: list.length ? null : ['Отмечайте бренды сердечком —', h('br'), 'их предложения появятся здесь'],
       link: 'Все',
       onLink: live ? () => app.nav.push('/favorites') : null,
     }));

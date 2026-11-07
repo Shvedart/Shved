@@ -2,7 +2,7 @@
 // Конфиг: { left: 'back' | 'close' | null, title, titleVisible, progress (0..1 | null),
 //           search, heart, heartVisible, transparent, onLeft, onHeart }
 
-import { h, button, icon, iconUrl } from '../core/dom.js';
+import { h, button, icon, iconImg, iconUrl } from '../core/dom.js';
 import { animate, EASE } from '../core/motion.js';
 import { toast } from './toast.js';
 
@@ -18,7 +18,7 @@ export function createAppbar({ getNav }) {
   const center = h('div', { class: 'appbar-center' }, title, progress);
   const search = button({ class: 'appbar-btn glass', 'aria-label': 'Поиск выгоды' }, icon('search'));
   const heartOutline = icon('heart-outline', { cls: 'heart-outline' });
-  const heartFilled = h('img', { class: 'ico-img heart-filled', src: 'assets/icons/heart-filled.svg', alt: '', 'aria-hidden': 'true' });
+  const heartFilled = iconImg('heart-filled', { cls: 'heart-filled' });
   const heart = button({ class: 'appbar-btn glass heart-btn', 'aria-label': 'Избранное' }, heartOutline, heartFilled);
   const right = h('div', { class: 'appbar-right' }, search, heart);
   const bar = h('header', { class: 'appbar' }, h('div', { class: 'appbar-controls' }, h('div', { class: 'appbar-left' }, left), center, right));

@@ -8,7 +8,6 @@ import { haptics } from '../core/haptics.js';
 import { store } from '../core/store.js';
 import { chip, offerRow, brandRow, primaryButton, linkButton, cardMini, setChipActive } from '../ui/components.js';
 import { favCard } from '../ui/favcard.js';
-import { toast } from '../ui/toast.js';
 import { app } from '../app.js';
 
 const RESULT = {
@@ -310,12 +309,8 @@ export function onboardingScreen({ el, params, nav, entry }) {
     if (busy) return;
     if (step === 3) { haptics.light(); return goResult(4, { swap: true }); }
     if (step === 4) {
-      if (e?.currentTarget === resPrimary) {
-        haptics.success();
-        toast('Уведомления включены — сообщим, когда кэшбэк вырастет');
-      } else {
-        haptics.selection();
-      }
+      if (e?.currentTarget === resPrimary) haptics.success();
+      else haptics.selection();
       return goResult(5, { swap: true });
     }
     if (step === 5) {

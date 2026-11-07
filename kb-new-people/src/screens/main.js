@@ -7,7 +7,7 @@ import { haptics } from '../core/haptics.js';
 import { toast } from '../ui/toast.js';
 import { cardMini, cardHeader, offerCard, productCard } from '../ui/components.js';
 import { favCard } from '../ui/favcard.js';
-import { startTour } from './tour.js';
+import { startTour, stopViewMarks } from './tour.js';
 import { openSheet } from '../ui/sheet.js';
 import { app } from '../app.js';
 
@@ -86,7 +86,7 @@ export function mainScreen({ el, params, nav, entry }) {
 
   const dayEls = streakCfg.days.map((d, i) => {
     const done = i === 0 && store.state.streak.day1;
-    const mark = d.gift ? img('assets/icons/priz.svg', { alt: '', width: 16, height: 16, cls: 'day-mark' }) : i === 0 ? iconImg('check', { size: 16, cls: 'day-mark day-check' }) : icon('lock', { size: 16, cls: 'day-mark' });
+    const mark = d.gift ? iconImg('priz', { size: 16, cls: 'day-mark' }) : i === 0 ? iconImg('check', { size: 16, cls: 'day-mark day-check' }) : icon('lock', { size: 16, cls: 'day-mark' });
     const content = [h('span', { class: 'day-dow' }, d.dow), h('span', { class: 'day-num' }, d.day), mark];
     if (i === 0) {
       return h('div', { class: `day ${done ? 'is-done' : ''}`, role: 'listitem', 'aria-label': `${d.dow} ${d.day}: ${done ? 'засчитан' : 'сегодня'}` }, ...content);
@@ -232,6 +232,7 @@ export function mainScreen({ el, params, nav, entry }) {
     destroy() {
       el.removeEventListener('scroll', onScroll);
       tour?.destroy();
+      stopViewMarks(el);
       cleanups.forEach((fn) => fn?.());
     },
   };

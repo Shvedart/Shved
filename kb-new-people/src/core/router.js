@@ -18,6 +18,8 @@ export function createRouter({ stage, routes, appbar, fallback = '/' }) {
 
   const dim = h('div', { class: 'page-dim', 'aria-hidden': 'true' });
   stage.append(dim);
+  // Затемнение — цветом фона, а не opacity: Safari на iOS красит статус-бар по фону верхнего элемента, даже прозрачного.
+  const shade = (a) => `rgba(0,0,0,${a})`;
 
   function match(path) {
     for (const route of routes) {
@@ -91,14 +93,14 @@ export function createRouter({ stage, routes, appbar, fallback = '/' }) {
     if (modal) {
       await Promise.all([
         animate(to.el, [{ transform: 'translateY(100%)', borderRadius: `var(--r-page) var(--r-page) 0 0` }, { transform: 'translateY(0)', borderRadius: '0' }], { duration: DUR, easing: EASE.ios }),
-        animate(dim, [{ opacity: 0 }, { opacity: 0.25 }], { duration: DUR, easing: EASE.ios }),
+        animate(dim, [{ backgroundColor: shade(0) }, { backgroundColor: shade(0.25) }], { duration: DUR, easing: EASE.ios }),
         animate(from.el, [{ transform: 'scale(1)' }, { transform: 'scale(0.96)' }], { duration: DUR, easing: EASE.ios }),
       ]);
     } else {
       await Promise.all([
         animate(to.el, [{ transform: 'translateX(100%)', borderRadius: 'var(--r-page)', boxShadow: '0 0 30px rgba(0,0,0,.12)' }, { transform: 'translateX(0)', borderRadius: '0', boxShadow: '0 0 30px rgba(0,0,0,0)' }], { duration: DUR, easing: EASE.ios }),
         animate(from.el, [{ transform: 'translateX(0)' }, { transform: 'translateX(-30%)' }], { duration: DUR, easing: EASE.ios }),
-        animate(dim, [{ opacity: 0 }, { opacity: 0.08 }], { duration: DUR, easing: EASE.ios }),
+        animate(dim, [{ backgroundColor: shade(0) }, { backgroundColor: shade(0.08) }], { duration: DUR, easing: EASE.ios }),
       ]);
     }
     cover([from]);
@@ -115,7 +117,7 @@ export function createRouter({ stage, routes, appbar, fallback = '/' }) {
     if (modal) {
       await Promise.all([
         animate(from.el, [{ transform: 'translateY(0)', borderRadius: '0' }, { transform: 'translateY(100%)', borderRadius: 'var(--r-page) var(--r-page) 0 0' }], { duration: DUR * 0.85, easing: EASE.ios }),
-        animate(dim, [{ opacity: 0.25 }, { opacity: 0 }], { duration: DUR * 0.85, easing: EASE.ios }),
+        animate(dim, [{ backgroundColor: shade(0.25) }, { backgroundColor: shade(0) }], { duration: DUR * 0.85, easing: EASE.ios }),
         animate(to.el, [{ transform: 'scale(0.96)' }, { transform: 'scale(1)' }], { duration: DUR * 0.85, easing: EASE.ios }),
       ]);
     } else {
@@ -123,7 +125,7 @@ export function createRouter({ stage, routes, appbar, fallback = '/' }) {
       await Promise.all([
         animate(from.el, [{ transform: `translateX(${start})`, borderRadius: 'var(--r-page)', boxShadow: '0 0 30px rgba(0,0,0,.12)' }, { transform: 'translateX(100%)', borderRadius: 'var(--r-page)', boxShadow: '0 0 30px rgba(0,0,0,0)' }], { duration: dur, easing: EASE.ios }),
         animate(to.el, [{ transform: `translateX(${-30 * (1 - progress)}%)` }, { transform: 'translateX(0)' }], { duration: dur, easing: EASE.ios }),
-        animate(dim, [{ opacity: 0.08 * (1 - progress) }, { opacity: 0 }], { duration: dur, easing: EASE.ios }),
+        animate(dim, [{ backgroundColor: shade(0.08 * (1 - progress)) }, { backgroundColor: shade(0) }], { duration: dur, easing: EASE.ios }),
       ]);
     }
     for (const el of [to.el, dim]) el.getAnimations().forEach((a) => a.cancel());
@@ -316,7 +318,7 @@ export function createRouter({ stage, routes, appbar, fallback = '/' }) {
       t.el.style.borderRadius = 'var(--r-page)';
       t.el.style.boxShadow = '0 0 30px rgba(0,0,0,.12)';
       drag.below.el.style.transform = `translateX(${-30 * (1 - p)}%)`;
-      dim.style.opacity = String(0.08 * (1 - p));
+      dim.style.backgroundColor = shade(0.08 * (1 - p));
     }, { passive: false });
 
     const end = () => {
@@ -330,7 +332,7 @@ export function createRouter({ stage, routes, appbar, fallback = '/' }) {
       const velocity = d.dx / Math.max(1, performance.now() - d.t0);
       const reset = () => {
         for (const el of [t.el, d.below.el]) { el.style.transform = ''; el.style.borderRadius = ''; el.style.boxShadow = ''; }
-        dim.style.opacity = '';
+        dim.style.backgroundColor = '';
       };
       if (p > 0.35 || velocity > 0.6) {
         reset();

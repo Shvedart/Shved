@@ -34,26 +34,73 @@ const ICON_ROOT = 'assets/icons/';
 // URL для mask-image: CSS-переменные разрешаются относительно таблицы стилей, поэтому нужен абсолютный путь.
 export const iconUrl = (name) => `url("${new URL(`${ICON_ROOT}${name}.svg`, document.baseURI).href}")`;
 
+// Иконки встраиваются в DOM как <svg>: Safari на iOS растрирует SVG в mask-image и <img>, и они мылятся.
+// Пока файл грузится, монохромная иконка рисуется маской, цветная — пустым местом нужного размера.
+const svgCache = new Map();
+let svgSeq = 0;
+
+function loadSvg(name) {
+  if (!svgCache.has(name)) {
+    svgCache.set(name, fetch(`${ICON_ROOT}${name}.svg`).then((r) => (r.ok ? r.text() : null)).catch(() => null));
+  }
+  return svgCache.get(name);
+}
+
+// Монохромная: все цвета вне <mask> → currentColor (как раньше маска брала только альфу).
+const toCurrentColor = (src) => src.split(/(<mask[\s\S]*?<\/mask>)/).map((part, i) => (i % 2 ? part : part
+  .replace(/(fill|stroke|stop-color)="(?!none|url)[^"]*"/g, '$1="currentColor"')
+  .replace(/(fill|stroke|stop-color):(?!\s*none|\s*url)[^;"]*/g, '$1:currentColor'))).join('');
+
+function inlineSvg(el, src, mono) {
+  // id внутри файла уникализируются, иначе одинаковые градиенты в скрытой копии ломают видимую
+  const n = ++svgSeq;
+  let text = src.replace(/id="([^"]+)"/g, `id="$1_i${n}"`).replace(/url\(#([^)]+)\)/g, `url(#$1_i${n})`).replace(/href="#([^"]+)"/g, `href="#$1_i${n}"`);
+  if (mono) text = toCurrentColor(text);
+  const tpl = document.createElement('template');
+  tpl.innerHTML = text.trim();
+  const svg = tpl.content.querySelector('svg');
+  if (!svg) return;
+  svg.removeAttribute('preserveAspectRatio');
+  svg.removeAttribute('style');
+  svg.setAttribute('width', '100%');
+  svg.setAttribute('height', '100%');
+  svg.setAttribute('focusable', 'false');
+  svg.setAttribute('aria-hidden', 'true');
+  el.classList.add('is-inline');
+  el.replaceChildren(svg);
+}
+
+function mountSvg(el, name, mono) {
+  const cached = svgCache.get(name);
+  if (cached?.value !== undefined) {
+    if (cached.value) inlineSvg(el, cached.value, mono);
+    return;
+  }
+  loadSvg(name).then((src) => {
+    svgCache.get(name).value = src;
+    if (src) inlineSvg(el, src, mono);
+  });
+}
+
 // Монохромная иконка: цвет берётся из currentColor.
 export function icon(name, { size = 24, cls = '' } = {}) {
   const el = h('span', { class: `ico ${cls}`, 'aria-hidden': 'true' });
   el.style.setProperty('--src', iconUrl(name));
   el.style.width = el.style.height = `${size}px`;
+  mountSvg(el, name, true);
   return el;
 }
 
 // Цветная иконка: используется как есть.
 export function iconImg(name, { size = 24, cls = '', alt = '' } = {}) {
-  const el = h('img', {
+  const el = h('span', {
     class: `ico-img ${cls}`,
-    src: `${ICON_ROOT}${name}.svg`,
-    width: size,
-    height: size,
-    alt,
+    role: alt ? 'img' : null,
+    'aria-label': alt || null,
     'aria-hidden': alt ? null : 'true',
-    draggable: 'false',
   });
   el.style.width = el.style.height = `${size}px`;
+  mountSvg(el, name, false);
   return el;
 }
 

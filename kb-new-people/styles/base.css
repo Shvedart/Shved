@@ -129,8 +129,7 @@ h1, h2, h3, p {
 .page-dim {
   position: absolute;
   inset: 0;
-  background: #000;
-  opacity: 0;
+  background: transparent;
   pointer-events: none;
   z-index: 3;
 }
@@ -162,6 +161,19 @@ h1, h2, h3, p {
   width: 24px;
   height: 24px;
   object-fit: contain;
+}
+
+/* SVG уже встроен — маска не нужна */
+.ico.is-inline {
+  background: none;
+  -webkit-mask: none;
+  mask: none;
+}
+
+.ico > svg,
+.ico-img > svg {
+  display: block;
+  overflow: visible;
 }
 
 @media (prefers-reduced-motion: reduce) {
