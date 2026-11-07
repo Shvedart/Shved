@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="592 0 24 24" fill="none"><g id="Gift">
+<mask id="mask1_635_122644" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="594" y="2" width="21" height="21">
+<g id="Mask">
+<path id="Mask_2" d="M594.002 7.00018V11.0002H614.002V7.00018H594.002Z" fill="black" style="fill:black;fill-opacity:1;" />
+<path id="Mask_3" opacity="0.7" fill-rule="evenodd" clip-rule="evenodd" d="M599.092 2.00012H598.001V4.00012C598.001 5.65698 599.344 7.00012 601.001 7.00012H604.001H607.001C608.658 7.00012 610.001 5.65698 610.001 4.00012V2.00012H607.001C605.344 2.00012 604.001 3.34327 604.001 5.00012C604.001 3.34327 602.658 2.00012 601.001 2.00012H599.092Z" fill="black" style="fill:black;fill-opacity:1;" />
+<path id="Mask_4" opacity="0.8" fill-rule="evenodd" clip-rule="evenodd" d="M602.001 11.0001H595.001V22.0001H602.001V11.0001ZM606.001 11.0001V19.0001C606.001 20.657 604.658 22.0001 603.001 22.0001H609.001C611.21 22.0001 613.001 20.2093 613.001 18.0001V11.0001H606.001Z" fill="black" style="fill:black;fill-opacity:1;" />
+<path id="Mask_5" opacity="0.3" d="M606.002 11.0001H602.002V22.0001H603.002C604.659 22.0001 606.002 20.657 606.002 19.0001V11.0001Z" fill="black" style="fill:black;fill-opacity:1;" />
+</g>
+</mask>
+<g mask="url(#mask1_635_122644)">
+<path id="Color" d="M592 0H616V24H592V0Z" fill="#333333" style="fill:#333333;fill:color(display-p3 0.2000 0.2000 0.2000);fill-opacity:1;" />
+</g>
+</g>
+</svg>

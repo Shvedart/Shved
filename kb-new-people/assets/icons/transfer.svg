@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="27.43" viewBox="444 384 24 27.43" fill="none"><defs><linearGradient id="paint15_linear_635_122644" x1="466.298" y1="388.215" x2="459.337" y2="404.179" gradientUnits="userSpaceOnUse">
+<stop style="stop-color:black;stop-opacity:1;" />
+<stop offset="1" stop-opacity="0.8" style="stop-color:black;stop-opacity:0.8;" />
+</linearGradient>
+<linearGradient id="paint14_linear_635_122644" x1="445.018" y1="397.405" x2="456.189" y2="402.782" gradientUnits="userSpaceOnUse">
+<stop stop-opacity="0.8" style="stop-color:black;stop-opacity:0.8;" />
+<stop offset="1" stop-opacity="0.65" style="stop-color:black;stop-opacity:0.65;" />
+</linearGradient>
+</defs><g id="Transfer">
+<g id="Group 1948755950_2">
+<g id="tui-ic-medium / logo-city">
+<path id="Mask_10" opacity="0.85" d="M453.99 388.215L444.502 397.735L454 407.215C456.003 405.213 456.003 401.96 453.999 399.959L451.773 397.735L453.987 395.508C455.99 393.493 455.991 390.232 453.99 388.215Z" fill="url(#paint14_linear_635_122644)" />
+<path id="Mask_11" opacity="0.85" d="M458.013 388.215L467.501 397.735L458.003 407.215C456 405.213 456.001 401.96 458.004 399.959L460.231 397.735L458.017 395.508C456.013 393.493 456.012 390.232 458.013 388.215Z" fill="url(#paint15_linear_635_122644)" />
+</g>
+</g>
+</g>
+</svg>

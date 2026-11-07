@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="444 582.86 24 24" fill="none"><defs><linearGradient id="paint31_linear_635_122644" x1="445.501" y1="603.857" x2="462.751" y2="587.357" gradientUnits="userSpaceOnUse">
+<stop stop-opacity="0.65" style="stop-color:black;stop-opacity:0.65;" />
+<stop offset="1" stop-opacity="0.4" style="stop-color:black;stop-opacity:0.4;" />
+</linearGradient>
+</defs><g id="coupon">
+<g id="Mask group_28">
+<mask id="mask18_635_122644" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="445" y="587" width="22" height="16">
+<g id="Group_46">
+<path id="Vector_102" d="M453.001 587.357H445.501V592.607C446.744 592.607 447.751 593.614 447.751 594.857C447.751 596.099 446.744 597.107 445.501 597.107V599.302C445.501 600.989 446.869 602.357 448.556 602.357H453.001V587.357Z" fill="url(#paint31_linear_635_122644)" />
+<path id="Vector_103" d="M453.001 602.357H466.501V597.107C465.258 597.107 464.251 596.1 464.251 594.857C464.251 593.614 465.258 592.607 466.501 592.607V590.411C466.501 588.724 465.133 587.357 463.446 587.357H453.001V602.357Z" fill="black" style="fill:black;fill-opacity:1;" />
+</g>
+</mask>
+<g mask="url(#mask18_635_122644)">
+<g id="Group_47">
+<path id="Vector_104" d="M468 582.857H444V606.857H468V582.857Z" fill="#333333" style="fill:#333333;fill:color(display-p3 0.2000 0.2000 0.2000);fill-opacity:1;" />
+</g>
+</g>
+</g>
+</g>
+</svg>

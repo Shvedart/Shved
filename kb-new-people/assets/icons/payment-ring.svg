@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="296 678.86 24 24" fill="none"><g id="Payment ring">
+<g id="Mask group_22">
+<mask id="mask13_635_122644" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="299" y="680" width="18" height="22">
+<g id="Group_35">
+<path id="Vector_84" d="M310.842 684.018C311.624 684.26 312.51 683.977 312.882 683.248L313.687 681.672C310.106 679.919 305.892 679.919 302.311 681.672L303.116 683.248C303.489 683.977 304.375 684.26 305.157 684.018C307.006 683.444 308.993 683.444 310.842 684.018Z" fill="black" style="fill:black;fill-opacity:1;" />
+<path id="Vector_85" fill-rule="evenodd" clip-rule="evenodd" d="M316.25 693.281C316.25 697.741 312.556 701.357 308 701.357C303.444 701.357 299.75 697.741 299.75 693.281C299.75 688.82 303.444 685.204 308 685.204C312.556 685.204 316.25 688.82 316.25 693.281ZM313.25 693.281C313.25 696.024 310.96 698.357 308 698.357C305.04 698.357 302.75 696.024 302.75 693.281C302.75 690.537 305.04 688.204 308 688.204C310.96 688.204 313.25 690.537 313.25 693.281Z" fill="black" style="fill:black;fill-opacity:1;" />
+</g>
+</mask>
+<g mask="url(#mask13_635_122644)">
+<g id="Group_36">
+<path id="Vector_86" d="M320 678.857H296V702.857H320V678.857Z" fill="#333333" style="fill:#333333;fill:color(display-p3 0.2000 0.2000 0.2000);fill-opacity:1;" />
+</g>
+</g>
+</g>
+</g>
+</svg>

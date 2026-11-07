@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="40" viewBox="148 774.86 24 40" fill="none"><defs><linearGradient id="paint26_linear_635_122644" x1="169.501" y1="793.134" x2="150.972" y2="798.468" gradientUnits="userSpaceOnUse">
+<stop stop-opacity="0.7" style="stop-color:black;stop-opacity:0.7;" />
+<stop offset="1" stop-opacity="0.5" style="stop-color:black;stop-opacity:0.5;" />
+</linearGradient>
+</defs><g id="Crown gray">
+<g id="Mask group_23">
+<g id="Group_37">
+<path id="Vector_87" d="M149.001 789.576C149.001 788.594 149.449 787.798 150.001 787.798H170.001C170.554 787.798 171.001 788.594 171.001 789.576V793.134H149.001V789.576Z" fill="black" style="fill:black;fill-opacity:1;" />
+<path id="Vector_88" d="M155.558 778.904C156.809 779.942 157.351 782.588 156.767 784.814L155.985 787.798H153.227L155.558 778.904Z" fill="black" fill-opacity="0.8" style="fill:black;fill-opacity:0.8;" />
+<path id="Vector_89" d="M166.779 787.798L164.447 778.904C163.196 779.942 162.655 782.588 163.238 784.814L164.021 787.798H166.779Z" fill="black" fill-opacity="0.8" style="fill:black;fill-opacity:0.8;" />
+<path id="Vector_90" d="M150.501 793.134H169.501L166.957 806.71C166.685 808.163 165.921 809.143 165.06 809.143H154.943C154.082 809.143 153.318 808.163 153.045 806.71L150.501 793.134Z" fill="url(#paint26_linear_635_122644)" />
+</g>
+</g>
+</g>
+</svg>

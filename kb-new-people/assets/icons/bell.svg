@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="740 678.86 24 24" fill="none"><defs><linearGradient id="paint32_linear_635_122644" x1="755.684" y1="697.857" x2="749.078" y2="681.776" gradientUnits="userSpaceOnUse">
+<stop style="stop-color:black;stop-opacity:1;" />
+<stop offset="1" stop-opacity="0.8" style="stop-color:black;stop-opacity:0.8;" />
+</linearGradient>
+<clipPath id="clip0_635_122644">
+<rect width="24" height="24" fill="white" style="fill:white;fill-opacity:1;" transform="translate(740 678.857)" />
+</clipPath>
+</defs><g id="bell" clip-path="url(#clip0_635_122644)">
+<g id="Clip path group">
+<mask id="mask20_635_122644" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="740" y="678" width="24" height="25">
+<g id="clip0_2767_265840">
+<path id="Vector_110" d="M764 678.857H740V702.857H764V678.857Z" fill="white" style="fill:white;fill-opacity:1;" />
+</g>
+</mask>
+<g mask="url(#mask20_635_122644)">
+<g id="Group_51">
+<g id="Mask group_31">
+<mask id="mask21_635_122644" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="742" y="681" width="20" height="20">
+<g id="Group_52">
+<path id="Vector_111" opacity="0.5" d="M748.5 697.857H755.5C755.5 699.514 754.157 700.857 752.5 700.857H751.5C749.843 700.857 748.5 699.514 748.5 697.857Z" fill="black" style="fill:black;fill-opacity:1;" />
+<path id="Vector_112" d="M744.5 688.357C744.5 684.491 747.634 681.357 751.5 681.357H752.5C756.366 681.357 759.5 684.491 759.5 688.357V693.075C759.5 693.909 759.76 694.722 760.245 695.4L762 697.857H742L743.755 695.4C744.24 694.722 744.5 693.909 744.5 693.075V688.357Z" fill="url(#paint32_linear_635_122644)" />
+</g>
+</mask>
+<g mask="url(#mask21_635_122644)">
+<g id="Group_53">
+<path id="Vector_113" d="M740 678.857H764V702.857H740V678.857Z" fill="#333333" style="fill:#333333;fill:color(display-p3 0.2000 0.2000 0.2000);fill-opacity:1;" />
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+</svg>

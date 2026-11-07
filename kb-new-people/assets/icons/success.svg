@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="444 192 24 24" fill="none"><defs><linearGradient id="paint6_linear_635_122644" x1="449" y1="197" x2="463" y2="211" gradientUnits="userSpaceOnUse">
+<stop stop-color="#0CBC37" style="stop-color:#0CBC37;stop-color:color(display-p3 0.0471 0.7373 0.2157);stop-opacity:1;" />
+<stop offset="1" stop-color="#0CBC37" stop-opacity="0.65" style="stop-color:#0CBC37;stop-color:color(display-p3 0.0471 0.7373 0.2157);stop-opacity:0.65;" />
+</linearGradient>
+</defs><g id="Success">
+<path id="Vector_28" fill-rule="evenodd" clip-rule="evenodd" d="M456 215C462.075 215 467 210.075 467 204C467 197.925 462.075 193 456 193C449.925 193 445 197.925 445 204C445 210.075 449.925 215 456 215Z" fill="url(#paint6_linear_635_122644)" />
+<path id="Vector_29" fill-rule="evenodd" clip-rule="evenodd" d="M454.937 208.551L462.008 201.48L461.634 201.106C460.747 200.219 459.309 200.219 458.422 201.106L454.937 204.591L453.785 203.439C452.898 202.552 451.46 202.552 450.573 203.439L450.199 203.813L454.937 208.551Z" fill="white" style="fill:white;fill-opacity:1;" />
+</g>
+</svg>

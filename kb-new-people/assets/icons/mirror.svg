@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="27.43" viewBox="740 384 24 27.43" fill="none"><defs><linearGradient id="paint17_linear_635_122644" x1="760.402" y1="398.089" x2="744.599" y2="392.983" gradientUnits="userSpaceOnUse">
+<stop stop-opacity="0.65" style="stop-color:black;stop-opacity:0.65;" />
+<stop offset="1" stop-opacity="0.9" style="stop-color:black;stop-opacity:0.9;" />
+</linearGradient>
+</defs><g id="Mirror">
+<g id="Mask group_13">
+<mask id="mask10_635_122644" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="743" y="386" width="20" height="22">
+<g id="Group_23">
+<path id="Vector_55" fill-rule="evenodd" clip-rule="evenodd" d="M753.575 404.085C757.518 403.388 760.501 400.123 760.501 396.2C760.501 391.77 756.695 388.178 752.001 388.178C747.306 388.178 743.5 391.77 743.5 396.2C743.5 400.123 746.483 403.388 750.425 404.085V405.522H749.806C748.698 405.522 747.8 406.37 747.8 407.416V408H756.202V407.416C756.202 406.37 755.303 405.522 754.195 405.522H753.575V404.085ZM758.376 396.2C758.376 399.523 755.522 402.217 752.001 402.217C748.48 402.217 745.625 399.523 745.625 396.2C745.625 392.877 748.48 390.183 752.001 390.183C755.522 390.183 758.376 392.877 758.376 396.2Z" fill="url(#paint17_linear_635_122644)" />
+<path id="Vector_56" d="M758.376 396.2C758.376 399.523 755.522 402.217 752 402.217C748.479 402.217 745.625 399.523 745.625 396.2C745.625 392.877 748.479 390.183 752 390.183C755.522 390.183 758.376 392.877 758.376 396.2Z" fill="black" fill-opacity="0.35" style="fill:black;fill-opacity:0.35;" />
+<path id="Vector_57" d="M756.5 397.615C755.5 393.84 754.5 392.896 750.5 391.953C754.5 391.009 755.5 390.065 756.5 386.29C757.5 390.065 758.5 391.009 762.5 391.953C758.5 392.896 757.5 393.84 756.5 397.615Z" fill="black" style="fill:black;fill-opacity:1;" />
+</g>
+</mask>
+<g mask="url(#mask10_635_122644)">
+<g id="Group_24">
+<path id="Vector_58" d="M740 386.29H764V408.94H740V386.29Z" fill="#333333" style="fill:#333333;fill:color(display-p3 0.2000 0.2000 0.2000);fill-opacity:1;" />
+</g>
+</g>
+</g>
+</g>
+</svg>

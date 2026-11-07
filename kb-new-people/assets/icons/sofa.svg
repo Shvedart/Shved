@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="27.43" viewBox="444 483.43 24 27.43" fill="none"><defs><linearGradient id="paint21_linear_635_122644" x1="456.004" y1="499.316" x2="452.827" y2="488.381" gradientUnits="userSpaceOnUse">
+<stop stop-opacity="0.3" style="stop-color:black;stop-opacity:0.3;" />
+<stop offset="0.988969" stop-color="#333333" stop-opacity="0.6" style="stop-color:#333333;stop-color:color(display-p3 0.2000 0.2000 0.2000);stop-opacity:0.6;" />
+</linearGradient>
+</defs><g id="Sofa">
+<g id="Mask group_16">
+<g id="Group_27">
+<path id="Vector_65" opacity="0.6" fill-rule="evenodd" clip-rule="evenodd" d="M449.004 503.707L446.004 502.609V507H449.004V503.707ZM466.004 502.609L463.004 503.707V507H466.004V502.609Z" fill="black" style="fill:black;fill-opacity:1;" />
+<path id="Vector_66" d="M449.004 489.436C449.004 487.617 450.347 486.143 452.004 486.143H460.004C461.661 486.143 463.004 487.617 463.004 489.436V499.316H449.004V489.436Z" fill="url(#paint21_linear_635_122644)" />
+<path id="Vector_67" d="M449 491.632H448C446.343 491.632 445 493.106 445 494.925V500.414C445 502.232 446.343 503.707 448 503.707H464C465.657 503.707 467 502.232 467 500.414V494.925C467 493.106 465.657 491.632 464 491.632H463V499.316L462.912 499.025C462.367 497.232 460.839 496.023 459.117 496.023H452.883C451.161 496.023 449.633 497.232 449.088 499.025L449 499.316V491.632Z" fill="black" style="fill:black;fill-opacity:1;" />
+</g>
+</g>
+</g>
+</svg>

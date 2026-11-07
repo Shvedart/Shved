@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="27.43" viewBox="296 384 24 27.43" fill="none"><defs><linearGradient id="paint12_linear_635_122644" x1="312.5" y1="406.857" x2="305.902" y2="398.168" gradientUnits="userSpaceOnUse">
+<stop stop-opacity="0.7" style="stop-color:black;stop-opacity:0.7;" />
+<stop offset="1" stop-opacity="0.3" style="stop-color:black;stop-opacity:0.3;" />
+</linearGradient>
+<linearGradient id="paint13_linear_635_122644" x1="300.368" y1="407.042" x2="318.632" y2="393.195" gradientUnits="userSpaceOnUse">
+<stop style="stop-color:black;stop-opacity:1;" />
+<stop offset="1" stop-opacity="0.6" style="stop-color:black;stop-opacity:0.6;" />
+</linearGradient>
+</defs><g id="Duck">
+<g id="Mask group_11">
+<mask id="mask8_635_122644" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="297" y="387" width="23" height="23">
+<g id="Group_19">
+<path id="Vector_48" fill-rule="evenodd" clip-rule="evenodd" d="M316.058 398.514H314.536C315.675 397.697 316.521 396.393 316.849 394.857H319.999L319.876 395.306C319.354 397.215 317.807 398.514 316.058 398.514Z" fill="black" style="fill:black;fill-opacity:1;" />
+<path id="Vector_49" fill-rule="evenodd" clip-rule="evenodd" d="M314.289 403.101C313.753 401.298 312.259 400 310.5 400H303.5V401.143C303.5 404.93 306.186 408 309.5 408H311.108C312.668 406.925 313.832 405.174 314.289 403.101Z" fill="url(#paint12_linear_635_122644)" />
+<path id="Vector_50" fill-rule="evenodd" clip-rule="evenodd" d="M311.75 387.429C308.851 387.429 306.5 390.115 306.5 393.429C306.5 394.581 306.784 395.657 307.277 396.571H302.09C300.196 396.571 298.465 395.349 297.618 393.413L297.5 393.143V400C297.5 405.05 301.082 409.143 305.5 409.143H307.5C308.82 409.143 310.054 408.726 311.108 408H309.5C306.186 408 303.5 404.93 303.5 401.143V400H310.5C312.259 400 313.753 401.298 314.289 403.101C314.427 402.475 314.5 401.819 314.5 401.143V398.541C316 397.484 317 395.59 317 393.429C317 390.115 314.649 387.429 311.75 387.429ZM313 392.571C312.172 392.571 311.5 393.339 311.5 394.286C311.5 395.233 312.172 396 313 396C313.828 396 314.5 395.233 314.5 394.286C314.5 393.339 313.828 392.571 313 392.571Z" fill="url(#paint13_linear_635_122644)" />
+</g>
+</mask>
+<g mask="url(#mask8_635_122644)">
+<g id="Group_20">
+<path id="Vector_51" d="M296 384H320V411.429H296V384Z" fill="#333333" style="fill:#333333;fill:color(display-p3 0.2000 0.2000 0.2000);fill-opacity:1;" />
+</g>
+</g>
+</g>
+</g>
+</svg>

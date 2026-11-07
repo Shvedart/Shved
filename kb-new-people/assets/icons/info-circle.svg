@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="592 192 24 24" fill="none"><defs><linearGradient id="paint35_linear_635_122644" x1="597" y1="197" x2="611" y2="211" gradientUnits="userSpaceOnUse">
+<stop stop-color="#428BF9" style="stop-color:#428BF9;stop-color:color(display-p3 0.2588 0.5451 0.9765);stop-opacity:1;" />
+<stop offset="1" stop-color="#428BF9" stop-opacity="0.65" style="stop-color:#428BF9;stop-color:color(display-p3 0.2588 0.5451 0.9765);stop-opacity:0.65;" />
+</linearGradient>
+</defs><g id="info-circle">
+<path id="Vector_119" fill-rule="evenodd" clip-rule="evenodd" d="M604 215C610.075 215 615 210.075 615 204C615 197.925 610.075 193 604 193C597.925 193 593 197.925 593 204C593 210.075 597.925 215 604 215Z" fill="url(#paint35_linear_635_122644)" />
+<path id="Vector_120" fill-rule="evenodd" clip-rule="evenodd" d="M602.5 198.628C602.5 199.318 603.06 199.878 603.75 199.878H605.275V198.628C605.275 197.938 604.715 197.378 604.025 197.378H602.5V198.628ZM606 207.435H605.25V202.54C605.25 201.988 604.802 201.378 604.25 201.378H601.25V202.54C601.25 203.093 601.698 203.621 602.25 203.621H602.75V207.435H601V208.5C601 209.052 601.698 209.5 602.25 209.5H607V208.5C607 207.948 606.552 207.435 606 207.435Z" fill="white" style="fill:white;fill-opacity:1;" />
+</g>
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="27.43" viewBox="148 483.43 24 27.43" fill="none"><defs><linearGradient id="paint19_linear_635_122644" x1="167.541" y1="491.429" x2="174.635" y2="503.127" gradientUnits="userSpaceOnUse">
+<stop stop-color="#333333" stop-opacity="0.7" style="stop-color:#333333;stop-color:color(display-p3 0.2000 0.2000 0.2000);stop-opacity:0.7;" />
+<stop offset="1" stop-color="#333333" stop-opacity="0.5" style="stop-color:#333333;stop-color:color(display-p3 0.2000 0.2000 0.2000);stop-opacity:0.5;" />
+</linearGradient>
+</defs><g id="Shopping bag">
+<g id="Mask group_15">
+<g id="Group_26">
+<path id="Vector_62" fill-rule="evenodd" clip-rule="evenodd" d="M154.496 485.714C152.839 485.714 151.496 487.249 151.496 489.143V507.429H162.496C164.153 507.429 165.496 505.894 165.496 504V485.714H154.496ZM162.496 489.143H154.496V497.143H161.496C162.049 497.143 162.496 496.631 162.496 496V489.143Z" fill="black" style="fill:black;fill-opacity:1;" />
+<path id="Vector_63" opacity="0.1" d="M154.496 489.143H162.496V496C162.496 496.631 162.049 497.143 161.496 497.143H154.496V489.143Z" fill="black" style="fill:black;fill-opacity:1;" />
+<path id="Vector_64" d="M166.495 496.572C165.943 496.572 165.495 496.06 165.495 495.429V490.286V489.143H166.089C167.495 489.143 168.712 490.259 169.017 491.828L169.495 494.286L171.088 504.751C171.301 506.149 170.359 507.429 169.118 507.429H162.495V504.572H168.495L167.495 496.572H166.495Z" fill="url(#paint19_linear_635_122644)" />
+</g>
+</g>
+</g>
+</svg>

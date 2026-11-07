@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="27.43" viewBox="296 483.43 24 27.43" fill="none"><defs><linearGradient id="paint20_linear_635_122644" x1="307.75" y1="489.643" x2="318.689" y2="507.726" gradientUnits="userSpaceOnUse">
+<stop style="stop-color:black;stop-opacity:1;" />
+<stop offset="1" stop-opacity="0.7" style="stop-color:black;stop-opacity:0.7;" />
+</linearGradient>
+</defs><g id="Cards">
+<g id="Group 1948755950_3">
+<g id="tui-ic-medium / chat">
+<path id="Mask_12" fill-rule="evenodd" clip-rule="evenodd" d="M297.5 489.643H313.5C315.985 489.643 318 491.658 318 494.143V508.143L315.756 505.734C314.81 504.719 313.485 504.143 312.098 504.143H302C299.515 504.143 297.5 502.128 297.5 499.643V489.643ZM302 496.143C302 494.486 303.343 493.143 305 493.143H313C313 494.8 311.657 496.143 310 496.143H302ZM305 498.143C303.343 498.143 302 499.486 302 501.143H306C307.657 501.143 309 499.8 309 498.143H305Z" fill="url(#paint20_linear_635_122644)" />
+<path id="Mask_13" opacity="0.3" d="M302 501.143C302 499.486 303.343 498.143 305 498.143H309C309 499.8 307.657 501.143 306 501.143H302Z" fill="black" style="fill:black;fill-opacity:1;" />
+</g>
+</g>
+</g>
+</svg>

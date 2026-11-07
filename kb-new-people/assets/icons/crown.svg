@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="148 288 24 24" fill="none"><g id="crown">
+<g id="Mask group_30">
+<mask id="mask19_635_122644" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="149" y="291" width="22" height="17">
+<g id="Group_49">
+<path id="Vector_106" d="M160.001 291.002L166.902 307.002C166.546 307.313 166.083 307.497 165.585 307.497H160.001H154.415C153.508 307.497 152.715 306.887 152.482 306.01L149.5 294.762L156.568 298.946L156.573 298.948L159.999 291.002L160 291L160.001 291.002Z" fill="#D7D7D7" style="fill:#D7D7D7;fill:color(display-p3 0.8431 0.8431 0.8431);fill-opacity:1;" />
+<path id="Vector_107" d="M160.001 291.002L166.902 307.002C166.546 307.313 166.083 307.497 165.585 307.497H160.001H154.415C153.508 307.497 152.715 306.887 152.482 306.01L149.5 294.762L156.568 298.946L156.573 298.948L159.999 291.002L160 291L160.001 291.002Z" fill="black" style="fill:black;fill-opacity:1;" />
+<path id="Vector_108" d="M167.518 306.01C167.413 306.405 167.193 306.745 166.9 307.001L163.428 298.947L170.5 294.762L167.518 306.01Z" fill="black" fill-opacity="0.65" style="fill:black;fill-opacity:0.65;" />
+</g>
+</mask>
+<g mask="url(#mask19_635_122644)">
+<g id="Group_50">
+<path id="Vector_109" d="M148 288H172V312H148V288Z" fill="#428BF9" style="fill:#428BF9;fill:color(display-p3 0.2588 0.5451 0.9765);fill-opacity:1;" />
+</g>
+</g>
+</g>
+</g>
+</svg>

@@ -1,0 +1,80 @@
+/* Дизайн-токены, собранные из переменных и стилей макета Figma (секция «new people»). */
+:root {
+  /* Цвета */
+  --c-text: #333333;          /* Primeri */
+  --c-text-secondary: #9299a2; /* seconderi */
+  --c-text-muted: rgba(51, 51, 51, 0.5);
+  --c-label: #000000;         /* Labels/Primary */
+  --c-bg: #ffffff;
+  --c-bg-page: #f6f7f8;       /* Color 4 */
+  --c-fill: rgba(0, 16, 36, 0.03); /* 3% */
+  --c-fill-strong: rgba(0, 16, 36, 0.06);
+  --c-border: rgba(0, 0, 0, 0.07);
+  --c-brand: #ffdd2d;
+  --c-brand-pressed: #f5d000;
+  --c-info: #428bf9;
+  --c-info-soft: #e3edfd;
+  --c-red: #f52222;
+  --c-green: #58c082;
+  --c-green-strong: #2fb36b;
+  --c-dark: #333333;
+  --c-on-dark: #ffffff;
+  --c-glass: rgba(247, 247, 247, 0.9);
+  --c-scrim: rgba(0, 0, 0, 0.4);
+  --c-lilac: #e5dcff;
+  --c-streak-gift: #4ce8fa;
+
+  /* Тени */
+  /* mini — тень всех карточек и плиток (эффект «mini» в Figma) */
+  --shadow-card: 0 6px 34px 0 rgba(0, 0, 0, 0.12);
+  --shadow-sheet: 0 -6px 34px 0 rgba(0, 0, 0, 0.12);
+
+  /* Радиусы */
+  --r-xs: 12px;
+  --r-s: 16px;
+  --r-m: 20px;
+  --r-l: 24px;
+  --r-xl: 32px;
+  --r-page: 40px;   /* скругление открывающейся страницы на переходе */
+  --r-pill: 100px;
+
+  /* Отступы */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --gutter: 16px;
+
+  /* Типографика (SF Pro на Apple, системный шрифт на остальных) */
+  --font-text: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-rounded: ui-rounded, "SF Pro Rounded", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Размеры */
+  --appbar-controls: 44px;
+  --appbar-pad-bottom: 12px;
+  --statusbar: max(env(safe-area-inset-top, 0px), 12px);
+  --appbar-h: calc(var(--statusbar) + var(--appbar-controls) + var(--appbar-pad-bottom));
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --content-max: 480px;
+
+  /* Движение */
+  --ease-ios: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --dur-press: 120ms;
+  --dur-fast: 200ms;
+  --dur-base: 320ms;
+  --dur-page: 460ms;
+}
+
+/* На экранах с широким цветовым охватом — та же тень в display-p3 */
+@supports (color: color(display-p3 0 0 0 / 1)) {
+  :root {
+    --shadow-card: 0 6px 34px 0 color(display-p3 0 0 0 / 0.12);
+    --shadow-sheet: 0 -6px 34px 0 color(display-p3 0 0 0 / 0.12);
+  }
+}

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="27.43" viewBox="592 483.43 24 27.43" fill="none"><defs><linearGradient id="paint22_linear_635_122644" x1="598" y1="498.202" x2="610" y2="498.202" gradientUnits="userSpaceOnUse">
+<stop stop-opacity="0.8" style="stop-color:black;stop-opacity:0.8;" />
+<stop offset="1" stop-opacity="0.7" style="stop-color:black;stop-opacity:0.7;" />
+</linearGradient>
+</defs><g id="T-shirt">
+<g id="Mask group_17">
+<g id="Group_28">
+<path id="Vector_68" fill-rule="evenodd" clip-rule="evenodd" d="M597.854 489.428C596.718 489.428 595.679 490.054 595.171 491.045L593 495.277L598 496.252V489.428H597.854ZM610.146 489.428C611.282 489.428 612.321 490.054 612.829 491.045L615 495.277L610 496.252V489.428H610.146Z" fill="black" style="fill:black;fill-opacity:1;" />
+<path id="Vector_69" d="M600 489.428H598L598 506H607C608.657 506 610 504.691 610 503.076V489.428H608C607.448 489.428 607.016 489.877 606.836 490.386C606.429 491.531 605.313 492.353 604 492.353C602.687 492.353 601.571 491.531 601.164 490.386C600.984 489.877 600.552 489.428 600 489.428Z" fill="url(#paint22_linear_635_122644)" />
+</g>
+</g>
+</g>
+</svg>

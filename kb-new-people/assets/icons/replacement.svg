@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="444 774.86 24 24" fill="none"><defs><linearGradient id="paint33_linear_635_122644" x1="456" y1="778.857" x2="456" y2="790.857" gradientUnits="userSpaceOnUse">
+<stop stop-opacity="0.15" style="stop-color:black;stop-opacity:0.15;" />
+<stop offset="1" stop-opacity="0.3" style="stop-color:black;stop-opacity:0.3;" />
+</linearGradient>
+<linearGradient id="paint34_linear_635_122644" x1="456" y1="778.857" x2="456" y2="790.857" gradientUnits="userSpaceOnUse">
+<stop stop-opacity="0.15" style="stop-color:black;stop-opacity:0.15;" />
+<stop offset="1" stop-opacity="0.3" style="stop-color:black;stop-opacity:0.3;" />
+</linearGradient>
+</defs><g id="replacement">
+<g id="Mask group_32">
+<mask id="mask22_635_122644" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="444" y="774" width="24" height="25">
+<g id="Group_54">
+<path id="Vector_114" d="M450 790.857H460.999C462.656 790.857 463.999 789.514 463.999 787.857V785.857C465.175 786.35 465.999 787.754 465.999 789.093L466 792.622C466 794.409 464.53 795.857 462.717 795.857H450V798.857L444 793.357L450 787.857V790.857Z" fill="black" style="fill:black;fill-opacity:1;" />
+<path id="Vector_115" d="M464 787.857C464 789.514 462.657 790.857 461 790.857H450V787.857L448 789.69V785.657C448 783.89 449.433 782.457 451.2 782.457H464V787.857Z" fill="url(#paint33_linear_635_122644)" />
+<path id="Vector_116" d="M458 778.857C458.884 778.857 459.599 779.573 459.6 780.457V781.657H459.2C458.455 781.657 457.828 781.147 457.65 780.457H454.35C454.172 781.147 453.545 781.657 452.8 781.657H452.4V780.457C452.401 779.573 453.116 778.857 454 778.857H458Z" fill="url(#paint34_linear_635_122644)" />
+<path id="Vector_117" fill-rule="evenodd" clip-rule="evenodd" d="M468 780.357L464 784.023V782.457H451.2C450.336 782.457 449.553 782.8 448.978 783.357L448.867 783.468C448.33 784.041 448 784.81 448 785.657V787.857C446.824 787.365 446 785.96 446 784.622V781.092C446 779.306 447.47 777.857 449.283 777.857H462V774.857L468 780.357Z" fill="black" style="fill:black;fill-opacity:1;" />
+</g>
+</mask>
+<g mask="url(#mask22_635_122644)">
+<g id="Group_55">
+<path id="Vector_118" d="M468 774.857H444V798.857H468V774.857Z" fill="#333333" style="fill:#333333;fill:color(display-p3 0.2000 0.2000 0.2000);fill-opacity:1;" />
+</g>
+</g>
+</g>
+</g>
+</svg>

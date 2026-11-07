@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="740 886.86 40 40" fill="none"><defs><linearGradient id="paint41_linear_635_122644" x1="752.903" y1="903.249" x2="767.51" y2="917.857" gradientUnits="userSpaceOnUse">
+<stop stop-opacity="0.5" style="stop-color:black;stop-opacity:0.5;" />
+<stop offset="1" stop-opacity="0.3" style="stop-color:black;stop-opacity:0.3;" />
+</linearGradient>
+<clipPath id="clip5_635_122644">
+<rect width="40" height="40" fill="white" style="fill:white;fill-opacity:1;" transform="translate(740 886.857)" />
+</clipPath>
+<linearGradient id="paint40_linear_635_122644" x1="760" y1="914.857" x2="760" y2="906.857" gradientUnits="userSpaceOnUse">
+<stop offset="0.03125" stop-opacity="0.8" style="stop-color:black;stop-opacity:0.8;" />
+<stop offset="1" style="stop-color:black;stop-opacity:1;" />
+</linearGradient>
+</defs><g id="tui-avatar-2-505486343 1" clip-path="url(#clip5_635_122644)">
+<path id="Vector_137" d="M780 906.857C780 895.811 771.046 886.857 760 886.857C748.954 886.857 740 895.811 740 906.857C740 917.903 748.954 926.857 760 926.857C771.046 926.857 780 917.903 780 906.857Z" fill="#F6516C" style="fill:#F6516C;fill:color(display-p3 0.9647 0.3176 0.4235);fill-opacity:1;" />
+<g id="Avatar_4">
+<mask id="mask27_635_122644" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="751" y="895" width="18" height="23">
+<g id="Avatar Figure">
+<path id="Vector_138" d="M760 895.857C757.239 895.857 755 898.096 755 900.857V902.857H756V903.857H764V902.857H765V900.857C765 898.096 762.761 895.857 760 895.857Z" fill="black" style="fill:black;fill-opacity:1;" />
+<path id="Vector_139" d="M754 908.857C754 907.753 754.895 906.857 756 906.857H764C765.105 906.857 766 907.753 766 908.857V914.857H756C754.895 914.857 754 913.962 754 912.857V908.857Z" fill="url(#paint40_linear_635_122644)" />
+<path id="Vector_140" fill-rule="evenodd" clip-rule="evenodd" d="M754 903.857C752.343 903.857 751 905.2 751 906.857V914.857C751 916.514 752.343 917.857 754 917.857H766C767.657 917.857 769 916.514 769 914.857V906.857C769 905.2 767.657 903.857 766 903.857H754ZM756 906.857C754.895 906.857 754 907.753 754 908.857V912.857C754 913.962 754.895 914.857 756 914.857H766V908.857C766 907.753 765.105 906.857 764 906.857H756Z" fill="url(#paint41_linear_635_122644)" />
+</g>
+</mask>
+<g mask="url(#mask27_635_122644)">
+<g id="Avatar Background_2">
+<path id="Vector_141" d="M748 894.857H772V918.857H748V894.857Z" fill="white" style="fill:white;fill-opacity:1;" />
+</g>
+</g>
+</g>
+</g>
+</svg>

@@ -1,0 +1,97 @@
+{
+  "today": "2025-11-01",
+  "month": { "name": "ноябрь", "title": "В ноябре" },
+  "brands": {
+    "samokat": { "name": "Самокат", "namePrep": "Самокате", "match": ["Самокат в Городе"] },
+    "lenta": { "name": "Лента", "namePrep": "Ленте", "match": ["Лента Доставка", "Гипер Лента в Городе"] },
+    "lavka": { "name": "Яндекс Лавка", "namePrep": "Яндекс Лавке", "match": ["Яндекс Лавка"] },
+    "pyaterochka": { "name": "Пятёрочка", "namePrep": "Пятёрочке", "match": ["Пятёрочка Доставка", "Пятёрочка в Т-Банке"] },
+    "perekrestok": { "name": "Перекрёсток", "namePrep": "Перекрёстке", "match": ["Перекрёсток"] },
+    "magnit": { "name": "Магнит", "namePrep": "Магните", "match": ["Магнит Доставка", "Магнит"] },
+    "auchan": { "name": "Ашан", "namePrep": "Ашане", "match": ["Ашан"] },
+    "tasty": { "name": "Tasty Coffee", "match": ["Tasty Coffee", "Дрип-пакеты Tasty Coffee"] },
+    "hochland": { "name": "Hochland", "match": ["Hochland «Для кулинарии»", "Hochland Grünländer «Классический»", "Комбо Hochland Grünländer и Casademont", "Hochland «Мега ломтик»", "Hochland «Больше белка»"] },
+    "t-travel": { "name": "Т-Путешествия", "match": ["Поезда в Т-Путешествиях", "Туры в Т-Путешествиях", "Автобусы в Т-Путешествиях"] },
+    "sber-health": { "name": "СберЗдоровье", "namePrep": "СберЗдоровье", "match": ["Анализы в СберЗдоровье"] },
+    "lamoda": { "name": "Lamoda", "namePrep": "Lamoda", "match": ["Lamoda"] },
+    "sportmaster": { "name": "Спортмастер", "namePrep": "Спортмастере", "match": ["Спортмастер"] },
+    "citilink": { "name": "Ситилинк", "namePrep": "Ситилинке", "match": ["Ситилинк"] },
+    "mvideo": { "name": "М.Видео", "namePrep": "М.Видео", "match": ["М.Видео в Шопинге"] },
+    "restore": { "name": "restore:", "match": ["restore:"] },
+    "detmir": { "name": "Детский мир", "namePrep": "Детском мире", "match": ["Детский мир"] },
+    "kitfort": { "name": "Kitfort", "match": ["Kitfort", "KITFORT"] },
+    "polaris": { "name": "Polaris", "match": ["Polaris", "Polaris в Шопинге"] },
+    "city-tests": { "name": "Анализы в Городе", "match": ["Анализы в Городе"] },
+    "city-shopping": { "name": "Шопинг в Городе", "match": ["Шопинг в Городе"] }
+  },
+  "extraOffers": [
+    {
+      "categoryId": "food",
+      "afterId": "offer-124",
+      "offer": {
+        "id": "offer-900",
+        "name": "Пятёрочка в Т-Банке",
+        "description": "Супермаркет у дома",
+        "cashback": "15%",
+        "cashbackText": "Кэшбэк 15%",
+        "condition": "За одну покупку онлайн",
+        "date": "До 10 ноября",
+        "image": "https://ms-static-images.t-static.ru/offer-image-compact-e3df5ba657e84de08acbfb608001899d.png",
+        "background": "",
+        "logo": "https://ms-static-images.t-static-online.com/partner-15121-image280-43810688.png",
+        "backgroundColor": "#D5DAD0",
+        "textColor": "#000000"
+      }
+    }
+  ],
+  "onboarding": {
+    "step1": {
+      "chip": "Еда",
+      "title": ["Настройте", "кэшбэк под себя"],
+      "subtitle": "Сохраняйте то, что пригодится",
+      "brands": ["samokat", "lenta", "lavka", "pyaterochka", "perekrestok"],
+      "cta": "Дальше Любимые бренды"
+    },
+    "step2": {
+      "chip": "Любимые бренды",
+      "title": ["Магазины,", "где вы покупаете"],
+      "subtitle": "Проверяйте кэшбэк перед покупкой",
+      "brands": ["lamoda", "sportmaster", "citilink", "mvideo", "restore", "detmir"],
+      "cta": "Собрать мою подборку"
+    },
+    "moreText": "И ещё 100 предложений покажем в ленте"
+  },
+  "main": {
+    "balance": "1 328 ₽",
+    "missed": { "month": "октябре", "amount": "+512 ₽" },
+    "availableToday": ["offer-005", "offer-009", "offer-014"],
+    "products": ["offer-097", "offer-099", "offer-102"],
+    "selection": ["offer-009", "offer-010", "offer-014", "offer-011", "offer-033", "offer-124"],
+    "streak": {
+      "title": ["Подарим кэшбэк 99%", "на", "Яндекс Плюс"],
+      "subtitle": "Если зайдёте сюда 5 дней подряд",
+      "days": [
+        { "dow": "Пн", "day": "29" },
+        { "dow": "Вт", "day": "30", "when": "во вторник, 30 октября" },
+        { "dow": "Ср", "day": "31", "when": "в среду, 31 октября" },
+        { "dow": "Чт", "day": "1", "when": "в четверг, 1 ноября" },
+        { "dow": "Пт", "day": "2", "gift": true, "when": "в пятницу, 2 ноября" }
+      ]
+    },
+    "nearby": [
+      { "id": "near-1", "cashback": "20%", "name": "Cut Barbershop", "address": "пр-кт Михаила Нагибина, 12А", "icon": "scissors" },
+      { "id": "near-2", "cashback": "20%", "name": "Кофейня Surf Coffee", "address": "пр-кт Михаила Нагибина, 13", "icon": "coffee" }
+    ]
+  },
+  "pk": {
+    "limit": 4,
+    "categories": [
+      { "id": "all", "percent": "1%", "title": "Все покупки", "icon": "cat-4", "hint": "1% на любые покупки картой, без ограничений по категориям" },
+      { "id": "clothes", "percent": "3%", "title": "Одежда и обувь", "icon": "cat-5", "hint": "3% в магазинах одежды, обуви и аксессуаров" },
+      { "id": "pets", "percent": "25%", "title": "Животные", "icon": "cat-3", "hint": "25% в зоомагазинах и ветклиниках" },
+      { "id": "beauty", "percent": "30%", "title": "Красота", "icon": "cat-2", "hint": "30% в салонах красоты и магазинах косметики" },
+      { "id": "pharmacy", "percent": "3%", "title": "Аптеки", "icon": "cat-1b", "hint": "3% в аптеках и на сайтах аптек" },
+      { "id": "restaurants", "percent": "10%", "title": "Рестораны", "icon": "cat-1", "hint": "10% в ресторанах, кафе и барах" }
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 886.86 40 40" fill="none"><defs><clipPath id="clip3_635_122644">
+<rect width="40" height="40" fill="white" style="fill:white;fill-opacity:1;" transform="translate(0 886.857)" />
+</clipPath>
+<linearGradient id="paint39_linear_635_122644" x1="27" y1="897.857" x2="27" y2="915.857" gradientUnits="userSpaceOnUse">
+<stop stop-opacity="0.5" style="stop-color:black;stop-opacity:0.5;" />
+<stop offset="1" stop-opacity="0.65" style="stop-color:black;stop-opacity:0.65;" />
+</linearGradient>
+<linearGradient id="paint38_linear_635_122644" x1="17.5" y1="898.357" x2="17.5882" y2="915.857" gradientUnits="userSpaceOnUse">
+<stop stop-opacity="0.85" style="stop-color:black;stop-opacity:0.85;" />
+<stop offset="1" style="stop-color:black;stop-opacity:1;" />
+</linearGradient>
+</defs><g id="tui-avatar-4-2130055170 1" clip-path="url(#clip3_635_122644)">
+<path id="Vector_130" d="M40 906.857C40 895.811 31.0457 886.857 20 886.857C8.9543 886.857 0 895.811 0 906.857C0 917.903 8.9543 926.857 20 926.857C31.0457 926.857 40 917.903 40 906.857Z" fill="#725DD6" style="fill:#725DD6;fill:color(display-p3 0.4471 0.3647 0.8392);fill-opacity:1;" />
+<g id="Avatar_2">
+<mask id="mask25_635_122644" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="11" y="897" width="18" height="19">
+<g id="Avatar Shape">
+<path id="Vector_131" fill-rule="evenodd" clip-rule="evenodd" d="M25 897.857H11V911.857C11 914.066 12.7909 915.857 15 915.857H25V897.857ZM13.5 903.357C13.5 905.014 14.8431 906.357 16.5 906.357H18.5C20.1569 906.357 21.5 905.014 21.5 903.357V899.857H20.5C19.6716 899.857 19 900.529 19 901.357V903.857H16V899.857H15C14.1716 899.857 13.5 900.529 13.5 901.357V903.357Z" fill="url(#paint38_linear_635_122644)" />
+<path id="Vector_132" d="M25 897.857H29V915.857H25V897.857Z" fill="url(#paint39_linear_635_122644)" />
+</g>
+</mask>
+<g mask="url(#mask25_635_122644)">
+<g id="Avatar Icon">
+<path id="Vector_133" d="M8 894.857H32V918.857H8V894.857Z" fill="white" style="fill:white;fill-opacity:1;" />
+</g>
+</g>
+</g>
+</g>
+</svg>

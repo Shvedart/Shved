@@ -1,0 +1,176 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-family: var(--font-text);
+  font-size: 15px;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+body {
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  text-align: inherit;
+}
+
+button:disabled {
+  cursor: default;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+h1, h2, h3, p {
+  margin: 0;
+  font-weight: inherit;
+}
+
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--c-info);
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Корень приложения */
+#app {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--c-bg-page);
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  overflow: hidden;
+  background: var(--c-bg);
+  isolation: isolate;
+}
+
+/* Страница — отдельный скролл-контейнер, чтобы стек сохранял состояние */
+.page {
+  position: absolute;
+  inset: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  background: var(--c-bg);
+  scrollbar-width: none;
+  contain: layout paint;
+  /* фокус с клавиатуры не прячется под апп-баром и нижней кнопкой */
+  scroll-padding-top: calc(var(--appbar-h) + 8px);
+  scroll-padding-bottom: 150px;
+}
+
+.page::-webkit-scrollbar {
+  display: none;
+}
+
+.page.has-appbar {
+  padding-top: var(--appbar-h);
+}
+
+.page.is-covered {
+  visibility: hidden;
+}
+
+.page.is-front,
+.page.is-leaving {
+  z-index: 4;
+}
+
+.page.is-modal {
+  z-index: 5;
+}
+
+.page-dim {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Нажатие: все кликабельные элементы сжимаются до 0.95 */
+.tap {
+  transition: transform var(--dur-press) var(--ease-out), opacity var(--dur-fast) ease;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.tap.is-pressed {
+  transform: scale(0.95);
+}
+
+.ico {
+  display: inline-block;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  background-color: currentColor;
+  -webkit-mask: var(--src) center / contain no-repeat;
+  mask: var(--src) center / contain no-repeat;
+}
+
+.ico-img {
+  display: block;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}

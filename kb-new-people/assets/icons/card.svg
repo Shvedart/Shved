@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="148 678.86 24 24" fill="none"><defs><linearGradient id="paint25_linear_635_122644" x1="158.122" y1="684.686" x2="165.563" y2="700.224" gradientUnits="userSpaceOnUse">
+<stop stop-opacity="0.5" style="stop-color:black;stop-opacity:0.5;" />
+<stop offset="1" stop-opacity="0.3" style="stop-color:black;stop-opacity:0.3;" />
+</linearGradient>
+</defs><g id="Card">
+<path id="Mask_14" d="M157.428 683.143C159.457 683.143 161.156 684.238 162.109 685.927L164.846 690.858L162.109 695.788C161.151 697.51 159.406 698.571 157.428 698.571H166.33C168.514 698.571 170.286 696.729 170.286 694.457V683.143H157.428Z" fill="url(#paint25_linear_635_122644)" />
+<path id="Mask_15" fill-rule="evenodd" clip-rule="evenodd" d="M153.696 683.143C151.497 683.143 149.714 684.985 149.714 687.257V698.571H157.722C159.646 698.571 161.424 697.51 162.388 695.788L165.143 690.858L162.388 685.927C161.427 684.204 159.646 683.143 157.722 683.143H153.696ZM151.374 695.486C151.374 694.35 152.265 693.429 153.365 693.429H156.849C156.849 694.565 155.957 695.486 154.858 695.486H151.374Z" fill="black" style="fill:black;fill-opacity:1;" />
+</g>
+</svg>

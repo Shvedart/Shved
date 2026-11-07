@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="27.43" viewBox="592 384 24 27.43" fill="none"><defs><linearGradient id="paint16_linear_635_122644" x1="613.996" y1="391.429" x2="592.326" y2="404.702" gradientUnits="userSpaceOnUse">
+<stop stop-opacity="0.8" style="stop-color:black;stop-opacity:0.8;" />
+<stop offset="1" style="stop-color:black;stop-opacity:1;" />
+</linearGradient>
+</defs><g id="Medicine">
+<g id="Mask group_12">
+<mask id="mask9_635_122644" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="593" y="386" width="21" height="22">
+<g id="Group_21">
+<path id="Vector_52" fill-rule="evenodd" clip-rule="evenodd" d="M599.498 388.572C599.498 387.309 600.393 386.286 601.498 386.286H601.998H605.998H606.498C607.602 386.286 608.498 387.309 608.498 388.572V390.286H607.998C607.066 390.286 606.283 389.557 606.061 388.572H601.935C601.713 389.557 600.929 390.286 599.998 390.286H599.498V388.572Z" fill="black" style="fill:black;fill-opacity:1;" />
+<path id="Vector_53" fill-rule="evenodd" clip-rule="evenodd" d="M597.996 391.429C595.787 391.429 593.996 393.475 593.996 396V407.429H609.996C612.205 407.429 613.996 405.382 613.996 402.857V391.429H597.996ZM603.496 404.572C602.944 404.572 602.496 404.06 602.496 403.429V401.143H599.496V398.857C599.496 398.226 599.944 397.714 600.496 397.714H602.496V394.286H604.496C605.049 394.286 605.496 394.798 605.496 395.429V397.714H608.496V400C608.496 400.631 608.049 401.143 607.496 401.143H605.496V404.572H603.496Z" fill="url(#paint16_linear_635_122644)" />
+</g>
+</mask>
+<g mask="url(#mask9_635_122644)">
+<g id="Group_22">
+<path id="Vector_54" d="M591.999 384H615.999V411.429H591.999V384Z" fill="#333333" style="fill:#333333;fill:color(display-p3 0.2000 0.2000 0.2000);fill-opacity:1;" />
+</g>
+</g>
+</g>
+</g>
+</svg>

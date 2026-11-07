@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="148 192 24 24" fill="none"><defs><linearGradient id="paint5_linear_635_122644" x1="162.143" y1="203.305" x2="156.838" y2="212.827" gradientUnits="userSpaceOnUse">
+<stop style="stop-color:black;stop-opacity:1;" />
+<stop offset="1" stop-opacity="0.8" style="stop-color:black;stop-opacity:0.8;" />
+</linearGradient>
+</defs><g id="Lock">
+<g id="Mask group_6">
+<mask id="mask6_635_122644" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="152" y="194" width="16" height="19">
+<g id="Group_12">
+<path id="Vector_23" d="M152.5 202.497V212.997H163.929C165.901 212.997 167.5 211.189 167.5 208.959V202.497H152.5Z" fill="url(#paint5_linear_635_122644)" />
+<path id="Vector_24" opacity="0.7" d="M166 200.247C166 196.933 163.314 194.247 160 194.247C156.686 194.247 154 196.933 154 200.247V202.497H157V200.247C157 198.59 158.343 197.247 160 197.247C161.657 197.247 163 198.59 163 200.247V202.497H166V200.247Z" fill="black" style="fill:black;fill-opacity:1;" />
+</g>
+</mask>
+<g mask="url(#mask6_635_122644)">
+<g id="Group_13">
+<path id="Vector_25" d="M172 192H148V216H172V192Z" fill="#333333" style="fill:#333333;fill:color(display-p3 0.2000 0.2000 0.2000);fill-opacity:1;" />
+</g>
+</g>
+</g>
+</g>
+</svg>

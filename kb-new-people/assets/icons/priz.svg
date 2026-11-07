@@ -1,0 +1,15 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="priz">
+<mask id="mask0_0_73" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="1" y="1" width="14" height="14">
+<g id="Mask">
+<path id="Mask_2" d="M1.33203 4.66683V7.3335H14.6654V4.66683H1.33203Z" fill="black" style="fill:black;fill-opacity:1;"/>
+<path id="Mask_3" opacity="0.7" d="M4.72727 1.3335H4V2.66683C4 3.7714 4.89543 4.66683 6 4.66683H8H10C11.1046 4.66683 12 3.7714 12 2.66683V1.3335H10C8.89543 1.3335 8 2.22893 8 3.3335C8 2.22893 7.10457 1.3335 6 1.3335H4.72727Z" fill-rule="evenodd" clip-rule="evenodd" fill="black" style="fill:black;fill-opacity:1;"/>
+<path id="Mask_4" opacity="0.8" d="M6.66667 7.3335H2V14.6668H6.66667V7.3335ZM9.33333 7.3335V12.6668C9.33333 13.7714 8.4379 14.6668 7.33333 14.6668H11.3333C12.8061 14.6668 14 13.4729 14 12.0002V7.3335H9.33333Z" fill-rule="evenodd" clip-rule="evenodd" fill="black" style="fill:black;fill-opacity:1;"/>
+<path id="Mask_5" opacity="0.3" d="M9.33203 7.3335H6.66536V14.6668H7.33203C8.4366 14.6668 9.33203 13.7714 9.33203 12.6668V7.3335Z" fill="black" style="fill:black;fill-opacity:1;"/>
+</g>
+</mask>
+<g mask="url(#mask0_0_73)">
+<path id="Color" d="M0 0H16V16H0V0Z" fill="#9299A2" style="fill:#9299A2;fill:color(display-p3 0.5725 0.6000 0.6353);fill-opacity:1;"/>
+</g>
+</g>
+</svg>

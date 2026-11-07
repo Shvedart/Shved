@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="740 96 24 24" fill="none"><defs><linearGradient id="paint4_linear_635_122644" x1="759.077" y1="107.12" x2="739.554" y2="112.269" gradientUnits="userSpaceOnUse">
+<stop style="stop-color:black;stop-opacity:1;" />
+<stop offset="1" stop-opacity="0.8" style="stop-color:black;stop-opacity:0.8;" />
+</linearGradient>
+</defs><g id="Location">
+<g id="Mask group_4">
+<mask id="mask4_635_122644" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="742" y="97" width="20" height="23">
+<g id="Group_8">
+<path id="Vector_18" fill-rule="evenodd" clip-rule="evenodd" d="M752 120L745.919 114.299C743.778 112.292 742.564 109.45 742.564 106.516C742.564 101.305 746.789 97 752 97C757.211 97 761.436 101.305 761.436 106.516C761.436 109.45 760.221 112.292 758.081 114.299L752 120ZM752 101.718C749.394 101.718 747.282 103.83 747.282 106.436C747.282 109.042 749.394 111.154 752 111.154C754.606 111.154 756.718 109.042 756.718 106.436C756.718 103.83 754.606 101.718 752 101.718Z" fill="url(#paint4_linear_635_122644)" />
+<path id="Vector_19" opacity="0.2" d="M747.282 106.437C747.282 103.831 749.395 101.719 752 101.719C754.606 101.719 756.718 103.831 756.718 106.437C756.718 109.042 754.606 111.155 752 111.155C749.395 111.155 747.282 109.042 747.282 106.437Z" fill="black" style="fill:black;fill-opacity:1;" />
+</g>
+</mask>
+<g mask="url(#mask4_635_122644)">
+<g id="Group_9">
+<path id="Vector_20" d="M764 96H740V120H764V96Z" fill="#333333" style="fill:#333333;fill:color(display-p3 0.2000 0.2000 0.2000);fill-opacity:1;" />
+</g>
+</g>
+</g>
+</g>
+</svg>

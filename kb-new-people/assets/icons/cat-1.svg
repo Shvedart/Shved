@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="592 774.86 40 40" fill="none"><defs><clipPath id="clip1_635_122644">
+<rect width="40" height="40" fill="white" style="fill:white;fill-opacity:1;" transform="translate(592 774.857)" />
+</clipPath>
+<linearGradient id="paint36_linear_635_122644" x1="619.5" y1="799.357" x2="604.5" y2="799.357" gradientUnits="userSpaceOnUse">
+<stop stop-opacity="0.75" style="stop-color:black;stop-opacity:0.75;" />
+<stop offset="1" stop-opacity="0.5" style="stop-color:black;stop-opacity:0.5;" />
+</linearGradient>
+</defs><g id="tui-avatar-1317067895 1" clip-path="url(#clip1_635_122644)">
+<path id="Vector_121" d="M632 794.857C632 783.811 623.046 774.857 612 774.857C600.954 774.857 592 783.811 592 794.857C592 805.903 600.954 814.857 612 814.857C623.046 814.857 632 805.903 632 794.857Z" fill="#FF7F95" style="fill:#FF7F95;fill:color(display-p3 1.0000 0.4980 0.5843);fill-opacity:1;" />
+<g id="Avatar Mask">
+<mask id="mask23_635_122644" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="601" y="785" width="22" height="18">
+<g id="Avatar Details">
+<path id="Vector_122" fill-rule="evenodd" clip-rule="evenodd" d="M612 785.857C610.893 785.857 610.112 786.942 610.462 787.992L610.777 788.939C606.385 789.536 603 793.301 603 797.857V799.857H621V797.857C621 793.301 617.615 789.536 613.223 788.939L613.538 787.992C613.889 786.942 613.107 785.857 612 785.857Z" fill="url(#paint36_linear_635_122644)" />
+<path id="Vector_123" fill-rule="evenodd" clip-rule="evenodd" d="M612 785.857C610.893 785.857 610.111 786.942 610.461 787.992L610.777 788.939C611.177 788.885 611.585 788.857 612 788.857C612.415 788.857 612.823 788.885 613.223 788.939L613.538 787.992C613.888 786.942 613.107 785.857 612 785.857Z" fill="black" style="fill:black;fill-opacity:1;" />
+<path id="Vector_124" d="M601 799.857H623C623 801.514 621.657 802.857 620 802.857H604C602.343 802.857 601 801.514 601 799.857Z" fill="black" style="fill:black;fill-opacity:1;" />
+</g>
+</mask>
+<g mask="url(#mask23_635_122644)">
+<g id="Avatar Background">
+<path id="Vector_125" d="M600 782.857H624V806.857H600V782.857Z" fill="white" style="fill:white;fill-opacity:1;" />
+</g>
+</g>
+</g>
+</g>
+</svg>

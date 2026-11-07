@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="27.43" viewBox="0 384 24 27.43" fill="none"><defs><linearGradient id="paint11_linear_635_122644" x1="22.5" y1="399.429" x2="3.02584" y2="385.322" gradientUnits="userSpaceOnUse">
+<stop stop-opacity="0.6" style="stop-color:black;stop-opacity:0.6;" />
+<stop offset="1" stop-opacity="0.4" style="stop-color:black;stop-opacity:0.4;" />
+</linearGradient>
+</defs><g id="Desktop">
+<g id="Mask group_9">
+<mask id="mask7_635_122644" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="1" y="387" width="22" height="21">
+<g id="Group_16">
+<path id="Vector_41" d="M1.5 402.857V399.429H19.6364C20.9611 399.429 22.0758 398.298 22.4028 396.762C22.4662 396.519 22.5 396.264 22.5 396V398.939C22.5 401.103 20.7905 402.857 18.6818 402.857H1.5Z" fill="black" style="fill:black;fill-opacity:1;" />
+<path id="Vector_42" d="M8.85 404.571C7.6902 404.571 6.75 405.799 6.75 407.314V408H17.25V407.314C17.25 405.799 16.3098 404.571 15.15 404.571H8.85Z" fill="black" style="fill:black;fill-opacity:1;" />
+<path id="Vector_43" d="M1.5 392.229C1.5 389.578 3.20946 387.429 5.31818 387.429H22.5V395.829C22.5 397.817 21.2179 399.429 19.6364 399.429H1.5V392.229Z" fill="url(#paint11_linear_635_122644)" />
+</g>
+</mask>
+<g mask="url(#mask7_635_122644)">
+<g id="Group_17">
+<path id="Vector_44" d="M0 384H24V411.429H0V384Z" fill="#333333" style="fill:#333333;fill:color(display-p3 0.2000 0.2000 0.2000);fill-opacity:1;" />
+</g>
+</g>
+</g>
+</g>
+</svg>

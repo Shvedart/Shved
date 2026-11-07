@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="148 582.86 24 24" fill="none"><defs><linearGradient id="paint29_linear_635_122644" x1="154.33" y1="586.287" x2="165.67" y2="597.627" gradientUnits="userSpaceOnUse">
+<stop style="stop-color:black;stop-opacity:1;" />
+<stop offset="1" stop-opacity="0.8" style="stop-color:black;stop-opacity:0.8;" />
+</linearGradient>
+</defs><g id="medal-2">
+<g id="Mask group_26">
+<mask id="mask16_635_122644" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="151" y="583" width="18" height="23">
+<g id="Group_42">
+<path id="Vector_95" fill-rule="evenodd" clip-rule="evenodd" d="M151 592.857C151 587.887 155.029 583.857 160 583.857C164.971 583.857 169 587.887 169 592.857C169 597.828 164.971 601.857 160 601.857C155.029 601.857 151 597.828 151 592.857ZM158.987 590.324C158.987 591.163 158.307 591.843 157.468 591.843C156.629 591.843 155.949 591.163 155.949 590.324C155.949 589.485 156.629 588.805 157.468 588.805C158.307 588.805 158.987 589.485 158.987 590.324ZM162.53 596.905C163.369 596.905 164.049 596.225 164.049 595.386C164.049 594.548 163.369 593.868 162.53 593.868C161.692 593.868 161.012 594.548 161.012 595.386C161.012 596.225 161.692 596.905 162.53 596.905ZM156.961 596.399C156.293 595.72 156.354 594.617 157.103 594.019L163.036 589.311C163.705 589.99 163.644 591.093 162.895 591.691L156.961 596.399Z" fill="url(#paint29_linear_635_122644)" />
+<path id="Vector_96" opacity="0.4" d="M167 605.857L161.682 603.958C160.594 603.569 159.406 603.569 158.318 603.958L153 605.857V598.511C154.65 600.551 157.172 601.857 160 601.857C162.828 601.857 165.35 600.551 167 598.511V605.857Z" fill="black" style="fill:black;fill-opacity:1;" />
+</g>
+</mask>
+<g mask="url(#mask16_635_122644)">
+<g id="Group_43">
+<path id="Vector_97" d="M148 582.857H172V606.857H148V582.857Z" fill="#333333" style="fill:#333333;fill:color(display-p3 0.2000 0.2000 0.2000);fill-opacity:1;" />
+</g>
+</g>
+</g>
+</g>
+</svg>

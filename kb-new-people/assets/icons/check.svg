@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 192 24 24" fill="none"><g id="Check">
+<g id="Icon--1086123619 1">
+<g id="Mask group_5">
+<mask id="mask5_635_122644" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="2" y="197" width="20" height="15">
+<g id="Group_10">
+<path id="Vector_21" d="M2.25 203.337L10.1501 211.229L10.1632 211.242L21.75 199.666L20.6967 198.614C19.5331 197.452 17.6468 197.452 16.4832 198.614L10.1631 204.928L7.51674 202.284C6.35323 201.122 4.46684 201.122 3.30334 202.284L2.25 203.337Z" fill="black" style="fill:black;fill-opacity:1;" />
+</g>
+</mask>
+<g mask="url(#mask5_635_122644)">
+<g id="Group_11">
+<path id="Vector_22" d="M24 192H0V216H24V192Z" fill="#333333" style="fill:#333333;fill:color(display-p3 0.2000 0.2000 0.2000);fill-opacity:1;" />
+</g>
+</g>
+</g>
+</g>
+</g>
+</svg>

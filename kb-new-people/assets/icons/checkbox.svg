@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="148 886.86 22 22" fill="none"><defs><clipPath id="clip7_635_122644">
+<rect width="22" height="22" fill="white" style="fill:white;fill-opacity:1;" transform="translate(148 886.857)" />
+</clipPath>
+</defs><g id="checkbox" clip-path="url(#clip7_635_122644)">
+<path id="Vector_146" fill-rule="evenodd" clip-rule="evenodd" d="M159 908.857C165.075 908.857 170 903.932 170 897.857C170 891.782 165.075 886.857 159 886.857C152.925 886.857 148 891.782 148 897.857C148 903.932 152.925 908.857 159 908.857Z" fill="#428BF9" style="fill:#428BF9;fill:color(display-p3 0.2588 0.5451 0.9765);fill-opacity:1;" />
+<g id="Mask group_33">
+<mask id="mask29_635_122644" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="153" y="893" width="13" height="11">
+<g id="Group_56">
+<path id="Vector_147" d="M163.337 894.194C163.786 893.745 164.514 893.745 164.963 894.194C165.412 894.643 165.412 895.371 164.963 895.82L157.963 902.82C157.514 903.269 156.786 903.269 156.337 902.82L153.337 899.82C152.888 899.371 152.888 898.643 153.337 898.194C153.786 897.745 154.514 897.745 154.963 898.194L157.15 900.381L163.337 894.194Z" fill="black" style="fill:black;fill-opacity:1;" />
+</g>
+</mask>
+<g mask="url(#mask29_635_122644)">
+<g id="Group_57">
+<path id="Vector_148" d="M167 889.857H151V905.857H167V889.857Z" fill="white" style="fill:white;fill-opacity:1;" />
+</g>
+</g>
+</g>
+</g>
+</svg>

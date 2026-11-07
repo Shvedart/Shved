@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 96 24 24" fill="none"><defs><linearGradient id="paint3_linear_635_122644" x1="13.25" y1="108.25" x2="2.25" y2="108.25" gradientUnits="userSpaceOnUse">
+<stop style="stop-color:black;stop-opacity:1;" />
+<stop offset="1" stop-opacity="0.7" style="stop-color:black;stop-opacity:0.7;" />
+</linearGradient>
+</defs><g id="Arrow right blue">
+<g id="Mask group_3">
+<mask id="mask3_635_122644" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="2" y="99" width="20" height="18">
+<g id="Group_6">
+<path id="Vector_12" d="M13.25 99.75V104.25H2.25V107.25C2.25 110.011 4.48858 112.25 7.25 112.25H13.25V116.75L21.75 108.25L13.25 99.75Z" fill="url(#paint3_linear_635_122644)" />
+</g>
+</mask>
+<g mask="url(#mask3_635_122644)">
+<g id="Group_7">
+<path id="Vector_13" d="M24 96H0V120H24V96Z" fill="#333333" style="fill:#333333;fill:color(display-p3 0.2000 0.2000 0.2000);fill-opacity:1;" />
+</g>
+</g>
+</g>
+</g>
+</svg>
