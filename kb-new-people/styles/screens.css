@@ -1079,7 +1079,7 @@
 }
 
 .main.is-touring .main-inner {
-  padding-bottom: 320px;
+  padding-bottom: 360px;
 }
 
 .tour {
@@ -1087,7 +1087,8 @@
   position: sticky;
   bottom: 0;
   z-index: 25;
-  padding: 85px var(--gutter) calc(20px + var(--safe-bottom));
+  /* сверху место под дугу радиального градиента — см. SHEET_FADE в tour.js */
+  padding: 125px var(--gutter) calc(20px + var(--safe-bottom));
   overflow: hidden;
 }
 
@@ -1098,8 +1099,8 @@
     radial-gradient(60% 70% at 20% 80%, rgba(214, 250, 208, 0.9), transparent 70%),
     radial-gradient(60% 70% at 85% 70%, rgba(228, 255, 222, 0.85), transparent 70%),
     radial-gradient(70% 60% at 50% 100%, rgba(204, 244, 210, 0.9), transparent 70%);
-  -webkit-mask: linear-gradient(to bottom, transparent 0, #000 30%);
-  mask: linear-gradient(to bottom, transparent 0, #000 30%);
+  -webkit-mask: radial-gradient(110% 100% at 50% 100%, #000 70%, transparent 100%);
+  mask: radial-gradient(110% 100% at 50% 100%, #000 70%, transparent 100%);
   background-size: 140% 140%;
   animation: glow 7s ease-in-out infinite alternate;
 }
@@ -1110,7 +1111,9 @@
   inset: 0;
   /* мятный градиент из макета (652:142228) */
   /* выше и плотнее, чем в макете: текст поверх ленты должен читаться на сплошном фоне */
-  background: linear-gradient(183.5deg, rgba(238, 255, 236, 0) 0%, rgba(238, 255, 236, 0.85) 22%, rgb(238, 255, 236) 36%);
+  /* эксперимент: радиальный — верхний край шторки дугой. Прежний линейный:
+     linear-gradient(183.5deg, rgba(238, 255, 236, 0) 0%, rgba(238, 255, 236, 0.85) 22%, rgb(238, 255, 236) 36%) */
+  background: radial-gradient(110% 100% at 50% 100%, rgb(238, 255, 236) 72%, rgba(238, 255, 236, 0.85) 82%, rgba(238, 255, 236, 0.4) 92%, rgba(238, 255, 236, 0) 100%);
 }
 
 @keyframes glow {
@@ -1999,7 +2002,9 @@
 
 .tour.is-tall::before {
   /* длинный мягкий переход: лента уходит под мяту плавно, без резкой границы */
-  background: linear-gradient(to bottom, rgba(238, 255, 236, 0) 0%, rgba(238, 255, 236, 0.1) 18%, rgba(238, 255, 236, 0.4) 26%, rgba(238, 255, 236, 0.75) 33%, rgba(238, 255, 236, 0.92) 38%, rgb(238, 255, 236) 42%);
+  /* прежний линейный: linear-gradient(to bottom, rgba(238, 255, 236, 0) 0%, rgba(238, 255, 236, 0.1) 18%,
+     rgba(238, 255, 236, 0.4) 26%, rgba(238, 255, 236, 0.75) 33%, rgba(238, 255, 236, 0.92) 38%, rgb(238, 255, 236) 42%) */
+  background: radial-gradient(110% 100% at 50% 100%, rgb(238, 255, 236) 68%, rgba(238, 255, 236, 0.9) 76%, rgba(238, 255, 236, 0.5) 88%, rgba(238, 255, 236, 0) 100%);
 }
 
 .tour.is-tall .tour-body {

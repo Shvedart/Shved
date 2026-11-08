@@ -225,7 +225,9 @@ export function buildShelves({ catalog, cards, scratches, promos = [], onLink })
     root.classList.toggle('starts-with-trip', !!shown[0]?.classList.contains('fc-trip'));
     // лента встаёт к навигации, видимые полки проявляются по очереди
     if (pageEl) {
-      const y = wrap.getBoundingClientRect().top - pageEl.getBoundingClientRect().top + pageEl.scrollTop - parseFloat(getComputedStyle(pageEl).paddingTop) - 8;
+      // по заголовку «Лента выгоды», а не по блоку: над ним отступ 32px, и из-под шапки торчала тень блока выше
+      const title = head.querySelector('.feed-head-title');
+      const y = title.getBoundingClientRect().top - pageEl.getBoundingClientRect().top + pageEl.scrollTop - parseFloat(getComputedStyle(pageEl).paddingTop) - 4;
       if (pageEl.scrollTop > y) pageEl.scrollTo({ top: Math.max(0, y), behavior: 'auto' });
     }
     stagger(shown.slice(0, 3), fadeUpIn, { duration: 360, step: 60, easing: EASE.out });

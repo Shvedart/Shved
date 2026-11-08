@@ -8,6 +8,10 @@ import { haptics } from '../core/haptics.js';
 import { store } from '../core/store.js';
 import { playConfetti } from '../ui/confetti.js';
 
+// верх шторки прозрачный (дуга градиента): всё, что выше этой линии от её верха, считается видимым.
+// Меняется вместе с `.tour { padding-top }` в screens.css
+const SHEET_FADE = 100;
+
 // 03: знакомство → ценность (счётчик и пролёт ленты) → галочка (кэшбэк сам) → сердечко как закладка →
 // стирашка как бонус → навигация по категориям → привычка
 const TOUR_HABIT = [
@@ -17,8 +21,8 @@ const TOUR_HABIT = [
   { target: 'selection', spotlight: 'selection', text: 'Увидели предложение — кэшбэк уже ваш. Ничего активировать не нужно', cta: 'Понятно' },
   { target: 'selection', hearts: 'selection', keepScroll: true, nudgeRows: 2, text: 'Нашли нужное среди тысяч предложений? Сердечко — чтобы не потерять' },
   { target: 'selection', scratch: true, text: 'А иногда в ленте прячется подарок — сотрите карточку' },
-  // navDemo — лента встаёт к навигации, тур сам переключает категории и возвращает всю ленту
-  { target: null, stay: true, navDemo: ['food', 'travel', 'health'], text: 'Уже знаете, что купить?\nВыберите категорию — покажем\nподходящие предложения' },
+  // navDemo — лента встаёт к навигации, тур сам переключает категории; последняя остаётся включённой
+  { target: null, stay: true, navDemo: ['health', 'travel', 'food'], text: 'Уже знаете, что купить?\nВыберите категорию — покажем\nподходящие предложения' },
   { target: null, stay: true, hero: 'assets/img/tour/final-70.webp', text: 'Перед покупкой загляните\nсюда: частые гости получают\nна 70% больше кэшбэка', cta: 'Лутать кэшбэк', last: true },
 ];
 
@@ -92,7 +96,7 @@ export function startTour({ el, entry, scenario }) {
     const appbarH = parseFloat(getComputedStyle(el).paddingTop);
     const r = target.getBoundingClientRect();
     const top = el.getBoundingClientRect().top;
-    const sheetTop = sheet.getBoundingClientRect().top + 60; // верх шторки прозрачный
+    const sheetTop = sheet.getBoundingClientRect().top + SHEET_FADE; // верх шторки прозрачный
     // блок уже виден над шторкой — страницу не двигаем
     if (r.top >= top + appbarH && r.bottom <= sheetTop) return;
     const y = r.top - top + el.scrollTop - appbarH - 12;
@@ -103,7 +107,7 @@ export function startTour({ el, entry, scenario }) {
   function scrollToCard(card) {
     const top = el.getBoundingClientRect().top;
     const appbarH = parseFloat(getComputedStyle(el).paddingTop);
-    const sheetTop = sheet.getBoundingClientRect().top + 60;
+    const sheetTop = sheet.getBoundingClientRect().top + SHEET_FADE;
     const r = card.getBoundingClientRect();
     const free = sheetTop - top - appbarH;
     const y = r.top - top + el.scrollTop - appbarH - Math.max(12, (free - r.height) / 2);
@@ -153,7 +157,7 @@ export function startTour({ el, entry, scenario }) {
     let best = null;
     for (const sh of el.querySelectorAll('.shelf')) {
       if (!sh.offsetParent) continue;
-      const y = sh.getBoundingClientRect().top - elTop + el.scrollTop - appbarH - 40;
+      const y = sh.getBoundingClientRect().top - elTop + el.scrollTop - appbarH - 12;
       if (!best || Math.abs(y - to) < Math.abs(best - to)) best = y;
     }
     if (best != null) to = Math.min(el.scrollHeight - el.clientHeight, Math.max(0, best));
@@ -198,7 +202,7 @@ export function startTour({ el, entry, scenario }) {
     animate(heroEl, [{ opacity: 0, transform: 'scale(.8) translateY(24px)' }, { opacity: 1, transform: 'none' }], { duration: 620, delay: 220, easing: EASE.spring });
   }
 
-  // Навигация ленты: доезжаем до неё и по очереди «нажимаем» категории, в конце — снова вся лента.
+  // Навигация ленты: доезжаем до неё и по очереди «нажимаем» категории.
   // Пользователь видит, как полки меняются, а не читает об этом.
   function runNavDemo(ids) {
     snapToFeedHead();
@@ -209,7 +213,8 @@ export function startTour({ el, entry, scenario }) {
       animate(btn, [{ transform: 'scale(1)' }, { transform: 'scale(.9)' }, { transform: 'scale(1)' }], { duration: 320, easing: EASE.out, fill: 'none' });
       btn.click();
     };
-    const resetAll = () => tap(el.querySelector('.feed-nav-item.is-active'));
+    // последняя категория остаётся включённой — лента так и показывает её дальше
+    const last = ids[ids.length - 1];
     (async () => {
       await wait(reducedMotion() ? 200 : 900);
       for (const id of ids) {
@@ -217,11 +222,12 @@ export function startTour({ el, entry, scenario }) {
         tap(item(id));
         await wait(1500);
       }
-      if (!stopped) resetAll();
     })();
     return () => {
       stopped = true;
-      resetAll();
+      // ушли с шага раньше — сразу ставим последнюю, чтобы не застрять на промежуточной
+      const btn = item(last);
+      if (btn && !btn.classList.contains('is-active')) btn.click();
     };
   }
 
@@ -232,7 +238,7 @@ export function startTour({ el, entry, scenario }) {
     if (!head) return;
     const appbarBottom = el.getBoundingClientRect().top + parseFloat(getComputedStyle(el).paddingTop);
     const d = head.getBoundingClientRect().top - appbarBottom;
-    el.scrollTo({ top: Math.max(0, el.scrollTop + d - 16), behavior: reducedMotion() ? 'auto' : 'smooth' });
+    el.scrollTo({ top: Math.max(0, el.scrollTop + d - 4), behavior: reducedMotion() ? 'auto' : 'smooth' });
   }
 
   // Картинки карточки, которую поднимем, должны быть загружены и раскодированы заранее,
@@ -355,7 +361,7 @@ export function startTour({ el, entry, scenario }) {
     const list = el.querySelector(`[data-tour-cards="${name}"]`);
     if (!list || !active) return [];
     const appbarBottom = el.getBoundingClientRect().top + parseFloat(getComputedStyle(el).paddingTop);
-    const sheetTop = sheet.getBoundingClientRect().top + 60;
+    const sheetTop = sheet.getBoundingClientRect().top + SHEET_FADE;
     return [...list.querySelectorAll(withPromos ? '.ocard, .promo' : '.ocard')].filter((card) => {
       if (!card.offsetParent) return false;
       const r = card.querySelector('.ocard-tile, .promo-tile').getBoundingClientRect();
@@ -423,7 +429,7 @@ export function startTour({ el, entry, scenario }) {
 
     // центр свободной зоны между апп-баром и плотной частью шторки
     const appbarBottom = el.getBoundingClientRect().top + parseFloat(getComputedStyle(el).paddingTop) - sr.top;
-    const freeBottom = sheet.getBoundingClientRect().top + 60 - sr.top;
+    const freeBottom = sheet.getBoundingClientRect().top + SHEET_FADE - sr.top;
     const scale = Math.min(1.3, (freeBottom - appbarBottom - 24) / r.height);
     const dx = sr.width / 2 - (r.left - sr.left + r.width / 2);
     const dy = (appbarBottom + freeBottom) / 2 - (r.top - sr.top + r.height / 2);
@@ -506,7 +512,7 @@ function trackViews(page, list) {
     const pr = page.getBoundingClientRect();
     const appbarBottom = pr.top + parseFloat(getComputedStyle(page).paddingTop);
     const sheet = page.querySelector(':scope > .tour');
-    const bottom = sheet ? sheet.getBoundingClientRect().top + 60 : pr.bottom;
+    const bottom = sheet ? sheet.getBoundingClientRect().top + SHEET_FADE : pr.bottom;
     const mid = (appbarBottom + bottom) / 2;
     const band = (bottom - appbarBottom) * 0.2;
     // ищем по странице, а не в сохранённом списке: после тура карточки переезжают в полки
