@@ -1189,6 +1189,16 @@
   margin-bottom: 8px;
 }
 
+/* строки заданы вручную (\n в тексте шага): поля уже, чтобы длинная строка не переносилась сама */
+.tour-text.is-lines {
+  padding: 0;
+}
+
+.tour-br {
+  flex-basis: 100%;
+  height: 0;
+}
+
 .tour-word {
   display: inline-block;
   white-space: pre;
@@ -1966,4 +1976,54 @@
 
 .confetti-layer svg {
   display: block;
+}
+
+/* счётчик предложений на втором шаге тура 03 */
+.tour-count {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  /* число с подписью — один блок по центру свободного места над текстом шага, чуть ниже к тексту */
+  margin: auto 0;
+  position: relative;
+  top: 30px;
+}
+
+/* шаг со счётчиком: шторка выше обычной, градиент становится сплошным раньше */
+.tour.is-tall {
+  display: flex;
+  flex-direction: column;
+  padding-top: 88px;
+}
+
+.tour.is-tall::before {
+  /* длинный мягкий переход: лента уходит под мяту плавно, без резкой границы */
+  background: linear-gradient(to bottom, rgba(238, 255, 236, 0) 0%, rgba(238, 255, 236, 0.1) 18%, rgba(238, 255, 236, 0.4) 26%, rgba(238, 255, 236, 0.75) 33%, rgba(238, 255, 236, 0.92) 38%, rgb(238, 255, 236) 42%);
+}
+
+.tour.is-tall .tour-body {
+  flex: 1;
+  min-height: 0;
+}
+
+.tour-count[hidden] {
+  display: none;
+}
+
+.tour-count-num {
+  font-family: var(--font-rounded);
+  font-weight: 700;
+  font-size: 56px;
+  line-height: 1.05;
+  letter-spacing: -0.5px;
+  color: var(--c-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.tour-count-label {
+  text-align: center;
+  font-size: 17px;
+  letter-spacing: -0.24px;
+  color: var(--c-text-muted);
 }

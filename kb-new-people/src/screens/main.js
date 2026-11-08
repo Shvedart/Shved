@@ -258,7 +258,8 @@ export function mainScreen({ el, params, nav, entry }) {
     missedSlot.append(h('div', { class: 'missed-wrap' }, h('span', { class: 'missed-tail', 'aria-hidden': 'true' }), missed));
     // появляется чуть позже загрузки и плавно сдвигает контент вниз
     const balance = Number(cfg.balance.replace(/\D/g, ''));
-    const counted = countUp(amountEl, balance);
+    // в 03 тур не про упущенную выгоду — сумма стоит сразу, не набегает
+    const counted = scenario === 's3' ? Promise.resolve() : countUp(amountEl, balance);
     setTimeout(async () => {
       await counted;
       missedSlot.classList.add('is-open');

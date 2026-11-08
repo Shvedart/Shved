@@ -8,13 +8,18 @@ import { haptics } from '../core/haptics.js';
 import { store } from '../core/store.js';
 import { playConfetti } from '../ui/confetti.js';
 
-// 03: ценность → галочка (кэшбэк сам) → сердечко как закладка → стирашка как бонус → привычка
+// 03: знакомство → ценность (счётчик и пролёт ленты) → галочка (кэшбэк сам) → сердечко как закладка →
+// стирашка как бонус → навигация по категориям → привычка
 const TOUR_HABIT = [
-  { target: null, text: 'Перед покупкой загляните сюда — здесь больше 3000 предложений с кэшбэком', cta: 'Показать' },
+  { target: null, text: 'Привет! За минуту покажем, как здесь получать больше кэшбэка', cta: 'Погнали' },
+  // counter — крупное число набегает до N, а лента под шторкой в это время быстро пролистывается
+  { target: null, stay: true, counter: 5000, text: 'Перед покупкой загляните сюда — выгода найдётся почти на всё', cta: 'Как это работает?' },
   { target: 'selection', spotlight: 'selection', text: 'Увидели предложение — кэшбэк уже ваш. Ничего активировать не нужно', cta: 'Понятно' },
   { target: 'selection', hearts: 'selection', keepScroll: true, nudgeRows: 2, text: 'Нашли нужное среди тысяч предложений? Сердечко — чтобы не потерять' },
   { target: 'selection', scratch: true, text: 'А иногда в ленте прячется подарок — сотрите карточку' },
-  { target: null, stay: true, hero: 'assets/img/tour/final-70.webp', text: 'Собираетесь что-то купить? Сначала загляните сюда', cta: 'Лутать кэшбэк', last: true },
+  // navDemo — лента встаёт к навигации, тур сам переключает категории и возвращает всю ленту
+  { target: null, stay: true, navDemo: ['food', 'travel', 'health'], text: 'Уже знаете, что купить?\nВыберите категорию — покажем\nподходящие предложения' },
+  { target: null, stay: true, hero: 'assets/img/tour/final-70.webp', text: 'Перед покупкой загляните\nсюда: частые гости получают\nна 70% больше кэшбэка', cta: 'Лутать кэшбэк', last: true },
 ];
 
 // 04: исходный тур — механики раздела по очереди
@@ -45,9 +50,12 @@ export function startTour({ el, entry, scenario }) {
   const closeBtn = button({ class: 'btn-link tour-close' }, 'Закрыть');
   const counter = h('span', { class: 'visually-hidden' });
   const heroEl = h('div', { class: 'tour-hero', 'aria-hidden': 'true' });
+  const countEl = h('div', { class: 'tour-count', 'aria-hidden': 'true', hidden: true },
+    h('span', { class: 'tour-count-num' }, h('span', { class: 'tour-count-digits' }, '0')),
+    h('span', { class: 'tour-count-label' }, 'предложений с кэшбэком'));
   const sheet = h('div', { class: 'tour', role: 'dialog', 'aria-label': 'Как получать больше кэшбэка' },
     h('div', { class: 'tour-glow', 'aria-hidden': 'true' }),
-    h('div', { class: 'tour-body' }, heroEl, counter, textEl, nextBtn, closeBtn));
+    h('div', { class: 'tour-body' }, heroEl, countEl, counter, textEl, nextBtn, closeBtn));
   /* Шторка — внутри прокручиваемой страницы, прилеплена к низу (sticky): свайп по ней листает
      ленту нативно, с инерцией. Отдельный слой поверх страницы на iPhone перехватывал скролл
      даже с pointer-events: none. Отрицательный отступ — чтобы она не добавляла высоту ленте. */
@@ -108,11 +116,77 @@ export function startTour({ el, entry, scenario }) {
     return () => clearTimeout(hintTimer);
   }
 
+  // «Больше 5000 предложений»: число набегает от нуля, а лента под шторкой в это же время
+  // быстро пролистывается вниз — масштаб чувствуется, а не только читается.
+  function runCounter(total) {
+    const num = countEl.querySelector('.tour-count-num');
+    const digits = countEl.querySelector('.tour-count-digits');
+    const fmtNum = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00A0');
+    // шторка на этом шаге выше обычной: число стоит наверху, на сплошном градиенте, а не поверх ленты
+    const base = sheet.offsetHeight;
+    countEl.hidden = false;
+    sheet.classList.add('is-tall');
+    const tall = Math.max(base, Math.round(el.clientHeight * 0.62));
+    sheet.style.height = `${tall}px`;
+    sheet.style.marginTop = `${-tall}px`;
+    const shrink = () => {
+      countEl.hidden = true;
+      sheet.classList.remove('is-tall');
+      sheet.style.height = '';
+      const h0 = sheet.offsetHeight;
+      sheet.style.marginTop = `${-h0}px`;
+      if (!reducedMotion()) animate(sheet, [{ height: `${tall}px`, marginTop: `${-tall}px` }, { height: `${h0}px`, marginTop: `${-h0}px` }], { duration: 420, easing: EASE.ios, fill: 'none' });
+    };
+    if (reducedMotion()) { digits.textContent = fmtNum(total); return shrink; }
+    animate(sheet, [{ height: `${base}px`, marginTop: `${-base}px` }, { height: `${tall}px`, marginTop: `${-tall}px` }], { duration: 800, easing: EASE.ios, fill: 'none' });
+    animate(countEl, [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 320, easing: EASE.out });
+    const DUR = 2200;
+    const from = el.scrollTop;
+    const grid = el.querySelector('[data-tour-cards]');
+    // пролетаем до середины ленты, но не дальше её конца
+    const maxY = grid ? grid.getBoundingClientRect().top - el.getBoundingClientRect().top + el.scrollTop + grid.offsetHeight * 0.5 : from + 2400;
+    let to = Math.min(el.scrollHeight - el.clientHeight, Math.max(from + 1200, maxY));
+    // останавливаемся на начале ближайшей полки: заголовок под апп-баром, верхние карточки видны,
+    // нижние уходят под градиент — а не обрывок карточки, на который наезжает число
+    const appbarH = parseFloat(getComputedStyle(el).paddingTop);
+    const elTop = el.getBoundingClientRect().top;
+    let best = null;
+    for (const sh of el.querySelectorAll('.shelf')) {
+      if (!sh.offsetParent) continue;
+      const y = sh.getBoundingClientRect().top - elTop + el.scrollTop - appbarH - 40;
+      if (!best || Math.abs(y - to) < Math.abs(best - to)) best = y;
+    }
+    if (best != null) to = Math.min(el.scrollHeight - el.clientHeight, Math.max(0, best));
+    const t0 = performance.now();
+    let raf = 0;
+    let stopped = false;
+    const tick = (now) => {
+      if (stopped) return;
+      const p = Math.min(1, (now - t0) / DUR);
+      const counterEase = 1 - (1 - p) ** 3; // число быстро растёт и мягко доходит до конца
+      const scrollEase = p < 0.5 ? 4 * p ** 3 : 1 - (-2 * p + 2) ** 3 / 2; // лента разгоняется и тормозит
+      digits.textContent = fmtNum(Math.round(total * counterEase));
+      el.scrollTop = from + (to - from) * scrollEase;
+      if (p < 1) raf = requestAnimationFrame(tick);
+      else {
+        haptics.light();
+        animate(num, [{ transform: 'scale(1)' }, { transform: 'scale(1.08)' }, { transform: 'scale(1)' }], { duration: 360, easing: EASE.spring, fill: 'none' });
+      }
+    };
+    raf = requestAnimationFrame(tick);
+    return () => {
+      stopped = true;
+      cancelAnimationFrame(raf);
+      shrink();
+    };
+  }
+
   // Финал: шторка вырастает почти на весь экран, фон белый, по центру — картинка.
   // Высоту меняем анимацией и следом пересчитываем отрицательный отступ, чтобы лента не сдвинулась.
   async function showHero(src) {
     // конфетти поверх всего экрана — слой не ловит касания, «Лутать кэшбэк» нажимается
     stopConfetti = playConfetti(stage);
+    snapToFeedHead();
     const from = sheet.offsetHeight;
     const to = Math.max(from, el.clientHeight - 24);
     heroEl.replaceChildren(h('img', { src, alt: '', draggable: 'false', decoding: 'async' }));
@@ -122,6 +196,43 @@ export function startTour({ el, entry, scenario }) {
     if (reducedMotion()) return;
     animate(sheet, [{ height: `${from}px`, marginTop: `${-from}px` }, { height: `${to}px`, marginTop: `${-to}px` }], { duration: 520, easing: EASE.ios, fill: 'none' });
     animate(heroEl, [{ opacity: 0, transform: 'scale(.8) translateY(24px)' }, { opacity: 1, transform: 'none' }], { duration: 620, delay: 220, easing: EASE.spring });
+  }
+
+  // Навигация ленты: доезжаем до неё и по очереди «нажимаем» категории, в конце — снова вся лента.
+  // Пользователь видит, как полки меняются, а не читает об этом.
+  function runNavDemo(ids) {
+    snapToFeedHead();
+    let stopped = false;
+    const item = (id) => el.querySelector(`.feed-nav-item[data-cat="${id}"]`);
+    const tap = (btn) => {
+      if (!btn) return;
+      animate(btn, [{ transform: 'scale(1)' }, { transform: 'scale(.9)' }, { transform: 'scale(1)' }], { duration: 320, easing: EASE.out, fill: 'none' });
+      btn.click();
+    };
+    const resetAll = () => tap(el.querySelector('.feed-nav-item.is-active'));
+    (async () => {
+      await wait(reducedMotion() ? 200 : 900);
+      for (const id of ids) {
+        if (stopped) return;
+        tap(item(id));
+        await wait(1500);
+      }
+      if (!stopped) resetAll();
+    })();
+    return () => {
+      stopped = true;
+      resetAll();
+    };
+  }
+
+  // Финал: лента встаёт к своему заголовку «Лента выгоды» — под апп-баром нет обрезанных карточек
+  function snapToFeedHead() {
+    // по заголовку, а не по блоку: у блока сверху свой отступ 32px
+    const head = el.querySelector('.feed-head-title');
+    if (!head) return;
+    const appbarBottom = el.getBoundingClientRect().top + parseFloat(getComputedStyle(el).paddingTop);
+    const d = head.getBoundingClientRect().top - appbarBottom;
+    el.scrollTo({ top: Math.max(0, el.scrollTop + d - 16), behavior: reducedMotion() ? 'auto' : 'smooth' });
   }
 
   // Картинки карточки, которую поднимем, должны быть загружены и раскодированы заранее,
@@ -151,11 +262,19 @@ export function startTour({ el, entry, scenario }) {
 
   function typeWords(text) {
     clearTimeout(wordsTimer);
-    const words = text.split(' ');
-    textEl.setAttribute('aria-label', text);
-    textEl.replaceChildren(...words.map((w) => h('span', { class: 'tour-word', 'aria-hidden': 'true' }, `${w} `)));
+    // \n в тексте шага — принудительный перенос строки (слова лежат во flex-строке, <br> там не работает)
+    const lines = text.split('\n').map((l) => l.trim().split(' '));
+    const words = lines.flat();
+    textEl.setAttribute('aria-label', text.replace(/\n/g, ' '));
+    // строки заданы вручную — поля уже, чтобы длинная строка не переносилась сама
+    textEl.classList.toggle('is-lines', text.includes('\n'));
+    textEl.replaceChildren(...lines.flatMap((ws, i) => [
+      ...(i ? [h('span', { class: 'tour-br', 'aria-hidden': 'true' })] : []),
+      // у последнего слова строки пробела нет — иначе длинная строка переносится из-за него
+      ...ws.map((w, j) => h('span', { class: 'tour-word', 'aria-hidden': 'true' }, j < ws.length - 1 ? `${w} ` : w)),
+    ]));
     if (reducedMotion()) return 0;
-    [...textEl.children].forEach((w, i) => {
+    [...textEl.querySelectorAll('.tour-word')].forEach((w, i) => {
       animate(w, [{ opacity: 0, filter: 'blur(4px)', transform: 'translateY(4px)' }, { opacity: 1, filter: 'blur(0)', transform: 'none' }], { duration: 320, delay: i * 70, easing: EASE.out });
     });
     return words.length * 70 + 320; // сколько печатается текст
@@ -210,6 +329,9 @@ export function startTour({ el, entry, scenario }) {
       }
     }
     if (step.hero) showHero(step.hero);
+    if (step.navDemo) stepCleanup = runNavDemo(step.navDemo);
+    if (step.counter) stepCleanup = runCounter(step.counter);
+    else countEl.hidden = true;
     const typing = typeWords(step.text);
     if (card && !scratchDone) {
       stepCleanup = waitForScratch(card);
