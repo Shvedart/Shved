@@ -16,8 +16,8 @@ const SHEET_FADE = 100;
 // стирашка как бонус → навигация по категориям → привычка
 const TOUR_HABIT = [
   { target: null, text: 'Привет! За минуту покажем, как здесь получать больше кэшбэка', cta: 'Погнали' },
-  // counter — крупное число набегает до N, а лента под шторкой в это время быстро пролистывается
-  { target: null, stay: true, counter: 5000, text: 'Перед покупкой загляните сюда — выгода найдётся почти на всё', cta: 'Как это работает?' },
+  // counter — крупное число набегает до N прямо над текстом шага, лента под шторкой пролистывается до афиши
+  { target: null, stay: true, counter: 5000, text: 'предложений с кэшбэком —\nвыгода найдётся почти на всё', cta: 'Как это работает?' },
   { target: 'selection', spotlight: 'selection', text: 'Увидели предложение — кэшбэк уже ваш. Ничего активировать не нужно', cta: 'Понятно' },
   { target: 'selection', hearts: 'selection', keepScroll: true, nudgeRows: 2, text: 'Нашли нужное среди тысяч предложений? Сердечко — чтобы не потерять' },
   { target: 'selection', scratch: true, text: 'А иногда в ленте прячется подарок — сотрите карточку' },
@@ -55,8 +55,7 @@ export function startTour({ el, entry, scenario }) {
   const counter = h('span', { class: 'visually-hidden' });
   const heroEl = h('div', { class: 'tour-hero', 'aria-hidden': 'true' });
   const countEl = h('div', { class: 'tour-count', 'aria-hidden': 'true', hidden: true },
-    h('span', { class: 'tour-count-num' }, h('span', { class: 'tour-count-digits' }, '0')),
-    h('span', { class: 'tour-count-label' }, 'предложений с кэшбэком'));
+    h('span', { class: 'tour-count-num' }, h('span', { class: 'tour-count-digits' }, '0')));
   const sheet = h('div', { class: 'tour', role: 'dialog', 'aria-label': 'Как получать больше кэшбэка' },
     h('div', { class: 'tour-glow', 'aria-hidden': 'true' }),
     h('div', { class: 'tour-body' }, heroEl, countEl, counter, textEl, nextBtn, closeBtn));
@@ -147,20 +146,20 @@ export function startTour({ el, entry, scenario }) {
     const DUR = 2200;
     const from = el.scrollTop;
     const grid = el.querySelector('[data-tour-cards]');
-    // пролетаем до середины ленты, но не дальше её конца
-    const maxY = grid ? grid.getBoundingClientRect().top - el.getBoundingClientRect().top + el.scrollTop + grid.offsetHeight * 0.5 : from + 2400;
-    let to = Math.min(el.scrollHeight - el.clientHeight, Math.max(from + 1200, maxY));
-    // останавливаемся на начале ближайшей полки: заголовок под апп-баром, верхние карточки видны,
-    // нижние уходят под градиент — а не обрывок карточки, на который наезжает число
     const appbarH = parseFloat(getComputedStyle(el).paddingTop);
     const elTop = el.getBoundingClientRect().top;
-    let best = null;
-    for (const sh of el.querySelectorAll('.shelf')) {
-      if (!sh.offsetParent) continue;
-      const y = sh.getBoundingClientRect().top - elTop + el.scrollTop - appbarH - 12;
-      if (!best || Math.abs(y - to) < Math.abs(best - to)) best = y;
+    const maxScroll = el.scrollHeight - el.clientHeight;
+    // пролетаем до афиши «События для вас»: её заголовок встаёт под апп-бар, крупные карточки
+    // уходят под шторку дугой. Нет афиши — до середины ленты
+    const afisha = el.querySelector('.fc-hero');
+    const head = afisha?.firstElementChild;
+    let to;
+    if (head?.offsetParent) to = head.getBoundingClientRect().top - elTop + el.scrollTop - appbarH - 12;
+    else {
+      const grid = el.querySelector('[data-tour-cards]');
+      to = grid ? grid.getBoundingClientRect().top - elTop + el.scrollTop + grid.offsetHeight * 0.5 : from + 2400;
     }
-    if (best != null) to = Math.min(el.scrollHeight - el.clientHeight, Math.max(0, best));
+    to = Math.min(maxScroll, Math.max(0, to));
     const t0 = performance.now();
     let raf = 0;
     let stopped = false;

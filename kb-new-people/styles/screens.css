@@ -1090,6 +1090,9 @@
   /* сверху место под дугу радиального градиента — см. SHEET_FADE в tour.js */
   padding: 125px var(--gutter) calc(20px + var(--safe-bottom));
   overflow: hidden;
+  /* iOS при быстрой автопрокрутке рисует sticky-шторку с опозданием, и снизу проступала лента.
+     Тень-«подол» того же цвета под шторкой закрывает зазор (свою тень overflow не обрезает) */
+  box-shadow: 0 240px 0 rgb(238, 255, 236);
 }
 
 .tour-glow {
@@ -1136,6 +1139,7 @@
 }
 
 .tour.is-full {
+  box-shadow: 0 240px 0 #fff;
   display: flex;
   flex-direction: column;
   padding-top: 64px;
@@ -1987,10 +1991,8 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  /* число с подписью — один блок по центру свободного места над текстом шага, чуть ниже к тексту */
-  margin: auto 0;
-  position: relative;
-  top: 30px;
+  /* число прижато к тексту шага снизу: «5 000» + «предложений с кэшбэком — …» читаются одной фразой */
+  margin: auto 0 -12px;
 }
 
 /* шаг со счётчиком: шторка выше обычной, градиент становится сплошным раньше */
@@ -2005,6 +2007,11 @@
   /* прежний линейный: linear-gradient(to bottom, rgba(238, 255, 236, 0) 0%, rgba(238, 255, 236, 0.1) 18%,
      rgba(238, 255, 236, 0.4) 26%, rgba(238, 255, 236, 0.75) 33%, rgba(238, 255, 236, 0.92) 38%, rgb(238, 255, 236) 42%) */
   background: radial-gradient(110% 100% at 50% 100%, rgb(238, 255, 236) 68%, rgba(238, 255, 236, 0.9) 76%, rgba(238, 255, 236, 0.5) 88%, rgba(238, 255, 236, 0) 100%);
+}
+
+/* текст шага со счётчиком — сразу под числом, без запаса высоты под три строки */
+.tour.is-tall .tour-text {
+  min-height: 0;
 }
 
 .tour.is-tall .tour-body {
@@ -2026,9 +2033,3 @@
   font-variant-numeric: tabular-nums;
 }
 
-.tour-count-label {
-  text-align: center;
-  font-size: 17px;
-  letter-spacing: -0.24px;
-  color: var(--c-text-muted);
-}
