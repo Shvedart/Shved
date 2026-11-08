@@ -11,23 +11,23 @@ import { travelShelf, afishaShelf } from '../ui/shelves.js';
 // scratch — номер скретч-карточки (по SCRATCH_PRIZES в main.js), тогда офферов три.
 const LAYOUT = [
   { title: 'Продукты с доставкой', sub: 'Привезут за час — с кэшбэком', cat: 'food', match: /доставка|лавка|самокат|купер/i, scratch: 0 },
-  { title: 'Супермаркеты рядом', sub: 'Кэшбэк на покупки у дома', cat: 'food', match: /магнит|пятёрочка|перекрёсток|лента|ашан/i, scratch: 1 },
+  { title: 'Супермаркеты рядом', sub: 'Кэшбэк на покупки у дома', cat: 'food', match: /магнит|пятёрочка|перекрёсток|лента|ашан/i },
   { title: 'Сырная полка', sub: 'Hochland и Almette с кэшбэком', cat: 'food', match: /hochland|almette/i },
-  { title: 'Красота и уход', sub: 'Косметика, парфюмерия и уход', cat: 'beauty', match: /подружка|лэтуаль|кератин|sokolov/i, scratch: 2 },
+  { title: 'Красота и уход', sub: 'Косметика, парфюмерия и уход', cat: 'beauty', match: /подружка|лэтуаль|кератин|sokolov/i },
   { kind: 'afisha' },
-  { title: 'Забота о здоровье', sub: 'Анализы, аптеки и клиники', cat: 'health', scratch: 3 },
-  { title: 'Одежда и обувь', sub: 'Обновите гардероб к сезону', cat: 'clothes', scratch: 4 },
+  { title: 'Забота о здоровье', sub: 'Анализы, аптеки и клиники', cat: 'health', scratch: 1 },
+  { title: 'Одежда и обувь', sub: 'Обновите гардероб к сезону', cat: 'clothes' },
   { title: 'Украшения и часы', sub: 'Подарки себе и близким', cat: 'beauty' },
-  { title: 'Кухонная техника', sub: 'Помощники для дома', cat: 'electronics', match: /tefal|polaris|delonghi|braun|kitfort/i, scratch: 5 },
+  { title: 'Кухонная техника', sub: 'Помощники для дома', cat: 'electronics', match: /tefal|polaris|delonghi|braun|kitfort/i, scratch: 2 },
   { kind: 'travel' },
   { title: 'Отели и туры', sub: 'Отдых с кэшбэком до 20%', cat: 'travel', match: /островок|travelata|onlinetours|туры|твил|травелог|яндекс|авито/i },
-  { title: 'Поезда и автобусы', sub: 'Поездки по России', cat: 'travel', scratch: 9 },
-  { title: 'Кино, книги и игры', sub: 'Подписки и развлечения', cat: 'fun', scratch: 6 },
+  { title: 'Поезда и автобусы', sub: 'Поездки по России', cat: 'travel', scratch: 4 },
+  { title: 'Кино, книги и игры', sub: 'Подписки и развлечения', cat: 'fun' },
   { title: 'Гаджеты', sub: 'Смартфоны, наушники и аксессуары', cat: 'electronics' },
   { title: 'Кофе и перекусы', sub: 'Взбодриться по пути', cat: 'food', match: /кофе|coffee|бургер/i },
-  { title: 'Всё для авто', sub: 'Сервис, шины и проверка машины', cat: 'auto', scratch: 7 },
+  { title: 'Всё для авто', sub: 'Сервис, шины и проверка машины', cat: 'auto', scratch: 3 },
   { title: 'Учёба онлайн', sub: 'Языки и курсы с кэшбэком', cat: 'education' },
-  { title: 'Детям', sub: 'Игрушки, одежда и книги', cat: 'kids', scratch: 8 },
+  { title: 'Детям', sub: 'Игрушки, одежда и книги', cat: 'kids' },
   { title: 'Уют в доме', sub: 'Мебель и товары для ремонта', cat: 'home' },
   { title: 'Питомцам', sub: 'Корм, ветеринары и страховка', cat: 'pets' },
   { title: 'Цветы', sub: 'Букеты с доставкой', cat: 'flowers' },
@@ -118,8 +118,13 @@ export function buildShelves({ catalog, cards, scratches, onLink }) {
     const scratch = s.scratch != null ? scratches[s.scratch] : null;
     const offers = take(s.cat, s.match, scratch ? 3 : 4);
     if (!offers.length) return;
-    // скретч-карточка встаёт в разные места полки, чтобы лента не была однообразной
-    if (scratch) offers.splice([3, 1, 2][i % 3] % (offers.length + 1), 0, scratch);
+    // скретч-карточка встаёт в разные места полки, чтобы лента не была однообразной;
+    // но не в нижний ряд над путешествиями — иначе стирашка стоит вплотную к билету
+    if (scratch) {
+      let at = [3, 1, 2][i % 3] % (offers.length + 1);
+      if (LAYOUT[i + 1]?.kind === 'travel' && at >= 2) at = 1;
+      offers.splice(at, 0, scratch);
+    }
     parts.push(h('section', { class: 'shelf', dataset: { cat: s.cat } },
       cardHeader({ title: s.title, subtitle: s.sub, link: 'Все', onLink }),
       h('div', { class: 'grid' }, offers)));
@@ -144,7 +149,7 @@ export function buildShelves({ catalog, cards, scratches, onLink }) {
   for (const c of catalog.categories) for (const id of c.offerIds) catOf.set(id, c.id);
   const navItems = NAV.filter((n) => catalog.getCategory(n.id)).map((n) => {
     const el = button({ class: 'feed-nav-item', role: 'tab', 'aria-selected': 'false', dataset: { cat: n.id } },
-      h('span', { class: 'feed-nav-pic' }, img(n.img, { cls: 'feed-nav-img', alt: '', width: 80, height: 76, lazy: false })),
+      h('span', { class: 'feed-nav-pic' }, img(n.img, { cls: 'feed-nav-img', alt: '', width: 105, height: 100, lazy: false })),
       h('span', { class: 'feed-nav-label' }, n.label));
     if (n.crop) Object.assign(el.querySelector('.feed-nav-img').style, { height: `${n.crop[0]}%`, top: `${n.crop[1]}%`, objectFit: 'fill' });
     el.addEventListener('click', () => select(current === n.id ? 'all' : n.id));

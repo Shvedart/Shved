@@ -46,10 +46,8 @@ export function scratchCard({ prize, label = 'Скретч-карточка: с�
     h('div', { class: 'scard-prize-sub' }, prize.sub));
   const zone = h('div', { class: 'scard-zone' }, prizeEl, canvas, particlesCanvas);
   // подпись как у карточки оффера, чтобы ряд ленты выглядел ровно
-  const descEl = h('div', { class: 'ocard-desc' }, 'Сотри пальцем');
-  const caption = h('div', { class: 'ocard-caption', 'aria-hidden': 'true' }, h('div', { class: 'ocard-name' }, 'Подарок'), descEl);
   // клавиатура и скринридер открывают карточку без стирания
-  const root = h('div', { class: 'scard', role: 'button', tabindex: '0', 'aria-label': label }, zone, caption);
+  const root = h('div', { class: 'scard', role: 'button', tabindex: '0', 'aria-label': label }, zone);
 
   const ctx = canvas.getContext('2d');
   const mask = document.createElement('canvas');
@@ -147,6 +145,9 @@ export function scratchCard({ prize, label = 'Скретч-карточка: с�
     try { ctx.letterSpacing = '-0.41px'; } catch (_) { /* старый Safari */ }
     ctx.font = `600 ${Math.round(17 * dpr)}px ${font}`;
     ['тут', 'спрятан', 'подарок'].forEach((line, i) => ctx.fillText(line, w / 2, blockY + crownSz + gap + i * lh));
+    // подсказка внизу фольги
+    ctx.font = `400 ${Math.round(13 * dpr)}px ${font}`;
+    ctx.fillText('сотри пальцем', w / 2, hgt - Math.round(32 * dpr));
 
     ctx.globalCompositeOperation = 'overlay';
     ctx.globalAlpha = 0.09;
@@ -250,7 +251,6 @@ export function scratchCard({ prize, label = 'Скретч-карточка: с�
     revealed = true;
     cancelHint?.();
     zone.classList.add('is-revealed');
-    descEl.textContent = 'Подарок открыт';
     root.setAttribute('aria-label', `${prize.percent}. ${prize.title} ${prize.sub}`);
     root.removeAttribute('role');
     root.tabIndex = -1;

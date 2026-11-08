@@ -1065,14 +1065,16 @@ img.is-broken {
 /* ---------- Скретч-карточка в ленте ---------- */
 /* Размер плитки и подпись как у карточки оффера, типографика приза — из стилей ленты */
 .scard {
+  /* стирашка во всю высоту ячейки ленты — вместе с местом под подписью соседних карточек */
   position: relative;
+  min-height: 216px;
   -webkit-user-select: none;
   user-select: none;
 }
 
 .scard-zone {
-  position: relative;
-  height: 216px; /* как плитка .ocard-s */
+  position: absolute;
+  inset: 0;
   border-radius: var(--r-m);
   overflow: hidden;
 }

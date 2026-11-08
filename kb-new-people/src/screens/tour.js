@@ -8,7 +8,7 @@ import { store } from '../core/store.js';
 const STEPS = [
   { target: null, text: 'Привет! За минуту покажем, как здесь получать больше кэшбэка', cta: 'Погнали' },
   { target: 'streak', text: 'Заходите сюда 5 дней подряд — и мы сделаем вам крутой подарок' },
-  { target: 'selection', spotlight: 'selection', text: 'Галочка на карточке означает, что кэшбэк активирован', cta: 'Понятно' },
+  { target: 'selection', spotlight: 'selection', text: 'Галочка на карточке означает, что кэшбэк активирован для вас', cta: 'Понятно' },
   { target: 'selection', scratch: true, text: 'Стирайте карточки и ищите крутую выгоду' },
   { target: 'selection', hearts: 'selection', keepScroll: true, nudgeRows: 2, text: 'Понравилось предложение? Поставьте сердечко' },
   // финал без прокрутки наверх: страница остаётся там, где пользователь закончил
