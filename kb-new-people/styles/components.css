@@ -1152,3 +1152,111 @@ img.is-broken {
   pointer-events: none;
 }
 
+
+/* ---------- Карточка промокода (макет 662:145964) ---------- */
+.promo {
+  position: relative;
+}
+
+.promo-main {
+  display: block;
+  width: 100%;
+  border-radius: var(--r-m);
+}
+
+/* плитка той же высоты, что у .ocard-s: голубая, контент сверху, код снизу */
+.promo-tile {
+  height: 216px;
+  display: flex;
+  flex-direction: column;
+  padding: var(--sp-3) 0;
+  border-radius: var(--r-m);
+  background: rgba(66, 139, 249, 0.1);
+  overflow: hidden;
+}
+
+.promo-top {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 var(--sp-3);
+}
+
+.promo-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #fff;
+}
+
+.promo-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.promo-texts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+.promo-terms {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 13px;
+  letter-spacing: -0.08px;
+  color: var(--c-text-muted);
+}
+
+.promo .ocard-value.is-long {
+  font-size: 20px;
+  line-height: 36px; /* та же высота строки, что у 30px, — ничего ниже не сдвигается */
+}
+
+/* низ плитки: перфорация и код всегда на одной высоте */
+.promo-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+/* перфорация между условиями и кодом — белый пунктир из макета */
+.promo-perf {
+  display: block;
+  width: 100%;
+  height: 11px;
+  max-width: none;
+}
+
+.promo-code {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  padding: 0 7px 0 var(--sp-3);
+  font-size: 15px;
+  letter-spacing: -0.24px;
+  color: var(--c-text);
+}
+
+.promo-code-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.promo-heart {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 44px;
+  height: 44px;
+}

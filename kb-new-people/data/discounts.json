@@ -1,0 +1,385 @@
+{
+  "categories": [
+    {
+      "id": "food",
+      "title": "Еда",
+      "offers": [
+        {
+          "id": "offer-008",
+          "name": "ВкусВилл",
+          "description": "Продукты и готовая еда",
+          "discount": "300 ₽",
+          "discountText": "Скидка 300 ₽",
+          "promoCode": "LCB3••••",
+          "condition": "На покупки онлайн",
+          "date": "Осталось 3 дня",
+          "image": "https://ms-static-images.t-static.ru/partner-image-compact-88b0bf70ea7f4913b8178530346c00b1.png",
+          "background": "https://ms-static-images.t-static.ru/partner-image1252-f8aee6e9a15b455ba6a2b6f734b52e02.png",
+          "logo": "https://ms-static-images.t-static.ru/partner-5613-image280-ef90c02e.png",
+          "backgroundColor": "#E3FBE5",
+          "textColor": "#333333"
+        },
+        {
+          "id": "offer-058",
+          "name": "Купер",
+          "description": "Доставка продуктов",
+          "discount": "400 ₽",
+          "discountText": "Скидка 400 ₽",
+          "promoCode": "KE99••••",
+          "condition": "За покупки онлайн",
+          "date": "До 6 ноября",
+          "image": "https://ms-static-images.t-static.ru/partner-image-compact-5914a7c01dbf43128ae0638f297041ce.png",
+          "background": "https://ms-static-images.t-static.ru/partner-image1252-61ea279fdee54231817679749187e7c3.png",
+          "logo": "https://ms-static-images.t-static-online.com/partner-7494-image280-cece06bc.png",
+          "backgroundColor": "#5AA552",
+          "textColor": "#FFFFFF"
+        },
+        {
+          "id": "offer-094",
+          "name": "METRO Online",
+          "description": "Гипермаркеты с доставкой",
+          "discount": "15%",
+          "discountText": "Скидка 15%",
+          "promoCode": "CET3••••",
+          "condition": "На одну покупку онлайн от 5 000 ₽",
+          "date": "До 3 ноября",
+          "image": "https://ms-static-images.t-static.ru/partner-image-compact-71bc5366586f4d38821548f56c4dd8d8.png",
+          "background": "https://ms-static-images.t-static.ru/partner-image1252-c4104459ae1e462f967ac8d742e8bebd.png",
+          "logo": "https://ms-static-images.t-static.ru/partner-14563-image280-4f043d05.png",
+          "backgroundColor": "#083A77",
+          "textColor": "#FFFFFF"
+        },
+        {
+          "id": "offer-095",
+          "name": "Винлаб",
+          "description": "Супермаркет напитков и продуктов",
+          "discount": "10%",
+          "discountText": "Скидка 10%",
+          "promoCode": "M82J••••",
+          "condition": "На одну покупку онлайн от 2 500 ₽",
+          "date": "Осталось 2 дня",
+          "image": "https://ms-static-images.t-static.ru/partner-image-compact-06368124e6c04148a1e48b684b97cfd5.png",
+          "background": "https://ms-static-images.t-static.ru/partner-image1252-ab500b6cca7948bcb4001822302b56aa.png",
+          "logo": "https://ms-static-images.t-static.ru/partner-13890-image280-7f302717.png",
+          "backgroundColor": "#311422",
+          "textColor": "#FFFFFF"
+        },
+        {
+          "id": "offer-116",
+          "name": "Вкусные подарки на Флаувау",
+          "description": "Съедобные подарки",
+          "discount": "22%",
+          "discountText": "Скидка 22%",
+          "promoCode": "HHW4••••",
+          "condition": "На покупки онлайн",
+          "date": "До 5 ноября",
+          "image": "https://ms-static-images.t-static.ru/partner-image-compact-b1d6812269c74d00ba20c94cbabd6dc6.png",
+          "background": "",
+          "logo": "https://ms-static-images.t-static-online.com/partner-image280-711451af100a4e2a9b667f3c809cd080.png",
+          "backgroundColor": "#FFDCDD",
+          "textColor": "#000000"
+        }
+      ]
+    },
+    {
+      "id": "health",
+      "title": "Здоровье",
+      "offers": [
+        {
+          "id": "offer-096",
+          "name": "POLZAru",
+          "description": "Интернет-аптека",
+          "discount": "200 ₽",
+          "discountText": "Скидка 200 ₽",
+          "promoCode": "XVN4••••",
+          "condition": "На покупки онлайн от 2 000 ₽",
+          "date": "Осталось 2 дня",
+          "image": "https://ms-static-images.t-static.ru/partner-image-compact-2b8b6575edbf40d5abb6cbdf4a6ed1f5.png",
+          "background": "https://ms-static-images.t-static.ru/partner-image1252-d8d783b697ae4978b044b38f55ebbc2f.png",
+          "logo": "https://ms-static-images.t-static.ru/partner-image280-9298873d8d4a420aae58452e43832638.png",
+          "backgroundColor": "#C9D9E2",
+          "textColor": "#000000"
+        }
+      ]
+    },
+    {
+      "id": "beauty",
+      "title": "Красота",
+      "offers": [
+        {
+          "id": "offer-028",
+          "name": "Подружка",
+          "description": "Магазин косметики",
+          "discount": "30%",
+          "discountText": "Скидка 30%",
+          "promoCode": "SKX4••••",
+          "condition": "За покупки онлайн от 500 ₽",
+          "date": "До 8 ноября",
+          "image": "https://ms-static-images.t-static.ru/partner-image-compact-cfd8965d3d7945f5adba948e3d8f642d.png",
+          "background": "https://ms-static-images.t-static.ru/partner-image1252-52f52eba2aef469c9678fcc462192274.png",
+          "logo": "https://ms-static-images.t-static.ru/partner-image280-13c0a273a2bc471892a377acfe321eb7.png",
+          "backgroundColor": "#FFE4F2",
+          "textColor": "#333333"
+        },
+        {
+          "id": "offer-092",
+          "name": "Randewoo",
+          "description": "Интернет-магазин парфюмерии и косметики",
+          "discount": "8%",
+          "discountText": "Скидка 8%",
+          "promoCode": "UT73•••••",
+          "condition": "На одну покупку онлайн от 2 500 ₽",
+          "date": "Осталось 2 дня",
+          "image": "https://ms-static-images.t-static.ru/partner-image-compact-76c2e18018184e46927bd9ba2b4deccb.png",
+          "background": "https://ms-static-images.t-static.ru/partner-image1252-9c4753c65ff14a9ca0c5fc7d75d338e6.png",
+          "logo": "https://ms-static-images.t-static.ru/partner-13390-image280-64076af8.png",
+          "backgroundColor": "#5C5184",
+          "textColor": "#FFFFFF"
+        }
+      ]
+    },
+    {
+      "id": "clothes",
+      "title": "Одежда и обувь",
+      "offers": [
+        {
+          "id": "offer-016",
+          "name": "NO ONE",
+          "description": "Одежда и обувь",
+          "discount": "15%",
+          "discountText": "Скидка 15%",
+          "promoCode": "BKB8••••",
+          "condition": "На покупки онлайн",
+          "date": "До 5 ноября",
+          "image": "https://ms-static-images.t-static.ru/partner-image-compact-99af2048cfaf4ecba95131f0bd07fd62.png",
+          "background": "https://ms-static-images.t-static.ru/partner-image1252-c9d5b03bd30447248d5e3dea63e51281.png",
+          "logo": "https://bms-logo-prod.tbank-online.com/general_logo/no-one.png",
+          "backgroundColor": "#D3DCFF",
+          "textColor": "#333333"
+        }
+      ]
+    },
+    {
+      "id": "kids",
+      "title": "Дети",
+      "offers": [
+        {
+          "id": "offer-093",
+          "name": "Детский мир",
+          "description": "Товары для детей",
+          "discount": "10%",
+          "discountText": "Скидка 10%",
+          "promoCode": "H92B••••",
+          "condition": "На первый заказ",
+          "date": "Осталось 2 дня",
+          "image": "https://ms-static-images.t-static.ru/partner-image-compact-63473ef22440437091b101ca8642bb90.png",
+          "background": "https://ms-static-images.t-static.ru/partner-image1252-78b5a54e6a5f40dcbddec7838f2c5300.png",
+          "logo": "https://ms-static-images.t-static.ru/partner-10903-image280-883ef19b.png",
+          "backgroundColor": "#CFEAFF",
+          "textColor": "#333333"
+        }
+      ]
+    },
+    {
+      "id": "electronics",
+      "title": "Электроника и техника",
+      "offers": [
+        {
+          "id": "offer-060",
+          "name": "Смартфоны в МегаФон",
+          "description": "Смартфоны и связь",
+          "discount": "до 10 000 ₽",
+          "discountText": "Скидка до 10 000 ₽",
+          "promoCode": "FP83•••••",
+          "condition": "На покупки онлайн",
+          "date": "До 3 ноября",
+          "image": "https://ms-static-images.t-static.ru/partner-image-compact-0072a0525a6b4e9bbeb6a03cf6004d03.png",
+          "background": "https://ms-static-images.t-static.ru/partner-image1252-8e710d7e39d6415992409ee467631d4f.png",
+          "logo": "https://ms-static-images.t-static-online.com/partner-4344-image280-d565bc34.png",
+          "backgroundColor": "#D1F6D3",
+          "textColor": "#333333"
+        }
+      ]
+    },
+    {
+      "id": "auto",
+      "title": "Авто",
+      "offers": [
+        {
+          "id": "offer-012",
+          "name": "Делимобиль",
+          "description": "Каршеринг",
+          "discount": "2000 ₽",
+          "discountText": "Скидка 2000 ₽",
+          "promoCode": "WNM6••••",
+          "condition": "За покупки онлайн от 1 000 ₽",
+          "date": "До 11 ноября",
+          "image": "https://ms-static-images.t-static.ru/partner-image-compact-7579f2376a95428aa84d6ba179c51428.png",
+          "background": "https://ms-static-images.t-static.ru/partner-image1252-9441afabb3194049a95829aa89ef4eae.png",
+          "logo": "https://ms-static-images.t-static.ru/partner-image280-e14d41828d424ed4a61e57d4203fdc54.png",
+          "backgroundColor": "#CCD4E2",
+          "textColor": "#000000"
+        },
+        {
+          "id": "offer-133",
+          "name": "Колесо.ру",
+          "description": "Шины и диски",
+          "discount": "5%",
+          "discountText": "Скидка 5%",
+          "promoCode": "CDA7••••",
+          "condition": "На покупки онлайн",
+          "date": "До 9 ноября",
+          "image": "https://ms-static-images.t-static.ru/partner-image-compact-10eb6b5b0046418bb9b7bc217044391c.png",
+          "background": "",
+          "logo": "https://ms-static-images.t-static-online.com/partner-image280-c13c2a334db04f3d8aaf721850c609a0.png",
+          "backgroundColor": "#D3DCFF",
+          "textColor": "#333333"
+        }
+      ]
+    },
+    {
+      "id": "pets",
+      "title": "Животные",
+      "offers": [
+        {
+          "id": "offer-122",
+          "name": "Четыре Лапы",
+          "description": "Зоомагазин",
+          "discount": "до 16%",
+          "discountText": "Скидка до 16%",
+          "promoCode": "FFZ5••••",
+          "condition": "На первую покупку",
+          "date": "Осталось 2 дня",
+          "image": "https://ms-static-images.t-static.ru/partner-image-compact-eb76d3d7dece401abe92eeb4cc7507d4.png",
+          "background": "https://ms-static-images.t-static.ru/partner-image1252-57bf4293e61e4a3fac4ea33c08eba37c.png",
+          "logo": "https://ms-static-images.t-static-online.com/partner-image280-9182e5ae99f740678c4b62288dfdbfe9.png",
+          "backgroundColor": "#FFE2E4",
+          "textColor": "#333333"
+        }
+      ]
+    },
+    {
+      "id": "fun",
+      "title": "Развлечения",
+      "offers": [
+        {
+          "id": "offer-091",
+          "name": "Яндекс Плюс",
+          "description": "Подписка на сервисы",
+          "discount": "99%",
+          "discountText": "Скидка 99%",
+          "promoCode": "RA96•••••",
+          "condition": "Яндекс Плюс — 45 дней за 2 ₽",
+          "date": "Осталось 2 дня",
+          "image": "https://ms-static-images.t-static.ru/partner-image-compact-f6572f37e4064f1f969fb70d23899677.png",
+          "background": "https://ms-static-images.t-static.ru/partner-image1252-8066b66ec96a463ebd2efdb575c882f1.png",
+          "logo": "https://ms-static-images.t-static.ru/partner-14859-image280-9d324b27.png",
+          "backgroundColor": "#F4E0FF",
+          "textColor": "#333333"
+        },
+        {
+          "id": "offer-138",
+          "name": "viju",
+          "description": "Онлайн-кинотеатр",
+          "discount": "100%",
+          "discountText": "Скидка 100%",
+          "promoCode": "VNU4••••",
+          "condition": "На месяц подписки",
+          "date": "Осталось 2 дня",
+          "image": "https://ms-static-images.t-static.ru/partner-image-compact-48d83ed03c814ac3a965789c41dd50e6.png",
+          "background": "https://ms-static-images.t-static.ru/partner-image1252-5b824357dc204ca4ad1a37c5991b0397.png",
+          "logo": "https://ms-static-images.t-static-online.com/partner-image280-2fdc6d39e43f4ef5af2cead4b19eeabc.png",
+          "backgroundColor": "#326167",
+          "textColor": "#FFFFFF"
+        },
+        {
+          "id": "offer-139",
+          "name": "Литрес",
+          "description": "Сервис электронных и аудиокниг",
+          "discount": "100%",
+          "discountText": "Скидка 100%",
+          "promoCode": "PGJ3••••",
+          "condition": "На два месяца подписки",
+          "date": "Осталось 2 дня",
+          "image": "https://ms-static-images.t-static.ru/partner-image-compact-dcfb7caa2f2e45acb9bcf7670f577de2.png",
+          "background": "https://ms-static-images.t-static.ru/partner-image1252-61b7404106f04affa97f8ef31f5b8dda.png",
+          "logo": "https://ms-static-images.t-static-online.com/partner-image280-8ace253e54634fcfb32b10a4f66f37aa.jpg",
+          "backgroundColor": "#5E4D3C",
+          "textColor": "#FFFFFF"
+        },
+        {
+          "id": "offer-143",
+          "name": "Литрес",
+          "description": "Сервис электронных и аудиокниг",
+          "discount": "50%",
+          "discountText": "Скидка 50%",
+          "promoCode": "SAC4••••",
+          "condition": "На 12 месяцев подписки",
+          "date": "Осталось 2 дня",
+          "image": "https://ms-static-images.t-static.ru/partner-image-compact-bff682810c7d4d38b573f1c7f043b010.png",
+          "background": "https://ms-static-images.t-static.ru/partner-image1252-61b7404106f04affa97f8ef31f5b8dda.png",
+          "logo": "https://ms-static-images.t-static-online.com/partner-image280-8ace253e54634fcfb32b10a4f66f37aa.jpg",
+          "backgroundColor": "#5E4D3C",
+          "textColor": "#FFFFFF"
+        }
+      ]
+    },
+    {
+      "id": "flowers",
+      "title": "Цветы",
+      "offers": [
+        {
+          "id": "offer-114",
+          "name": "FMART by flowwow",
+          "description": "Доставка цветов и подарков",
+          "discount": "23%",
+          "discountText": "Скидка 23%",
+          "promoCode": "B76J••••",
+          "condition": "На одну покупку онлайн",
+          "date": "Осталось 2 дня",
+          "image": "https://ms-static-images.t-static.ru/partner-image-compact-7abb20c94719440586babaf2cdf1fe4f.png",
+          "background": "",
+          "logo": "https://ms-static-images.t-static-online.com/partner-image280-b958851c79d148f1852fa1f03d8a20ef.png",
+          "backgroundColor": "#E3F6C9",
+          "textColor": "#333333"
+        },
+        {
+          "id": "offer-115",
+          "name": "Флаувау",
+          "description": "Доставка цветов и подарков",
+          "discount": "1000 ₽",
+          "discountText": "Скидка 1000 ₽",
+          "promoCode": "HQ99••••",
+          "condition": "На покупки онлайн",
+          "date": "До 3 ноября",
+          "image": "https://ms-static-images.t-static.ru/partner-image-compact-cbf497cc540247bc88aadc79a0613960.png",
+          "background": "",
+          "logo": "https://ms-static-images.t-static-online.com/partner-image280-711451af100a4e2a9b667f3c809cd080.png",
+          "backgroundColor": "#F07C6B",
+          "textColor": "#000000"
+        }
+      ]
+    },
+    {
+      "id": "shopping",
+      "title": "Шопинг",
+      "offers": [
+        {
+          "id": "offer-078",
+          "name": "Мегамаркет",
+          "description": "Маркетплейс",
+          "discount": "20%",
+          "discountText": "Скидка 20%",
+          "promoCode": "GRS4••••",
+          "condition": "За покупки онлайн от 1 000 ₽",
+          "date": "До 8 ноября",
+          "image": "https://ms-static-images.t-static.ru/partner-image-compact-bbab795d25954768a5a8c30985a61796.png",
+          "background": "https://ms-static-images.t-static.ru/partner-image1252-78c651c4abda413bbcf1a6a3d9779532.png",
+          "logo": "https://ms-static-images.t-static.ru/partner-image280-2fde6c084b244617b5ce3c2884adf716.png",
+          "backgroundColor": "#775184",
+          "textColor": "#FFFFFF"
+        }
+      ]
+    }
+  ]
+}

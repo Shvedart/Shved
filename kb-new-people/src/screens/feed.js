@@ -14,6 +14,7 @@ const LAYOUT = [
   { title: 'Супермаркеты рядом', sub: 'Кэшбэк на покупки у дома', cat: 'food', match: /магнит|пятёрочка|перекрёсток|лента|ашан/i },
   { title: 'Сырная полка', sub: 'Hochland и Almette с кэшбэком', cat: 'food', match: /hochland|almette/i },
   { title: 'Красота и уход', sub: 'Косметика, парфюмерия и уход', cat: 'beauty', match: /подружка|лэтуаль|кератин|sokolov/i },
+  { kind: 'promos', title: 'Промокоды для вас', sub: 'Скидки по коду у партнёров' },
   { kind: 'afisha' },
   { title: 'Забота о здоровье', sub: 'Анализы, аптеки и клиники', cat: 'health', scratch: 1 },
   { title: 'Одежда и обувь', sub: 'Обновите гардероб к сезону', cat: 'clothes' },
@@ -82,7 +83,7 @@ const AFISHA = [
 
 /* Собирает полки из уже отрисованных карточек ленты: узлы переезжают, поэтому галочки
    «просмотрено», лайки и стёртые скретч-карточки сохраняются. */
-export function buildShelves({ catalog, cards, scratches, onLink }) {
+export function buildShelves({ catalog, cards, scratches, promos = [], onLink }) {
   const byOffer = new Map(cards.map((c) => [c.dataset.offer, c]));
   const used = new Set();
   const take = (cat, match, n) => {
@@ -97,9 +98,25 @@ export function buildShelves({ catalog, cards, scratches, onLink }) {
     return out;
   };
 
+  // промокоды по категориям: в полке без стирашки один оффер уступает место промокоду
+  const promoPool = [...promos];
+  const takePromo = (cat) => {
+    const at = promoPool.findIndex((p) => p.dataset.cat === cat);
+    return at < 0 ? null : promoPool.splice(at, 1)[0];
+  };
+
   const extras = [];
   const parts = [];
   LAYOUT.forEach((s, i) => {
+    if (s.kind === 'promos') {
+      // отдельная полка промокодов — из тех, что не разошлись по категориям раньше
+      const list = promoPool.splice(0, 4);
+      if (list.length) {
+        parts.push(h('section', { class: 'shelf', dataset: { cat: 'mix' } },
+          cardHeader({ title: s.title, subtitle: s.sub, link: 'Все', onLink }), h('div', { class: 'grid' }, list)));
+      }
+      return;
+    }
     if (s.kind === 'travel') {
       const t = travelShelf({ items: TRAVEL });
       t.dataset.cat = 'travel';
@@ -116,8 +133,15 @@ export function buildShelves({ catalog, cards, scratches, onLink }) {
       return;
     }
     const scratch = s.scratch != null ? scratches[s.scratch] : null;
-    const offers = take(s.cat, s.match, scratch ? 3 : 4);
-    if (!offers.length) return;
+    const promo = scratch || s.promo === false ? null : takePromo(s.cat);
+    const offers = take(s.cat, s.match, scratch || promo ? 3 : 4);
+    if (!offers.length) { if (promo) promoPool.unshift(promo); return; }
+    // промокод — в другом ряду и колонке, чем стирашки, чтобы не стоять всегда в одном месте
+    if (promo) {
+      let at = [1, 2, 0][i % 3] % (offers.length + 1);
+      if (LAYOUT[i + 1]?.kind === 'travel' && at >= 2) at = 1;
+      offers.splice(at, 0, promo);
+    }
     // скретч-карточка встаёт в разные места полки, чтобы лента не была однообразной;
     // но не в нижний ряд над путешествиями — иначе стирашка стоит вплотную к билету
     if (scratch) {
@@ -140,6 +164,7 @@ export function buildShelves({ catalog, cards, scratches, onLink }) {
   }
   const rest = cards.filter((c) => !used.has(c.dataset.offer));
   for (let i = 0; i < rest.length; i += 4) shelf('Ещё для вас', 'Подобрали по вашим покупкам', rest.slice(i, i + 4), 'mix');
+  for (let i = 0; i < promoPool.length; i += 4) shelf('Ещё промокоды', 'Скидки по коду у партнёров', promoPool.slice(i, i + 4), 'mix');
 
   const root = h('div', { class: 'shelves', dataset: { tourCards: 'selection' } }, parts);
 
@@ -176,8 +201,8 @@ export function buildShelves({ catalog, cards, scratches, onLink }) {
     for (const part of parts) {
       if (part.dataset.cat === 'mix') {
         let any = false;
-        for (const card of part.querySelectorAll('.ocard')) {
-          const ok = id === 'all' || (!own && catOf.get(card.dataset.offer) === id);
+        for (const card of part.querySelectorAll('.ocard, .promo')) {
+          const ok = id === 'all' || (!own && (card.dataset.cat || catOf.get(card.dataset.offer)) === id);
           card.hidden = !ok;
           any ||= ok;
         }

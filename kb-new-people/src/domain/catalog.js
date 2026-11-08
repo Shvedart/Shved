@@ -6,7 +6,7 @@ import { plural } from '../core/dom.js';
 const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
 const DAY_MS = 86400000;
 
-export function buildCatalog(raw, cfg, productsRaw = null) {
+export function buildCatalog(raw, cfg, productsRaw = null, discountsRaw = null) {
   const today = new Date(`${cfg.today}T00:00:00`);
   const matchIndex = new Map();
   for (const [brandId, b] of Object.entries(cfg.brands || {})) {
@@ -57,7 +57,8 @@ export function buildCatalog(raw, cfg, productsRaw = null) {
   }
 
   const products = buildProducts(productsRaw, offers, brands);
-  return createCatalogApi({ categories, offers, brands, cfg, products });
+  const promos = buildPromos(discountsRaw, brands);
+  return createCatalogApi({ categories, offers, brands, cfg, products, promos });
 }
 
 /* Товары с кэшбэком (формат land → payload.items[]: фото, название, кэшбэк).
@@ -93,11 +94,43 @@ function buildProducts(productsRaw, offers, brands) {
   return list;
 }
 
-function createCatalogApi({ categories, offers, brands, cfg, products = [] }) {
+/* Промокоды (data/discounts.json): та же раскладка «категория → предложения», что у кэшбэка,
+   но вместо процента — скидка и код. Бренд ищем среди брендов кэшбэка по названию —
+   тогда работает сердечко и переход в детали. */
+function buildPromos(discountsRaw, brands) {
+  const list = [];
+  const brandList = [...brands.values()].sort((a, b) => b.name.length - a.name.length);
+  for (const cat of discountsRaw?.categories || []) {
+    for (const p of cat.offers || []) {
+      const lower = normName(p.name).toLowerCase();
+      const brand = brandList.find((b) => normName(b.name).toLowerCase() === lower)
+        || brandList.find((b) => b.name.length > 3 && lower.includes(normName(b.name).toLowerCase()));
+      list.push({
+        id: `promo-${p.id}`,
+        categoryId: cat.id,
+        name: normName(p.name),
+        description: p.description || '',
+        discount: p.discount,
+        discountText: p.discountText,
+        code: p.promoCode,
+        condition: p.condition,
+        date: p.date,
+        logo: p.logo,
+        image: p.image,
+        brandId: brand?.id || null,
+        offerId: brand?.offerIds[0] || null,
+      });
+    }
+  }
+  return list;
+}
+
+function createCatalogApi({ categories, offers, brands, cfg, products = [], promos = [] }) {
   const api = {
     config: cfg,
     categories,
     products,
+    promos,
     getOffer: (id) => offers.get(id) || null,
     getBrand: (id) => brands.get(id) || null,
     getCategory: (id) => categories.find((c) => c.id === id) || null,

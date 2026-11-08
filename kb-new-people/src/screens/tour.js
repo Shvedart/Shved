@@ -47,6 +47,9 @@ export function startTour({ el, entry, scenario }) {
   closeBtn.addEventListener('click', () => finish());
 
   animate(sheet, [{ transform: 'translateY(100%)' }, { transform: 'none' }], { duration: 520, easing: EASE.ios });
+  // карточку для шага с галочкой начинаем грузить сразу, пока идут первые шаги
+  const spotStep = STEPS.find((s) => s.spotlight);
+  if (spotStep) warmCard(spotStep.spotlight);
   go(0);
 
   function focusBlock(name, { stay = false, scroll = true } = {}) {
@@ -100,6 +103,16 @@ export function startTour({ el, entry, scenario }) {
     if (reducedMotion()) return;
     animate(sheet, [{ height: `${from}px`, marginTop: `${-from}px` }, { height: `${to}px`, marginTop: `${-to}px` }], { duration: 520, easing: EASE.ios, fill: 'none' });
     animate(heroEl, [{ opacity: 0, transform: 'scale(.8) translateY(24px)' }, { opacity: 1, transform: 'none' }], { duration: 620, delay: 220, easing: EASE.spring });
+  }
+
+  // Картинки карточки, которую поднимем, должны быть загружены и раскодированы заранее,
+  // иначе на телефоне копия показывается пустой и фото «впрыгивают» (ждём не дольше 1,2 с)
+  function warmCard(name) {
+    const card = el.querySelector(`[data-tour-cards="${name}"] .ocard`);
+    const imgs = card ? [...card.querySelectorAll('img')] : [];
+    for (const im of imgs) im.loading = 'eager';
+    const ready = Promise.all(imgs.map((im) => (im.decode ? im.decode() : Promise.resolve()).catch(() => {})));
+    return Promise.race([ready, wait(1200)]);
   }
 
   // Ждём, пока страница перестанет прокручиваться (scrollTop не меняется 150 мс), но не дольше 1,6 с.
@@ -188,7 +201,7 @@ export function startTour({ el, entry, scenario }) {
       await wait(reducedMotion() ? 0 : Math.max(750, step.hearts ? typing + 700 : 0));
       if (index !== i || !active) return;
       // на iPhone плавная докрутка длится дольше — ждём, пока лента встанет, иначе карточка сразу вернётся
-      if (step.spotlight) await scrollIdle(el);
+      if (step.spotlight) await Promise.all([scrollIdle(el), warmCard(step.spotlight)]);
       if (index !== i || !active) return;
       if (step.spotlight) stepCleanup = spotlight(step.spotlight);
       if (step.hearts) stepCleanup = waitForLike(step.hearts);
@@ -196,21 +209,23 @@ export function startTour({ el, entry, scenario }) {
   }
 
   // Карточки ленты, которые видны между апп-баром и шторкой.
-  function visibleCards(name) {
+  // withPromos — вместе с промокодами (для подсказки на сердечках; «прожектор» берёт только офферы)
+  function visibleCards(name, { withPromos = false } = {}) {
     const list = el.querySelector(`[data-tour-cards="${name}"]`);
     if (!list || !active) return [];
     const appbarBottom = el.getBoundingClientRect().top + parseFloat(getComputedStyle(el).paddingTop);
     const sheetTop = sheet.getBoundingClientRect().top + 60;
-    return [...list.querySelectorAll('.ocard')].filter((card) => {
-      const r = card.querySelector('.ocard-tile').getBoundingClientRect();
+    return [...list.querySelectorAll(withPromos ? '.ocard, .promo' : '.ocard')].filter((card) => {
+      if (!card.offsetParent) return false;
+      const r = card.querySelector('.ocard-tile, .promo-tile').getBoundingClientRect();
       return r.top >= appbarBottom - 10 && r.top + 60 <= sheetTop;
     });
   }
 
-  // Сердечки видимых офферов по очереди загораются красным — подсказка, что их можно ставить.
+  // Сердечки видимых офферов и промокодов по очереди загораются красным — подсказка, что их можно ставить.
   function hintHearts(name) {
-    visibleCards(name).forEach((card, i) => {
-      const heart = card.querySelector('.ocard-heart');
+    visibleCards(name, { withPromos: true }).forEach((card, i) => {
+      const heart = card.querySelector('.ocard-heart, .promo-heart');
       if (!heart || heart.getAttribute('aria-pressed') === 'true') return;
       setTimeout(() => {
         if (!active) return;
@@ -253,6 +268,8 @@ export function startTour({ el, entry, scenario }) {
     clone.setAttribute('aria-hidden', 'true');
     Object.assign(clone.style, { left: `${r.left - sr.left}px`, top: `${r.top - sr.top}px`, width: `${r.width}px` });
     clone.querySelector('.counted')?.remove();
+    // у копии картинки грузим сразу: ленивые <img> вне потока на iPhone появлялись с опозданием
+    for (const im of clone.querySelectorAll('img')) im.loading = 'eager';
     // зелёный бейдж «Активен» растёт из угла логотипа, по нему бежит блик
     const mark = h('span', { class: 'spot-badge', 'aria-hidden': 'true' },
       iconImg('success', { size: 20 }), h('span', { class: 'spot-badge-text' }, 'Активен'),

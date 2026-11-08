@@ -1697,6 +1697,20 @@
 }
 
 /* поднятая карточка серая, как закрытые офферы серии (.ocard.is-locked), — цветной остаётся только галочка */
+/* в Safari слои с filter рисовались поверх бейджа — задаём порядок явно */
+.spot-card .ocard-tile {
+  isolation: isolate;
+}
+
+.spot-card .ocard-tile > :not(.spot-badge) {
+  z-index: 0;
+}
+
+.spot-card .spot-badge {
+  z-index: 5;
+  transform: translateZ(0);
+}
+
 .spot-card .ocard-tile > :not(.spot-badge),
 .spot-card .ocard-caption,
 .spot-card .ocard-heart {

@@ -196,6 +196,49 @@ export function productCard(item) {
     item.brandId ? heartButton(item.brandId, { size: 24, cls: 'pcard-heart' }) : null);
 }
 
+// ---------- Карточка промокода (макет 662:145964) ----------
+// Как карточка оффера, но плитка голубая: логотип сверху, крупная скидка, условия,
+// перфорация и замаскированный код со стрелкой.
+
+export function promoCard(promo) {
+  const main = button({ class: 'promo-main', 'aria-label': `${promo.discountText}, ${promo.name}. Промокод ${promo.code}` },
+    h('div', { class: 'promo-tile' },
+      h('div', { class: 'promo-top' },
+        h('span', { class: 'promo-logo' }, img(promo.logo, { alt: '', width: 56, height: 56, fallback: promo.name })),
+        h('div', { class: 'promo-texts' },
+          // длинная скидка («до 10 000 ₽») не влезает в 30px — для неё шрифт 20px
+          h('div', { class: `ocard-value ${promo.discount.length > 7 ? 'is-long' : ''}` }, promo.discount),
+          h('div', { class: 'promo-terms' }, promo.condition))),
+      // перфорация и код прибиты к низу плитки — линия разрыва у всех карточек на одной высоте
+      h('div', { class: 'promo-bottom' },
+        h('img', { class: 'promo-perf', src: 'assets/img/promo-perforation.svg', alt: '', 'aria-hidden': 'true', draggable: 'false' }),
+        h('div', { class: 'promo-code' }, h('span', { class: 'promo-code-text' }, promo.code), icon('chevron-right', { size: 16 })))),
+    h('div', { class: 'ocard-caption' }, h('div', { class: 'ocard-name' }, promo.name), h('div', { class: 'ocard-desc' }, promo.description)));
+  main.addEventListener('click', () => {
+    if (promo.offerId) app.nav.push(`/offer/${promo.offerId}`);
+    else toast('Промокод откроется в приложении');
+  });
+  const heart = promo.brandId
+    ? heartButton(promo.brandId, { size: 24, cls: 'promo-heart' })
+    : localHeart(`${promo.name}: в избранное`);
+  return h('div', { class: 'promo', dataset: { promo: promo.id, cat: promo.categoryId } }, main, heart);
+}
+
+// Сердечко без бренда в каталоге: отметка живёт только на карточке
+function localHeart(label) {
+  const outline = icon('heart-outline', { size: 24, cls: 'heart-outline' });
+  const filled = iconImg('heart-filled', { size: 24, cls: 'heart-filled' });
+  const el = button({ class: 'heart promo-heart', 'aria-label': label, 'aria-pressed': 'false' }, outline, filled);
+  el.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const on = el.getAttribute('aria-pressed') !== 'true';
+    el.setAttribute('aria-pressed', String(on));
+    haptics.selection();
+    animate(on ? filled : outline, [{ transform: 'scale(.5) rotate(-18deg)' }, { transform: 'scale(1.22) rotate(8deg)' }, { transform: 'scale(1) rotate(0)' }], { duration: 420, easing: EASE.spring, fill: 'none' });
+  });
+  return el;
+}
+
 // ---------- Заголовок секции в карточке ----------
 
 export function cardHeader({ title, subtitle, link, onLink, aside }) {

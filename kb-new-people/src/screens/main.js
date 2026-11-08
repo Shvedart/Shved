@@ -5,7 +5,7 @@ import { animate, EASE, stagger, fadeUpIn, reducedMotion } from '../core/motion.
 import { store } from '../core/store.js';
 import { haptics } from '../core/haptics.js';
 import { toast } from '../ui/toast.js';
-import { cardMini, cardHeader, offerCard, productCard } from '../ui/components.js';
+import { cardMini, cardHeader, offerCard, productCard, promoCard } from '../ui/components.js';
 import { favCard } from '../ui/favcard.js';
 import { scratchCard } from '../ui/scratch.js';
 import { buildShelves } from './feed.js';
@@ -181,7 +181,7 @@ export function mainScreen({ el, params, nav, entry }) {
   function toShelves({ animated }) {
     if (shelves) return;
     const cards = [...selectionGrid.querySelectorAll(':scope > .ocard')];
-    shelves = buildShelves({ catalog, cards, scratches, onLink: () => nav.push('/favorites') });
+    shelves = buildShelves({ catalog, cards, scratches, promos: catalog.promos.map((p) => promoCard(p)), onLink: () => nav.push('/favorites') });
     const swap = () => {
       selection.classList.add('is-shelves');
       selection.replaceChildren(shelves);
