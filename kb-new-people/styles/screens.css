@@ -953,7 +953,7 @@
 
 .day.is-done .day-check {
   display: block;
-  filter: brightness(0) invert(1);
+  color: #fff;
 }
 
 .day.is-gift {
@@ -1490,10 +1490,6 @@
   color: #fff;
 }
 
-.offer-step-icon .ico-img {
-  filter: brightness(0) invert(1);
-}
-
 .offer-step-text {
   display: flex;
   flex-direction: column;
@@ -1696,7 +1692,8 @@
   opacity: 0;
 }
 
-/* поднятая карточка серая, как закрытые офферы серии (.ocard.is-locked), — цветной остаётся только галочка */
+/* поднятая карточка: эксперимент — цветная, но почти прозрачная (20%); яркий только бейдж «Активен».
+   Прежний вариант — серая, как закрытые офферы серии: filter: grayscale(1); opacity: 0.55 */
 /* в Safari слои с filter рисовались поверх бейджа — задаём порядок явно */
 .spot-card .ocard-tile {
   isolation: isolate;
@@ -1714,8 +1711,7 @@
 .spot-card .ocard-tile > :not(.spot-badge),
 .spot-card .ocard-caption,
 .spot-card .ocard-heart {
-  filter: grayscale(1);
-  opacity: 0.55;
+  opacity: 0.2;
 }
 
 .spot-card {
@@ -1766,4 +1762,208 @@
 @keyframes spot-shine {
   0% { background-position: 150% 0; }
   60%, 100% { background-position: -50% 0; }
+}
+
+/* ---------- «Мое любимое» v2 — сценарий 04 (макет 668:149352) ---------- */
+.fav-logos-scroll {
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.fav-logos-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.fav-logos {
+  display: flex;
+  gap: 14px;
+  width: max-content;
+  /* сверху место под плашки с процентом */
+  padding: 10px var(--gutter) 12px;
+}
+
+.fav-logo {
+  position: relative;
+  flex: none;
+  width: 56px;
+  height: 56px;
+  /* невыбранные логотипы прозрачнее выбранного */
+  opacity: 0.65;
+  transition: opacity var(--dur-fast) ease;
+}
+
+.fav-logo.is-active,
+.fav-logo-add {
+  opacity: 1;
+}
+
+.fav-logo-pic {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  /* обводка — на случай логотипа с белым фоном */
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+  transition: border-radius var(--dur-fast) ease;
+}
+
+.fav-logo-pic img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* у выбранного логотипа вместо круга — скругление 8px */
+.fav-logo.is-active .fav-logo-pic {
+  border-radius: 8px;
+}
+
+.fav-logo-add .fav-logo-pic {
+  background: var(--c-fill);
+  box-shadow: none;
+  color: var(--c-text);
+}
+
+/* плашка с самым большим кэшбэком бренда — над логотипом по центру */
+.fav-logo-badge {
+  position: absolute;
+  left: 50%;
+  top: -9px;
+  /* центрируем через translate, а не transform: анимация «пружинки» меняет transform,
+     и плашка от этого прыгала вбок на шагах 4 и 5 */
+  translate: -50% 0;
+  padding: 1px 5px;
+  border-radius: var(--r-pill);
+  background: var(--c-brand);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 14px;
+  color: var(--c-text);
+  white-space: nowrap;
+}
+
+/* кэшбэк вырос — плашка зелёная; акция закончилась — красный счётчик */
+.fav-logo-badge.is-up {
+  /* тот же зелёный, что у нового процента в строке */
+  background: var(--c-green-strong);
+  color: #fff;
+}
+
+.fav-logo-badge.is-count {
+  background: var(--c-red);
+  color: #fff;
+}
+
+.fav-logo-badge.is-count {
+  min-width: 18px;
+  text-align: center;
+}
+
+/* строки: процент жирный, дальше источник — без точки и названия бренда */
+.favcard-v2 .cell-value {
+  /* процент — SF Pro Rounded, как крупные значения на карточках ленты */
+  font-family: var(--font-rounded);
+  font-weight: 700;
+  margin-right: 8px; /* ровно 8px до названия — без пробела-разделителя */
+}
+
+.favcard-v2 .row-dot {
+  display: none;
+}
+
+.cell-logo {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-right: 6px;
+  border-radius: 50%;
+  overflow: hidden;
+  vertical-align: -4px;
+}
+
+.cell-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.favcard-info-v2 {
+  display: block;
+  margin: 0 12px 6px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(66, 139, 249, 0.12);
+  font-size: 13px;
+  line-height: 17px;
+}
+
+.favcard-boost.favcard-v2 .fav-logo:not(.is-active),
+.favcard-replace.favcard-v2 .fav-logo:not(.is-active) {
+  opacity: 0.35;
+}
+
+/* ---------- Бренды (сценарий 04, «+» в «Мое любимое») ---------- */
+.brands-head {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: var(--c-bg);
+  padding-top: 4px;
+}
+
+.brands-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  margin: 0 var(--gutter) 12px;
+  padding: 0 8px 0 12px;
+  border-radius: 12px;
+  background: var(--c-fill-strong);
+  color: var(--c-text-muted);
+}
+
+.brands-search-input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  outline: none;
+  background: none;
+  font: inherit;
+  font-size: 16px; /* не меньше 16px — иначе Safari увеличивает страницу при фокусе */
+  color: var(--c-text);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.brands-search-input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.brands-search-clear {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: var(--c-text-muted);
+}
+
+.brands.is-searching .brands-head .chips-scroll {
+  display: none;
+}
+
+/* конфетти на финале тура: поверх всего, но касания проходят насквозь */
+.confetti-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.confetti-layer svg {
+  display: block;
 }

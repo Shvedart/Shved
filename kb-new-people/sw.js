@@ -1,5 +1,5 @@
 // Service worker: оболочка приложения доступна офлайн, картинки партнёров кешируются по мере просмотра.
-const VERSION = 'kb-np-v39';
+const VERSION = 'kb-np-v62';
 const SHELL = [
   './',
   'index.html',
@@ -29,6 +29,9 @@ const SHELL = [
   'src/ui/sheet.js',
   'src/ui/scratch.js',
   'src/ui/shelves.js',
+  'src/ui/confetti.js',
+  'assets/vendor/lottie_light.min.js',
+  'assets/lottie/confetti.json',
   'src/screens/feed.js',
   'src/screens/hub.js',
   'src/screens/bank.js',
@@ -38,6 +41,7 @@ const SHELL = [
   'src/screens/pk.js',
   'src/screens/offer.js',
   'src/screens/favorites.js',
+  'src/screens/brands.js',
 ];
 
 self.addEventListener('install', (e) => {

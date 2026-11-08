@@ -8,7 +8,7 @@ const initial = () => ({
   pk: null,               // { categories: [id], rating: 1..5, month }
   onboarding: {},         // { s1: { done: true }, s2: {...} }
   streak: { day1: false },
-  tour: { s3: false },
+  tour: { s3: false, s4: false },
 });
 
 function read() {

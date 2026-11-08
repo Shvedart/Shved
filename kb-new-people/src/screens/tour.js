@@ -1,11 +1,24 @@
-// Необычный онбординг сценария 03: живой градиент, текст по словам, «Далее» подсвечивает блоки главной.
+// Тур по главной в сценариях 03 и 04: живой градиент, текст по словам, «Далее» подсвечивает блоки.
+// 04 — исходный тур (механики по очереди). 03 — эксперимент: тур вокруг одной привычки
+// «перед покупкой загляни сюда», механики подчинены ей.
 
 import { h, button, iconImg, wait } from '../core/dom.js';
 import { animate, EASE, reducedMotion } from '../core/motion.js';
 import { haptics } from '../core/haptics.js';
 import { store } from '../core/store.js';
+import { playConfetti } from '../ui/confetti.js';
 
-const STEPS = [
+// 03: ценность → галочка (кэшбэк сам) → сердечко как закладка → стирашка как бонус → привычка
+const TOUR_HABIT = [
+  { target: null, text: 'Перед покупкой загляните сюда — здесь больше 3000 предложений с кэшбэком', cta: 'Показать' },
+  { target: 'selection', spotlight: 'selection', text: 'Увидели предложение — кэшбэк уже ваш. Ничего активировать не нужно', cta: 'Понятно' },
+  { target: 'selection', hearts: 'selection', keepScroll: true, nudgeRows: 2, text: 'Нашли нужное среди тысяч предложений? Сердечко — чтобы не потерять' },
+  { target: 'selection', scratch: true, text: 'А иногда в ленте прячется подарок — сотрите карточку' },
+  { target: null, stay: true, hero: 'assets/img/tour/final-70.webp', text: 'Собираетесь что-то купить? Сначала загляните сюда', cta: 'Лутать кэшбэк', last: true },
+];
+
+// 04: исходный тур — механики раздела по очереди
+const TOUR_MECHANICS = [
   { target: null, text: 'Привет! За минуту покажем, как здесь получать больше кэшбэка', cta: 'Погнали' },
   { target: 'streak', text: 'Заходите сюда 5 дней подряд — и мы сделаем вам крутой подарок' },
   { target: 'selection', spotlight: 'selection', text: 'Галочка на карточке означает, что кэшбэк активирован для вас', cta: 'Понятно' },
@@ -16,12 +29,16 @@ const STEPS = [
   { target: null, stay: true, hero: 'assets/img/tour/final-70.webp', text: 'Кто заходит сюда каждый день, получает на 70% больше кэшбэка', cta: 'Лутать кэшбэк', last: true },
 ];
 
+const TOURS = { s3: TOUR_HABIT, s4: TOUR_MECHANICS };
+
 export function startTour({ el, entry, scenario }) {
+  const STEPS = TOURS[scenario] || TOUR_MECHANICS;
   const stage = el.parentElement;
   let index = -1;
   let active = true;
   let wordsTimer = 0;
   let stepCleanup = null;
+  let stopConfetti = null;
 
   const textEl = h('p', { class: 'tour-text', 'aria-live': 'polite' });
   const nextBtn = button({ class: 'btn btn-dark btn-l tour-next' }, h('span', { class: 'btn-label' }, 'Далее'));
@@ -94,6 +111,8 @@ export function startTour({ el, entry, scenario }) {
   // Финал: шторка вырастает почти на весь экран, фон белый, по центру — картинка.
   // Высоту меняем анимацией и следом пересчитываем отрицательный отступ, чтобы лента не сдвинулась.
   async function showHero(src) {
+    // конфетти поверх всего экрана — слой не ловит касания, «Лутать кэшбэк» нажимается
+    stopConfetti = playConfetti(stage);
     const from = sheet.offsetHeight;
     const to = Math.max(from, el.clientHeight - 24);
     heroEl.replaceChildren(h('img', { src, alt: '', draggable: 'false', decoding: 'async' }));
@@ -343,6 +362,7 @@ export function startTour({ el, entry, scenario }) {
     },
     destroy() {
       stepCleanup?.();
+      stopConfetti?.();
       active = false;
       sheet.remove();
     },

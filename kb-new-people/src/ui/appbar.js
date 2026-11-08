@@ -57,8 +57,11 @@ export function createAppbar({ getNav }) {
     progress.hidden = !hasProgress;
     if (hasProgress) {
       progressFill.style.width = `${Math.max(0.06, cfg.progress) * 100}%`;
-      progress.setAttribute('aria-valuenow', String(Math.round(cfg.progress * 5)));
-      progress.setAttribute('aria-label', `Шаг ${Math.round(cfg.progress * 5)} из 5`);
+      // сколько всего шагов — у онбординга 02 их четыре
+      const total = cfg.steps || 5;
+      progress.setAttribute('aria-valuemax', String(total));
+      progress.setAttribute('aria-valuenow', String(Math.round(cfg.progress * total)));
+      progress.setAttribute('aria-label', `Шаг ${Math.round(cfg.progress * total)} из ${total}`);
     }
     title.textContent = cfg.title || '';
     title.classList.toggle('is-visible', !!cfg.title && cfg.titleVisible !== false && !hasProgress);

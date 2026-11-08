@@ -6,7 +6,7 @@ import { store } from '../core/store.js';
 import { haptics } from '../core/haptics.js';
 import { toast } from '../ui/toast.js';
 import { cardMini, cardHeader, offerCard, productCard, promoCard } from '../ui/components.js';
-import { favCard } from '../ui/favcard.js';
+import { favCard, favLook } from '../ui/favcard.js';
 import { scratchCard } from '../ui/scratch.js';
 import { buildShelves } from './feed.js';
 import { startTour, stopViewMarks } from './tour.js';
@@ -75,7 +75,7 @@ export function mainScreen({ el, params, nav, entry }) {
   const pk = h('div', { class: 'main-block', dataset: { tour: 'pk' } }, cardMini({ flat: false }));
   cleanups.push(pk.firstChild.destroy);
 
-  const fav = favCard({ mode: 'live' });
+  const fav = favCard({ mode: 'live', look: favLook(scenario) });
   cleanups.push(fav.destroy);
   const favBlock = h('div', { class: 'main-block', dataset: { tour: 'fav' } }, fav);
 
@@ -92,7 +92,8 @@ export function mainScreen({ el, params, nav, entry }) {
     const mark = d.gift ? iconImg('priz', { size: 16, cls: 'day-mark' }) : done ? null : icon('lock', { size: 16, cls: 'day-mark day-lock' });
     // первый день: до активации — замочек, как у остальных; после — галочка
     const content = [h('span', { class: 'day-dow' }, d.dow), h('span', { class: 'day-num' }, d.day), mark,
-      i === 0 ? iconImg('check', { size: 16, cls: 'day-mark day-check' }) : null];
+      // монохромная иконка (цвет из currentColor): белая без CSS-фильтра — фильтр Safari растрирует
+      i === 0 ? icon('check', { size: 16, cls: 'day-mark day-check' }) : null];
     if (i === 0) {
       return h('div', { class: `day ${done ? 'is-done' : ''}`, role: 'listitem', 'aria-label': `${d.dow} ${d.day}: ${done ? 'засчитан' : 'сегодня'}` }, ...content);
     }
@@ -221,12 +222,12 @@ export function mainScreen({ el, params, nav, entry }) {
   el.addEventListener('scroll', onScroll, { passive: true });
 
   // ---------- Серия: первый день засчитывается, когда блок виден на 50% ----------
-  // В сценарии 03 — только когда блок поднялся в верхнюю часть экрана: обычно это происходит
+  // В сценариях 03 и 04 — только когда блок поднялся в верхнюю часть экрана: обычно это происходит
   // на шаге тура про серию, и день засчитывается прямо на глазах.
   if (!store.state.streak.day1) {
-    const s3 = scenario === 's3';
+    const hook = scenario === 's3' || scenario === 's4';
     const io = new IntersectionObserver((items) => {
-      if (!items.some((i) => i.isIntersecting) || app.nav.top !== entry || (!s3 && tour?.active)) return;
+      if (!items.some((i) => i.isIntersecting) || app.nav.top !== entry || (!hook && tour?.active)) return;
       io.disconnect();
       setTimeout(() => {
         const day = dayEls[0];
@@ -238,13 +239,14 @@ export function mainScreen({ el, params, nav, entry }) {
         animate(day.querySelector('.day-check'), [{ opacity: 0, transform: 'scale(0) rotate(-30deg)' }, { opacity: 1, transform: 'scale(1.3)' }, { opacity: 1, transform: 'none' }], { duration: 520, delay: 120, easing: EASE.spring });
         store.markStreakDay();
       }, tour?.active ? 1500 : 250); // в туре — с паузой, чтобы сначала прочитали текст шага
-    }, s3 ? { root: el, rootMargin: '0px 0px -55% 0px', threshold: 0 } : { root: el, threshold: 0.5 });
+    }, hook ? { root: el, rootMargin: '0px 0px -55% 0px', threshold: 0 } : { root: el, threshold: 0.5 });
     io.observe(streak);
     cleanups.push(() => io.disconnect());
   }
 
   // ---------- Сценарий 03: плашка «могли получить больше» ----------
-  if (scenario === 's3') {
+  // сценарии 03 и 04: заход через плашку «могли получить больше» и тур
+  if (scenario === 's3' || scenario === 's4') {
     const missed = button({ class: 'missed', 'aria-label': `В ${cfg.missed.month} могли получить ещё ${cfg.missed.amount} кэшбэка. Узнать как` },
       h('span', { class: 'missed-crown' }, icon('crown', { size: 22 })),
       h('span', { class: 'missed-text' }, h('span', null, `В ${cfg.missed.month} могли получить`), h('span', { class: 'missed-amount' }, `ещё ${cfg.missed.amount} кэшбэка`)),

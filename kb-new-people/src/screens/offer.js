@@ -1,6 +1,6 @@
 // Детали оффера (фрейм 635:131030). Контент — из JSON; блоки «Как получить» и «Что ещё нужно знать» — общая рыба.
 
-import { h, icon, iconImg, img } from '../core/dom.js';
+import { h, icon, img } from '../core/dom.js';
 import { haptics } from '../core/haptics.js';
 import { store } from '../core/store.js';
 import { animate, EASE } from '../core/motion.js';
@@ -44,7 +44,7 @@ export function offerScreen({ el, params, entry }) {
         h('h2', { class: 'offer-card-title' }, `Как получить ${kind.toLowerCase()}`),
         h('ol', { class: 'offer-steps' }, steps.map(([ic, title, sub]) =>
           h('li', { class: 'offer-step' },
-            h('span', { class: 'offer-step-icon' }, ic === 'cart' ? icon('stap', { size: 22 }) : ic === 'card' ? icon('card', { size: 22 }) : iconImg('crown', { size: 22 })),
+            h('span', { class: 'offer-step-icon' }, ic === 'cart' ? icon('stap', { size: 22 }) : ic === 'card' ? icon('card', { size: 22 }) : icon('crown', { size: 22 })),
             h('span', { class: 'offer-step-text' }, h('span', { class: 'offer-step-title' }, title), h('span', { class: 'offer-step-sub' }, sub))))),
         h('div', { class: 'offer-note' }, 'Акция не распространяется на покупки через сторонние сервисы доставки')),
       h('section', { class: 'card offer-card' },

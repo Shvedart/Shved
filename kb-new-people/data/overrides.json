@@ -49,7 +49,8 @@
       "chip": "Еда",
       "title": ["Настройте", "кэшбэк под себя"],
       "subtitle": "Сохраняйте то, что пригодится",
-      "brands": ["samokat", "lenta", "lavka", "pyaterochka", "perekrestok"],
+      "brands": ["samokat", "lenta", "lavka", "pyaterochka", "perekrestok", "magnit"
+      ],
       "cta": "Дальше Любимые бренды"
     },
     "step2": {

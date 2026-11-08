@@ -1,7 +1,9 @@
 // Блок «Мое любимое». Один компонент для главной (live) и для макета в шагах 3–5 онбординга (preview).
 // variant: 'default' | 'boost' (+15% к первому офферу) | 'replace' (акция закончилась, показываем замену)
+// look: 'v1' — чипсы брендов; 'v2' — сценарий 04 (макет 668:149352): логотипы с плашкой процента,
+// кнопка «+»; в строках процент и полное название оффера.
 
-import { h, img, iconImg } from '../core/dom.js';
+import { h, img, iconImg, icon, button } from '../core/dom.js';
 import { animate, EASE, settle } from '../core/motion.js';
 import { haptics } from '../core/haptics.js';
 import { store } from '../core/store.js';
@@ -9,10 +11,16 @@ import { fmt } from '../domain/catalog.js';
 import { app } from '../app.js';
 import { chip, cell, cardHeader, setChipActive, badge } from './components.js';
 
-export function favCard({ mode = 'live', variant: initialVariant = 'default' } = {}) {
+// Какой вид «Мое любимое» в каком сценарии. Старый вид (v1, чипсы) не удалён:
+// чтобы вернуть его сценарию, поставьте здесь 'v1'.
+const LOOK_BY_SCENARIO = { s1: 'v2', s2: 'v2', s3: 'v1', s4: 'v1' };
+export const favLook = (scenario) => LOOK_BY_SCENARIO[scenario] || 'v1';
+
+export function favCard({ mode = 'live', variant: initialVariant = 'default', look = 'v1' } = {}) {
   let variant = initialVariant;
   const live = mode === 'live';
-  const root = h('section', { class: `card favcard favcard-${mode} favcard-${variant}`, 'aria-label': 'Мое любимое' });
+  const v2 = look === 'v2';
+  const root = h('section', { class: `card favcard favcard-${mode} favcard-${variant} ${v2 ? 'favcard-v2' : ''}`, 'aria-label': 'Мое любимое' });
   let selected = null;
   let unsub = null;
 
@@ -38,6 +46,12 @@ export function favCard({ mode = 'live', variant: initialVariant = 'default' } =
     }
     root.classList.remove('is-empty');
 
+    if (v2) {
+      root.append(logosRow(list));
+      root.append(h('div', { class: 'favcard-list' }, renderList()));
+      syncBadge();
+      return;
+    }
     const chips = h('div', { class: 'chips-line', role: 'tablist', 'aria-label': 'Любимые бренды' },
       list.map((b) => {
         const c = chip({
@@ -56,8 +70,53 @@ export function favCard({ mode = 'live', variant: initialVariant = 'default' } =
     syncBadge();
   }
 
+  // v2: ряд логотипов. Над каждым — плашка с самым большим кэшбэком бренда; выбранный логотип
+  // с небольшим скруглением, остальные круглые и чуть прозрачные. «+» — добавить бренды.
+  function logosRow(list) {
+    const items = list.map((b) => {
+      const top = app.catalog.topOffer(b.id);
+      const el = button({
+        class: `fav-logo ${b.id === selected ? 'is-active' : ''}`,
+        role: 'tab',
+        'aria-selected': String(b.id === selected),
+        'aria-label': `${b.name}${top ? `, кэшбэк ${top.short}` : ''}`,
+        dataset: { brand: b.id },
+      },
+      h('span', { class: 'fav-logo-pic' }, img(b.logo, { alt: '', width: 56, height: 56, fallback: b.name })),
+      top ? h('span', { class: 'fav-logo-badge' }, top.short) : null);
+      if (live) el.addEventListener('click', () => select(b.id));
+      else { el.tabIndex = -1; el.disabled = true; }
+      return el;
+    });
+    const add = button({ class: 'fav-logo fav-logo-add', 'aria-label': 'Добавить бренды' }, h('span', { class: 'fav-logo-pic' }, icon('add', { size: 28 })));
+    if (live) add.addEventListener('click', () => app.nav.push('/brands'));
+    else { add.tabIndex = -1; add.disabled = true; }
+    return h('div', { class: 'fav-logos-scroll' }, h('div', { class: 'fav-logos', role: 'tablist', 'aria-label': 'Любимые бренды' }, items, add));
+  }
+
   // На шаге «замена акции» у выбранного бренда появляется бейдж — там изменения.
   function syncBadge() {
+    if (v2) {
+      // v2: в «росте» плашка выбранного бренда краснеет со стрелкой, в «замене» — красный счётчик
+      for (const el of root.querySelectorAll('.fav-logo[data-brand]')) {
+        const on = el.dataset.brand === selected;
+        const pill = el.querySelector('.fav-logo-badge');
+        el.classList.toggle('is-active', on);
+        el.setAttribute('aria-selected', String(on));
+        if (!pill) continue;
+        const top = app.catalog.topOffer(el.dataset.brand);
+        pill.className = 'fav-logo-badge';
+        pill.textContent = top?.short || '';
+        if (on && variant === 'boost' && top && top.type !== 'points') {
+          pill.classList.add('is-up');
+          pill.textContent = `${top.short.replace(/\d+/, (n) => String(Number(n) + 15))}↗`;
+        } else if (on && variant === 'replace') {
+          pill.classList.add('is-count');
+          pill.textContent = '1';
+        }
+      }
+      return root.querySelector('.fav-logo.is-active .fav-logo-badge.is-up, .fav-logo.is-active .fav-logo-badge.is-count');
+    }
     root.querySelectorAll('.chip-badge').forEach((b) => b.remove());
     if (variant !== 'replace') return;
     const active = root.querySelector('.chip.is-active');
@@ -73,6 +132,18 @@ export function favCard({ mode = 'live', variant: initialVariant = 'default' } =
     if (variant === 'replace') {
       const brand = app.catalog.getBrand(selected);
       const similar = app.catalog.similarOffers(selected, 2);
+      if (v2) {
+        // замена: офферы других брендов — с маленьким логотипом и полным названием
+        return [
+          h('div', { class: 'favcard-info favcard-info-v2' }, `${fmt.brandPrep(brand)} акции закончились. Подобрали похожие предложения`),
+          ...similar.map((o) => {
+            const c = cell(o, { interactive: false });
+            c.querySelector('.cell-title').prepend(h('span', { class: 'cell-logo' }, img(o.logo, { alt: '', width: 20, height: 20, fallback: o.name })));
+            c.querySelector('.row-dot').textContent = ' ';
+            return c;
+          }),
+        ];
+      }
       return [
         h('div', { class: 'favcard-info' }, iconImg('info-circle', { size: 24 }), h('span', null, `${fmt.brandPrep(brand)} акции закончились. Подобрали похожие предложения`)),
         ...similar.map((o) => h('div', { class: 'mini-row' },
@@ -91,12 +162,19 @@ export function favCard({ mode = 'live', variant: initialVariant = 'default' } =
         c.querySelector('.cell-value').replaceWith(h('span', { class: 'cell-value boost' },
           h('span', { class: 'boost-old' }, o.cashback), h('span', { class: 'boost-arrow' }, ' → '),
           h('span', { class: 'boost-new', dataset: { from: String(o.value), to: String(o.value + 15) } }, boosted)));
+        if (v2) toSource(c);
         return c;
       }
       const c = cell(o, { interactive: live });
       if (variant === 'boost') c.classList.add('is-dim');
+      if (v2) toSource(c);
       return c;
     });
+  }
+
+  // v2: в строке процент и полное название оффера через пробел, без точки
+  function toSource(c) {
+    c.querySelector('.row-dot').textContent = ' ';
   }
 
   function select(id) {
@@ -104,6 +182,7 @@ export function favCard({ mode = 'live', variant: initialVariant = 'default' } =
     selected = id;
     haptics.selection();
     for (const c of root.querySelectorAll('.chip')) setChipActive(c, c.dataset.brand === id);
+    if (v2) syncBadge();
     const listEl = root.querySelector('.favcard-list');
     listEl.replaceChildren(...renderList());
     animate(listEl, [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 240, easing: EASE.out });
@@ -132,7 +211,13 @@ export function favCard({ mode = 'live', variant: initialVariant = 'default' } =
     } else {
       await animate(listEl, [{ opacity: 0 }, { opacity: 1 }], { duration: 260, delay: 80, easing: EASE.out });
     }
-    if (newBadge) animate(newBadge, [{ transform: 'scale(0)' }, { transform: 'scale(1.3)' }, { transform: 'scale(1)' }], { duration: 420, easing: EASE.spring, fill: 'none' });
+    // v2: плашка уже на месте — только мягко «вздыхает», без исчезновения (иначе казалось, что она моргает)
+    if (newBadge) {
+      const frames = v2
+        ? [{ transform: 'scale(1)' }, { transform: 'scale(1.12)' }, { transform: 'scale(1)' }]
+        : [{ transform: 'scale(0)' }, { transform: 'scale(1.3)' }, { transform: 'scale(1)' }];
+      animate(newBadge, frames, { duration: 420, easing: EASE.spring, fill: 'none' });
+    }
     if (next === 'boost') playBoost();
   }
 
@@ -146,7 +231,8 @@ export function favCard({ mode = 'live', variant: initialVariant = 'default' } =
     const tpl = num.textContent;
     row.classList.add('is-glow');
     animate(row.querySelector('.boost-old'), [{ opacity: 1 }, { opacity: 0.45 }], { duration: 300, delay: 150 });
-    animate(row.querySelector('.boost-arrow'), [{ opacity: 0, transform: 'translateX(-6px)' }, { opacity: 1, transform: 'none' }], { duration: 300, delay: 200 });
+    // стрелка серая, как старый процент слева
+    animate(row.querySelector('.boost-arrow'), [{ opacity: 0, transform: 'translateX(-6px)' }, { opacity: 0.45, transform: 'none' }], { duration: 300, delay: 200 });
     const t0 = performance.now() + 250;
     const dur = 800;
     const tick = (t) => {

@@ -159,6 +159,20 @@ function createCatalogApi({ categories, offers, brands, cfg, products = [], prom
       }
       return result;
     },
+    // Выгода бренда одной строкой, без счёта предложений (сценарий 02):
+    // одно — «12% на доставку», несколько — «до 53% · доставка и магазины».
+    brandPitch(brandId) {
+      const list = api.offersOfBrand(brandId);
+      if (!list.length) return 'Пока нет. Но часто бывают';
+      if (list.length === 1) return `${list[0].cashback} ${CHANNEL_PHRASE[channelOf(list[0])]}`;
+      const channels = [...new Set(list.map(channelOf))];
+      const top = list[0];
+      const value = top.type === 'cashback' ? `до ${top.short}` : top.cashback;
+      // все предложения в одном канале — «до 47% на доставку»
+      if (channels.length === 1) return `${value} ${CHANNEL_PHRASE[channels[0]]}`;
+      const where = channels.length === 2 ? `${channels[0]} и ${channels[1]}` : `${channels[0]}, ${channels[1]} и ещё ${channels.length - 2}`;
+      return `${value} · ${where}`;
+    },
     brandSummary(brandId) {
       const list = api.offersOfBrand(brandId);
       if (!list.length) return 'Пока нет. Но часто бывают';
@@ -170,6 +184,28 @@ function createCatalogApi({ categories, offers, brands, cfg, products = [], prom
   };
   return api;
 }
+
+// Канал оффера — где действует кэшбэк. Угадываем по названию и условию; для прототипа хватает.
+// Сначала смотрим на название: «Самокат в Городе» — это Город, хоть в описании и «доставка».
+function channelOf(o) {
+  if (/аптек/i.test(o.name)) return 'аптека';
+  if (/в т-банке/i.test(o.name)) return 'Т-Банк';
+  if (/в городе/i.test(o.name)) return 'Город';
+  if (/шопинг/i.test(o.name)) return 'Шопинг';
+  if (/доставк/i.test(`${o.name} ${o.description || ''}`)) return 'доставка';
+  if (/онлайн/i.test(o.condition)) return 'онлайн';
+  return 'магазины';
+}
+
+const CHANNEL_PHRASE = {
+  аптека: 'в аптеке',
+  доставка: 'на доставку',
+  'Т-Банк': 'в Т-Банке',
+  Город: 'в Городе',
+  Шопинг: 'в Шопинге',
+  онлайн: 'на покупки онлайн',
+  магазины: 'в магазинах',
+};
 
 function normalizeOffer(o, categoryId, brandId, today) {
   const cashback = (o.cashback || '').trim();

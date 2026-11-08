@@ -1,5 +1,7 @@
 // Онбординг сценариев 01 (лайк оффера) и 02 (лайк бренда).
 // Шаги 1–2 — одна страница с разными состояниями (фреймы 635:122720, 122749, 637:140273, 635:126132, 126159).
+// В 02 выбор — один шаг: без чипсов, сначала бренды еды, следом любимые бренды; заголовок из второй
+// табы, подзаголовок из первой. Итог тогда идёт шагами 2–4 из 4 (в адресе остаются /3–/5).
 // Шаги 3–5 — итог: успех, уведомления, замена акции (фреймы 635:123799, 124374, 124960, 125539).
 
 import { h, iconImg, icon, img, plural, wait } from '../core/dom.js';
@@ -7,7 +9,7 @@ import { animate, EASE, stagger, fadeUpIn, fadeUpOut, fadeDownIn, fadeDownOut, r
 import { haptics } from '../core/haptics.js';
 import { store } from '../core/store.js';
 import { chip, offerRow, brandRow, primaryButton, linkButton, cardMini, setChipActive } from '../ui/components.js';
-import { favCard } from '../ui/favcard.js';
+import { favCard, favLook } from '../ui/favcard.js';
 import { app } from '../app.js';
 
 const RESULT = {
@@ -19,8 +21,12 @@ const RESULT = {
 export function onboardingScreen({ el, params, nav, entry }) {
   const scenario = params.s;
   const byBrand = scenario === 's2';
+  const merged = scenario === 's2';
   const cfg = app.catalog.config.onboarding;
   let step = Math.min(5, Math.max(1, Number(params.step) || 1));
+  if (merged && step === 2) step = 1;
+  // прогресс в апп-баре: в 02 шагов на один меньше
+  const progressOf = (n) => (merged ? Math.max(1, n - 1) / 4 : n / 5);
   if (step > 2 && !store.hasAnyFav()) step = 1;
   let busy = false;
   let hintTimer = 0;
@@ -48,7 +54,7 @@ export function onboardingScreen({ el, params, nav, entry }) {
   const pick = h('div', { class: 'onb-pick screen-flex' },
     h('div', { class: 'onb-pk' }, pkTile),
     header,
-    h('div', { class: 'chips-line onb-chips', role: 'tablist', 'aria-label': 'Шаги подборки' }, chips),
+    merged ? null : h('div', { class: 'chips-line onb-chips', role: 'tablist', 'aria-label': 'Шаги подборки' }, chips),
     listEl,
     moreEl,
     pickBar);
@@ -88,12 +94,17 @@ export function onboardingScreen({ el, params, nav, entry }) {
   }
 
   function rowsFor(n) {
-    return stepCfg(n).brands
+    if (merged) return [...rowsOf(cfg.step1.brands), ...rowsOf(cfg.step2.brands)];
+    return rowsOf(stepCfg(n).brands);
+  }
+
+  function rowsOf(ids) {
+    return ids
       .map((id) => app.catalog.getBrand(id))
       .filter(Boolean)
       .slice(0, 6)
       .map((brand) => {
-        if (byBrand) return brandRow(brand);
+        if (byBrand) return brandRow(brand, { pitch: true });
         const offer = app.catalog.topOffer(brand.id);
         return offer ? offerRow(offer) : null;
       })
@@ -102,15 +113,17 @@ export function onboardingScreen({ el, params, nav, entry }) {
 
   function setTexts(n) {
     const s = stepCfg(n);
-    titleEl.replaceChildren(...s.title.flatMap((line, i) => (i ? [h('br'), line] : [line])));
-    subEl.textContent = s.subtitle;
-    ctaBtn.querySelector('.btn-label').textContent = s.cta;
+    // 02: один шаг — заголовок и кнопка из второй табы, подзаголовок из первой
+    const title = merged ? cfg.step2.title : s.title;
+    titleEl.replaceChildren(...title.flatMap((line, i) => (i ? [h('br'), line] : [line])));
+    subEl.textContent = merged ? cfg.step1.subtitle : s.subtitle;
+    ctaBtn.querySelector('.btn-label').textContent = merged ? cfg.step2.cta : s.cta;
     updateFootnote();
   }
 
   function updateFootnote() {
     const text = footnote.querySelector('.onb-footnote-text');
-    if (step === 1 || !store.hasAnyFav()) {
+    if ((step === 1 && !merged) || !store.hasAnyFav()) {
       text.textContent = 'Можно выбрать без ограничений';
       return;
     }
@@ -122,7 +135,7 @@ export function onboardingScreen({ el, params, nav, entry }) {
     setTexts(step);
     listEl.replaceChildren(...rowsFor(step));
     chips.forEach((c) => setChipActive(c, c.dataset.step === String(step)));
-    app.appbar.patch(entry, { progress: step / 5 });
+    app.appbar.patch(entry, { progress: progressOf(step) });
     if (animateIn) {
       // при открытии список появляется сверху вниз
       stagger(listEl.children, [{ opacity: 0, transform: 'translateY(-14px)' }, { opacity: 1, transform: 'none' }], { duration: 380, step: 60, delay: 120, easing: EASE.out });
@@ -140,7 +153,7 @@ export function onboardingScreen({ el, params, nav, entry }) {
     step = n;
     nav.setPath(`/onb/${scenario}/${n}`, entry);
     chips.forEach((c) => setChipActive(c, c.dataset.step === String(n)));
-    app.appbar.patch(entry, { progress: n / 5 });
+    app.appbar.patch(entry, { progress: progressOf(n) });
     await Promise.all([
       stagger(listEl.children, fadeUpOut, { duration: 200, step: 30, easing: EASE.in }),
       animate(header, fadeDownOut, { duration: 180, easing: EASE.in }),
@@ -153,7 +166,7 @@ export function onboardingScreen({ el, params, nav, entry }) {
   }
 
   function onPickCta() {
-    if (step === 1) return goPick(2);
+    if (step === 1 && !merged) return goPick(2);
     if (!store.hasAnyFav()) {
       // ничего не лайкнули — сразу на главную в сценарий «упущенная выгода»
       haptics.light();
@@ -209,16 +222,16 @@ export function onboardingScreen({ el, params, nav, entry }) {
 
   function setResultContent(n) {
     setHeading(n);
-    phoneSlot.replaceChildren(favCard({ mode: 'preview', variant: RESULT[n].variant }));
+    phoneSlot.replaceChildren(favCard({ mode: 'preview', variant: RESULT[n].variant, look: favLook(scenario) }));
     setBar(n);
-    app.appbar.patch(entry, { progress: n / 5, heart: false });
+    app.appbar.patch(entry, { progress: progressOf(n), heart: false });
   }
 
   // Шаг 3 → 4 → 5: телефон и кнопка остаются на месте, меняются иконка, заголовок,
   // содержимое карточки и подпись кнопки — состояние перетекает, а не перерисовывается.
   async function morphResult(n) {
     const r = RESULT[n];
-    app.appbar.patch(entry, { progress: n / 5 });
+    app.appbar.patch(entry, { progress: progressOf(n) });
 
     const card = phoneSlot.firstElementChild;
     const label = resPrimary.querySelector('.btn-label');
@@ -330,7 +343,7 @@ export function onboardingScreen({ el, params, nav, entry }) {
   }
 
   return {
-    appbar: { left: 'back', progress: step / 5, heart: step <= 2, onLeft: () => nav.popTo('/') },
+    appbar: { left: 'back', progress: progressOf(step), steps: merged ? 4 : 5, heart: step <= 2, onLeft: () => nav.popTo('/') },
     onActive() {
       if (step <= 2) updateFootnote();
     },

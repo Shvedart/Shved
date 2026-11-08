@@ -84,15 +84,17 @@ export function offerRow(offer, { onOpen } = {}) {
   return h('div', { class: 'row', dataset: { offer: offer.id } }, main, heartButton(offer.brandId, { cls: 'row-heart', label: `${offer.name}: в избранное` }));
 }
 
-// Строка бренда (сценарий 02): лайк бренда целиком.
-export function brandRow(brand, { onOpen } = {}) {
+// Строка бренда (сценарий 02): лайк бренда целиком. pitch — подзаголовок «до 53% · доставка и магазины»
+// вместо «Два предложения на…» (плашку с процентом у логотипа убрали — она повторяла подзаголовок).
+export function brandRow(brand, { onOpen, pitch = false } = {}) {
   const top = app.catalog.topOffer(brand.id);
   const open = onOpen || (() => top && app.nav.push(`/offer/${top.id}`));
-  const main = button({ class: 'row-main', 'aria-label': `${brand.name}. ${app.catalog.brandSummary(brand.id)}`, disabled: top ? null : true },
+  const sub = pitch ? app.catalog.brandPitch(brand.id) : app.catalog.brandSummary(brand.id);
+  const main = button({ class: 'row-main', 'aria-label': `${brand.name}. ${sub}`, disabled: top ? null : true },
     brandAvatar(brand.logo, brand.name),
     h('span', { class: 'row-text' },
       h('span', { class: 'row-title' }, h('span', { class: 'row-name' }, brand.name)),
-      h('span', { class: 'row-sub' }, h('span', { class: 'row-sub-text' }, app.catalog.brandSummary(brand.id)))));
+      h('span', { class: 'row-sub' }, h('span', { class: 'row-sub-text' }, sub))));
   main.addEventListener('click', open);
   return h('div', { class: 'row', dataset: { brand: brand.id } }, main, heartButton(brand.id, { cls: 'row-heart' }));
 }
