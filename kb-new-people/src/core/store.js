@@ -9,6 +9,7 @@ const initial = () => ({
   onboarding: {},         // { s1: { done: true }, s2: {...} }
   streak: { day1: false },
   tour: { s3: false, s4: false, s5: false },
+  boost: null,            // { brandId, offerId } — повышенный кэшбэк, засчитан после «Включить уведомления»
 });
 
 function read() {
@@ -70,6 +71,12 @@ export const store = {
     state = { ...state, pk };
     write();
     emit({ type: 'pk' });
+  },
+
+  setBoost(boost) {
+    state = { ...state, boost };
+    write();
+    emit({ type: 'boost' });
   },
 
   completeOnboarding(scenario) {

@@ -1655,6 +1655,16 @@
   animation: boost-glow 1.4s ease-out 1;
 }
 
+/* на главной рост засчитан — строка как обычная, без зелёной подложки и вспышки */
+.favcard-live .cell.is-boosted {
+  margin: 0;
+  width: 100%;
+  padding: 0 var(--sp-4) 0 var(--sp-5);
+  border-radius: 0;
+  background-color: transparent;
+  animation: none;
+}
+
 @keyframes boost-glow {
   0% { box-shadow: 0 0 0 0 rgba(47, 179, 107, 0.35); }
   60% { box-shadow: 0 0 0 8px rgba(47, 179, 107, 0); }
@@ -1935,6 +1945,11 @@
 .favcard-boost.favcard-v2 .fav-logo:not(.is-active),
 .favcard-replace.favcard-v2 .fav-logo:not(.is-active) {
   opacity: 0.35;
+}
+
+/* бренд, у которого вырос кэшбэк, не гаснет — его зелёную плашку видно ещё до выбора */
+.favcard-boost.favcard-v2 .fav-logo.is-up-host {
+  opacity: 1;
 }
 
 /* ---------- Бренды (сценарий 04, «+» в «Мое любимое») ---------- */

@@ -1,10 +1,10 @@
 // Блок «Мое любимое». Один компонент для главной (live) и для макета в шагах 3–5 онбординга (preview).
-// variant: 'default' | 'boost' (+15% к первому офферу) | 'replace' (акция закончилась, показываем замену)
+// variant: 'default' | 'boost' (+15%: v1 — к первому офферу, v2 — см. boostTarget) | 'replace' (акция закончилась, показываем замену)
 // look: 'v1' — чипсы брендов; 'v2' — сценарий 04 (макет 668:149352): логотипы с плашкой процента,
 // кнопка «+»; в строках процент и полное название оффера.
 
-import { h, img, iconImg, icon, button } from '../core/dom.js';
-import { animate, EASE, settle } from '../core/motion.js';
+import { h, img, iconImg, icon, button, wait } from '../core/dom.js';
+import { animate, EASE, settle, reducedMotion } from '../core/motion.js';
 import { haptics } from '../core/haptics.js';
 import { store } from '../core/store.js';
 import { fmt } from '../domain/catalog.js';
@@ -16,6 +16,17 @@ import { chip, cell, cardHeader, setChipActive, badge } from './components.js';
 const LOOK_BY_SCENARIO = { s1: 'v2', s2: 'v2', s3: 'v1', s4: 'v1', s5: 'v1' };
 export const favLook = (scenario) => LOOK_BY_SCENARIO[scenario] || 'v1';
 
+// Повышенный кэшбэк (v2): на шаге «Сообщим, когда кэшбэк вырастет» он растёт у второго выбранного
+// бренда (если выбран один — у него), у самого жирного предложения. Включили уведомления —
+// рост засчитывается и переезжает на главную (store.state.boost), «Не сейчас» — нет.
+export const BOOST = 15;
+export function boostTarget() {
+  const ids = store.state.favBrands.filter((id) => app.catalog.getBrand(id));
+  const brandId = ids.length >= 2 ? ids[1] : ids[0];
+  const top = brandId ? app.catalog.topOffer(brandId) : null;
+  return top && top.type !== 'points' ? { brandId, offerId: top.id } : null;
+}
+
 export function favCard({ mode = 'live', variant: initialVariant = 'default', look = 'v1' } = {}) {
   let variant = initialVariant;
   const live = mode === 'live';
@@ -26,9 +37,20 @@ export function favCard({ mode = 'live', variant: initialVariant = 'default', lo
 
   const brands = () => store.state.favBrands.map((id) => app.catalog.getBrand(id)).filter(Boolean);
 
+  // у кого вырос кэшбэк: в макете онбординга — на шаге «рост», на главной — если его засчитали
+  function boosted() {
+    if (!v2) return null;
+    if (live) {
+      const b = store.state.boost;
+      return b && store.isFav(b.brandId) ? b : null;
+    }
+    return variant === 'boost' ? boostTarget() : null;
+  }
+
   function render() {
     const list = brands();
-    if (!list.some((b) => b.id === selected)) selected = list[0]?.id || null;
+    // на главной сразу открыт бренд с повышенным кэшбэком — видно, что рост засчитан
+    if (!list.some((b) => b.id === selected)) selected = (live && boosted()?.brandId) || list[0]?.id || null;
 
     // подзаголовка нет; пока ничего не лайкнули (сценарий 03), на его месте подсказка
     root.replaceChildren(cardHeader({
@@ -97,25 +119,28 @@ export function favCard({ mode = 'live', variant: initialVariant = 'default', lo
   // На шаге «замена акции» у выбранного бренда появляется бейдж — там изменения.
   function syncBadge() {
     if (v2) {
-      // v2: в «росте» плашка выбранного бренда краснеет со стрелкой, в «замене» — красный счётчик
+      // v2: у бренда с ростом плашка зеленеет со стрелкой, в «замене» у выбранного — красный счётчик
+      const up = boosted();
       for (const el of root.querySelectorAll('.fav-logo[data-brand]')) {
         const on = el.dataset.brand === selected;
+        const isUp = up?.brandId === el.dataset.brand;
         const pill = el.querySelector('.fav-logo-badge');
         el.classList.toggle('is-active', on);
+        el.classList.toggle('is-up-host', isUp);
         el.setAttribute('aria-selected', String(on));
         if (!pill) continue;
         const top = app.catalog.topOffer(el.dataset.brand);
         pill.className = 'fav-logo-badge';
         pill.textContent = top?.short || '';
-        if (on && variant === 'boost' && top && top.type !== 'points') {
+        if (isUp && top) {
           pill.classList.add('is-up');
-          pill.textContent = `${top.short.replace(/\d+/, (n) => String(Number(n) + 15))}↗`;
+          pill.textContent = `${top.short.replace(/\d+/, (n) => String(Number(n) + BOOST))}↗`;
         } else if (on && variant === 'replace') {
           pill.classList.add('is-count');
           pill.textContent = '1';
         }
       }
-      return root.querySelector('.fav-logo.is-active .fav-logo-badge.is-up, .fav-logo.is-active .fav-logo-badge.is-count');
+      return root.querySelector('.fav-logo-badge.is-up, .fav-logo.is-active .fav-logo-badge.is-count');
     }
     root.querySelectorAll('.chip-badge').forEach((b) => b.remove());
     if (variant !== 'replace') return;
@@ -154,19 +179,22 @@ export function favCard({ mode = 'live', variant: initialVariant = 'default', lo
       ];
     }
     const shown = live ? offers : offers.slice(0, 2);
-    return shown.map((o, i) => {
-      if (variant === 'boost' && i === 0 && o.type !== 'points') {
-        const boosted = `${o.cashback.replace(/\d+/, (n) => String(Number(n) + 15))}`;
-        const c = cell(o, { interactive: false });
+    // v1 — рост у первого предложения выбранного бренда; v2 — у бренда из boosted()
+    const up = v2 ? boosted() : (variant === 'boost' ? { brandId: selected, offerId: offers[0]?.id } : null);
+    const here = up && up.brandId === selected;
+    return shown.map((o) => {
+      if (here && o.id === up.offerId && o.type !== 'points') {
+        const value = `${o.cashback.replace(/\d+/, (n) => String(Number(n) + BOOST))}`;
+        const c = cell(o, { interactive: live });
         c.classList.add('is-boosted');
         c.querySelector('.cell-value').replaceWith(h('span', { class: 'cell-value boost' },
           h('span', { class: 'boost-old' }, o.cashback), h('span', { class: 'boost-arrow' }, ' → '),
-          h('span', { class: 'boost-new', dataset: { from: String(o.value), to: String(o.value + 15) } }, boosted)));
+          h('span', { class: 'boost-new', dataset: { from: String(o.value), to: String(o.value + BOOST) } }, value)));
         if (v2) toSource(c);
         return c;
       }
       const c = cell(o, { interactive: live });
-      if (variant === 'boost') c.classList.add('is-dim');
+      if (here && !live) c.classList.add('is-dim');
       if (v2) toSource(c);
       return c;
     });
@@ -184,8 +212,22 @@ export function favCard({ mode = 'live', variant: initialVariant = 'default', lo
     for (const c of root.querySelectorAll('.chip')) setChipActive(c, c.dataset.brand === id);
     if (v2) syncBadge();
     const listEl = root.querySelector('.favcard-list');
+    const h0 = listEl.offsetHeight;
     listEl.replaceChildren(...renderList());
-    animate(listEl, [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 240, easing: EASE.out });
+    const h1 = listEl.offsetHeight;
+    if (h0 !== h1) animate(listEl, [{ height: `${h0}px` }, { height: `${h1}px` }], { duration: 300, easing: EASE.ios, fill: 'none' });
+    return animate(listEl, [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 240, easing: EASE.out });
+  }
+
+  // v2, шаг «рост»: сначала зеленеет плашка у бренда с ростом, потом он сам выбирается
+  // (логотип становится квадратным) и в его строке проигрывается рост кэшбэка
+  async function runBoost() {
+    const up = boosted();
+    if (!v2 || !up || up.brandId === selected) return playBoost();
+    await wait(reducedMotion() ? 0 : 700);
+    if (variant !== 'boost' || !root.isConnected) return;
+    await select(up.brandId);
+    playBoost();
   }
 
   // Смена состояния без пересоздания карточки: чипсы и логотипы остаются, меняется только список.
@@ -196,6 +238,8 @@ export function favCard({ mode = 'live', variant: initialVariant = 'default', lo
     await animate(listEl, [{ opacity: 1 }, { opacity: 0 }], { duration: 140, easing: EASE.in });
     root.classList.replace(`favcard-${variant}`, `favcard-${next}`);
     variant = next;
+    // акция закончилась у первого бренда — после роста на втором выбор возвращается к первому
+    if (v2 && next === 'replace') selected = brands()[0]?.id || selected;
     listEl.replaceChildren(...renderList());
     const newBadge = syncBadge();
     const h1 = listEl.offsetHeight;
@@ -218,7 +262,8 @@ export function favCard({ mode = 'live', variant: initialVariant = 'default', lo
         : [{ transform: 'scale(0)' }, { transform: 'scale(1.3)' }, { transform: 'scale(1)' }];
       animate(newBadge, frames, { duration: 420, easing: EASE.spring, fill: 'none' });
     }
-    if (next === 'boost') playBoost();
+    // не ждём: кнопка шага доступна, пока плашка и выбор бренда доигрывают
+    if (next === 'boost') runBoost();
   }
 
   // Рост кэшбэка: подсветка строки, старое значение зачёркивается, новое «досчитывает» на +15%.
@@ -248,13 +293,13 @@ export function favCard({ mode = 'live', variant: initialVariant = 'default', lo
   render();
   if (live) {
     unsub = store.subscribe((_, change) => {
-      if (change.type === 'fav' || change.type === 'reset') render();
+      if (change.type === 'fav' || change.type === 'reset' || change.type === 'boost') render();
     });
   }
 
   root.destroy = () => unsub?.();
   root.rerender = render;
   root.setVariant = setVariant;
-  root.playBoost = playBoost;
+  root.playBoost = runBoost;
   return root;
 }

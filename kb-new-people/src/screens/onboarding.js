@@ -9,7 +9,7 @@ import { animate, EASE, stagger, fadeUpIn, fadeUpOut, fadeDownIn, fadeDownOut, r
 import { haptics } from '../core/haptics.js';
 import { store } from '../core/store.js';
 import { chip, offerRow, brandRow, primaryButton, linkButton, cardMini, setChipActive } from '../ui/components.js';
-import { favCard, favLook } from '../ui/favcard.js';
+import { favCard, favLook, boostTarget } from '../ui/favcard.js';
 import { app } from '../app.js';
 
 const RESULT = {
@@ -114,9 +114,11 @@ export function onboardingScreen({ el, params, nav, entry }) {
   function setTexts(n) {
     const s = stepCfg(n);
     // 02: один шаг — заголовок и кнопка из второй табы, подзаголовок из первой
-    const title = merged ? cfg.step2.title : s.title;
+    // 02 — один экран без прошлого шага: свои заголовок и подзаголовок (`onboarding.merged`)
+    const title = merged ? cfg.merged.title : s.title;
     titleEl.replaceChildren(...title.flatMap((line, i) => (i ? [h('br'), line] : [line])));
-    subEl.textContent = merged ? cfg.step1.subtitle : s.subtitle;
+    // \n в подзаголовке — перенос строки
+    subEl.replaceChildren(...(merged ? cfg.merged.subtitle : s.subtitle).split('\n').flatMap((line, i) => (i ? [h('br'), line] : [line])));
     ctaBtn.querySelector('.btn-label').textContent = merged ? cfg.step2.cta : s.cta;
     updateFootnote();
   }
@@ -322,8 +324,9 @@ export function onboardingScreen({ el, params, nav, entry }) {
     if (busy) return;
     if (step === 3) { haptics.light(); return goResult(4, { swap: true }); }
     if (step === 4) {
-      if (e?.currentTarget === resPrimary) haptics.success();
-      else haptics.selection();
+      // включили уведомления — рост кэшбэка засчитан и будет на главной; «Не сейчас» — без него
+      if (e?.currentTarget === resPrimary) { haptics.success(); store.setBoost(boostTarget()); }
+      else { haptics.selection(); store.setBoost(null); }
       return goResult(5, { swap: true });
     }
     if (step === 5) {

@@ -285,6 +285,8 @@ export function mainScreen({ el, params, nav, entry }) {
       rest.forEach((b) => { b.style.opacity = ''; });
       stagger(rest, fadeUpIn, { duration: 460, step: 70, easing: EASE.out });
     });
+    // включили уведомления в онбординге — рост кэшбэка засчитан: проигрываем его ещё раз уже здесь
+    if (store.state.boost) wait(900).then(() => fav.playBoost());
   }
 
   return {
