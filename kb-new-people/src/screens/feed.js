@@ -4,7 +4,7 @@
 import { h, button, img, icon, iconImg } from '../core/dom.js';
 import { animate, EASE, stagger, fadeUpIn } from '../core/motion.js';
 import { haptics } from '../core/haptics.js';
-import { cardHeader, productCard } from '../ui/components.js';
+import { cardHeader, linkButton, productCard } from '../ui/components.js';
 import { travelShelf, afishaShelf } from '../ui/shelves.js';
 import { app } from '../app.js';
 
@@ -40,25 +40,24 @@ const LAYOUT = [
   { title: 'Шопинг', sub: 'Маркетплейсы и сервисы покупок', cat: 'shopping' },
 ];
 
-// навигация ленты: порядок, подписи и иллюстрации из макета 654:145600;
-// crop — высота и сдвиг картинки в процентах, как в макете (часть иллюстраций выходит за плитку)
+// навигация ленты: порядок, подписи и иллюстрации из макета 654:145600.
 const NAV = [
-  { id: 'food', label: 'Еда', img: 'assets/img/cats/food.png' },
-  { id: 'travel', label: 'Путешествия', img: 'assets/img/cats/travel.png' },
-  { id: 'health', label: 'Здоровье', img: 'assets/img/cats/health.png' },
-  { id: 'beauty', label: 'Красота', img: 'assets/img/cats/beauty.png' },
-  { id: 'electronics', label: 'Электроника и техника', img: 'assets/img/cats/electronics.png' },
-  { id: 'kids', label: 'Дети', img: 'assets/img/cats/kids.png', crop: [103.83, -3.83] },
-  { id: 'clothes', label: 'Одежда', img: 'assets/img/cats/clothes.png', crop: [104.11, -4.11] },
-  { id: 'fun', label: 'Развлечения', img: 'assets/img/cats/fun.png', crop: [110.14, -4.35] },
-  { id: 'auto', label: 'Авто', img: 'assets/img/cats/auto.png', crop: [114.46, -6.33] },
-  { id: 'pets', label: 'Животные', img: 'assets/img/cats/pets.png', crop: [114.46, -6.93] },
-  { id: 'home', label: 'Дом', img: 'assets/img/cats/home.png' },
-  { id: 'education', label: 'Образование', img: 'assets/img/cats/education.png', crop: [113.1, -6.55] },
-  { id: 'shopping', label: 'Шопинг', img: 'assets/img/cats/shopping.png', crop: [105.56, -2.75] },
-  { id: 'telecom', label: 'Связь', img: 'assets/img/cats/telecom.png', crop: [106.15, -4.22] },
-  { id: 'sport', label: 'Спорт', img: 'assets/img/cats/sport.png', crop: [102.7, -2.7] },
-  { id: 'flowers', label: 'Цветы', img: 'assets/img/cats/flowers.png', crop: [104.4, -4.4] },
+  { id: 'food', label: 'Еда', img: 'assets/img/cats/food.webp' },
+  { id: 'travel', label: 'Путешествия', img: 'assets/img/cats/travel.webp' },
+  { id: 'health', label: 'Здоровье', img: 'assets/img/cats/health.webp' },
+  { id: 'beauty', label: 'Красота', img: 'assets/img/cats/beauty.webp' },
+  { id: 'electronics', label: 'Электроника и техника', img: 'assets/img/cats/electronics.webp' },
+  { id: 'kids', label: 'Дети', img: 'assets/img/cats/kids.webp' },
+  { id: 'clothes', label: 'Одежда', img: 'assets/img/cats/clothes.webp' },
+  { id: 'fun', label: 'Развлечения', img: 'assets/img/cats/fun.webp' },
+  { id: 'auto', label: 'Авто', img: 'assets/img/cats/auto.webp' },
+  { id: 'pets', label: 'Животные', img: 'assets/img/cats/pets.webp' },
+  { id: 'home', label: 'Дом', img: 'assets/img/cats/home.webp' },
+  { id: 'education', label: 'Образование', img: 'assets/img/cats/education.webp' },
+  { id: 'shopping', label: 'Шопинг', img: 'assets/img/cats/shopping.webp' },
+  { id: 'telecom', label: 'Связь', img: 'assets/img/cats/telecom.webp' },
+  { id: 'sport', label: 'Спорт', img: 'assets/img/cats/sport.webp' },
+  { id: 'flowers', label: 'Цветы', img: 'assets/img/cats/flowers.webp' },
 ];
 
 const TRAVEL = [
@@ -103,13 +102,10 @@ function gorodShelf({ catalog, onLink }) {
     tile.addEventListener('click', () => (offer ? app.nav.push(`/offer/${offer.id}`) : onLink?.()));
     return tile;
   });
-  const all = button({ class: 'gorod-all' }, 'Посмотреть все');
-  all.addEventListener('click', () => onLink?.());
   const title = GOROD.title.flatMap((line, i) => (i ? [h('br'), line] : [line]));
   return h('section', { class: 'shelf gorod', dataset: { cat: 'food' } },
     cardHeader({ title, subtitle: GOROD.sub }),
-    h('div', { class: 'gorod-grid' }, tiles),
-    all);
+    h('div', { class: 'gorod-grid' }, tiles));
 }
 
 // какие товары (data/products.json) — про еду: для полки «Товары с кэшбэком» в категории «Еда»
@@ -138,14 +134,13 @@ function groceryShelf({ catalog, onLink }) {
         h('p', { class: 'gcard-name' }, p.name)));
   });
   if (!items.length) return null;
-  const all = button({ class: 'gorod-all' }, 'Посмотреть все');
-  all.addEventListener('click', () => onLink?.());
+  // шапка как у других полок (заголовок, подзаголовок, «Все»), только слева — логотип магазина
   return h('section', { class: 'shelf grocery', dataset: { cat: 'food' } },
     h('div', { class: 'card-header grocery-head' },
-      h('div', { class: 'card-header-text' }, h('p', { class: 'grocery-shop' }, GROCERY.shop), h('h2', { class: 'card-title' }, GROCERY.title)),
-      img(GROCERY.avatar, { cls: 'grocery-avatar', alt: '', width: 44, height: 44 })),
-    h('div', { class: 'gorod-grid grocery-grid' }, items),
-    all);
+      img(GROCERY.avatar, { cls: 'grocery-avatar', alt: '', width: 44, height: 44 }),
+      h('div', { class: 'card-header-text' }, h('h2', { class: 'card-title' }, GROCERY.title), h('p', { class: 'card-subtitle' }, GROCERY.shop)),
+      linkButton('Все', { onClick: onLink, cls: 'card-link' })),
+    h('div', { class: 'gorod-grid grocery-grid' }, items));
 }
 
 const AFISHA = [
@@ -272,7 +267,6 @@ export function buildShelves({ catalog, cards, scratches, promos = [], onLink })
     const el = button({ class: 'feed-nav-item', role: 'tab', 'aria-selected': 'false', dataset: { cat: n.id } },
       h('span', { class: 'feed-nav-pic' }, img(n.img, { cls: 'feed-nav-img', alt: '', width: 105, height: 100, lazy: false })),
       h('span', { class: 'feed-nav-label' }, n.label));
-    if (n.crop) Object.assign(el.querySelector('.feed-nav-img').style, { height: `${n.crop[0]}%`, top: `${n.crop[1]}%`, objectFit: 'fill' });
     el.addEventListener('click', () => select(current === n.id ? 'all' : n.id));
     return el;
   });

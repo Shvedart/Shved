@@ -36,7 +36,7 @@ const TOUR_HABIT_V2 = [
   { target: 'selection', hearts: 'selection', keepScroll: true, nudgeRows: 2, text: 'Поставьте сердечко, чтобы отслеживать акции этого магазина или бренда' },
   { target: 'selection', scratch: true, text: 'А иногда в ленте прячется подарок — сотрите карточку' },
   { target: null, stay: true, navDemo: ['health', 'travel', 'food'], text: 'Уже знаете, что купить?\nВыберите категорию — покажем\nподходящие предложения' },
-  { target: null, stay: true, hero: 'assets/img/tour/final-70.webp', text: 'Заходите сюда перед\nпокупкой — каждый день\nновые предложения', cta: 'Лутать кэшбэк', last: true },
+  { target: null, stay: true, hero: 'assets/img/tour/final-coins.webp', text: 'Заходите сюда перед\nпокупкой — каждый день\nновые предложения', cta: 'Лутать кэшбэк', last: true },
 ];
 
 // 05: исходный тур — механики раздела по очереди
@@ -93,6 +93,28 @@ export function startTour({ el, entry, scenario }) {
   // карточку для шага с галочкой начинаем грузить сразу, пока идут первые шаги
   const spotStep = STEPS.find((s) => s.spotlight);
   if (spotStep) warmCard(spotStep.spotlight);
+  // Плавная прокрутка своими кадрами, а не scrollTo({ behavior: 'smooth' }): нативную iPhone ведёт
+  // отдельно от страницы, sticky-шторка отстаёт от ленты, и снизу проступал зазор шире «подола».
+  // По кадрам (как у счётчика) шторка стоит на месте. Палец на экране прокрутку останавливает.
+  let glideRaf = 0;
+  const stopGlide = () => cancelAnimationFrame(glideRaf);
+  el.addEventListener('touchstart', stopGlide, { passive: true });
+  function glide(top) {
+    stopGlide();
+    const to = Math.max(0, Math.min(top, el.scrollHeight - el.clientHeight));
+    const from = el.scrollTop;
+    if (reducedMotion() || Math.abs(to - from) < 2) { el.scrollTop = to; return; }
+    const dur = Math.min(900, 350 + Math.abs(to - from) * 0.35);
+    const t0 = performance.now();
+    const tick = (now) => {
+      const p = Math.min(1, (now - t0) / dur);
+      const e = p < 0.5 ? 4 * p ** 3 : 1 - (-2 * p + 2) ** 3 / 2;
+      el.scrollTop = from + (to - from) * e;
+      if (p < 1) glideRaf = requestAnimationFrame(tick);
+    };
+    glideRaf = requestAnimationFrame(tick);
+  }
+
   go(0);
 
   function focusBlock(name, { stay = false, scroll = true } = {}) {
@@ -101,7 +123,7 @@ export function startTour({ el, entry, scenario }) {
     el.classList.toggle('is-tour-clear', !name && stay);
     if (!name) {
       for (const b of el.querySelectorAll('.is-focus')) b.classList.remove('is-focus');
-      if (!stay) el.scrollTo({ top: 0, behavior: reducedMotion() ? 'auto' : 'smooth' });
+      if (!stay) glide(0);
       return;
     }
     for (const b of el.querySelectorAll('[data-tour]')) b.classList.toggle('is-focus', b.dataset.tour === name);
@@ -114,7 +136,7 @@ export function startTour({ el, entry, scenario }) {
     // блок уже виден над шторкой — страницу не двигаем
     if (r.top >= top + appbarH && r.bottom <= sheetTop) return;
     const y = r.top - top + el.scrollTop - appbarH - 12;
-    el.scrollTo({ top: Math.max(0, y), behavior: reducedMotion() ? 'auto' : 'smooth' });
+    glide(Math.max(0, y));
   }
 
   // Докручиваем ленту так, чтобы скретч-карточка встала посередине между апп-баром и шторкой.
@@ -125,7 +147,7 @@ export function startTour({ el, entry, scenario }) {
     const r = card.getBoundingClientRect();
     const free = sheetTop - top - appbarH;
     const y = r.top - top + el.scrollTop - appbarH - Math.max(12, (free - r.height) / 2);
-    el.scrollTo({ top: Math.max(0, y), behavior: reducedMotion() ? 'auto' : 'smooth' });
+    glide(Math.max(0, y));
   }
 
   // Шаг со скретч-карточкой: показываем, как стирать; стирать или нет — решает пользователь.
@@ -258,7 +280,7 @@ export function startTour({ el, entry, scenario }) {
     if (!head) return;
     const appbarBottom = el.getBoundingClientRect().top + parseFloat(getComputedStyle(el).paddingTop);
     const d = head.getBoundingClientRect().top - appbarBottom;
-    el.scrollTo({ top: Math.max(0, el.scrollTop + d - 4), behavior: reducedMotion() ? 'auto' : 'smooth' });
+    glide(Math.max(0, el.scrollTop + d - 4));
   }
 
   // Картинки карточки, которую поднимем, должны быть загружены и раскодированы заранее,
@@ -339,7 +361,7 @@ export function startTour({ el, entry, scenario }) {
       if (first) {
         const appbarH = parseFloat(getComputedStyle(el).paddingTop);
         const y = first.getBoundingClientRect().top - el.getBoundingClientRect().top + el.scrollTop - appbarH - 12;
-        el.scrollTo({ top: Math.max(0, y), behavior: reducedMotion() ? 'auto' : 'smooth' });
+        glide(Math.max(0, y));
       }
     } else focusBlock(step.target, { stay: step.stay, scroll: !step.keepScroll });
     // докручиваем ленту вниз к следующему ряду офферов и ставим его наверх экрана, под апп-бар:
@@ -351,7 +373,7 @@ export function startTour({ el, entry, scenario }) {
       const target = cards.find((c) => c.getBoundingClientRect().top > appbarBottom + row * (step.nudgeRows - 1) + 40);
       if (target) {
         const y = target.getBoundingClientRect().top - appbarBottom + el.scrollTop - 12;
-        el.scrollTo({ top: Math.max(0, y), behavior: reducedMotion() ? 'auto' : 'smooth' });
+        glide(Math.max(0, y));
       }
     }
     if (step.hero) showHero(step.hero);
@@ -501,6 +523,8 @@ export function startTour({ el, entry, scenario }) {
     active = false;
     clearTimeout(wordsTimer);
     store.completeTour(scenario);
+    stopGlide();
+    el.removeEventListener('touchstart', stopGlide);
     el.classList.remove('is-touring', 'is-tour-intro', 'is-tour-clear');
     for (const b of el.querySelectorAll('.is-focus')) b.classList.remove('is-focus');
     await animate(sheet, [{ transform: 'none' }, { transform: 'translateY(100%)' }], { duration: 360, easing: EASE.ios });
@@ -514,6 +538,8 @@ export function startTour({ el, entry, scenario }) {
     destroy() {
       stepCleanup?.();
       stopConfetti?.();
+      stopGlide();
+      el.removeEventListener('touchstart', stopGlide);
       active = false;
       sheet.remove();
     },

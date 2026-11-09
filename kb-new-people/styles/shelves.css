@@ -702,41 +702,22 @@
   letter-spacing: -0.24px;
 }
 
-.gorod-all {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: calc(100% - 32px);
-  height: 60px;
-  margin: 8px 16px;
-  border-radius: var(--r-s);
-  background: var(--c-fill);
-  color: var(--c-info);
-  font-size: 17px;
-  letter-spacing: -0.41px;
-}
 
 /* ---------- «Вы уже заказывали» — товары магазина (макет 685:150677, вторая версия) ---------- */
+/* «Все» стоит по верху, на уровне заголовка, как в других шапках; логотип — по центру двух строк */
 .grocery-head {
   align-items: flex-start;
+  gap: 12px;
   padding-bottom: 12px;
 }
 
-.grocery-shop {
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: -0.24px;
-  line-height: 20px;
-  text-transform: uppercase;
-  color: var(--c-text-secondary);
-  margin-bottom: 4px;
-}
+
 
 .grocery-avatar {
   flex: none;
+  align-self: center;
   width: 44px;
   height: 44px;
-  margin-left: 2px;
 }
 
 .grocery-grid {
