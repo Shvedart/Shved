@@ -20,7 +20,7 @@ export function bankScreen({ el, params, nav }) {
   };
 
   const enter = () => {
-    if (scenario === 's3' || scenario === 's4') nav.push(`/main/${scenario}`);
+    if (['s3', 's4', 's5'].includes(scenario)) nav.push(`/main/${scenario}`);
     else if (store.state.onboarding[scenario]?.done) nav.push(`/main/${scenario}`);
     else nav.push(`/onb/${scenario}/1`);
   };

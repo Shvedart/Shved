@@ -1084,20 +1084,26 @@
 
 .tour {
   /* внутри скролла страницы, прилеплена к низу экрана: свайп по шторке листает ленту */
+  /* «подол»: шторка уходит на 80px под нижний край экрана. iPhone при быстрой автопрокрутке
+     рисует sticky-шторку выше, чем надо, и снизу проступала лента — теперь там её же фон.
+     Тень того же цвета не помогла. Меняется вместе с SKIRT в tour.js */
+  --skirt: 80px;
   position: sticky;
-  bottom: 0;
+  bottom: calc(-1 * var(--skirt));
   z-index: 25;
+  /* содержимое прижато к низу: пока высота шторки анимируется, текст и кнопки стоят на месте */
+  display: flex;
+  flex-direction: column;
   /* сверху место под дугу радиального градиента — см. SHEET_FADE в tour.js */
-  padding: 125px var(--gutter) calc(20px + var(--safe-bottom));
+  padding: 125px var(--gutter) calc(20px + var(--safe-bottom) + var(--skirt));
   overflow: hidden;
-  /* iOS при быстрой автопрокрутке рисует sticky-шторку с опозданием, и снизу проступала лента.
-     Тень-«подол» того же цвета под шторкой закрывает зазор (свою тень overflow не обрезает) */
-  box-shadow: 0 240px 0 rgb(238, 255, 236);
+  background: linear-gradient(to top, rgb(238, 255, 236) var(--skirt), transparent var(--skirt));
 }
 
 .tour-glow {
   position: absolute;
   inset: 0;
+  bottom: var(--skirt);
   background:
     radial-gradient(60% 70% at 20% 80%, rgba(214, 250, 208, 0.9), transparent 70%),
     radial-gradient(60% 70% at 85% 70%, rgba(228, 255, 222, 0.85), transparent 70%),
@@ -1112,6 +1118,7 @@
   content: '';
   position: absolute;
   inset: 0;
+  bottom: var(--skirt);
   /* мятный градиент из макета (652:142228) */
   /* выше и плотнее, чем в макете: текст поверх ленты должен читаться на сплошном фоне */
   /* эксперимент: радиальный — верхний край шторки дугой. Прежний линейный:
@@ -1127,6 +1134,7 @@
 
 .tour-body {
   position: relative;
+  margin-top: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1139,9 +1147,7 @@
 }
 
 .tour.is-full {
-  box-shadow: 0 240px 0 #fff;
-  display: flex;
-  flex-direction: column;
+  background: linear-gradient(to top, #fff var(--skirt), transparent var(--skirt));
   padding-top: 64px;
 }
 
@@ -1199,6 +1205,16 @@
 /* строки заданы вручную (\n в тексте шага): поля уже, чтобы длинная строка не переносилась сама */
 .tour-text.is-lines {
   padding: 0;
+}
+
+/* подзаголовок шага (sub): 8px от текста, мельче и серее */
+.tour-sub {
+  margin: -16px 0 8px;
+  padding: 0 24px;
+  font-size: 15px;
+  line-height: 20px;
+  color: var(--c-text-secondary);
+  text-align: center;
 }
 
 .tour-br {
@@ -1805,7 +1821,7 @@
   width: 56px;
   height: 56px;
   /* невыбранные логотипы прозрачнее выбранного */
-  opacity: 0.65;
+  opacity: 0.85;
   transition: opacity var(--dur-fast) ease;
 }
 
@@ -1997,8 +2013,6 @@
 
 /* шаг со счётчиком: шторка выше обычной, градиент становится сплошным раньше */
 .tour.is-tall {
-  display: flex;
-  flex-direction: column;
   padding-top: 88px;
 }
 

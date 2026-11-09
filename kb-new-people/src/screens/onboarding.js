@@ -13,7 +13,7 @@ import { favCard, favLook } from '../ui/favcard.js';
 import { app } from '../app.js';
 
 const RESULT = {
-  3: { icon: 'success', title: ['Предложения', 'любимых брендов', 'уже доступны'], variant: 'default', cta: 'Дальше', caption: 'Избранное теперь всегда под рукой' },
+  3: { icon: 'success', title: ['Акции', 'в магазинах', 'уже активны'], variant: 'default', cta: 'Дальше', caption: 'Перед покупкой проверьте, где больше кэшбэк' },
   4: { icon: 'bell', title: ['Сообщим, когда', 'кэшбэк вырастет'], variant: 'boost', cta: 'Включить уведомления', secondary: 'Не сейчас' },
   5: { icon: 'info-circle', title: ['Акция', 'закончится,', 'найдём похожую'], variant: 'replace', cta: 'Готово', caption: 'Всё готово, осталось совсем чуть-чуть' },
 };
@@ -170,7 +170,7 @@ export function onboardingScreen({ el, params, nav, entry }) {
     if (!store.hasAnyFav()) {
       // ничего не лайкнули — сразу на главную в сценарий «упущенная выгода»
       haptics.light();
-      nav.replace('/main/s3');
+      nav.replace('/main/s4');
       return;
     }
     haptics.light();

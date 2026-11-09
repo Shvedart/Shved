@@ -48,15 +48,15 @@
     "step1": {
       "chip": "Еда",
       "title": ["Настройте", "кэшбэк под себя"],
-      "subtitle": "Сохраняйте то, что пригодится",
+      "subtitle": "Отметьте магазины, где покупаете",
       "brands": ["samokat", "lenta", "lavka", "pyaterochka", "perekrestok", "magnit"
       ],
       "cta": "Дальше Любимые бренды"
     },
     "step2": {
       "chip": "Любимые бренды",
-      "title": ["Магазины,", "где вы покупаете"],
-      "subtitle": "Проверяйте кэшбэк перед покупкой",
+      "title": ["Где ещё", "вы покупаете?"],
+      "subtitle": "Чтобы и там получать кэшбэк",
       "brands": ["lamoda", "sportmaster", "citilink", "mvideo", "restore", "detmir"],
       "cta": "Собрать мою подборку"
     },

@@ -13,6 +13,10 @@ import { startTour, stopViewMarks } from './tour.js';
 import { openSheet } from '../ui/sheet.js';
 import { app } from '../app.js';
 
+// сценарии с заходом через плашку и тур; в 03 и 04 — тур-привычка, в 05 — тур про механики
+const HOOK = ['s3', 's4', 's5'];
+const HABIT = ['s3', 's4'];
+
 export function mainScreen({ el, params, nav, entry }) {
   const scenario = params.s;
   const { catalog } = app;
@@ -222,10 +226,10 @@ export function mainScreen({ el, params, nav, entry }) {
   el.addEventListener('scroll', onScroll, { passive: true });
 
   // ---------- Серия: первый день засчитывается, когда блок виден на 50% ----------
-  // В сценариях 03 и 04 — только когда блок поднялся в верхнюю часть экрана: обычно это происходит
+  // В сценариях 03–05 — только когда блок поднялся в верхнюю часть экрана: обычно это происходит
   // на шаге тура про серию, и день засчитывается прямо на глазах.
   if (!store.state.streak.day1) {
-    const hook = scenario === 's3' || scenario === 's4';
+    const hook = HOOK.includes(scenario);
     const io = new IntersectionObserver((items) => {
       if (!items.some((i) => i.isIntersecting) || app.nav.top !== entry || (!hook && tour?.active)) return;
       io.disconnect();
@@ -244,9 +248,9 @@ export function mainScreen({ el, params, nav, entry }) {
     cleanups.push(() => io.disconnect());
   }
 
-  // ---------- Сценарий 03: плашка «могли получить больше» ----------
-  // сценарии 03 и 04: заход через плашку «могли получить больше» и тур
-  if (scenario === 's3' || scenario === 's4') {
+  // ---------- Сценарии 03–05: плашка «могли получить больше» ----------
+  // заход через плашку «могли получить больше» и тур
+  if (HOOK.includes(scenario)) {
     const missed = button({ class: 'missed', 'aria-label': `В ${cfg.missed.month} могли получить ещё ${cfg.missed.amount} кэшбэка. Узнать как` },
       h('span', { class: 'missed-crown' }, icon('crown', { size: 22 })),
       h('span', { class: 'missed-text' }, h('span', null, `В ${cfg.missed.month} могли получить`), h('span', { class: 'missed-amount' }, `ещё ${cfg.missed.amount} кэшбэка`)),
@@ -258,8 +262,8 @@ export function mainScreen({ el, params, nav, entry }) {
     missedSlot.append(h('div', { class: 'missed-wrap' }, h('span', { class: 'missed-tail', 'aria-hidden': 'true' }), missed));
     // появляется чуть позже загрузки и плавно сдвигает контент вниз
     const balance = Number(cfg.balance.replace(/\D/g, ''));
-    // в 03 тур не про упущенную выгоду — сумма стоит сразу, не набегает
-    const counted = scenario === 's3' ? Promise.resolve() : countUp(amountEl, balance);
+    // в 03 и 04 тур не про упущенную выгоду — сумма стоит сразу, не набегает
+    const counted = HABIT.includes(scenario) ? Promise.resolve() : countUp(amountEl, balance);
     setTimeout(async () => {
       await counted;
       missedSlot.classList.add('is-open');
@@ -268,8 +272,8 @@ export function mainScreen({ el, params, nav, entry }) {
       // лёгкий блик пробегает по плашке, привлекая внимание
       missed.classList.add('is-shine');
       setTimeout(() => missed.classList.remove('is-shine'), 2600);
-      // в 03 сумма не набегает — без паузы плашка выскакивала сразу при входе
-    }, scenario === 's3' ? 800 : 300);
+      // в 03 и 04 сумма не набегает — без паузы плашка выскакивала сразу при входе
+    }, HABIT.includes(scenario) ? 800 : 300);
   }
 
   // ---------- Онбординг завершён: блок избранного становится настоящим, остальное появляется ----------

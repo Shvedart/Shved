@@ -11,8 +11,10 @@ import { playConfetti } from '../ui/confetti.js';
 // верх шторки прозрачный (дуга градиента): всё, что выше этой линии от её верха, считается видимым.
 // Меняется вместе с `.tour { padding-top }` в screens.css
 const SHEET_FADE = 100;
+// «подол» шторки под нижним краем экрана (`--skirt` в screens.css): к видимой высоте добавляем его
+const SKIRT = 80;
 
-// 03: знакомство → ценность (счётчик и пролёт ленты) → галочка (кэшбэк сам) → сердечко как закладка →
+// 04: знакомство → ценность (счётчик и пролёт ленты) → галочка (кэшбэк сам) → сердечко как закладка →
 // стирашка как бонус → навигация по категориям → привычка
 const TOUR_HABIT = [
   { target: null, text: 'Привет! За минуту покажем, как здесь получать больше кэшбэка', cta: 'Погнали' },
@@ -26,7 +28,18 @@ const TOUR_HABIT = [
   { target: null, stay: true, hero: 'assets/img/tour/final-70.webp', text: 'Перед покупкой загляните\nсюда: частые гости получают\nна 70% больше кэшбэка', cta: 'Лутать кэшбэк', last: true },
 ];
 
-// 04: исходный тур — механики раздела по очереди
+// 03: тот же тур-привычка, но с согласованной редакцией текстов (правки от 9 ноября)
+const TOUR_HABIT_V2 = [
+  { target: null, text: 'За покупки можно получать больше кэшбэка. За минуту расскажем', cta: 'Погнали' },
+  { target: null, stay: true, counter: 5000, text: 'предложений с кэшбэком —\nвыгода найдётся почти на всё', cta: 'Как это работает?' },
+  { target: 'selection', spotlight: 'selection', text: 'Как только\nвы видите предложение,\nкэшбэк уже активен', sub: 'Проверьте условия в карточке', cta: 'Понятно' },
+  { target: 'selection', hearts: 'selection', keepScroll: true, nudgeRows: 2, text: 'Поставьте сердечко, чтобы отслеживать акции этого магазина или бренда' },
+  { target: 'selection', scratch: true, text: 'А иногда в ленте прячется подарок — сотрите карточку' },
+  { target: null, stay: true, navDemo: ['health', 'travel', 'food'], text: 'Уже знаете, что купить?\nВыберите категорию — покажем\nподходящие предложения' },
+  { target: null, stay: true, hero: 'assets/img/tour/final-70.webp', text: 'Заходите сюда перед\nпокупкой — каждый день\nновые предложения', cta: 'Лутать кэшбэк', last: true },
+];
+
+// 05: исходный тур — механики раздела по очереди
 const TOUR_MECHANICS = [
   { target: null, text: 'Привет! За минуту покажем, как здесь получать больше кэшбэка', cta: 'Погнали' },
   { target: 'streak', text: 'Заходите сюда 5 дней подряд — и мы сделаем вам крутой подарок' },
@@ -38,7 +51,7 @@ const TOUR_MECHANICS = [
   { target: null, stay: true, hero: 'assets/img/tour/final-70.webp', text: 'Кто заходит сюда каждый день, получает на 70% больше кэшбэка', cta: 'Лутать кэшбэк', last: true },
 ];
 
-const TOURS = { s3: TOUR_HABIT, s4: TOUR_MECHANICS };
+const TOURS = { s3: TOUR_HABIT_V2, s4: TOUR_HABIT, s5: TOUR_MECHANICS };
 
 export function startTour({ el, entry, scenario }) {
   const STEPS = TOURS[scenario] || TOUR_MECHANICS;
@@ -50,6 +63,8 @@ export function startTour({ el, entry, scenario }) {
   let stopConfetti = null;
 
   const textEl = h('p', { class: 'tour-text', 'aria-live': 'polite' });
+  // sub — подзаголовок под текстом шага, проявляется, когда текст допечатан
+  const subEl = h('p', { class: 'tour-sub', hidden: true });
   const nextBtn = button({ class: 'btn btn-dark btn-l tour-next' }, h('span', { class: 'btn-label' }, 'Далее'));
   const closeBtn = button({ class: 'btn-link tour-close' }, 'Закрыть');
   const counter = h('span', { class: 'visually-hidden' });
@@ -58,7 +73,7 @@ export function startTour({ el, entry, scenario }) {
     h('span', { class: 'tour-count-num' }, h('span', { class: 'tour-count-digits' }, '0')));
   const sheet = h('div', { class: 'tour', role: 'dialog', 'aria-label': 'Как получать больше кэшбэка' },
     h('div', { class: 'tour-glow', 'aria-hidden': 'true' }),
-    h('div', { class: 'tour-body' }, heroEl, countEl, counter, textEl, nextBtn, closeBtn));
+    h('div', { class: 'tour-body' }, heroEl, countEl, counter, textEl, subEl, nextBtn, closeBtn));
   /* Шторка — внутри прокручиваемой страницы, прилеплена к низу (sticky): свайп по ней листает
      ленту нативно, с инерцией. Отдельный слой поверх страницы на iPhone перехватывал скролл
      даже с pointer-events: none. Отрицательный отступ — чтобы она не добавляла высоту ленте. */
@@ -129,16 +144,20 @@ export function startTour({ el, entry, scenario }) {
     const base = sheet.offsetHeight;
     countEl.hidden = false;
     sheet.classList.add('is-tall');
-    const tall = Math.max(base, Math.round(el.clientHeight * 0.62));
+    const tall = Math.max(base, Math.round(el.clientHeight * 0.62) + SKIRT);
     sheet.style.height = `${tall}px`;
     sheet.style.marginTop = `${-tall}px`;
     const shrink = () => {
       countEl.hidden = true;
       sheet.classList.remove('is-tall');
-      sheet.style.height = '';
-      const h0 = sheet.offsetHeight;
-      sheet.style.marginTop = `${-h0}px`;
-      if (!reducedMotion()) animate(sheet, [{ height: `${tall}px`, marginTop: `${-tall}px` }, { height: `${h0}px`, marginTop: `${-h0}px` }], { duration: 420, easing: EASE.ios, fill: 'none' });
+      // текст следующего шага ставится сразу после — меряем высоту в следующем кадре, уже с ним.
+      // Иначе шторка сжималась под старый текст, новый не влезал и кнопка проседала вниз
+      requestAnimationFrame(() => {
+        sheet.style.height = '';
+        const h0 = sheet.offsetHeight;
+        sheet.style.marginTop = `${-h0}px`;
+        if (!reducedMotion()) animate(sheet, [{ height: `${tall}px`, marginTop: `${-tall}px` }, { height: `${h0}px`, marginTop: `${-h0}px` }], { duration: 420, easing: EASE.ios, fill: 'none' });
+      });
     };
     if (reducedMotion()) { digits.textContent = fmtNum(total); return shrink; }
     animate(sheet, [{ height: `${base}px`, marginTop: `${-base}px` }, { height: `${tall}px`, marginTop: `${-tall}px` }], { duration: 800, easing: EASE.ios, fill: 'none' });
@@ -191,7 +210,7 @@ export function startTour({ el, entry, scenario }) {
     stopConfetti = playConfetti(stage);
     snapToFeedHead();
     const from = sheet.offsetHeight;
-    const to = Math.max(from, el.clientHeight - 24);
+    const to = Math.max(from, el.clientHeight - 24 + SKIRT);
     heroEl.replaceChildren(h('img', { src, alt: '', draggable: 'false', decoding: 'async' }));
     sheet.classList.add('is-full');
     sheet.style.height = `${to}px`;
@@ -338,6 +357,9 @@ export function startTour({ el, entry, scenario }) {
     if (step.counter) stepCleanup = runCounter(step.counter);
     else countEl.hidden = true;
     const typing = typeWords(step.text);
+    subEl.hidden = !step.sub;
+    subEl.textContent = step.sub || '';
+    if (step.sub) animate(subEl, [{ opacity: 0, transform: 'translateY(4px)' }, { opacity: 1, transform: 'none' }], { duration: 320, delay: typing, easing: EASE.out, fill: 'backwards' });
     if (card && !scratchDone) {
       stepCleanup = waitForScratch(card);
       return;
