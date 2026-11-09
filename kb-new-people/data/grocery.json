@@ -1,0 +1,904 @@
+{
+  "products": [
+    {
+      "id": "grocery-001",
+      "name": "Творожок Простоквашино Голубика-банан 3.6% БЗМЖ 110г",
+      "price": "42,99 ₽",
+      "cashback": "6 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1802417-main/800x800.jpeg?updated_at=2026-06-04T12:52:27.006Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-002",
+      "name": "Киви",
+      "price": "97,5 ₽",
+      "cashback": "15 ₽",
+      "badge": "−7%",
+      "image": "https://photos.okolo.app/product/1158979-main/800x800.jpeg?updated_at=2026-03-16T08:46:19.402Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-003",
+      "name": "Яйцо куриное Лето пищевое С1 10шт.",
+      "price": "109,99 ₽",
+      "cashback": "16 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1161699-main/800x800.jpeg?updated_at=2025-02-24T07:59:26.057Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-004",
+      "name": "Кефир Станция молочная 3.2-4.5% БЗМЖ 900г",
+      "price": "89,99 ₽",
+      "cashback": "13 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1835623-main/800x800.jpeg?updated_at=2025-11-25T13:33:12.808Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-005",
+      "name": "Хлеб Аютинский хлеб тостовый пшеничный нарезка 280г",
+      "price": "40,99 ₽",
+      "cashback": "6 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1167930-main/800x800.jpeg?updated_at=2025-02-25T13:38:52.806Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-006",
+      "name": "Шоколад Бабаевский Элитный горький 75% 75г",
+      "price": "124,99 ₽",
+      "cashback": "19 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1836681-main/800x800.jpeg?updated_at=2026-08-05T14:28:15.398Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-007",
+      "name": "Гранат",
+      "price": "94,8 ₽",
+      "cashback": "14 ₽",
+      "badge": "−10%",
+      "image": "https://photos.okolo.app/product/1158997-main/800x800.jpeg?updated_at=2025-03-10T18:16:31.872Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-008",
+      "name": "Творожок взбитый Чудо Персик-груша 4.2% БЗМЖ, 100г",
+      "price": "59,99 ₽",
+      "cashback": "9 ₽",
+      "badge": "20%",
+      "image": "https://photos.okolo.app/product/1163628-main/800x800.jpeg?updated_at=2026-09-18T15:39:20.561Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-009",
+      "name": "Слойка Аютинский хлеб с яблоком 80г",
+      "price": "30,99 ₽",
+      "cashback": "5 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1165227-main/800x800.jpeg?updated_at=2025-02-21T10:27:57.159Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-010",
+      "name": "Хлопья овсяные Ясно Солнышко №2 500г",
+      "price": "125,99 ₽",
+      "cashback": "19 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1160876-main/800x800.jpeg?updated_at=2025-03-10T16:04:48.533Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-011",
+      "name": "Хлеб Аютинский хлеб Ремесленный на закваске нарезка 550г",
+      "price": "79,99 ₽",
+      "cashback": "12 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1201845-main/800x800.jpeg?updated_at=2025-02-25T13:38:52.803Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-012",
+      "name": "Вода Кубай газированная 1.5л",
+      "price": "49,99 ₽",
+      "cashback": "7 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1164360-main/800x800.jpeg?updated_at=2025-01-31T14:19:00.194Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-013",
+      "name": "Кетчуп Heinz Томатный 320г",
+      "price": "139,99 ₽",
+      "cashback": "21 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1392827-main/800x800.jpeg?updated_at=2026-07-23T11:42:17.385Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-014",
+      "name": "Сок Сады Придонья Kids Яблоко-виноград для детей с 6 мес. 200мл",
+      "price": "26,99 ₽",
+      "cashback": "4 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1600151-main/800x800.jpeg?updated_at=2025-03-10T16:04:52.900Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-015",
+      "name": "Грибы Global Village шампиньоны",
+      "price": "114 ₽",
+      "cashback": "17 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1157069-main/800x800.jpeg?updated_at=2025-03-10T09:03:31.329Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-016",
+      "name": "Туалетная бумага Papia 3 слоя 4шт.",
+      "price": "86,99 ₽",
+      "cashback": "13 ₽",
+      "badge": "−13%",
+      "image": "https://photos.okolo.app/product/1173172-main/800x800.jpeg?updated_at=2026-09-02T10:20:32.138Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-017",
+      "name": "Бекон Мясная Ферма сырокопчёный, 150г",
+      "price": "136,99 ₽",
+      "cashback": "21 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1575079-main/800x800.jpeg?updated_at=2026-07-12T23:05:06.895Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-018",
+      "name": "Голень цыплят Приосколье с кожей охлажденная",
+      "price": "278,99 ₽",
+      "cashback": "42 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/2066537-main/800x800.jpeg",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-019",
+      "name": "Средство для мытья посуды Synergetic Алоэ 500мл",
+      "price": "115,99 ₽",
+      "cashback": "17 ₽",
+      "badge": "−15%",
+      "image": "https://photos.okolo.app/product/1190600-main/800x800.jpeg?updated_at=2025-11-25T14:51:32.903Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-020",
+      "name": "Молоко Сарафаново безлактозное ультрапастеризованное 1.5% БЗМЖ 970мл",
+      "price": "119,99 ₽",
+      "cashback": "18 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1562032-main/800x800.jpeg?updated_at=2024-11-12T15:03:13.066Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-021",
+      "name": "Макаронные изделия Barilla Спагетти №5 из твёрдых сортов пшеницы, 450г",
+      "price": "99,99 ₽",
+      "cashback": "15 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1202745-main/800x800.jpeg?updated_at=2026-09-30T22:22:09.196Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-022",
+      "name": "Фарш Рестория Классический из мяса цыпленка охлажденный 400г",
+      "price": "154,99 ₽",
+      "cashback": "23 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1848949-main/800x800.jpeg?updated_at=2025-09-24T17:52:18.983Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-023",
+      "name": "Творожок взбитый Чудо Вишня-Черешня 4% БЗМЖ, 100г",
+      "price": "59,99 ₽",
+      "cashback": "9 ₽",
+      "badge": "20%",
+      "image": "https://photos.okolo.app/product/1163625-main/800x800.jpeg?updated_at=2026-09-18T15:39:17.721Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-024",
+      "name": "Творог АК Выселковский 5% БЗМЖ 300г",
+      "price": "134,99 ₽",
+      "cashback": "20 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1497608-main/800x800.jpeg?updated_at=2025-01-29T10:48:13.883Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-025",
+      "name": "Вода Аквалайн Для Ляль для детского питания 5л",
+      "price": "125,99 ₽",
+      "cashback": "19 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1513444-main/800x800.jpeg?updated_at=2025-01-20T13:20:02.509Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-026",
+      "name": "Майонез Слобода Оливковый 67%, 270мл",
+      "price": "88,99 ₽",
+      "cashback": "13 ₽",
+      "badge": "−15%",
+      "image": "https://photos.okolo.app/product/2203064-main/800x800.jpeg?updated_at=2026-09-25T09:14:09.022Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-027",
+      "name": "Сметана Кубанская буренка 15% БЗМЖ 300г",
+      "price": "94,99 ₽",
+      "cashback": "14 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1188240-main/800x800.jpeg?updated_at=2026-06-09T14:58:30.872Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-028",
+      "name": "Творог Коровка Из Кореновки 9% БЗМЖ 300г",
+      "price": "144,99 ₽",
+      "cashback": "22 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1458517-main/800x800.jpeg?updated_at=2025-01-10T10:15:03.522Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-029",
+      "name": "Паста томатная Донконсервпром Иранская 28% 280г",
+      "price": "74,99 ₽",
+      "cashback": "11 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1169207-main/800x800.jpeg?updated_at=2025-03-10T14:47:00.020Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-030",
+      "name": "Икра мойвы Санта Бремор с копчёным лососем, 180г",
+      "price": "146,99 ₽",
+      "cashback": "22 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1198134-main/800x800.jpeg?updated_at=2026-07-23T15:46:10.281Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-031",
+      "name": "Палочки творожные Свитлогорье ванильные в карамельной глазури 23% 180г",
+      "price": "179,99 ₽",
+      "cashback": "27 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1186458-main/800x800.jpeg?updated_at=2025-01-31T14:30:39.398Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-032",
+      "name": "Палочки Body & Up ватные 160шт",
+      "price": "49,99 ₽",
+      "cashback": "7 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/2141327-main/800x800.jpeg",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-033",
+      "name": "Вода Святой Источник Светлячок негазированная для детей, 5л",
+      "price": "188,99 ₽",
+      "cashback": "28 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1181065-main/800x800.jpeg?updated_at=2025-07-24T08:52:17.107Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-034",
+      "name": "Кефир Станция Молочная 2.5% БЗМЖ 900г",
+      "price": "86,99 ₽",
+      "cashback": "13 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1399214-main/800x800.jpeg?updated_at=2025-11-17T10:44:45.640Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-035",
+      "name": "Макароны Makfa улитки 450г",
+      "price": "64,99 ₽",
+      "cashback": "10 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1159813-main/800x800.jpeg?updated_at=2026-09-02T15:45:23.886Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-036",
+      "name": "Сыр творожный Almette с зеленью 60% БЗМЖ 150г",
+      "price": "129,99 ₽",
+      "cashback": "19 ₽",
+      "badge": "20%",
+      "image": "https://photos.okolo.app/product/1157517-main/800x800.jpeg?updated_at=2025-10-13T13:51:58.150Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-037",
+      "name": "Томаты коктейльные 350г",
+      "price": "189,99 ₽",
+      "cashback": "28 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1196929-main/800x800.jpeg?updated_at=2026-02-18T13:55:57.238Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-038",
+      "name": "Огурцы Global Village Корнишоны маринованные, 580мл",
+      "price": "136,99 ₽",
+      "cashback": "21 ₽",
+      "badge": "−33%",
+      "image": "https://photos.okolo.app/product/2139976-main/800x800.jpeg",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-039",
+      "name": "Тунец Вкусные Консервы натуральный филе-кусочки, 185г",
+      "price": "136,99 ₽",
+      "cashback": "21 ₽",
+      "badge": "−10%",
+      "image": "https://photos.okolo.app/product/2190271-main/800x800.jpeg",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-040",
+      "name": "Бумага Papia Biocare туалетная 3 слоя 6 рулонов",
+      "price": "149,99 ₽",
+      "cashback": "22 ₽",
+      "badge": "−16%",
+      "image": "https://photos.okolo.app/product/1625367-main/800x800.jpeg?updated_at=2025-09-24T17:41:05.250Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-041",
+      "name": "Сок Сады Придонья Kids Зеленое яблоко для детей с 4 мес. 200мл",
+      "price": "26,99 ₽",
+      "cashback": "4 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1600158-main/800x800.jpeg?updated_at=2025-03-04T05:34:39.396Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-042",
+      "name": "Гренки Дон Крутон пшеничные со вкусом тайского перца 130г",
+      "price": "99,99 ₽",
+      "cashback": "15 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1206674-main/800x800.jpeg?updated_at=2026-07-14T10:14:59.169Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-043",
+      "name": "Творог Простоквашино зерненый в сливках 5% БЗМЖ 320г",
+      "price": "144,99 ₽",
+      "cashback": "22 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1411502-main/800x800.jpeg?updated_at=2026-08-14T13:38:20.961Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-044",
+      "name": "Сосиски ИндиЛайт Грандос вареные из мяса индейки 440г",
+      "price": "214,99 ₽",
+      "cashback": "32 ₽",
+      "badge": "До 30%",
+      "image": "https://photos.okolo.app/product/1402058-main/800x800.jpeg?updated_at=2025-03-10T15:43:53.981Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-045",
+      "name": "Хлеб Чиабатта 225г",
+      "price": "59,99 ₽",
+      "cashback": "9 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1851449-main/800x800.jpeg?updated_at=2025-09-24T18:02:05.758Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-046",
+      "name": "Сырок Вкуснотеево Премиум Шоколадный творожный в шоколадной глазури 16% 40г",
+      "price": "44,99 ₽",
+      "cashback": "7 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/2166785-main/800x800.jpeg?updated_at=2026-06-10T13:22:51.984Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-047",
+      "name": "Сухарики Три корочки Семга и сыр 60г + соус тартар 25мл",
+      "price": "40,99 ₽",
+      "cashback": "6 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1161847-main/800x800.jpeg?updated_at=2025-02-17T16:30:01.775Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-048",
+      "name": "Батон Аютинский хлеб Нарезной пшеничный нарезка 380г",
+      "price": "56,99 ₽",
+      "cashback": "9 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1163199-main/800x800.jpeg?updated_at=2025-02-25T13:37:44.161Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-049",
+      "name": "Сок Сады Придонья Kids Яблоко-вишня для детей с 5 мес. 200мл",
+      "price": "26,99 ₽",
+      "cashback": "4 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1600153-main/800x800.jpeg?updated_at=2025-03-04T05:34:39.388Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-050",
+      "name": "Туалетная бумага Zemma Deluxe Деликатная Забота 3 слоя, 8шт",
+      "price": "205,99 ₽",
+      "cashback": "31 ₽",
+      "badge": "−47%",
+      "image": "https://photos.okolo.app/product/2151198-main/800x800.jpeg?updated_at=2026-09-21T07:09:11.072Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-051",
+      "name": "Колбаса Останкино Салями Итальянская сырокопченая полусухая нарезка 150г",
+      "price": "178,99 ₽",
+      "cashback": "27 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1162577-main/800x800.jpeg?updated_at=2025-05-15T15:15:07.022Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-052",
+      "name": "Сметана Коровка из Кореновки 20% БЗМЖ 300г",
+      "price": "109,99 ₽",
+      "cashback": "16 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1206877-main/800x800.jpeg?updated_at=2024-09-26T06:26:26.831Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-053",
+      "name": "Слойка Аютинский Хлеб с вишней 80г",
+      "price": "30,99 ₽",
+      "cashback": "5 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1165228-main/800x800.jpeg?updated_at=2025-02-21T10:27:36.051Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-054",
+      "name": "Хурма",
+      "price": "79 ₽",
+      "cashback": "12 ₽",
+      "badge": "−14%",
+      "image": "https://photos.okolo.app/product/1157145-main/800x800.jpeg?updated_at=2026-10-28T13:50:23.029Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-055",
+      "name": "Вода Societe Minerale артезианская негазированная 5л",
+      "price": "137,99 ₽",
+      "cashback": "21 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1171376-main/800x800.jpeg?updated_at=2025-01-31T14:19:07.382Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-056",
+      "name": "Сырок Коровка из Кореновки творожный в белом с карамелью шоколаде 23% 50г",
+      "price": "59,99 ₽",
+      "cashback": "9 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1194629-main/800x800.jpeg?updated_at=2025-01-31T14:30:39.645Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-057",
+      "name": "Горошек Кубаночка зеленый из мозговых сортов 370г",
+      "price": "93,99 ₽",
+      "cashback": "14 ₽",
+      "badge": "−10%",
+      "image": "https://photos.okolo.app/product/1837878-main/800x800.jpeg?updated_at=2025-09-24T17:48:53.994Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-058",
+      "name": "Окорочка Мясная Ферма из мяса цыплят варёно-копчёные",
+      "price": "315 ₽",
+      "cashback": "47 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/2111524-main/800x800.jpeg",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-059",
+      "name": "Вода Святой источник природная негазированная, 5л",
+      "price": "179,99 ₽",
+      "cashback": "27 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1167496-main/800x800.jpeg?updated_at=2025-08-22T15:07:00.270Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-060",
+      "name": "Томатная паста Кухмастер 270г",
+      "price": "88,99 ₽",
+      "cashback": "13 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1171933-main/800x800.jpeg?updated_at=2025-12-30T13:10:46.950Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-061",
+      "name": "Кефир Станция молочная 1% БЗМЖ 900г",
+      "price": "79,99 ₽",
+      "cashback": "12 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1200776-main/800x800.jpeg?updated_at=2025-07-15T09:05:27.127Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-062",
+      "name": "Молоко Кубанская буренка пастеризованное 2.5% БЗМЖ 930мл",
+      "price": "109,99 ₽",
+      "cashback": "16 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1165464-main/800x800.jpeg?updated_at=2026-06-09T14:58:20.235Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-063",
+      "name": "Томатная паста Помидорка 250мл",
+      "price": "149,99 ₽",
+      "cashback": "22 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1159104-main/800x800.jpeg?updated_at=2025-03-10T14:47:02.000Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-064",
+      "name": "Продукт Горянка молокосодержащий произведенный по технологии сметаны 25% СЗМЖ 700г",
+      "price": "159,99 ₽",
+      "cashback": "24 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1191335-main/800x800.jpeg?updated_at=2024-09-26T10:16:22.519Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-065",
+      "name": "Творог Коровка из Кореновки 5% БЗМЖ 180г",
+      "price": "76,99 ₽",
+      "cashback": "12 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1169391-main/800x800.jpeg?updated_at=2025-01-10T10:05:22.070Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-066",
+      "name": "Филе грудки ЦБ Приосколье без кожи",
+      "price": "404,99 ₽",
+      "cashback": "61 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/2066539-main/800x800.jpeg?updated_at=2025-10-10T14:27:55.598Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-067",
+      "name": "Напиток газированный Добрый Epic Vibe земляника и ананас, 449мл",
+      "price": "124,99 ₽",
+      "cashback": "19 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/2173166-main/800x800.jpeg",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-068",
+      "name": "Чеснок Рестория сушеный 15г",
+      "price": "40,99 ₽",
+      "cashback": "6 ₽",
+      "badge": "−10%",
+      "image": "https://photos.okolo.app/product/1405803-main/800x800.jpeg?updated_at=2025-04-09T14:49:26.775Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-069",
+      "name": "Масло сладкосливочное Брест-Литовск 82.5% БЗМЖ 180г",
+      "price": "209,99 ₽",
+      "cashback": "31 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1169627-main/800x800.jpeg?updated_at=2026-10-21T12:13:10.335Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-070",
+      "name": "Пельмени Цезарь Классика 800г",
+      "price": "309,99 ₽",
+      "cashback": "46 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1188358-main/800x800.jpeg?updated_at=2026-09-10T14:21:26.067Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-071",
+      "name": "Квас Староминский Традиционный 1.5л",
+      "price": "115,99 ₽",
+      "cashback": "17 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/2011986-main/800x800.jpeg?updated_at=2025-09-24T17:57:16.032Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-072",
+      "name": "Холодный чай Lipton Зеленый 1.5л",
+      "price": "199,99 ₽",
+      "cashback": "30 ₽",
+      "badge": "15%",
+      "image": "https://photos.okolo.app/product/1176073-main/800x800.jpeg?updated_at=2026-08-07T15:06:36.799Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-073",
+      "name": "Яблоки Гренни Смит",
+      "price": "134,99 ₽",
+      "cashback": "20 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1157230-main/800x800.jpeg?updated_at=2025-03-10T15:38:28.167Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-074",
+      "name": "Напиток кисломолочный Имунеле Земляника 1.2% БЗМЖ 100мл",
+      "price": "29,99 ₽",
+      "cashback": "4 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1157180-main/800x800.jpeg?updated_at=2026-10-16T09:31:37.511Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-075",
+      "name": "Огурец Global Village среднеплодный гладкий 600г",
+      "price": "119,99 ₽",
+      "cashback": "18 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1157117-main/800x800.jpeg?updated_at=2025-03-05T10:57:54.144Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-076",
+      "name": "Вода Святой источник Спорт негазированная, 750мл",
+      "price": "66,99 ₽",
+      "cashback": "10 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1161996-main/800x800.jpeg?updated_at=2025-08-22T15:06:42.389Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-077",
+      "name": "Сыр творожный Савушкин сливочный 60% БЗМЖ 150г",
+      "price": "104,99 ₽",
+      "cashback": "16 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1205358-main/800x800.jpeg?updated_at=2026-10-07T08:18:46.500Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-078",
+      "name": "Сырок Белый Медведь творожный глазированный ванильный 22% 30г",
+      "price": "26,99 ₽",
+      "cashback": "4 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1433795-main/800x800.jpeg?updated_at=2025-02-14T09:58:01.552Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-079",
+      "name": "Сырок Коровка из Кореновки в темном шоколаде 23% 50г",
+      "price": "59,99 ₽",
+      "cashback": "9 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1180110-main/800x800.jpeg",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-080",
+      "name": "Сырок творожный Вкуснотеево глазированный в шоколадной глазури с ванилью 16% БЗМЖ, 40г",
+      "price": "44,99 ₽",
+      "cashback": "7 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/2166474-main/800x800.jpeg?updated_at=2026-06-10T13:22:51.992Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-081",
+      "name": "Напиток газированный Добрый Epic Vibe юдзу-апельсин-мандарин, 449мл",
+      "price": "124,99 ₽",
+      "cashback": "19 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/2173165-main/800x800.jpeg",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-082",
+      "name": "Сырок Коровка из Кореновки в молочном шоколаде 23% БЗМЖ 50г",
+      "price": "59,99 ₽",
+      "cashback": "9 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1180109-main/800x800.jpeg?updated_at=2025-01-31T14:30:37.262Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-083",
+      "name": "Палочки крабовые Русское море охлажденные 400г",
+      "price": "178,99 ₽",
+      "cashback": "27 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1370427-main/800x800.jpeg?updated_at=2026-07-09T16:57:34.636Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-084",
+      "name": "Азу Вкус & Польза из мяса индейки, 500г",
+      "price": "309,99 ₽",
+      "cashback": "46 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/2150683-main/800x800.jpeg?updated_at=2026-07-29T08:09:44.416Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-085",
+      "name": "Голень цыплят Благояр охлажденная",
+      "price": "349,99 ₽",
+      "cashback": "52 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1592242-main/800x800.jpeg?updated_at=2025-01-10T10:19:15.035Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-086",
+      "name": "Сырок глазированный Простоквашино с вареной сгущенкой 23% 40г",
+      "price": "47,99 ₽",
+      "cashback": "7 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1210302-main/800x800.jpeg?updated_at=2025-09-29T14:30:39.587Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-087",
+      "name": "Кефир Агрокомплекс 2.5% БЗМЖ 900г",
+      "price": "96,99 ₽",
+      "cashback": "15 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1178450-main/800x800.jpeg?updated_at=2025-01-29T10:47:53.621Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-088",
+      "name": "Творог Коровка из Кореновки 5% БЗМЖ 300г",
+      "price": "134,99 ₽",
+      "cashback": "20 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1458516-main/800x800.jpeg?updated_at=2025-04-01T00:30:35.041Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-089",
+      "name": "Филе индейки ИндиЛайт малое охлажденное, 500г",
+      "price": "359,99 ₽",
+      "cashback": "54 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1197235-main/800x800.jpeg?updated_at=2026-08-25T08:36:04.490Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-090",
+      "name": "Сырок творожный Белый медведь Картошка глазированный 22%, 30г",
+      "price": "26,99 ₽",
+      "cashback": "4 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1625518-main/800x800.jpeg?updated_at=2026-06-25T10:35:55.255Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-091",
+      "name": "Сыр Liebendorf Тильзитер твердый нарезка 45% БЗМЖ 150г",
+      "price": "144,99 ₽",
+      "cashback": "22 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1177476-main/800x800.jpeg?updated_at=2026-09-30T18:14:24.717Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-092",
+      "name": "Кефир Агрокомплекс 2.5% БЗМЖ 900г",
+      "price": "76,99 ₽",
+      "cashback": "12 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1187469-main/800x800.jpeg?updated_at=2024-09-27T15:25:09.821Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-093",
+      "name": "Вода Святой источник негазированная, 1л",
+      "price": "59,99 ₽",
+      "cashback": "9 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1168340-main/800x800.jpeg?updated_at=2025-08-22T15:07:53.514Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-094",
+      "name": "Капуста Global Village белокочанная с морковью квашеная 500г",
+      "price": "139,99 ₽",
+      "cashback": "21 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1621957-main/800x800.jpeg?updated_at=2025-09-24T17:37:17.508Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-095",
+      "name": "Сыр Liebendorf Гауда полутвердый 45% БЗМЖ",
+      "price": "294,5 ₽",
+      "cashback": "44 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1194479-main/800x800.jpeg?updated_at=2025-02-03T07:59:52.575Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-096",
+      "name": "Масло сливочное Волгодонское Крестьянское 72.5% БЗМЖ 180г",
+      "price": "173,99 ₽",
+      "cashback": "26 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1184127-main/800x800.jpeg?updated_at=2025-01-22T09:18:41.733Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-097",
+      "name": "Горчица Махеевъ Русская столовая 140г",
+      "price": "43,99 ₽",
+      "cashback": "7 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1171817-main/800x800.jpeg",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-098",
+      "name": "Творог Коровка из Кореновки обезжиренный БЗМЖ 180г",
+      "price": "69,99 ₽",
+      "cashback": "10 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1169390-main/800x800.jpeg?updated_at=2025-01-10T10:05:19.953Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-099",
+      "name": "Бедро цыпленка Благояр с хребтом охлажденное",
+      "price": "291,49 ₽",
+      "cashback": "44 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1592243-main/800x800.jpeg?updated_at=2025-01-10T10:19:15.034Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    },
+    {
+      "id": "grocery-100",
+      "name": "Крабовые палочки Vici Снежный краб пастеризованные 170г",
+      "price": "157,99 ₽",
+      "cashback": "24 ₽",
+      "badge": "",
+      "image": "https://photos.okolo.app/product/1210867-main/800x800.jpeg?updated_at=2025-10-23T10:49:51.171Z",
+      "shopLogo": "https://cdn.t-bank-app.ru/icons/lifestyle_images/grocery/icons/5_logomark.png"
+    }
+  ]
+}

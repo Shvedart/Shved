@@ -187,7 +187,7 @@ export function productCard(item) {
   const main = button({ class: 'pcard-main', 'aria-label': `${item.name}, кэшбэк ${item.short}` },
     h('div', { class: 'pcard-tile' }, img(item.image, { cls: 'pcard-image', alt: '' })),
     h('div', { class: 'pcard-caption' },
-      h('div', { class: 'pcard-price' }, h('span', null, 'Кэшбэк'), h('span', { class: 'pcard-pill' }, icon('crown', { size: 16 }), item.short)),
+      h('div', { class: 'pcard-price' }, h('span', { class: 'ocard-kind' }, 'Кэшбэк'), h('span', { class: 'pcard-pill' }, icon('crown', { size: 16 }), item.short)),
       h('div', { class: 'pcard-name' }, item.name),
       h('div', { class: 'pcard-pay' }, iconImg('premium-yellow', { size: 16 }), 'Оплати картой Т-Банка')));
   main.addEventListener('click', () => {

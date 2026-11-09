@@ -783,6 +783,11 @@ img.is-broken {
   color: var(--c-text);
 }
 
+/* «Кэшбэк» — 15px, как подпись на карточках ленты (.ocard-kind) */
+.pcard-price .ocard-kind {
+  font-family: var(--font-text);
+}
+
 .pcard-pill {
   display: inline-flex;
   align-items: center;

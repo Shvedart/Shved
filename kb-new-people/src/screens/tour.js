@@ -208,6 +208,8 @@ export function startTour({ el, entry, scenario }) {
   async function showHero(src) {
     // конфетти поверх всего экрана — слой не ловит касания, «Лутать кэшбэк» нажимается
     stopConfetti = playConfetti(stage);
+    // за белым фоном лента возвращается ко всем категориям — после демо навигации оставалась «Еда»
+    el.querySelector('.feed-nav-item.is-active')?.click();
     snapToFeedHead();
     const from = sheet.offsetHeight;
     const to = Math.max(from, el.clientHeight - 24 + SKIRT);

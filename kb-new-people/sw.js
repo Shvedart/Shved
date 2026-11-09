@@ -1,5 +1,5 @@
 // Service worker: оболочка приложения доступна офлайн, картинки партнёров кешируются по мере просмотра.
-const VERSION = 'kb-np-v114';
+const VERSION = 'kb-np-v128';
 const SHELL = [
   './',
   'index.html',
@@ -8,6 +8,7 @@ const SHELL = [
   'data/overrides.json',
   'data/products.json',
   'data/discounts.json',
+  'data/grocery.json',
   'styles/tokens.css',
   'styles/base.css',
   'styles/components.css',

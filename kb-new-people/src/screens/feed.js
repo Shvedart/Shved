@@ -1,18 +1,23 @@
 // Лента после тура сценария 03: офферы собираются в смысловые полки по 4 (или 3 + скретч-карточка),
 // между ними — полки «Путешествия» и «События для вас» из прототипа афиши.
 
-import { h, button, img } from '../core/dom.js';
+import { h, button, img, icon, iconImg } from '../core/dom.js';
 import { animate, EASE, stagger, fadeUpIn } from '../core/motion.js';
 import { haptics } from '../core/haptics.js';
-import { cardHeader } from '../ui/components.js';
+import { cardHeader, productCard } from '../ui/components.js';
 import { travelShelf, afishaShelf } from '../ui/shelves.js';
+import { app } from '../app.js';
 
 // Порядок ленты. offers — смысловая полка: категория каталога, при необходимости — фильтр по названию;
 // scratch — номер скретч-карточки (по SCRATCH_PRIZES в main.js), тогда офферов три.
 const LAYOUT = [
   { title: 'Продукты с доставкой', sub: 'Привезут за час — с кэшбэком', cat: 'food', match: /доставка|лавка|самокат|купер/i, scratch: 0 },
   { title: 'Супермаркеты рядом', sub: 'Кэшбэк на покупки у дома', cat: 'food', match: /магнит|пятёрочка|перекрёсток|лента|ашан/i },
+  { kind: 'gorod' },
+  { kind: 'grocery' },
   { title: 'Сырная полка', sub: 'Hochland и Almette с кэшбэком', cat: 'food', match: /hochland|almette/i },
+  // товары с кэшбэком — только когда в навигации выбрана «Еда», во всей ленте их нет
+  { kind: 'products', only: 'food' },
   { title: 'Красота и уход', sub: 'Косметика, парфюмерия и уход', cat: 'beauty', match: /подружка|лэтуаль|кератин|sokolov/i },
   { kind: 'promos', title: 'Промокоды для вас', sub: 'Скидки по коду у партнёров' },
   { kind: 'afisha' },
@@ -70,6 +75,79 @@ const TRAVEL = [
   { cta: true, img: 'assets/img/travel/stavropol-2.webp', color: '#609379', title: 'Скидки до 30%\nна горящие билеты', desc: 'Подберём даты и цену под вас', button: 'Смотреть билеты' },
 ];
 
+// «Заказать продукты домой через Т-Банк» (макет 685:150677): четыре бренда, кэшбэк — с заказа
+// через Город / Т-Банк. У ВкусВилла такого предложения в данных нет — процент задан вручную.
+const GOROD = {
+  title: ['Продукты домой из Т-Банка'],
+  sub: 'С кэшбэком за каждый заказ',
+  items: [
+    { name: 'Пятёрочка', time: '20-30 мин', offer: 'offer-900', logo: 'assets/img/gorod/pyaterochka.png', color: '#3e8d3e' },
+    { name: 'Самокат', time: 'за 15 мин', offer: 'offer-040', logo: 'assets/img/gorod/samokat.png', color: '#ff335f' },
+    { name: 'Лента Доставка', time: 'за 240 мин', offer: 'offer-125', logo: 'assets/img/gorod/lenta.png', color: '#003c96' },
+    { name: 'ВкусВилл', time: '35-120 мин', cashback: '5%', logo: 'assets/img/gorod/vkusvill.png', color: '#60b769' },
+  ],
+};
+
+function gorodShelf({ catalog, onLink }) {
+  const tiles = GOROD.items.map((it) => {
+    const offer = it.offer ? catalog.getOffer(it.offer) : null;
+    const value = offer?.short || it.cashback;
+    const tile = button({ class: 'gorod-tile', 'aria-label': `${it.name}, ${it.time}, кэшбэк ${value}` },
+      h('span', { class: 'gorod-pic', style: { background: it.color } },
+        img(it.logo, { alt: '', width: 100, height: 100 }),
+        // фиксированная сумма в рублях — с иконкой купона, как у промокодов; процент — с короной
+        h('span', { class: 'gorod-badge' }, offer?.type === 'fixed' ? iconImg('coupon', { size: 12 }) : icon('crown', { size: 12 }), h('span', null, value))),
+      h('span', { class: 'gorod-text' },
+        h('span', { class: 'gorod-name' }, it.name),
+        h('span', { class: 'gorod-time' }, it.time)));
+    tile.addEventListener('click', () => (offer ? app.nav.push(`/offer/${offer.id}`) : onLink?.()));
+    return tile;
+  });
+  const all = button({ class: 'gorod-all' }, 'Посмотреть все');
+  all.addEventListener('click', () => onLink?.());
+  const title = GOROD.title.flatMap((line, i) => (i ? [h('br'), line] : [line]));
+  return h('section', { class: 'shelf gorod', dataset: { cat: 'food' } },
+    cardHeader({ title, subtitle: GOROD.sub }),
+    h('div', { class: 'gorod-grid' }, tiles),
+    all);
+}
+
+// какие товары (data/products.json) — про еду: для полки «Товары с кэшбэком» в категории «Еда»
+const FOOD_PRODUCTS = ['product-001', 'product-002', 'product-003', 'product-004', 'product-005', 'product-007'];
+
+// «Вы уже заказывали» (макет 685:150677, вторая версия): товары магазина из data/grocery.json —
+// цена, кэшбэк в рублях с короной и сердечко. Показываем первые четыре.
+const GROCERY = { shop: 'ВкусВилл', title: 'Вы уже заказывали', avatar: 'assets/img/gorod/vkusvill-avatar.svg', count: 4 };
+
+function groceryShelf({ catalog, onLink }) {
+  const items = catalog.grocery.slice(0, GROCERY.count).map((p) => {
+    // сердечко только для вида: товаров нет в избранном прототипа
+    const heart = button({ class: 'heart gcard-heart', 'aria-label': `${p.name}: в избранное`, 'aria-pressed': 'false' },
+      icon('heart-outline', { size: 24, cls: 'heart-outline' }), iconImg('heart-filled', { size: 24, cls: 'heart-filled' }));
+    heart.addEventListener('click', () => {
+      const on = heart.getAttribute('aria-pressed') !== 'true';
+      heart.setAttribute('aria-pressed', String(on));
+      haptics.selection();
+    });
+    return h('div', { class: 'gcard' },
+      h('div', { class: 'gcard-pic' }, img(p.image, { alt: '' })),
+      heart,
+      h('div', { class: 'gcard-info' },
+        h('div', { class: 'gcard-price' }, h('span', null, p.price),
+          h('span', { class: 'gcard-badge' }, icon('crown', { size: 10 }), h('span', null, p.cashback))),
+        h('p', { class: 'gcard-name' }, p.name)));
+  });
+  if (!items.length) return null;
+  const all = button({ class: 'gorod-all' }, 'Посмотреть все');
+  all.addEventListener('click', () => onLink?.());
+  return h('section', { class: 'shelf grocery', dataset: { cat: 'food' } },
+    h('div', { class: 'card-header grocery-head' },
+      h('div', { class: 'card-header-text' }, h('p', { class: 'grocery-shop' }, GROCERY.shop), h('h2', { class: 'card-title' }, GROCERY.title)),
+      img(GROCERY.avatar, { cls: 'grocery-avatar', alt: '', width: 44, height: 44 })),
+    h('div', { class: 'gorod-grid grocery-grid' }, items),
+    all);
+}
+
 const AFISHA = [
   { img: 'assets/img/afisha/basta.jpg', category: 'Хип-хоп', title: 'Баста', place: 'ОК «Лужники», Большая арена', date: '30 ноября', price: 'От 4 850 ₽', cashback: 'До 20%' },
   { img: 'assets/img/afisha/madam-boom.jpg', category: 'Шоу', title: 'Бурлеск кабаре шоу МАДАМ БУМ', place: 'Гримёрка Gastro Club & Karaoke Bar', date: '4 декабря', price: 'От 4 500 ₽', cashback: 'До 20%' },
@@ -115,6 +193,24 @@ export function buildShelves({ catalog, cards, scratches, promos = [], onLink })
         parts.push(h('section', { class: 'shelf', dataset: { cat: 'mix' } },
           cardHeader({ title: s.title, subtitle: s.sub, link: 'Все', onLink }), h('div', { class: 'grid' }, list)));
       }
+      return;
+    }
+    if (s.kind === 'products') {
+      const list = catalog.products.filter((p) => FOOD_PRODUCTS.includes(p.id));
+      if (list.length) {
+        parts.push(h('section', { class: 'shelf shelf-products', hidden: true, dataset: { cat: s.only, only: s.only } },
+          cardHeader({ title: 'Товары с кэшбэком', link: 'Все', onLink }),
+          h('div', { class: 'hscroll' }, list.map((p) => productCard(p)))));
+      }
+      return;
+    }
+    if (s.kind === 'grocery') {
+      const g = groceryShelf({ catalog, onLink });
+      if (g) parts.push(g);
+      return;
+    }
+    if (s.kind === 'gorod') {
+      parts.push(gorodShelf({ catalog, onLink }));
       return;
     }
     if (s.kind === 'travel') {
@@ -208,7 +304,8 @@ export function buildShelves({ catalog, cards, scratches, promos = [], onLink })
         }
         part.hidden = !any;
       } else {
-        part.hidden = !(id === 'all' || part.dataset.cat === id);
+        // полка «только для категории» во всей ленте не показывается
+        part.hidden = part.dataset.only ? part.dataset.only !== id : !(id === 'all' || part.dataset.cat === id);
       }
       if (!part.hidden) shown.push(part);
     }

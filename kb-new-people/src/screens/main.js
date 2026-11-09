@@ -5,7 +5,7 @@ import { animate, EASE, stagger, fadeUpIn, reducedMotion } from '../core/motion.
 import { store } from '../core/store.js';
 import { haptics } from '../core/haptics.js';
 import { toast } from '../ui/toast.js';
-import { cardMini, cardHeader, offerCard, productCard, promoCard } from '../ui/components.js';
+import { cardMini, cardHeader, cell, offerCard, productCard, promoCard } from '../ui/components.js';
 import { favCard, favLook } from '../ui/favcard.js';
 import { scratchCard } from '../ui/scratch.js';
 import { buildShelves } from './feed.js';
@@ -131,7 +131,13 @@ export function mainScreen({ el, params, nav, entry }) {
         h('p', { class: 'card-subtitle' }, streakCfg.subtitle))),
     h('div', { class: 'days', role: 'list', 'aria-label': 'Серия заходов' }, dayEls),
     h('div', { class: 'card-header card-header-tight streak-today' }, h('h2', { class: 'card-title' }, 'Доступно уже сегодня')),
-    h('div', { class: 'hscroll streak-today' }, today.map((o) => offerCard(o, { size: 'm' }))));
+    // строками, как в «Мое любимое»: маленький логотип, процент и название. Прежний вид — карточки:
+    // h('div', { class: 'hscroll streak-today' }, today.map((o) => offerCard(o, { size: 'm' })))
+    h('div', { class: 'streak-today streak-rows' }, today.map((o) => {
+      const c = cell(o);
+      c.querySelector('.cell-title').prepend(h('span', { class: 'cell-logo' }, img(o.logo, { alt: '', width: 20, height: 20, fallback: o.name })));
+      return c;
+    })));
 
   const nearby = h('section', { class: 'card nearby', dataset: { tour: 'nearby' } },
     cardHeader({ title: 'Выгода рядом с вами', subtitle: 'Кэшбэк на районе', aside: h('span', { class: 'map-pin', 'aria-hidden': 'true' }, icon('location', { size: 22 })) }),
@@ -140,7 +146,8 @@ export function mainScreen({ el, params, nav, entry }) {
       h('span', { class: 'nearby-text' }, h('span', { class: 'nearby-title' }, `${n.cashback} • ${n.name}`), h('span', { class: 'nearby-sub' }, n.address))))));
 
   const products = h('section', { class: 'card products', dataset: { tour: 'products' } },
-    cardHeader({ title: 'Товары с кэшбэком', subtitle: 'Самые жирные предложения' }),
+    // экрана со всеми товарами в прототипе нет — «Все» только показывает подсказку
+    cardHeader({ title: 'Товары с кэшбэком', link: 'Все', onLink: () => toast('Недоступно в прототипе') }),
     // реальные товары из data/products.json; если их нет — прежние офферы из overrides
     h('div', { class: 'hscroll' }, (catalog.products.length ? catalog.products : cfg.products.map((id) => catalog.getOffer(id)).filter(Boolean)).map((p) => productCard(p))));
 
