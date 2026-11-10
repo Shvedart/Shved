@@ -25,7 +25,7 @@ export function evenWeights(ids) {
 }
 
 export function defaultSetup(ids) {
-  return { mode: 'shelves', goods: 30, weights: evenWeights(ids), locked: [] };
+  return { mode: 'shelves', goods: 30, bigGoods: false, weights: evenWeights(ids), locked: [] };
 }
 
 // Ставит категории id долю value; остаток делят нетронутые категории пропорционально их долям.

@@ -170,6 +170,37 @@ const GOODS_SHELVES = 3;
 const CUSTOM_TOTAL = 64;
 const chunk = (list, n) => Array.from({ length: Math.ceil(list.length / n) }, (_, i) => list.slice(i * n, i * n + n));
 
+// Правила для больших карточек в сплошной ленте: больших товаров подряд — не больше двух,
+// обычные карточки идут только парами (в строке всегда две). Порядок ленты сохраняется,
+// лишняя одиночная карточка в конце отбрасывается.
+function pairUp(items) {
+  const isBig = (x) => x.classList.contains('is-big');
+  const bigs = items.filter(isBig);
+  const smalls = items.filter((x) => !isBig(x));
+  const out = [];
+  let run = 0;
+  for (const item of items) {
+    if (isBig(item)) {
+      if (!bigs.includes(item)) continue;
+      // третий большой подряд ждёт, пока между ними не встанет пара обычных
+      if (run === 2) {
+        if (smalls.length < 2) break;
+        out.push(smalls.shift(), smalls.shift());
+        run = 0;
+      }
+      bigs.splice(bigs.indexOf(item), 1);
+      out.push(item);
+      run++;
+    } else {
+      if (!smalls.includes(item)) continue;
+      if (smalls.length < 2) break;
+      out.push(smalls.shift(), smalls.shift());
+      run = 0;
+    }
+  }
+  return out;
+}
+
 function customParts({ catalog, byOffer, promos, setup, onLink }) {
   const usedOffers = new Set();
   const usedPromos = new Set();
@@ -197,6 +228,8 @@ function customParts({ catalog, byOffer, promos, setup, onLink }) {
     const goodsCards = goodsPool.slice(0, g).map((p) => {
       const card = goodsCard(p);
       card.dataset.cat = cat;
+      // большие карточки — во всю ширину ленты
+      if (setup.bigGoods) card.classList.add('is-big');
       return card;
     });
     plan[cat] = { offers: offerPool.slice(0, o), goods: goodsCards };
@@ -215,12 +248,28 @@ function customParts({ catalog, byOffer, promos, setup, onLink }) {
     }
     const order = interleave(Object.fromEntries(Object.entries(perCat).map(([c, l]) => [c, l.length])));
     const taken = {};
-    const items = order.map((c) => perCat[c][(taken[c] = (taken[c] || 0) + 1) - 1]);
+    let items = order.map((c) => perCat[c][(taken[c] = (taken[c] || 0) + 1) - 1]);
+    if (setup.bigGoods) items = pairUp(items);
     // как Pinterest: две независимые колонки, карточки по очереди слева и справа —
     // разная высота офферов и товаров даёт неровные ряды, порядок чтения сохраняется
-    const cols = [h('div', { class: 'masonry-col' }), h('div', { class: 'masonry-col' })];
-    items.forEach((item, i) => cols[i % 2].append(item));
-    return [h('section', { class: 'shelf shelf-mixed', dataset: { cat: 'mix' } }, h('div', { class: 'masonry' }, cols))];
+    // большая карточка разрывает колонки: до неё — свой блок колонок, она сама — во всю ширину
+    const blocks = [];
+    let cols = null;
+    let n = 0;
+    for (const item of items) {
+      if (item.classList.contains('is-big')) {
+        blocks.push(h('div', { class: 'masonry-wide' }, item));
+        cols = null;
+        continue;
+      }
+      if (!cols) {
+        cols = [h('div', { class: 'masonry-col' }), h('div', { class: 'masonry-col' })];
+        blocks.push(h('div', { class: 'masonry' }, cols));
+        n = 0;
+      }
+      cols[n++ % 2].append(item);
+    }
+    return [h('section', { class: 'shelf shelf-mixed', dataset: { cat: 'mix' } }, blocks)];
   }
 
   // полками: у каждой категории полки по 4 — офферные и товарные вперемешку по доле;
@@ -231,7 +280,8 @@ function customParts({ catalog, byOffer, promos, setup, onLink }) {
     const offerShelves = chunk(offers, 4).map((list, i) => h('section', { class: 'shelf', dataset: { cat } },
       cardHeader({ title: i ? `Ещё: ${title.toLowerCase()}` : title, subtitle: 'Кэшбэк у партнёров', link: 'Все', onLink }),
       h('div', { class: 'grid' }, list)));
-    const goodsShelves = chunk(goods, 4).map((list, i) => h('section', { class: 'shelf shelf-goods', dataset: { cat, goods: 'true' } },
+    // большие карточки — по две в полке: больше двух товаров подряд не идёт
+    const goodsShelves = chunk(goods, setup.bigGoods ? 2 : 4).map((list, i) => h('section', { class: 'shelf shelf-goods', dataset: { cat, goods: 'true' } },
       cardHeader({ title: i ? `Ещё товары: ${title.toLowerCase()}` : GOODS_TITLES[cat] || `Товары: ${title.toLowerCase()}`, subtitle: 'Предложения выбранных брендов', link: 'Все', onLink }),
       h('div', { class: 'grid' }, list)));
     const kinds = interleave({ goods: goodsShelves.length, offers: offerShelves.length });

@@ -134,6 +134,22 @@
   padding: 0 var(--gutter);
 }
 
+/* блоки колонок и большие карточки идут друг за другом с тем же шагом, что ряды */
+.shelf-mixed {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.masonry-wide {
+  padding: 0 var(--gutter);
+}
+
+/* в полке с сеткой большая карточка товара занимает обе колонки */
+.grid > .goods.is-big {
+  grid-column: 1 / -1;
+}
+
 .masonry-col {
   display: flex;
   flex-direction: column;

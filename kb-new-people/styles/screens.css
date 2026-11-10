@@ -2261,3 +2261,67 @@
 .setup-bar {
   margin-top: auto;
 }
+
+/* переключатель «Большие карточки товаров» — как системный iOS */
+.setup-switch {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.setup-switch-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  font-size: 15px;
+  letter-spacing: -0.24px;
+  color: var(--c-text);
+}
+
+.setup-switch-text .setup-hint {
+  margin-top: 2px;
+}
+
+.setup-switch-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.setup-switch-track {
+  position: relative;
+  flex: none;
+  width: 51px;
+  height: 31px;
+  border-radius: 16px;
+  background: var(--c-fill-strong);
+  transition: background-color var(--dur-fast) ease;
+}
+
+.setup-switch-track::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: transform var(--dur-fast) var(--ease-ios);
+}
+
+.setup-switch-input:checked + .setup-switch-track {
+  background: var(--c-green);
+}
+
+.setup-switch-input:checked + .setup-switch-track::after {
+  transform: translateX(20px);
+}
+
+.setup-switch-input:focus-visible + .setup-switch-track {
+  outline: 2px solid var(--c-info);
+  outline-offset: 2px;
+}

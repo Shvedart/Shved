@@ -1490,6 +1490,11 @@ img.is-broken {
   text-overflow: ellipsis;
 }
 
+/* большая карточка (макет 720:155762): описание в одну строку */
+.goods.is-big .goods-desc {
+  -webkit-line-clamp: 1;
+}
+
 .goods-desc {
   display: -webkit-box;
   -webkit-line-clamp: 2;

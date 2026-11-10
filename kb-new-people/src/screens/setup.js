@@ -64,6 +64,13 @@ export function setupScreen({ el, params, nav }) {
     value: setup.goods,
     onInput: (v) => { setup = { ...setup, goods: v }; goods.paint(v); goodsHint.textContent = goodsText(v); },
   });
+  // большие карточки товаров (макет 720:155762): товар во всю ширину ленты
+  const bigInput = h('input', { class: 'setup-switch-input', type: 'checkbox', role: 'switch' });
+  bigInput.checked = !!setup.bigGoods;
+  bigInput.addEventListener('change', () => { setup = { ...setup, bigGoods: bigInput.checked }; haptics.selection(); });
+  const big = h('label', { class: 'setup-switch' },
+    h('span', { class: 'setup-switch-text' }, h('span', { class: 'setup-label' }, 'Большие карточки товаров'), h('span', { class: 'setup-hint' }, 'Товар во всю ширину ленты')),
+    bigInput, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
   const goodsText = (v) => `${v}% товаров и ${100 - v}% офферов, промокодов и подборок`;
   const goodsHint = h('p', { class: 'setup-hint' }, goodsText(setup.goods));
 
@@ -109,7 +116,7 @@ export function setupScreen({ el, params, nav }) {
       h('h1', { class: 'setup-title' }, 'Соберите ленту под себя'),
       h('p', { class: 'setup-sub' }, 'Как показывать предложения и чего в ленте должно быть больше'),
       h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Вид ленты'), seg, modeHint),
-      h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Товары или офферы'), goods, goodsHint),
+      h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Товары или офферы'), goods, goodsHint, big),
       h('section', { class: 'setup-block' },
         h('div', { class: 'setup-block-head' }, h('h2', { class: 'setup-block-title' }, 'Чего показывать больше'), reset),
         h('p', { class: 'setup-hint' }, 'Доли категорий в сумме — 100%. Тронутый ползунок держит свою долю, остальные делят остаток'),
