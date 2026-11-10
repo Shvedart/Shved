@@ -262,9 +262,16 @@ function customParts({ catalog, byOffer, promos, setup, onLink }) {
         cols = null;
         continue;
       }
+      // с большими карточками ряды ровные (обычная сетка), без них — колонки как в Pinterest
       if (!cols) {
-        cols = [h('div', { class: 'masonry-col' }), h('div', { class: 'masonry-col' })];
-        blocks.push(h('div', { class: 'masonry' }, cols));
+        if (setup.bigGoods) {
+          const grid = h('div', { class: 'grid' });
+          cols = [grid, grid];
+          blocks.push(grid);
+        } else {
+          cols = [h('div', { class: 'masonry-col' }), h('div', { class: 'masonry-col' })];
+          blocks.push(h('div', { class: 'masonry' }, cols));
+        }
         n = 0;
       }
       cols[n++ % 2].append(item);

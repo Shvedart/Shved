@@ -141,6 +141,11 @@
   gap: 24px;
 }
 
+/* ровные ряды сплошной ленты (с большими карточками) — шаг рядов как у колонок */
+.shelf-mixed > .grid {
+  row-gap: 24px;
+}
+
 .masonry-wide {
   padding: 0 var(--gutter);
 }
