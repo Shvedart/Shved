@@ -60,8 +60,10 @@ export function buildCatalog(raw, cfg, productsRaw = null, discountsRaw = null, 
   const promos = buildPromos(discountsRaw, brands);
   // продукты из магазина (data/grocery.json): цена, кэшбэк в рублях и фото — для полки «Вы уже заказывали»
   const grocery = groceryRaw?.products || [];
-  // товары маркетплейса (data/tovarka.json) по категориям навигации: [{ id, title, products }]
-  const goods = goodsRaw?.categories || [];
+  // товары маркетплейса (data/tovarka.json) по категориям навигации: [{ id, title, products }];
+  // hiddenGoods в overrides — товары, которые пока не показываем (например, фото-инфографика)
+  const hiddenGoods = new Set(cfg.hiddenGoods || []);
+  const goods = (goodsRaw?.categories || []).map((c) => ({ ...c, products: c.products.filter((p) => !hiddenGoods.has(p.id)) }));
   return createCatalogApi({ categories, offers, brands, cfg, products, promos, grocery, goods });
 }
 

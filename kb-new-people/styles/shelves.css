@@ -125,6 +125,22 @@
   padding-bottom: 0;
 }
 
+/* сплошная лента 07 — две колонки разной высоты (как Pinterest) */
+.masonry {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  align-items: start;
+  padding: 0 var(--gutter);
+}
+
+.masonry-col {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
 .shelf .grid {
   row-gap: 24px;
 }

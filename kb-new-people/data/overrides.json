@@ -1,6 +1,7 @@
 {
   "today": "2025-11-01",
   "month": { "name": "ноябрь", "title": "В ноябре" },
+  "hiddenGoods": ["product-089", "product-099", "product-406"],
   "prevMonth": { "name": "октябрь", "title": "в октябре", "categories": ["restaurants", "beauty", "pharmacy", "clothes"] },
   "brands": {
     "samokat": { "name": "Самокат", "namePrep": "Самокате", "match": ["Самокат в Городе"] },

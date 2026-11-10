@@ -216,7 +216,11 @@ function customParts({ catalog, byOffer, promos, setup, onLink }) {
     const order = interleave(Object.fromEntries(Object.entries(perCat).map(([c, l]) => [c, l.length])));
     const taken = {};
     const items = order.map((c) => perCat[c][(taken[c] = (taken[c] || 0) + 1) - 1]);
-    return [h('section', { class: 'shelf shelf-mixed', dataset: { cat: 'mix' } }, h('div', { class: 'grid' }, items))];
+    // как Pinterest: две независимые колонки, карточки по очереди слева и справа —
+    // разная высота офферов и товаров даёт неровные ряды, порядок чтения сохраняется
+    const cols = [h('div', { class: 'masonry-col' }), h('div', { class: 'masonry-col' })];
+    items.forEach((item, i) => cols[i % 2].append(item));
+    return [h('section', { class: 'shelf shelf-mixed', dataset: { cat: 'mix' } }, h('div', { class: 'masonry' }, cols))];
   }
 
   // полками: у каждой категории полки по 4 — офферные и товарные вперемешку по доле;
