@@ -1265,3 +1265,77 @@ img.is-broken {
   width: 44px;
   height: 44px;
 }
+
+/* ---------- Повышенный кэшбэк: две плитки (макет 693:151396) ---------- */
+.pk-tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.pk-tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  min-width: 0;
+  height: 120px;
+  padding: 12px;
+  border-radius: var(--r-m);
+  text-align: left;
+}
+
+.pk-tiles.is-flat .pk-tile {
+  background: var(--c-fill);
+}
+
+/* на главной фон страницы серый — плитки белые и плоские, без тени */
+.pk-tiles.is-raised .pk-tile {
+  background: var(--c-bg);
+}
+
+.pk-tile-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+}
+
+.pk-tile-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.24px;
+  color: var(--c-text);
+}
+
+.pk-tile-top .badge {
+  flex: none;
+}
+
+/* стопка иконок категорий: 40px, наезжают на 10px, белая обводка 2px */
+.pk-tile-stack {
+  display: flex;
+  isolation: isolate;
+}
+
+.pk-tile-icon {
+  position: relative;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 0 2px var(--c-bg);
+}
+
+.pk-tile-icon + .pk-tile-icon {
+  margin-left: -10px;
+}
+
+/* первая иконка — сверху, дальше каждая уходит под соседку слева */
+.pk-tile-icon:nth-child(1) { z-index: 4; }
+.pk-tile-icon:nth-child(2) { z-index: 3; }
+.pk-tile-icon:nth-child(3) { z-index: 2; }
+.pk-tile-icon:nth-child(4) { z-index: 1; }

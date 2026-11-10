@@ -156,6 +156,51 @@ export function cardMini({ flat = true, onOpen } = {}) {
   return el;
 }
 
+// Повышенный кэшбэк, новый вид (макет 693:151396, сценарии 01 и 02): две плитки рядом.
+// Слева — текущий месяц: красный бейдж и «Выбрать», после выбора — стопка иконок категорий.
+// Справа — прошлый месяц: категории уже выбраны, тап открывает их на экране выбора только для просмотра.
+// Прежний вид — cardMini выше; какой вид в каком сценарии — PK_LOOK ниже.
+export function pkTiles({ flat = true } = {}) {
+  const cfg = app.catalog.config;
+  const catsOf = (ids) => ids.map((id) => cfg.pk.categories.find((c) => c.id === id)).filter(Boolean);
+  const stack = (cats) => h('span', { class: 'pk-tile-stack' }, cats.map((c) => iconImg(c.icon, { size: 40, cls: 'pk-tile-icon' })));
+  const title = (text) => h('span', { class: 'pk-tile-title' }, text);
+
+  const now = button({ class: 'pk-tile' });
+  const render = () => {
+    const pk = store.state.pk;
+    const text = `Повышенный кэшбэк ${cfg.month.title.toLowerCase()}`;
+    if (!pk) {
+      now.setAttribute('aria-label', `${text}: выберите категории`);
+      now.replaceChildren(h('span', { class: 'pk-tile-top' }, title(text), badge(1)),
+        h('span', { class: 'btn btn-primary btn-s', 'aria-hidden': 'true' }, 'Выбрать'));
+    } else {
+      const cats = catsOf(pk.categories);
+      now.setAttribute('aria-label', `${text}: ${cats.map((c) => c.title).join(', ')}`);
+      now.replaceChildren(h('span', { class: 'pk-tile-top' }, title(text)), stack(cats));
+    }
+  };
+  render();
+  now.addEventListener('click', () => app.nav.push('/pk'));
+
+  const prev = cfg.prevMonth;
+  const before = prev ? button({ class: 'pk-tile', 'aria-label': `Повышенный кэшбэк ${prev.title}: посмотреть категории` },
+    h('span', { class: 'pk-tile-top' }, title(`Повышенный кэшбэк ${prev.title}`)), stack(catsOf(prev.categories))) : null;
+  before?.addEventListener('click', () => app.nav.push('/pk/prev'));
+
+  const el = h('div', { class: `pk-tiles ${flat ? 'is-flat' : 'is-raised'}` }, now, before);
+  const unsub = store.subscribe((_, change) => { if (change.type === 'pk' || change.type === 'reset') render(); });
+  el.destroy = unsub;
+  return el;
+}
+
+// Какой вид выбора повышенного кэшбэка в каком сценарии: 'tiles' — две плитки, 'mini' — прежняя плашка
+const PK_LOOK = { s1: 'tiles', s2: 'tiles' };
+// tilesFlat — плитки серые и плоские даже там, где прежняя плашка была белой с тенью (главная)
+export function pkBlock(scenario, { flat = true, tilesFlat = flat } = {}) {
+  return PK_LOOK[scenario] === 'tiles' ? pkTiles({ flat: tilesFlat }) : cardMini({ flat });
+}
+
 // ---------- Карточка оффера (вертикальная) ----------
 
 // locked: оффер откроется позже — карточка серая, вместо лайка замок, но открыть детали можно.

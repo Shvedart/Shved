@@ -9,11 +9,13 @@ import { toast } from '../ui/toast.js';
 import { primaryButton } from '../ui/components.js';
 import { app } from '../app.js';
 
-export function pkScreen({ el, nav }) {
+export function pkScreen({ el, nav, params = {} }) {
   el.classList.add('pk');
   const cfg = app.catalog.config.pk;
-  const locked = !!store.state.pk;
-  const chosen = new Set(locked ? store.state.pk.categories : []);
+  // /pk/prev — категории прошлого месяца: уже выбраны, только посмотреть
+  const prev = params.month === 'prev' ? app.catalog.config.prevMonth : null;
+  const locked = !!prev || !!store.state.pk;
+  const chosen = new Set(prev ? prev.categories : locked ? store.state.pk.categories : []);
   let submitting = false;
 
   const rows = cfg.categories.map((cat) => {
@@ -34,11 +36,14 @@ export function pkScreen({ el, nav }) {
     primaryButton('Выбрать', { onClick: submit, cls: 'pk-submit' }),
     h('p', { class: 'pk-terms' }, 'Нажимая кнопку, вы соглашаетесь ', button({ class: 'pk-terms-link', onclick: () => toast('Условия программы — в разработке') }, 'с условиями')));
 
-  const lockedNote = h('p', { class: 'pk-locked' }, `Категории на ${app.catalog.config.month.name} выбраны. Изменить их можно будет в следующем месяце`);
+  const monthName = prev ? prev.name : app.catalog.config.month.name;
+  const lockedNote = h('p', { class: 'pk-locked' }, prev
+    ? `Категории на ${prev.name} уже выбраны — так они выглядели в прошлом месяце`
+    : `Категории на ${monthName} выбраны. Изменить их можно будет в следующем месяце`);
 
   el.append(
     h('div', { class: 'pk-inner' },
-      h('h1', { class: 'pk-title' }, `Выберите ${cfg.limit} категории кэшбэка на ${app.catalog.config.month.name}`),
+      h('h1', { class: 'pk-title' }, prev ? `Категории кэшбэка на ${prev.name}` : `Выберите ${cfg.limit} категории кэшбэка на ${monthName}`),
       h('ul', { class: 'pk-list', role: 'list' }, rows),
       locked ? lockedNote : null),
     locked ? null : footer);

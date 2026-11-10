@@ -20,7 +20,7 @@ const routes = [
   { pattern: /^\/bank\/(?<s>s[1-5])$/, create: bankScreen, parent: '/' },
   { pattern: /^\/onb\/(?<s>s[12])\/(?<step>[1-5])$/, create: onboardingScreen, parent: (p) => `/bank/${p.s}` },
   { pattern: /^\/main\/(?<s>s[1-5])$/, create: mainScreen, parent: '/' },
-  { pattern: /^\/pk$/, create: pkScreen, modal: true, parent: '/' },
+  { pattern: /^\/pk(?:\/(?<month>prev))?$/, create: pkScreen, modal: true, parent: '/' },
   { pattern: /^\/offer\/(?<id>[\w-]+)$/, create: offerScreen, parent: '/' },
   { pattern: /^\/favorites$/, create: favoritesScreen, parent: '/' },
   { pattern: /^\/brands$/, create: brandsScreen, parent: '/' },

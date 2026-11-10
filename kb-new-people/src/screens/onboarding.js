@@ -8,7 +8,7 @@ import { h, iconImg, icon, img, plural, wait } from '../core/dom.js';
 import { animate, EASE, stagger, fadeUpIn, fadeUpOut, fadeDownIn, fadeDownOut, reducedMotion } from '../core/motion.js';
 import { haptics } from '../core/haptics.js';
 import { store } from '../core/store.js';
-import { chip, offerRow, brandRow, primaryButton, linkButton, cardMini, setChipActive } from '../ui/components.js';
+import { chip, offerRow, brandRow, primaryButton, linkButton, pkBlock, setChipActive } from '../ui/components.js';
 import { favCard, favLook, boostTarget } from '../ui/favcard.js';
 import { app } from '../app.js';
 
@@ -36,7 +36,7 @@ export function onboardingScreen({ el, params, nav, entry }) {
   el.classList.add('onb');
 
   // ---------- Шаги 1–2 ----------
-  const pkTile = cardMini({ flat: true });
+  const pkTile = pkBlock(scenario, { flat: true });
   cleanups.push(pkTile.destroy);
   const titleEl = h('h1', { class: 'onb-title' });
   const subEl = h('p', { class: 'onb-sub' });

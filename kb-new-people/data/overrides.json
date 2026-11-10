@@ -1,6 +1,7 @@
 {
   "today": "2025-11-01",
   "month": { "name": "ноябрь", "title": "В ноябре" },
+  "prevMonth": { "name": "октябрь", "title": "в октябре", "categories": ["restaurants", "beauty", "pharmacy", "clothes"] },
   "brands": {
     "samokat": { "name": "Самокат", "namePrep": "Самокате", "match": ["Самокат в Городе"] },
     "lenta": { "name": "Лента", "namePrep": "Ленте", "match": ["Лента Доставка", "Гипер Лента в Городе"] },

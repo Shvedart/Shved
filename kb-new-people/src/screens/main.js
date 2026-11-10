@@ -5,7 +5,7 @@ import { animate, EASE, stagger, fadeUpIn, reducedMotion } from '../core/motion.
 import { store } from '../core/store.js';
 import { haptics } from '../core/haptics.js';
 import { toast } from '../ui/toast.js';
-import { cardMini, cardHeader, cell, offerCard, productCard, promoCard } from '../ui/components.js';
+import { pkBlock, cardHeader, cell, offerCard, productCard, promoCard } from '../ui/components.js';
 import { favCard, favLook } from '../ui/favcard.js';
 import { scratchCard } from '../ui/scratch.js';
 import { buildShelves } from './feed.js';
@@ -29,7 +29,7 @@ export function mainScreen({ el, params, nav, entry }) {
 
   // ---------- Верх: сумма и действия ----------
   const actions = [
-    { id: 'withdraw', label: 'Вывести', node: icon('arrow-right', { size: 28 }) },
+    { id: 'withdraw', label: 'Потратить', node: icon('arrow-right', { size: 28 }) },
     { id: 'privileges', label: 'Привилегии', node: iconImg('premium-gold', { size: 28 }) },
     { id: 'food', label: 'Еда', node: icon('food', { size: 28 }) },
     { id: 'edit', label: 'Изменить', node: icon('edit', { size: 28 }), disabled: true },
@@ -76,7 +76,7 @@ export function mainScreen({ el, params, nav, entry }) {
     h('div', { class: 'nav-actions' }, actions));
 
   // ---------- Блоки ----------
-  const pk = h('div', { class: 'main-block', dataset: { tour: 'pk' } }, cardMini({ flat: false }));
+  const pk = h('div', { class: 'main-block', dataset: { tour: 'pk' } }, pkBlock(scenario, { flat: false, tilesFlat: true }));
   cleanups.push(pk.firstChild.destroy);
 
   const fav = favCard({ mode: 'live', look: favLook(scenario) });
