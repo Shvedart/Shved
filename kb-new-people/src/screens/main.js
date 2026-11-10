@@ -195,7 +195,7 @@ export function mainScreen({ el, params, nav, entry }) {
   function toShelves({ animated }) {
     if (shelves) return;
     const cards = [...selectionGrid.querySelectorAll(':scope > .ocard')];
-    shelves = buildShelves({ catalog, cards, scratches, promos: catalog.promos.map((p) => promoCard(p)), goods: WITH_GOODS.includes(scenario), onLink: () => nav.push('/favorites') });
+    shelves = buildShelves({ catalog, cards, scratches, promos: catalog.promos.map((p) => promoCard(p)), goods: WITH_GOODS.includes(scenario), custom: scenario === 's7' ? store.state.feedSetup : null, onLink: () => nav.push('/favorites') });
     const swap = () => {
       selection.classList.add('is-shelves');
       selection.replaceChildren(shelves);

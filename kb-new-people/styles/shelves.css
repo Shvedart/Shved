@@ -16,6 +16,13 @@
   padding: 32px var(--gutter) 16px 20px;
 }
 
+.feed-head-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .feed-head-title {
   font-family: var(--font-display);
   font-size: 28px;

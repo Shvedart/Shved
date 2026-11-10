@@ -14,12 +14,14 @@ import { pkScreen } from './screens/pk.js';
 import { offerScreen } from './screens/offer.js';
 import { favoritesScreen } from './screens/favorites.js';
 import { brandsScreen } from './screens/brands.js';
+import { setupScreen } from './screens/setup.js';
 
 const routes = [
   { pattern: /^\/$/, create: hubScreen },
-  { pattern: /^\/bank\/(?<s>s[1-6])$/, create: bankScreen, parent: '/' },
+  { pattern: /^\/bank\/(?<s>s[1-7])$/, create: bankScreen, parent: '/' },
   { pattern: /^\/onb\/(?<s>s[12])\/(?<step>[1-5])$/, create: onboardingScreen, parent: (p) => `/bank/${p.s}` },
-  { pattern: /^\/main\/(?<s>s[1-6])$/, create: mainScreen, parent: '/' },
+  { pattern: /^\/main\/(?<s>s[1-7])$/, create: mainScreen, parent: '/' },
+  { pattern: /^\/setup\/(?<s>s7)$/, create: setupScreen, parent: (p) => `/bank/${p.s}` },
   { pattern: /^\/pk(?:\/(?<month>prev))?$/, create: pkScreen, modal: true, parent: '/' },
   { pattern: /^\/offer\/(?<id>[\w-]+)$/, create: offerScreen, parent: '/' },
   { pattern: /^\/favorites$/, create: favoritesScreen, parent: '/' },

@@ -2087,3 +2087,177 @@
   font-variant-numeric: tabular-nums;
 }
 
+
+/* ---------- Настройка ленты (сценарий 07) ---------- */
+.setup {
+  display: flex;
+  flex-direction: column;
+}
+
+.setup-inner {
+  padding: 8px var(--gutter) 24px;
+}
+
+.setup-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 28px;
+  letter-spacing: 0.36px;
+  line-height: 1.15;
+  color: var(--c-text);
+}
+
+.setup-sub {
+  margin-top: 8px;
+  font-size: 15px;
+  letter-spacing: -0.24px;
+  color: var(--c-text-secondary);
+}
+
+.setup-block {
+  margin-top: 28px;
+}
+
+.setup-block-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.setup-block-title {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.41px;
+  color: var(--c-text);
+  margin-bottom: 12px;
+}
+
+.setup-hint {
+  margin-top: 8px;
+  font-size: 13px;
+  letter-spacing: -0.08px;
+  color: var(--c-text-secondary);
+}
+
+.setup-block-head + .setup-hint {
+  margin: -4px 0 12px;
+}
+
+/* переключатель вида ленты — сегменты на сером фоне */
+.setup-seg {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--r-xs);
+  background: var(--c-fill-strong);
+}
+
+.setup-seg-item {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.24px;
+  color: var(--c-text);
+  transition: background-color var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
+}
+
+.setup-seg-item.is-active {
+  background: var(--c-bg);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  font-weight: 600;
+}
+
+.setup-sliders {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.setup-slider {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.setup-slider-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 15px;
+  letter-spacing: -0.24px;
+  color: var(--c-text);
+}
+
+.setup-value {
+  font-family: var(--font-rounded);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* тронутый ползунок держит долю — подпись жирная, дорожка синяя */
+.setup-slider.is-locked .setup-label {
+  font-weight: 600;
+}
+
+.setup-range {
+  --fill: 0%;
+  width: 100%;
+  height: 28px;
+  margin: 0;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.setup-range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to right, var(--c-text) var(--fill), var(--c-fill-strong) var(--fill));
+}
+
+.setup-slider.is-locked .setup-range::-webkit-slider-runnable-track {
+  background: linear-gradient(to right, var(--c-info) var(--fill), var(--c-fill-strong) var(--fill));
+}
+
+.setup-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 28px;
+  height: 28px;
+  margin-top: -12px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2), 0 0 0 0.5px rgba(0, 0, 0, 0.06);
+}
+
+.setup-range::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--c-fill-strong);
+}
+
+.setup-range::-moz-range-progress {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--c-text);
+}
+
+.setup-range::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.setup-reset {
+  font-size: 15px;
+}
+
+.setup-bar {
+  margin-top: auto;
+}

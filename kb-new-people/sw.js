@@ -1,5 +1,5 @@
 // Service worker: оболочка приложения доступна офлайн, картинки партнёров кешируются по мере просмотра.
-const VERSION = 'kb-np-v155';
+const VERSION = 'kb-np-v159';
 const SHELL = [
   './',
   'index.html',
@@ -44,6 +44,8 @@ const SHELL = [
   'src/screens/offer.js',
   'src/screens/favorites.js',
   'src/screens/brands.js',
+  'src/screens/setup.js',
+  'src/domain/feedSetup.js',
 ];
 
 self.addEventListener('install', (e) => {
