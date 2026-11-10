@@ -51,7 +51,8 @@ const TOUR_MECHANICS = [
   { target: null, stay: true, hero: 'assets/img/tour/final-70.webp', text: 'Кто заходит сюда каждый день, получает на 70% больше кэшбэка', cta: 'Лутать кэшбэк', last: true },
 ];
 
-const TOURS = { s3: TOUR_HABIT_V2, s4: TOUR_HABIT, s5: TOUR_MECHANICS };
+// 06 — тот же тур, что в 03: отличается только лента (товарные полки)
+const TOURS = { s3: TOUR_HABIT_V2, s4: TOUR_HABIT, s5: TOUR_MECHANICS, s6: TOUR_HABIT_V2 };
 
 export function startTour({ el, entry, scenario }) {
   const STEPS = TOURS[scenario] || TOUR_MECHANICS;

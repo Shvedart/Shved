@@ -3,16 +3,16 @@
 
 import { buildCatalog } from '../domain/catalog.js';
 
-export function createLocalSource({ catalogUrl = 'cashback-web.json', overridesUrl = 'data/overrides.json', productsUrl = 'data/products.json', discountsUrl = 'data/discounts.json', groceryUrl = 'data/grocery.json' } = {}) {
+export function createLocalSource({ catalogUrl = 'cashback-web.json', overridesUrl = 'data/overrides.json', productsUrl = 'data/products.json', discountsUrl = 'data/discounts.json', groceryUrl = 'data/grocery.json', goodsUrl = 'data/tovarka.json' } = {}) {
   return {
     async load() {
       // товары, промокоды и продукты из магазина — необязательные источники: без них лента обходится офферами
-      const [raw, overrides, products, discounts, grocery] = await Promise.all([
+      const [raw, overrides, products, discounts, grocery, goods] = await Promise.all([
         fetchJson(catalogUrl), fetchJson(overridesUrl),
         fetchJson(productsUrl).catch(() => null), fetchJson(discountsUrl).catch(() => null),
-        fetchJson(groceryUrl).catch(() => null),
+        fetchJson(groceryUrl).catch(() => null), fetchJson(goodsUrl).catch(() => null),
       ]);
-      return { raw, overrides, products, discounts, grocery };
+      return { raw, overrides, products, discounts, grocery, goods };
     },
   };
 }
@@ -34,6 +34,6 @@ async function fetchJson(url) {
 }
 
 export async function loadCatalog(source) {
-  const { raw, overrides, products, discounts, grocery } = await source.load();
-  return buildCatalog(raw, overrides, products, discounts, grocery);
+  const { raw, overrides, products, discounts, grocery, goods } = await source.load();
+  return buildCatalog(raw, overrides, products, discounts, grocery, goods);
 }

@@ -6,7 +6,7 @@ import { plural } from '../core/dom.js';
 const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
 const DAY_MS = 86400000;
 
-export function buildCatalog(raw, cfg, productsRaw = null, discountsRaw = null, groceryRaw = null) {
+export function buildCatalog(raw, cfg, productsRaw = null, discountsRaw = null, groceryRaw = null, goodsRaw = null) {
   const today = new Date(`${cfg.today}T00:00:00`);
   const matchIndex = new Map();
   for (const [brandId, b] of Object.entries(cfg.brands || {})) {
@@ -60,7 +60,9 @@ export function buildCatalog(raw, cfg, productsRaw = null, discountsRaw = null, 
   const promos = buildPromos(discountsRaw, brands);
   // продукты из магазина (data/grocery.json): цена, кэшбэк в рублях и фото — для полки «Вы уже заказывали»
   const grocery = groceryRaw?.products || [];
-  return createCatalogApi({ categories, offers, brands, cfg, products, promos, grocery });
+  // товары маркетплейса (data/tovarka.json) по категориям навигации: [{ id, title, products }]
+  const goods = goodsRaw?.categories || [];
+  return createCatalogApi({ categories, offers, brands, cfg, products, promos, grocery, goods });
 }
 
 /* Товары с кэшбэком (формат land → payload.items[]: фото, название, кэшбэк).
@@ -127,13 +129,14 @@ function buildPromos(discountsRaw, brands) {
   return list;
 }
 
-function createCatalogApi({ categories, offers, brands, cfg, products = [], promos = [], grocery = [] }) {
+function createCatalogApi({ categories, offers, brands, cfg, products = [], promos = [], grocery = [], goods = [] }) {
   const api = {
     config: cfg,
     categories,
     products,
     promos,
     grocery,
+    goods,
     getOffer: (id) => offers.get(id) || null,
     getBrand: (id) => brands.get(id) || null,
     getCategory: (id) => categories.find((c) => c.id === id) || null,

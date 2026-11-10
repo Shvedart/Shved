@@ -255,7 +255,9 @@ export function promoCard(promo) {
         h('div', { class: 'promo-texts' },
           // длинная скидка («до 10 000 ₽») не влезает в 30px — для неё шрифт 20px
           h('div', { class: `ocard-value ${promo.discount.length > 7 ? 'is-long' : ''}` }, promo.discount),
-          h('div', { class: 'promo-terms' }, promo.condition))),
+          h('div', { class: 'promo-terms' }, promo.condition),
+          // срок — только на широких экранах, где в плитке хватает места (см. .promo-date)
+          promo.date ? h('div', { class: 'promo-date' }, promo.date) : null)),
       // перфорация и код прибиты к низу плитки — линия разрыва у всех карточек на одной высоте
       h('div', { class: 'promo-bottom' },
         h('img', { class: 'promo-perf', src: 'assets/img/promo-perforation.svg', alt: '', 'aria-hidden': 'true', draggable: 'false' }),
@@ -269,6 +271,30 @@ export function promoCard(promo) {
     ? heartButton(promo.brandId, { size: 24, cls: 'promo-heart' })
     : localHeart(`${promo.name}: в избранное`);
   return h('div', { class: 'promo', dataset: { promo: promo.id, cat: promo.categoryId } }, main, heart);
+}
+
+// ---------- Карточка товара (макет 710:155116) ----------
+// Фото 3:4 на серой плитке (белый фон снимка сливается с ней), рейтинг, сердечко и точки галереи;
+// ниже старая цена со скидкой, цена с кэшбэком, бренд, описание в две строки и магазин.
+export function goodsCard(p) {
+  const pic = h('div', { class: 'goods-pic' },
+    img(p.image, { alt: '' }),
+    p.rating ? h('span', { class: 'goods-rating' }, icon('star', { size: 10 }), p.rating) : null);
+  const merchant = p.verified
+    ? h('div', { class: 'goods-shop' }, h('span', { class: 'goods-verified' }, iconImg('premium-dark', { size: 10 })), 'Магазин проверен')
+    : p.merchant ? h('div', { class: 'goods-shop' }, // логотип не загрузился (часть адресов cdn-tinkoff недоступна) — кружок с первой буквой
+      p.merchantLogo ? h('span', { class: 'goods-shop-logo' }, img(p.merchantLogo, { alt: '', fallback: p.merchant })) : null, p.merchant) : null;
+  const main = button({ class: 'goods-main', 'aria-label': `${p.brand}, ${p.description}. ${p.price}, кэшбэк ${p.cashback} ₽` },
+    pic,
+    h('div', { class: 'goods-dots', 'aria-hidden': 'true' }, h('span', { class: 'is-on' }), h('span'), h('span')),
+    h('div', { class: 'goods-info' },
+      p.oldPrice ? h('div', { class: 'goods-old' }, h('s', null, p.oldPrice), p.discount ? h('span', { class: 'goods-discount' }, p.discount) : null) : null,
+      h('div', { class: 'goods-price' }, h('span', null, p.price),
+        h('span', { class: 'gcard-badge' }, icon('crown', { size: 10 }), h('span', null, `${p.cashback}\u00A0₽`))),
+      h('div', { class: 'goods-text' }, h('p', { class: 'goods-brand' }, p.brand), h('p', { class: 'goods-desc' }, p.description)),
+      merchant));
+  main.addEventListener('click', () => toast('Товар откроется в приложении'));
+  return h('div', { class: 'goods', dataset: { goods: p.id } }, main, localHeart(`${p.brand}: в избранное`));
 }
 
 // Сердечко без бренда в каталоге: отметка живёт только на карточке

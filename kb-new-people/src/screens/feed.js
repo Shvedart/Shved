@@ -4,7 +4,7 @@
 import { h, button, img, icon, iconImg } from '../core/dom.js';
 import { animate, EASE, stagger, fadeUpIn } from '../core/motion.js';
 import { haptics } from '../core/haptics.js';
-import { cardHeader, linkButton, productCard } from '../ui/components.js';
+import { cardHeader, goodsCard, linkButton, productCard } from '../ui/components.js';
 import { travelShelf, afishaShelf } from '../ui/shelves.js';
 import { app } from '../app.js';
 
@@ -19,22 +19,29 @@ const LAYOUT = [
   // товары с кэшбэком — только когда в навигации выбрана «Еда», во всей ленте их нет
   { kind: 'products', only: 'food' },
   { title: 'Красота и уход', sub: 'Косметика, парфюмерия и уход', cat: 'beauty', match: /подружка|лэтуаль|кератин|sokolov/i },
+  { kind: 'goods', cat: 'beauty' },
   { kind: 'promos', title: 'Промокоды для вас', sub: 'Скидки по коду у партнёров' },
   { kind: 'afisha' },
   { title: 'Забота о здоровье', sub: 'Анализы, аптеки и клиники', cat: 'health', scratch: 1 },
   { title: 'Одежда и обувь', sub: 'Обновите гардероб к сезону', cat: 'clothes' },
+  { kind: 'goods', cat: 'clothes' },
   { title: 'Украшения и часы', sub: 'Подарки себе и близким', cat: 'beauty' },
   { title: 'Кухонная техника', sub: 'Помощники для дома', cat: 'electronics', match: /tefal|polaris|delonghi|braun|kitfort/i, scratch: 2 },
+  { kind: 'goods', cat: 'electronics' },
   { kind: 'travel' },
   { title: 'Отели и туры', sub: 'Отдых с кэшбэком до 20%', cat: 'travel', match: /островок|travelata|onlinetours|туры|твил|травелог|яндекс|авито/i },
   { title: 'Поезда и автобусы', sub: 'Поездки по России', cat: 'travel', scratch: 4 },
   { title: 'Кино, книги и игры', sub: 'Подписки и развлечения', cat: 'fun' },
+  { kind: 'goods', cat: 'sport' },
   { title: 'Гаджеты', sub: 'Смартфоны, наушники и аксессуары', cat: 'electronics' },
   { title: 'Кофе и перекусы', sub: 'Взбодриться по пути', cat: 'food', match: /кофе|coffee|бургер/i },
   { title: 'Всё для авто', sub: 'Сервис, шины и проверка машины', cat: 'auto', scratch: 3 },
+  { kind: 'goods', cat: 'auto' },
   { title: 'Учёба онлайн', sub: 'Языки и курсы с кэшбэком', cat: 'education' },
   { title: 'Детям', sub: 'Игрушки, одежда и книги', cat: 'kids' },
+  { kind: 'goods', cat: 'kids' },
   { title: 'Уют в доме', sub: 'Мебель и товары для ремонта', cat: 'home' },
+  { kind: 'goods', cat: 'home' },
   { title: 'Питомцам', sub: 'Корм, ветеринары и страховка', cat: 'pets' },
   { title: 'Цветы', sub: 'Букеты с доставкой', cat: 'flowers' },
   { title: 'Шопинг', sub: 'Маркетплейсы и сервисы покупок', cat: 'shopping' },
@@ -143,6 +150,20 @@ function groceryShelf({ catalog, onLink }) {
     h('div', { class: 'gorod-grid grocery-grid' }, items));
 }
 
+// Товары маркетплейса (data/tovarka.json, карточка — макет 710:155116): полки по 4 товара.
+// Во всей ленте у категории одна полка, в своей категории и в «Шопинге» (он родитель всех
+// товарных категорий) — до GOODS_SHELVES полок
+const GOODS_TITLES = {
+  electronics: 'Техника и гаджеты',
+  clothes: 'Одежда и обувь',
+  auto: 'Товары для авто',
+  sport: 'Товары для спорта',
+  home: 'Товары для дома',
+  beauty: 'Косметика и уход',
+  kids: 'Товары для детей',
+};
+const GOODS_SHELVES = 3;
+
 const AFISHA = [
   { img: 'assets/img/afisha/basta.jpg', category: 'Хип-хоп', title: 'Баста', place: 'ОК «Лужники», Большая арена', date: '30 ноября', price: 'От 4 850 ₽', cashback: 'До 20%' },
   { img: 'assets/img/afisha/madam-boom.jpg', category: 'Шоу', title: 'Бурлеск кабаре шоу МАДАМ БУМ', place: 'Гримёрка Gastro Club & Karaoke Bar', date: '4 декабря', price: 'От 4 500 ₽', cashback: 'До 20%' },
@@ -156,7 +177,7 @@ const AFISHA = [
 
 /* Собирает полки из уже отрисованных карточек ленты: узлы переезжают, поэтому галочки
    «просмотрено», лайки и стёртые скретч-карточки сохраняются. */
-export function buildShelves({ catalog, cards, scratches, promos = [], onLink }) {
+export function buildShelves({ catalog, cards, scratches, promos = [], goods = false, onLink }) {
   const byOffer = new Map(cards.map((c) => [c.dataset.offer, c]));
   const used = new Set();
   const take = (cat, match, n) => {
@@ -180,6 +201,7 @@ export function buildShelves({ catalog, cards, scratches, promos = [], onLink })
 
   const extras = [];
   const parts = [];
+  const afterTravel = [];
   LAYOUT.forEach((s, i) => {
     if (s.kind === 'promos') {
       // отдельная полка промокодов — из тех, что не разошлись по категориям раньше
@@ -199,6 +221,21 @@ export function buildShelves({ catalog, cards, scratches, promos = [], onLink })
       }
       return;
     }
+    if (s.kind === 'goods') {
+      if (!goods) return;
+      // товарная полка не встаёт прямо над «Путешествиями» со слайдером — переезжает под них
+      const into = LAYOUT[i + 1]?.kind === 'travel' ? afterTravel : parts;
+      const list = catalog.goods.find((g) => g.id === s.cat)?.products || [];
+      for (let n = 0; n < GOODS_SHELVES && n * 4 < list.length; n++) {
+        const shelf = h('section', { class: 'shelf shelf-goods', dataset: n ? { cat: s.cat, goods: 'true', more: 'true' } : { cat: s.cat, goods: 'true' } },
+          n ? null : cardHeader({ title: GOODS_TITLES[s.cat] || 'Товары', subtitle: 'Предложения выбранных брендов', link: 'Все', onLink }),
+          h('div', { class: 'grid' }, list.slice(n * 4, n * 4 + 4).map((p) => goodsCard(p))));
+        // продолжение полки — только внутри категории
+        if (n) shelf.hidden = true;
+        into.push(shelf);
+      }
+      return;
+    }
     if (s.kind === 'grocery') {
       const g = groceryShelf({ catalog, onLink });
       if (g) parts.push(g);
@@ -212,7 +249,7 @@ export function buildShelves({ catalog, cards, scratches, promos = [], onLink })
       const t = travelShelf({ items: TRAVEL });
       t.dataset.cat = 'travel';
       extras.push(t);
-      parts.push(t);
+      parts.push(t, ...afterTravel.splice(0));
       return;
     }
     if (s.kind === 'afisha') {
@@ -286,7 +323,7 @@ export function buildShelves({ catalog, cards, scratches, promos = [], onLink })
     }
     // у категории есть свои полки — показываем их; если своих нет (спорт, связь),
     // показываем её карточки из сборных полок «Ещё для вас»
-    const own = parts.some((p) => p.dataset.cat === id);
+    const own = parts.some((p) => p.dataset.cat === id && !p.dataset.goods);
     const shown = [];
     for (const part of parts) {
       if (part.dataset.cat === 'mix') {
@@ -299,7 +336,10 @@ export function buildShelves({ catalog, cards, scratches, promos = [], onLink })
         part.hidden = !any;
       } else {
         // полка «только для категории» во всей ленте не показывается
-        part.hidden = part.dataset.only ? part.dataset.only !== id : !(id === 'all' || part.dataset.cat === id);
+        if (part.dataset.only) part.hidden = part.dataset.only !== id;
+        // товары: во всей ленте — первая полка категории, в своей категории и в «Шопинге» — все
+        else if (part.dataset.goods) part.hidden = id === 'all' ? !!part.dataset.more : !(part.dataset.cat === id || id === 'shopping');
+        else part.hidden = !(id === 'all' || part.dataset.cat === id);
       }
       if (!part.hidden) shown.push(part);
     }

@@ -13,9 +13,11 @@ import { startTour, stopViewMarks } from './tour.js';
 import { openSheet } from '../ui/sheet.js';
 import { app } from '../app.js';
 
-// сценарии с заходом через плашку и тур; в 03 и 04 — тур-привычка, в 05 — тур про механики
-const HOOK = ['s3', 's4', 's5'];
-const HABIT = ['s3', 's4'];
+// сценарии с заходом через плашку и тур; в 03, 04 и 06 — тур-привычка, в 05 — тур про механики
+const HOOK = ['s3', 's4', 's5', 's6'];
+const HABIT = ['s3', 's4', 's6'];
+// товарные полки (data/tovarka.json) в ленте — только в 06
+const WITH_GOODS = ['s6'];
 
 export function mainScreen({ el, params, nav, entry }) {
   const scenario = params.s;
@@ -193,7 +195,7 @@ export function mainScreen({ el, params, nav, entry }) {
   function toShelves({ animated }) {
     if (shelves) return;
     const cards = [...selectionGrid.querySelectorAll(':scope > .ocard')];
-    shelves = buildShelves({ catalog, cards, scratches, promos: catalog.promos.map((p) => promoCard(p)), onLink: () => nav.push('/favorites') });
+    shelves = buildShelves({ catalog, cards, scratches, promos: catalog.promos.map((p) => promoCard(p)), goods: WITH_GOODS.includes(scenario), onLink: () => nav.push('/favorites') });
     const swap = () => {
       selection.classList.add('is-shelves');
       selection.replaceChildren(shelves);

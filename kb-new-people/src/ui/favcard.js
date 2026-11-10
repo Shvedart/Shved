@@ -13,7 +13,7 @@ import { chip, cell, cardHeader, setChipActive, badge } from './components.js';
 
 // Какой вид «Мое любимое» в каком сценарии. Старый вид (v1, чипсы) не удалён:
 // чтобы вернуть его сценарию, поставьте здесь 'v1'.
-const LOOK_BY_SCENARIO = { s1: 'v2', s2: 'v2', s3: 'v1', s4: 'v1', s5: 'v1' };
+const LOOK_BY_SCENARIO = { s1: 'v2', s2: 'v2', s3: 'v1', s4: 'v1', s5: 'v1', s6: 'v1' };
 export const favLook = (scenario) => LOOK_BY_SCENARIO[scenario] || 'v1';
 
 // Повышенный кэшбэк (v2): на шаге «Сообщим, когда кэшбэк вырастет» он растёт у второго выбранного

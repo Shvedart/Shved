@@ -68,8 +68,8 @@
     "moreText": "И ещё 100 предложений покажем в ленте"
   },
   "main": {
-    "balance": "1 328 ₽",
-    "missed": { "month": "октябре", "amount": "+512 ₽" },
+    "balance": "1 328 ₽",
+    "missed": { "month": "октябре", "amount": "+512 ₽" },
     "availableToday": ["offer-005", "offer-009", "offer-014"],
     "products": ["offer-097", "offer-099", "offer-102"],
     "selection": ["offer-009", "offer-010", "offer-014", "offer-011", "offer-033", "offer-124"],
