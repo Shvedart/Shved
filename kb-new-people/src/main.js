@@ -58,19 +58,42 @@ async function boot() {
 }
 
 // Сжатие до 0.95 при касании — сразу на pointerdown, без задержки :active на iOS.
+// Сжатие кнопок при нажатии. Не сразу, а через 90 мс: свайп ленты начинается с касания карточки,
+// и без задержки карточки «прожимались» на каждом скролле. Палец сдвинулся или лента поехала —
+// нажатия нет; быстрый тап всё равно коротко мигает сжатием.
 function installPressFeedback() {
   let pressed = null;
+  let timer = 0;
+  let start = null;
   const release = () => {
+    clearTimeout(timer);
     pressed?.classList.remove('is-pressed');
     pressed = null;
+    start = null;
   };
   document.addEventListener('pointerdown', (e) => {
     const t = e.target.closest('.tap');
     if (!t || t.disabled || t.getAttribute('aria-disabled') === 'true') return;
-    pressed = t;
-    t.classList.add('is-pressed');
+    release();
+    start = { x: e.clientX, y: e.clientY, t };
+    timer = setTimeout(() => {
+      if (!start) return;
+      pressed = t;
+      t.classList.add('is-pressed');
+    }, 90);
   }, { passive: true });
-  document.addEventListener('pointerup', release, { passive: true });
+  document.addEventListener('pointermove', (e) => {
+    if (start && Math.hypot(e.clientX - start.x, e.clientY - start.y) > 8) release();
+  }, { passive: true });
+  document.addEventListener('pointerup', () => {
+    // тап быстрее задержки — показываем короткое сжатие, чтобы отклик всё же был
+    if (start && !pressed) {
+      const t = start.t;
+      t.classList.add('is-pressed');
+      setTimeout(() => t.classList.remove('is-pressed'), 120);
+    }
+    release();
+  }, { passive: true });
   document.addEventListener('pointercancel', release, { passive: true });
   document.addEventListener('scroll', release, { passive: true, capture: true });
   document.addEventListener('keydown', (e) => {

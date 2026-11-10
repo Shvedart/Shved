@@ -167,7 +167,7 @@ const GOODS_SHELVES = 3;
 
 // ---------- Лента по настройке (сценарий 07) ----------
 // Сколько карточек в ленте: доли категорий делят это число, доля товаров — каждую категорию
-const CUSTOM_TOTAL = 64;
+const CUSTOM_TOTAL = 150;
 const chunk = (list, n) => Array.from({ length: Math.ceil(list.length / n) }, (_, i) => list.slice(i * n, i * n + n));
 
 // Правила для больших карточек в сплошной ленте: больших товаров подряд — не больше двух,
@@ -201,7 +201,7 @@ function pairUp(items) {
   return out;
 }
 
-function customParts({ catalog, byOffer, promos, setup, onLink }) {
+function customParts({ catalog, byOffer, promos, scratches = [], setup, onLink }) {
   const usedOffers = new Set();
   const usedPromos = new Set();
   // по каждой категории: сколько всего, из них товаров — по доле, остальное офферы и промокоды
@@ -249,6 +249,13 @@ function customParts({ catalog, byOffer, promos, setup, onLink }) {
     const order = interleave(Object.fromEntries(Object.entries(perCat).map(([c, l]) => [c, l.length])));
     const taken = {};
     let items = order.map((c) => perCat[c][(taken[c] = (taken[c] || 0) + 1) - 1]);
+    // стирашки — на место офферов и промокодов, равномерно по ленте
+    const offerIdx = items.map((x, i) => (x.classList.contains('goods') ? -1 : i)).filter((i) => i >= 0);
+    const stepI = offerIdx.length / (scratches.length + 1);
+    scratches.forEach((sc, i) => {
+      const at = offerIdx[Math.min(offerIdx.length - 1, Math.round(stepI * (i + 1)))];
+      if (at != null) items[at] = sc;
+    });
     if (setup.bigGoods) items = pairUp(items);
     // как Pinterest: две независимые колонки, карточки по очереди слева и справа —
     // разная высота офферов и товаров даёт неровные ряды, порядок чтения сохраняется
@@ -298,7 +305,16 @@ function customParts({ catalog, byOffer, promos, setup, onLink }) {
   }
   const order = interleave(Object.fromEntries(Object.entries(perCat).map(([c, l]) => [c, l.length])));
   const taken = {};
-  return order.map((c) => perCat[c][(taken[c] = (taken[c] || 0) + 1) - 1]);
+  const shelves = order.map((c) => perCat[c][(taken[c] = (taken[c] || 0) + 1) - 1]);
+  // стирашки — по одной в разные офферные полки, каждый раз на другое место в полке
+  const offerShelves = shelves.filter((sh) => !sh.dataset.goods);
+  const stepS = offerShelves.length / (scratches.length + 1);
+  scratches.forEach((sc, i) => {
+    const sh = offerShelves[Math.min(offerShelves.length - 1, Math.round(stepS * (i + 1)))];
+    const cards = sh ? [...sh.querySelector('.grid').children] : [];
+    cards[[1, 3, 0, 2][i % 4] % (cards.length || 1)]?.replaceWith(sc);
+  });
+  return shelves;
 }
 
 const AFISHA = [
@@ -341,7 +357,7 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
   const extras = [];
   const parts = [];
   const afterTravel = [];
-  if (custom) parts.push(...customParts({ catalog, byOffer, promos: promoPool, setup: custom, onLink }));
+  if (custom) parts.push(...customParts({ catalog, byOffer, promos: promoPool, scratches, setup: custom, onLink }));
   else {
     LAYOUT.forEach((s, i) => {
       if (s.kind === 'promos') {
