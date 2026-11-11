@@ -1625,6 +1625,26 @@ img.is-broken {
   color: var(--c-text);
 }
 
+/* банковский баннер: текст 15px, логотип в строку с названием продукта */
+.banner.is-bank .banner-title {
+  font-size: 15px;
+  letter-spacing: -0.24px;
+}
+
+.banner-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.24px;
+  color: var(--c-bg);
+}
+
+.banner.is-dark .banner-brand {
+  color: var(--c-text);
+}
+
 .banner-ad {
   position: relative;
   padding: 1px 4px 2px;

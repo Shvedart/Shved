@@ -1,8 +1,9 @@
 {
-  "_about": "Рекламные баннеры ленты 07 (макеты 745:157201…752:157399). Баннер размером со стирашку: фон-картинка, необязательный логотип 24px, заголовок и плашка «Реклама». category — id категории ленты (food, travel, health, beauty, electronics, kids, clothes, fun, auto, pets, home, telecom); \"bank\" — продукты банка, баннер виден только во всей ленте. textColor — light (белый текст) или dark (тёмный). focus — необязательная точка фокуса фото (CSS object-position), если важная часть картинки уезжает при обрезке.",
+  "_about": "Рекламные баннеры ленты 07 (макеты 745:157201…762:157596). Баннер размером со стирашку: фон-картинка, необязательный логотип 24px, заголовок и плашка «Реклама». type: ad — реклама партнёра (заголовок 17px, логотип над ним); bank — продукт Т-Банка (текст 15px; если есть brand — сверху строка «логотип + название продукта» полужирным). category — id категории ленты (food, travel, health, beauty, electronics, kids, clothes, fun, auto, pets, home, telecom); \"bank\" — продукты банка без своей категории (вклады, кредитка, инвестиции): видны только во всей ленте. textColor — light (белый текст) или dark (тёмный). focus — необязательная точка фокуса фото (CSS object-position).",
   "banners": [
     {
       "id": "mvideo-headphones",
+      "type": "ad",
       "category": "electronics",
       "title": "Лучший кэшбэк\nв М-Видео",
       "image": "assets/img/ads/mvideo-headphones.webp",
@@ -12,6 +13,7 @@
     },
     {
       "id": "makita",
+      "type": "ad",
       "category": "home",
       "title": "Makita — лучшие инструменты",
       "image": "assets/img/ads/makita.webp",
@@ -21,6 +23,7 @@
     },
     {
       "id": "hoff-chair",
+      "type": "ad",
       "category": "home",
       "title": "Лучший кэшбэк\nв Hoff",
       "image": "assets/img/ads/hoff-chair.webp",
@@ -30,6 +33,7 @@
     },
     {
       "id": "newbuildings",
+      "type": "ad",
       "category": "home",
       "title": "Лучшие новостройки\nМосквы",
       "image": "assets/img/ads/newbuildings.webp",
@@ -38,6 +42,7 @@
     },
     {
       "id": "aura-vitamins",
+      "type": "ad",
       "category": "health",
       "title": "Позаботьтесь об обмене веществ",
       "image": "assets/img/ads/aura-vitamins.webp",
@@ -46,6 +51,7 @@
     },
     {
       "id": "analyses",
+      "type": "ad",
       "category": "health",
       "title": "Любые анализы со скидкой 20%",
       "image": "assets/img/ads/analyses.webp",
@@ -54,6 +60,7 @@
     },
     {
       "id": "pets",
+      "type": "ad",
       "category": "pets",
       "title": "Товары для питомцев с кэшбэком 10%",
       "image": "assets/img/ads/pets.webp",
@@ -61,15 +68,17 @@
       "figma": "745:157202"
     },
     {
-      "id": "spa",
-      "category": "beauty",
-      "title": "Спа-комплекс с кэшбэком 20%",
-      "image": "assets/img/ads/spa.webp",
+      "id": "headphones",
+      "type": "ad",
+      "category": "electronics",
+      "title": "Наушники с кэшбэком 20%",
+      "image": "assets/img/ads/headphones.webp",
       "textColor": "light",
       "figma": "745:157224"
     },
     {
       "id": "skin-pink",
+      "type": "ad",
       "category": "beauty",
       "title": "Позаботьтесь\nо красоте кожи",
       "image": "assets/img/ads/skin-pink.webp",
@@ -78,6 +87,7 @@
     },
     {
       "id": "aura-skincare",
+      "type": "ad",
       "category": "beauty",
       "title": "Всё для ухода\nза вашей кожей",
       "image": "assets/img/ads/aura-skincare.webp",
@@ -86,6 +96,7 @@
     },
     {
       "id": "tires",
+      "type": "ad",
       "category": "auto",
       "title": "Подберите шины для вашего авто",
       "image": "assets/img/ads/tires.webp",
@@ -94,6 +105,7 @@
     },
     {
       "id": "car-repair",
+      "type": "ad",
       "category": "auto",
       "title": "Надёжный ремонт вашего авто",
       "image": "assets/img/ads/car-repair.webp",
@@ -102,6 +114,7 @@
     },
     {
       "id": "restaurants",
+      "type": "ad",
       "category": "food",
       "title": "Любимые блюда\nиз ресторанов",
       "image": "assets/img/ads/restaurants.webp",
@@ -110,6 +123,7 @@
     },
     {
       "id": "groceries",
+      "type": "ad",
       "category": "food",
       "title": "Свежие продукты\nк вашему столу",
       "image": "assets/img/ads/groceries.webp",
@@ -118,6 +132,7 @@
     },
     {
       "id": "travel",
+      "type": "ad",
       "category": "travel",
       "title": "Путешествия\nвашей мечты",
       "image": "assets/img/ads/travel.webp",
@@ -126,6 +141,7 @@
     },
     {
       "id": "concerts",
+      "type": "ad",
       "category": "fun",
       "title": "Концерты и шоу\nна любой вкус",
       "image": "assets/img/ads/concerts.webp",
@@ -133,20 +149,131 @@
       "figma": "745:157363"
     },
     {
-      "id": "sim-tariff",
-      "category": "telecom",
-      "title": "Тариф за 390 ₽ — платите вовремя в течение года",
-      "image": "assets/img/ads/sim-tariff.webp",
-      "textColor": "light",
-      "figma": "752:157399"
+      "id": "beauty-colors",
+      "type": "ad",
+      "category": "beauty",
+      "title": "Добавьте красок в ежедневный уход",
+      "image": "assets/img/ads/beauty-colors.webp",
+      "textColor": "dark",
+      "figma": "762:157596"
     },
     {
-      "id": "credit-card",
+      "id": "beauty-daily",
+      "type": "ad",
+      "category": "beauty",
+      "title": "Ваш ежедневный уход за кожей",
+      "image": "assets/img/ads/beauty-daily.webp",
+      "textColor": "dark",
+      "figma": "762:157578"
+    },
+    {
+      "id": "beauty-mamonde",
+      "type": "ad",
+      "category": "beauty",
+      "title": "Освежите кожу с Mamonde",
+      "image": "assets/img/ads/beauty-mamonde.webp",
+      "textColor": "dark",
+      "figma": "761:157572"
+    },
+    {
+      "id": "beauty-aura-set",
+      "type": "ad",
+      "category": "beauty",
+      "title": "Подарите набор Aura",
+      "image": "assets/img/ads/beauty-aura-set.webp",
+      "textColor": "dark",
+      "figma": "762:157590"
+    },
+    {
+      "id": "beauty-hair",
+      "type": "ad",
+      "category": "beauty",
+      "title": "Всё для ухода за волосами",
+      "image": "assets/img/ads/beauty-hair.webp",
+      "textColor": "dark",
+      "figma": "762:157584"
+    },
+    {
+      "id": "auto-parts",
+      "type": "ad",
+      "category": "auto",
+      "title": "Подберите детали для вашего авто",
+      "image": "assets/img/ads/auto-parts.webp",
+      "textColor": "light",
+      "figma": "761:157560"
+    },
+    {
+      "id": "auto-oil",
+      "type": "ad",
+      "category": "auto",
+      "title": "Всё для замены масла",
+      "image": "assets/img/ads/auto-oil.webp",
+      "textColor": "light",
+      "figma": "761:157566"
+    },
+    {
+      "id": "bank-mobile",
+      "type": "bank",
+      "category": "telecom",
+      "brand": "Мобайл",
+      "title": "Тариф за 390 ₽ — платите вовремя в течение года",
+      "image": "assets/img/ads/bank-mobile.webp",
+      "logo": "assets/img/ads/bank-mobile-logo.svg",
+      "textColor": "dark",
+      "figma": "754:157442"
+    },
+    {
+      "id": "bank-platinum",
+      "type": "bank",
       "category": "bank",
-      "title": "Удобный беспроцентный период",
+      "title": "Платинум\nНаша лучшая кредитная карта",
       "image": "assets/img/ads/credit-card.webp",
       "textColor": "light",
-      "figma": "751:157393"
+      "figma": "754:157405"
+    },
+    {
+      "id": "bank-insurance-flat",
+      "type": "bank",
+      "category": "home",
+      "brand": "Страхование",
+      "title": "Страхование\nквартиры\nбез осмотра",
+      "image": "assets/img/ads/bank-insurance-flat.webp",
+      "logo": "assets/img/ads/bank-logo.svg",
+      "textColor": "dark",
+      "figma": "758:157548"
+    },
+    {
+      "id": "bank-osago",
+      "type": "bank",
+      "category": "auto",
+      "brand": "Страхование",
+      "title": "ОСАГО\nрассчитайте за 2 минуты",
+      "image": "assets/img/ads/bank-osago.webp",
+      "logo": "assets/img/ads/bank-logo.svg",
+      "textColor": "dark",
+      "figma": "756:157524"
+    },
+    {
+      "id": "bank-deposit",
+      "type": "bank",
+      "category": "bank",
+      "brand": "Вклады",
+      "title": "Откройте вклад со ставкой\nдо 14% годовых",
+      "image": "assets/img/ads/bank-deposit.webp",
+      "logo": "assets/img/ads/bank-logo.svg",
+      "textColor": "dark",
+      "figma": "757:157536"
+    },
+    {
+      "id": "bank-invest",
+      "type": "bank",
+      "category": "bank",
+      "brand": "Инвестиции",
+      "title": "Покупайте дешевле, продавайте дороже",
+      "image": "assets/img/ads/bank-invest.webp",
+      "logo": "assets/img/ads/bank-logo.svg",
+      "textColor": "light",
+      "figma": "756:157515"
     }
   ]
 }

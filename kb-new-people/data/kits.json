@@ -1,0 +1,104 @@
+{
+  "_about": "Наборы товаров для ленты 07: полка «заголовок + рекламный баннер + товары набора + кнопка «Заказать набор» с суммой». banner — как в data/banners.json (title, image, textColor); растягивается по высоте карточек товаров. category — категория ленты, в которой полка видна при фильтре. products — в формате data/tovarka.json.",
+  "kits": [
+    {
+      "id": "candle",
+      "category": "home",
+      "title": "Сделать свою первую свечу",
+      "order": "Заказать набор",
+      "banner": {
+        "id": "kit-candle",
+        "type": "ad",
+        "title": "Один набор для первого раза",
+        "image": "assets/img/ads/candle.webp",
+        "textColor": "light"
+      },
+      "products": [
+        {
+          "id": "kit-candle-001",
+          "image": "https://goods-platform-images-prod-11.t-static.ru/193361663_dad0fdd2-825e-4d2d-9bd8-53740a0413d5.jpg",
+          "rating": "",
+          "oldPrice": "1 068 ₽",
+          "discount": "−35%",
+          "price": "694 ₽",
+          "cashback": "208",
+          "brand": "Depiltouch",
+          "description": "Парафин для рук и ног, Олива, 75 мл",
+          "merchantLogo": "",
+          "merchant": "Магазин проверен",
+          "verified": true
+        },
+        {
+          "id": "kit-candle-002",
+          "image": "https://goods-platform-images-prod-20.t-static.ru/195778560_93f86140-4d11-4470-9046-67030c7da191.jpg",
+          "rating": "5",
+          "oldPrice": "216 ₽",
+          "discount": "−20%",
+          "price": "172 ₽",
+          "cashback": "51",
+          "brand": "love2art",
+          "description": "Фитиль для свечей хлопковый 10 нитей 12.5 метров",
+          "merchantLogo": "",
+          "merchant": "Магазин проверен",
+          "verified": true
+        },
+        {
+          "id": "kit-candle-003",
+          "image": "https://goods-platform-images-prod-23.t-static.ru/90077464_f30ebb8b-796b-4bd5-a239-44e9f0a8d37f.jpg",
+          "rating": "5",
+          "oldPrice": "1 210 ₽",
+          "discount": "−33%",
+          "price": "807 ₽",
+          "cashback": "242",
+          "brand": "Patisse",
+          "description": "Форма-вырубка для печенья \"Облако\" с силиконовым ободком 6х6х2.5 см",
+          "merchantLogo": "",
+          "merchant": "Магазин проверен",
+          "verified": true
+        },
+        {
+          "id": "kit-candle-004",
+          "image": "https://goods-platform-images-prod-26.t-static.ru/90077126_c18eb037-b8c1-4000-ba45-171bb47ac61d.jpg",
+          "rating": "4,7",
+          "oldPrice": "1 210 ₽",
+          "discount": "−33%",
+          "price": "807 ₽",
+          "cashback": "242",
+          "brand": "Patisse",
+          "description": "Форма-вырубка для печенья \"Сердце\" с силиконовым ободком 6х6х2.5 см",
+          "merchantLogo": "",
+          "merchant": "Магазин проверен",
+          "verified": true
+        },
+        {
+          "id": "kit-candle-005",
+          "image": "https://goods-platform-images-prod-8.t-static.ru/155596066_43273119-61d2-4698-9212-3bd4aa034058.jpg",
+          "rating": "4,9",
+          "oldPrice": "3 590 ₽",
+          "discount": "−52%",
+          "price": "1 700 ₽",
+          "cashback": "510",
+          "brand": "Boles d'olor",
+          "description": "Аромат для каталитической лампы (рефилл) Nina Gribov \"Мягкий хлопок/Cotonet\" №3, 500 мл для каталитической лампы Boles d Olor, Maison Berger, Ashleigh & Burwood, Millefiori MILANO.",
+          "merchantLogo": "",
+          "merchant": "Магазин проверен",
+          "verified": true
+        },
+        {
+          "id": "kit-candle-006",
+          "image": "https://goods-platform-images-prod-26.t-static.ru/64219938_edf88e6b-a2f8-420d-9b4f-fad3dc405527.jpg",
+          "rating": "",
+          "oldPrice": "",
+          "discount": "",
+          "price": "200 ₽",
+          "cashback": "40",
+          "brand": "ПРЕСТИЖ",
+          "description": "Колер универсальный 100 мл, серый 281304",
+          "merchantLogo": "https://mobile-bnpl-prod.cdn-tinkoff.ru/icons/partnerCustomIcons/vseinstrumenti_checkoutomniom_logo222.png",
+          "merchant": "ВсеИнструменты.ру",
+          "verified": false
+        }
+      ]
+    }
+  ]
+}

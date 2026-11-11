@@ -169,7 +169,88 @@ function deliveryEdit() {
   return b;
 }
 
-function deliveryShelf({ catalog, onLink }) {
+// какой вид полки «Доставка продуктов» показывать: 'compare' — сравнение корзины в магазинах
+// (макет 762:158548), 'single' — прежний вид с одним магазином (макет 736:156423, сохранён, скрыт)
+const DELIVERY_LOOK = 'compare';
+
+// Одна и та же корзина в разных магазинах. У магазина своя цена на каждый продукт: базовая цена
+// из data/grocery.json × множитель (prices, по кругу; 1 — как в данных), кэшбэк продукта × cashback.
+// Самая выгодная корзина — меньше всего «цена минус кэшбэк»: она выбрана сразу, её цена зелёная
+const DELIVERY_STORES = [
+  { id: 'pyaterochka', name: 'Пятёрочка', logo: 'assets/img/gorod/pyaterochka.png', time: 'за 30 мин', prices: [1], cashback: 1 },
+  { id: 'lenta', name: 'Лента доставка', logo: 'assets/img/gorod/lenta.png', time: 'за 240 мин', prices: [1.16, 0.92, 1.21, 1.09, 1.3, 1.12, 0.95, 1.18, 1.07, 1.14, 0.9, 1.22], cashback: 0.8 },
+];
+
+// какие продукты из data/grocery.json в корзине — разные: молочка, фрукты, мясо, бакалея, сыр
+const DELIVERY_BASKET = ['grocery-001', 'grocery-002', 'grocery-003', 'grocery-004', 'grocery-005', 'grocery-006',
+  'grocery-007', 'grocery-017', 'grocery-018', 'grocery-021', 'grocery-036', 'grocery-073'];
+
+function deliveryShelf(args) {
+  return DELIVERY_LOOK === 'compare' ? deliveryCompareShelf(args) : deliverySingleShelf(args);
+}
+
+function deliveryCompareShelf({ catalog, onLink }) {
+  const list = DELIVERY_BASKET.map((id) => catalog.grocery.find((p) => p.id === id)).filter(Boolean);
+  if (!list.length) return null;
+  const money = (n) => `${(Math.round(n * 100) / 100).toLocaleString('ru-RU', { maximumFractionDigits: 2 })}\u00a0₽`;
+  // цены и кэшбэк каждого продукта в каждом магазине; цена не «как в данных» — с 99 копейками
+  const stores = DELIVERY_STORES.map((st) => {
+    const items = list.map((p, i) => {
+      const k = st.prices[i % st.prices.length];
+      const price = k === 1 ? rub(p.price) : Math.floor(rub(p.price) * k) + 0.99;
+      return { price, back: Math.round(rub(p.cashback) * k * st.cashback) };
+    });
+    const total = items.reduce((t, x) => t + x.price, 0);
+    const back = items.reduce((t, x) => t + x.back, 0);
+    return { ...st, items, total, back };
+  });
+  const best = stores.reduce((a, b) => (b.total - b.back < a.total - a.back ? b : a));
+  let picked = best;
+  const cards = list.map(groceryCard);
+  const sumEl = h('b', null, money(Math.round(picked.total)));
+  // цены на карточках — выбранного магазина; плашка на фото — насколько дороже или дешевле лучшей корзины
+  function paint() {
+    cards.forEach((card, i) => {
+      const { price, back } = picked.items[i];
+      card.querySelector('.gcard-price > span').textContent = money(price);
+      card.querySelector('.gcard-badge > span:last-child').textContent = money(back);
+      const diff = Math.round((price - best.items[i].price) * 100) / 100;
+      card.querySelector('.delivery-diff')?.remove();
+      if (!diff) return;
+      const pill = h('span', { class: `delivery-diff ${diff > 0 ? 'is-up' : 'is-down'}` }, `${diff > 0 ? '+' : '−'}${money(Math.abs(Math.abs(diff) >= 1 ? Math.round(diff) : diff))}`);
+      card.querySelector('.gcard-pic').append(pill);
+      animate(pill, [{ opacity: 0, transform: 'scale(0.6)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 260, easing: EASE.spring });
+    });
+    sumEl.textContent = money(Math.round(picked.total));
+  }
+  const rows = stores.map((st) => {
+    const row = button({ class: 'delivery-store', role: 'radio', 'aria-checked': String(st === picked), 'aria-label': `${st.name}: ${money(st.total)}, кэшбэк ${money(st.back)}, доставка ${st.time}` },
+      img(st.logo, { cls: 'delivery-store-logo', alt: '', width: 40, height: 40 }),
+      h('span', { class: 'delivery-store-text' },
+        h('span', { class: 'delivery-store-name' }, h('span', { class: 'delivery-store-title' }, st.name), ' • ',
+          h('span', { class: st === best ? 'is-best' : '' }, money(Math.round(st.total)))),
+        h('span', { class: 'delivery-store-meta' }, icon('crown', { size: 14 }), h('span', { class: 'delivery-store-back' }, money(st.back)), ' • ', st.time)),
+      h('span', { class: 'delivery-radio', 'aria-hidden': 'true' }, iconImg('checkbox', { size: 22 })));
+    row.addEventListener('click', () => {
+      if (picked === st) return;
+      picked = st;
+      haptics.selection();
+      rows.forEach((r, i) => r.setAttribute('aria-checked', String(stores[i] === picked)));
+      paint();
+    });
+    return row;
+  });
+  paint();
+  const order = button({ class: 'delivery-order' }, h('span', null, 'Заказать'), sumEl);
+  order.addEventListener('click', () => toast('Недоступно в прототипе'));
+  return h('section', { class: 'card delivery delivery-compare', dataset: { cat: 'food' } },
+    cardHeader({ title: 'Ваша корзина', subtitle: 'Доставка продуктов из Т-Банка', link: 'Все', onLink }),
+    h('div', { class: 'hscroll delivery-scroll' }, cards, deliveryEdit()),
+    h('div', { class: 'delivery-stores', role: 'radiogroup', 'aria-label': 'Магазин' }, rows),
+    h('div', { class: 'delivery-foot' }, order));
+}
+
+function deliverySingleShelf({ catalog, onLink }) {
   const list = catalog.grocery.slice(0, DELIVERY.count);
   if (!list.length) return null;
   const sum = (key) => Math.round(list.reduce((s, p) => s + rub(p[key]), 0)).toLocaleString('ru-RU');
@@ -209,14 +290,15 @@ const TAIL_GOODS = 40;
 const BANNER_EVERY = 16;
 
 // Баннеры из data/banners.json, что подходят ленте: своей категории с долей больше 0 или вне
-// настройки (продукты банка, связь). Порядок — категории чередуются по долям, как карточки
+// настройки (продукты банка, связь — у них средняя доля). Порядок — категории чередуются по долям
 function pickBanners(catalog, setup) {
+  const shares = Object.values(setup.weights).filter((w) => w > 0);
+  const avg = shares.reduce((a, b) => a + b, 0) / (shares.length || 1);
+  const weightOf = (c) => (c in setup.weights ? setup.weights[c] : avg);
   const byCat = {};
-  for (const b of catalog.banners) {
-    const w = b.category in setup.weights ? setup.weights[b.category] : 5;
-    if (w > 0) (byCat[b.category] ||= []).push(b);
-  }
-  const counts = Object.fromEntries(Object.entries(byCat).map(([c, l]) => [c, l.length * (c in setup.weights ? setup.weights[c] : 5)]));
+  for (const b of catalog.banners) if (weightOf(b.category) > 0) (byCat[b.category] ||= []).push(b);
+  // очередь — по доле категории, а не по числу её баннеров: иначе категория с 8 баннерами забирала бы всю рекламу
+  const counts = Object.fromEntries(Object.keys(byCat).map((c) => [c, Math.max(1, Math.round(weightOf(c) * 10))]));
   const taken = {};
   const order = interleave(counts).filter((c) => (taken[c] = (taken[c] || 0) + 1) <= byCat[c].length);
   const used = {};
@@ -262,8 +344,73 @@ const groceryAsGoods = (p) => ({
 });
 
 // «Путешествия» и афиша в ленте 07 — если у их категории есть доля; встают на треть и две трети ленты
+// «Подешевело в избранном» (макет 762:158789, лента 07): белая карточка, товары со
+// скидкой из выбранных категорий лентой вбок (карточки 132px, как в «Вашей корзине»), сердечко
+// уже отмечено, на фото — зелёная плашка, на сколько рублей стало дешевле
+const FAV_DROP_COUNT = 8;
+
+function favDropShelf({ catalog, setup }) {
+  const src = setup.moderated !== false && catalog.goodsModerated.length ? catalog.goodsModerated : catalog.goods;
+  const pools = Object.fromEntries(src.filter((c) => (setup.weights[c.id] || 0) > 0)
+    .map((c) => [c.id, c.products.filter((p) => p.oldPrice && rub(p.oldPrice) > rub(p.price))]));
+  // категории чередуются по долям, чтобы в полке были не одни часы
+  const order = interleave(Object.fromEntries(Object.entries(pools).map(([c, l]) => [c, Math.min(l.length, FAV_DROP_COUNT)])));
+  const taken = {};
+  const list = order.slice(0, FAV_DROP_COUNT).map((c) => pools[c][(taken[c] = (taken[c] || 0) + 1) - 1]);
+  if (list.length < 2) return null;
+  return goodsStrip({ title: 'Подешевело в избранном', cat: 'shopping', list, liked: true,
+    label: (p) => ({ text: `−${Math.round(rub(p.oldPrice) - rub(p.price)).toLocaleString('ru-RU')}\u00a0₽`, cls: 'is-down' }) });
+}
+
+// Белая карточка с товарами лентой вбок (карточки 132px, без старой цены и магазина) и плашкой на фото:
+// общая для «Подешевело в избранном» и «Успеет приехать к субботе»
+function goodsStrip({ title, sub, cat, list, liked = false, label }) {
+  const cards = list.map((p) => {
+    const card = goodsCard(p);
+    if (liked) card.querySelector('.heart')?.setAttribute('aria-pressed', 'true');
+    const { text, cls } = label(p);
+    card.querySelector('.goods-pic').append(h('span', { class: `delivery-diff ${cls}` }, text));
+    return card;
+  });
+  return h('section', { class: 'card delivery fav-drop', dataset: { cat } },
+    cardHeader({ title, subtitle: sub }),
+    h('div', { class: 'hscroll delivery-scroll' }, cards));
+}
+
+// Набор товаров с баннером (data/kits.json, лента 07): заголовок, первым — баннер набора во всю
+// высоту карточек, за ним товары набора (карточки 132px), внизу «Заказать набор» с суммой
+function kitShelf(kit) {
+  const total = kit.products.reduce((s, p) => s + rub(p.price), 0);
+  const order = button({ class: 'delivery-order' }, h('span', null, kit.order || 'Заказать набор'), h('b', null, `${Math.round(total).toLocaleString('ru-RU')}\u00a0₽`));
+  order.addEventListener('click', () => toast('Недоступно в прототипе'));
+  return h('section', { class: 'card delivery kit', dataset: { cat: kit.category, kit: kit.id } },
+    cardHeader({ title: kit.title }),
+    h('div', { class: 'hscroll delivery-scroll' }, bannerCard({ category: kit.category, ...kit.banner }), kit.products.map(goodsCard)),
+    h('div', { class: 'delivery-foot' }, order));
+}
+
+// «Успеет приехать к субботе» (лента 07): детские игрушки на подарок, на фото — когда привезут
+const GIFT_DAYS = ['Завтра', 'В пятницу', 'В субботу'];
+const GIFT_MATCH = /игрушк|конструктор|беговел|робот|мотоцикл|электромобил|каталк|велосипед|набор/i;
+
+function giftShelf({ catalog, setup }) {
+  const src = setup.moderated !== false && catalog.goodsModerated.length ? catalog.goodsModerated : catalog.goods;
+  const list = (src.find((c) => c.id === 'kids')?.products || []).filter((p) => GIFT_MATCH.test(p.description)).slice(0, FAV_DROP_COUNT);
+  if (list.length < 2) return null;
+  return goodsStrip({ title: 'Успеет приехать к субботе', sub: 'Подарки детям', cat: 'kids', list,
+    label: (p) => ({ text: GIFT_DAYS[list.indexOf(p) % GIFT_DAYS.length], cls: 'is-date' }) });
+}
+
 function customSpecials({ catalog, setup, extras, onLink }) {
   const list = [];
+  if (setup.goods > 0) {
+    const f = favDropShelf({ catalog, setup });
+    if (f) list.push({ el: f, at: 0.5 });
+    const g = giftShelf({ catalog, setup });
+    if (g) list.push({ el: g, at: 0.85 });
+    // наборы — между «Подешевело в избранном» и афишей
+    catalog.kits.forEach((kit, i) => list.push({ el: kitShelf(kit), at: 0.6 + i * 0.05 }));
+  }
   // «Доставка продуктов» — по тумблеру в настройке, по умолчанию включена (у старых настроек поля нет)
   if (setup.delivery !== false) {
     const d = deliveryShelf({ catalog, onLink });
@@ -282,7 +429,8 @@ function customSpecials({ catalog, setup, extras, onLink }) {
     extras.push(a);
     list.push({ el: a, at: 0.7 });
   }
-  return list;
+  // широкие блоки ставятся по порядку своего места в ленте
+  return list.sort((a, b) => a.at - b.at);
 }
 
 // Раздаёт total карточек категориям по весам порциями по step, не больше, чем есть (caps):

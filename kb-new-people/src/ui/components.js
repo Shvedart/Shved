@@ -235,13 +235,15 @@ export function offerCard(offer, { size = 'm', onOpen, locked = false, lockLabel
 // ---------- Рекламный баннер (макеты 745:157201…752:157399) ----------
 
 // Размером со стирашку: фото на всю плитку, сверху логотип и заголовок, внизу плашка «Реклама».
-// b — баннер из data/banners.json
+// b — баннер из data/banners.json. type: 'bank' — продукт банка (макеты 754:157405…758:157548):
+// текст мельче, логотип стоит в строку с названием продукта (brand)
 export function bannerCard(b) {
-  const el = button({ class: `banner is-${b.textColor === 'dark' ? 'dark' : 'light'}`, dataset: { cat: b.category, banner: b.id }, 'aria-label': `Реклама. ${b.title.replace(/\n/g, ' ')}` },
+  const bank = b.type === 'bank';
+  const logo = b.logo ? img(b.logo, { cls: 'banner-logo', alt: '', width: 24, height: 24 }) : null;
+  const top = bank && b.brand ? h('span', { class: 'banner-brand' }, logo, h('span', null, b.brand)) : logo;
+  const el = button({ class: `banner is-${b.textColor === 'dark' ? 'dark' : 'light'}${bank ? ' is-bank' : ''}`, dataset: { cat: b.category, banner: b.id, type: b.type || 'ad' }, 'aria-label': `Реклама. ${[b.brand, b.title.replace(/\n/g, ' ')].filter(Boolean).join('. ')}` },
     img(b.image, { cls: 'banner-bg', alt: '' }),
-    h('span', { class: 'banner-head' },
-      b.logo ? img(b.logo, { cls: 'banner-logo', alt: '', width: 24, height: 24 }) : null,
-      h('span', { class: 'banner-title' }, b.title)),
+    h('span', { class: 'banner-head' }, top, h('span', { class: 'banner-title' }, b.title)),
     h('span', { class: 'banner-ad' }, 'Реклама'));
   if (b.focus) el.querySelector('.banner-bg').style.objectPosition = b.focus;
   el.addEventListener('click', () => toast('Недоступно в прототипе'));

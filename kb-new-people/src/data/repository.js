@@ -3,17 +3,18 @@
 
 import { buildCatalog } from '../domain/catalog.js';
 
-export function createLocalSource({ catalogUrl = 'cashback-web.json', overridesUrl = 'data/overrides.json', productsUrl = 'data/products.json', discountsUrl = 'data/discounts.json', groceryUrl = 'data/grocery.json', goodsUrl = 'data/tovarka.json', goodsModeratedUrl = 'data/tovarka-moderated.json', bannersUrl = 'data/banners.json' } = {}) {
+export function createLocalSource({ catalogUrl = 'cashback-web.json', overridesUrl = 'data/overrides.json', productsUrl = 'data/products.json', discountsUrl = 'data/discounts.json', groceryUrl = 'data/grocery.json', goodsUrl = 'data/tovarka.json', goodsModeratedUrl = 'data/tovarka-moderated.json', bannersUrl = 'data/banners.json', kitsUrl = 'data/kits.json' } = {}) {
   return {
     async load() {
       // товары, промокоды и продукты из магазина — необязательные источники: без них лента обходится офферами
-      const [raw, overrides, products, discounts, grocery, goods, goodsModerated, banners] = await Promise.all([
+      const [raw, overrides, products, discounts, grocery, goods, goodsModerated, banners, kits] = await Promise.all([
         fetchJson(catalogUrl), fetchJson(overridesUrl),
         fetchJson(productsUrl).catch(() => null), fetchJson(discountsUrl).catch(() => null),
         fetchJson(groceryUrl).catch(() => null), fetchJson(goodsUrl).catch(() => null),
         fetchJson(goodsModeratedUrl).catch(() => null), fetchJson(bannersUrl).catch(() => null),
+        fetchJson(kitsUrl).catch(() => null),
       ]);
-      return { raw, overrides, products, discounts, grocery, goods, goodsModerated, banners };
+      return { raw, overrides, products, discounts, grocery, goods, goodsModerated, banners, kits };
     },
   };
 }
@@ -35,6 +36,6 @@ async function fetchJson(url) {
 }
 
 export async function loadCatalog(source) {
-  const { raw, overrides, products, discounts, grocery, goods, goodsModerated, banners } = await source.load();
-  return buildCatalog(raw, overrides, products, discounts, grocery, goods, goodsModerated, banners);
+  const { raw, overrides, products, discounts, grocery, goods, goodsModerated, banners, kits } = await source.load();
+  return buildCatalog(raw, overrides, products, discounts, grocery, goods, goodsModerated, banners, kits);
 }

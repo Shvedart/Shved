@@ -922,3 +922,169 @@
 .delivery-order b {
   font-weight: 700;
 }
+
+/* ---------- «Ваша корзина»: одна корзина в разных магазинах (макет 762:158548) ---------- */
+.delivery-stores {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 16px;
+}
+
+.delivery-store {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  height: 56px;
+  padding: 0 var(--gutter);
+  text-align: left;
+}
+
+.delivery-store-logo {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.delivery-store-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.delivery-store-name {
+  display: flex;
+  gap: 4px;
+  font-size: 17px;
+  letter-spacing: -0.41px;
+  color: var(--c-text);
+  white-space: nowrap;
+}
+
+.delivery-store-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* самая дешёвая корзина — зелёная */
+.delivery-store-name .is-best {
+  color: var(--c-green);
+}
+
+.delivery-store-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  letter-spacing: -0.08px;
+  color: var(--c-text-secondary);
+  white-space: nowrap;
+}
+
+.delivery-store-meta svg,
+.delivery-store-back {
+  color: var(--c-text);
+}
+
+/* строки магазинов не сжимаются при нажатии — отклик даёт галочка, как в выборе повышенного кэшбэка */
+.delivery-store.is-pressed {
+  transform: none;
+}
+
+/* радиокнопка: выбранная — синий кружок с галочкой (проявляется пружинкой), остальные — пустой кружок */
+.delivery-radio {
+  position: relative;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  transition: border-color var(--dur-fast) ease;
+}
+
+.delivery-radio > * {
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 160ms ease, transform 260ms var(--ease-spring);
+}
+
+.delivery-store[aria-checked='true'] .delivery-radio {
+  border-color: transparent;
+}
+
+.delivery-store[aria-checked='true'] .delivery-radio > * {
+  opacity: 1;
+  transform: none;
+}
+
+/* разница цены продукта с лучшей корзиной — плашка на фото, поверх затемнения */
+.delivery-diff {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  z-index: 1;
+  padding: 2px 6px;
+  border-radius: var(--r-pill);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.08px;
+  color: var(--c-on-dark);
+}
+
+.delivery-diff.is-up {
+  background: var(--c-red);
+}
+
+.delivery-diff.is-down {
+  background: var(--c-green);
+}
+
+/* ---------- «Из избранного товары стали дешевле» (макет 762:158789) ---------- */
+.fav-drop .card-header {
+  padding-left: 20px;
+}
+
+.fav-drop .delivery-scroll {
+  padding-bottom: 8px;
+}
+
+.fav-drop .goods {
+  flex: none;
+  width: 132px;
+  scroll-snap-align: start;
+}
+
+/* в полке скидок старая цена и магазин не нужны: разница уже на плашке */
+.fav-drop .goods-old,
+.fav-drop .goods-shop {
+  display: none;
+}
+
+/* когда привезут — синяя плашка («Успеет приехать к субботе») */
+.delivery-diff.is-date {
+  background: var(--c-info);
+}
+
+/* ---------- Набор товаров с баннером (data/kits.json) ---------- */
+.kit .hscroll .goods {
+  flex: none;
+  width: 132px;
+  scroll-snap-align: start;
+}
+
+/* баннер набора — шириной с карточку и во всю высоту карточек товаров */
+.kit .hscroll .banner {
+  flex: none;
+  align-self: stretch;
+  width: 132px;
+  min-height: 0;
+  aspect-ratio: auto;
+  scroll-snap-align: start;
+}
