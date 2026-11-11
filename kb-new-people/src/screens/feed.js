@@ -4,7 +4,7 @@
 import { h, button, img, icon, iconImg } from '../core/dom.js';
 import { animate, EASE, stagger, fadeUpIn } from '../core/motion.js';
 import { haptics } from '../core/haptics.js';
-import { cardHeader, goodsCard, linkButton, productCard } from '../ui/components.js';
+import { bannerCard, cardHeader, goodsCard, linkButton, productCard } from '../ui/components.js';
 import { travelShelf, afishaShelf } from '../ui/shelves.js';
 import { toast } from '../ui/toast.js';
 import { app } from '../app.js';
@@ -157,7 +157,7 @@ function groceryShelf({ catalog, onLink }) {
 
 // «Доставка продуктов» (макет 736:156423, лента 07): белая карточка — продукты магазина
 // лентой вбок; в подзаголовке кэшбэк за корзину, внизу кнопка с магазином и суммой
-const DELIVERY = { title: 'Доставка продуктов', sub: 'Собрали вашу корзину', shop: 'ВкусВилл', count: 6 };
+const DELIVERY = { title: 'Доставка продуктов', sub: 'Собрали вашу корзину', shop: 'ВкусВилл', time: 'за 30 мин', count: 6 };
 const rub = (s) => Number(s.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
 
 // последняя плитка корзины (макет 736:156684): плюс на сером квадрате и подпись
@@ -173,8 +173,8 @@ function deliveryShelf({ catalog, onLink }) {
   const list = catalog.grocery.slice(0, DELIVERY.count);
   if (!list.length) return null;
   const sum = (key) => Math.round(list.reduce((s, p) => s + rub(p[key]), 0)).toLocaleString('ru-RU');
-  const order = button({ class: 'delivery-order', 'aria-label': `Заказать в магазине ${DELIVERY.shop} на ${sum('price')} ₽` },
-    h('span', null, DELIVERY.shop), h('b', null, `${sum('price')} ₽`));
+  const order = button({ class: 'delivery-order', 'aria-label': `Заказать в магазине ${DELIVERY.shop} на ${sum('price')} ₽, доставка ${DELIVERY.time}` },
+    h('span', null, DELIVERY.shop, h('span', { class: 'delivery-time' }, DELIVERY.time)), h('b', null, `${sum('price')} ₽`));
   order.addEventListener('click', () => toast('Недоступно в прототипе'));
   return h('section', { class: 'card delivery', dataset: { cat: 'food' } },
     h('div', { class: 'card-header' },
@@ -205,6 +205,23 @@ const GOODS_SHELVES = 3;
 const CUSTOM_TOTAL = 150;
 // сколько товаров минимум идёт подряд в конце ленты 07, когда офферы кончились
 const TAIL_GOODS = 40;
+// рекламный баннер в сплошной ленте 07 — примерно один на столько карточек
+const BANNER_EVERY = 16;
+
+// Баннеры из data/banners.json, что подходят ленте: своей категории с долей больше 0 или вне
+// настройки (продукты банка, связь). Порядок — категории чередуются по долям, как карточки
+function pickBanners(catalog, setup) {
+  const byCat = {};
+  for (const b of catalog.banners) {
+    const w = b.category in setup.weights ? setup.weights[b.category] : 5;
+    if (w > 0) (byCat[b.category] ||= []).push(b);
+  }
+  const counts = Object.fromEntries(Object.entries(byCat).map(([c, l]) => [c, l.length * (c in setup.weights ? setup.weights[c] : 5)]));
+  const taken = {};
+  const order = interleave(counts).filter((c) => (taken[c] = (taken[c] || 0) + 1) <= byCat[c].length);
+  const used = {};
+  return order.map((c) => byCat[c][(used[c] = (used[c] || 0) + 1) - 1]);
+}
 const chunk = (list, n) => Array.from({ length: Math.ceil(list.length / n) }, (_, i) => list.slice(i * n, i * n + n));
 
 // Правила для больших карточек в сплошной ленте: больших товаров подряд — не больше двух,
@@ -461,6 +478,10 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
       sc.dataset.cat = items[at].dataset.cat;
       items[at] = sc;
     });
+    // рекламные баннеры — между карточками, равномерно по ленте (карточки не заменяют)
+    const banners = pickBanners(catalog, setup).slice(0, Math.floor(items.length / BANNER_EVERY));
+    const stepB = items.length / (banners.length + 1);
+    banners.forEach((b, i) => items.splice(Math.round(stepB * (i + 1)) + i, 0, bannerCard(b)));
     if (setup.bigGoods) items = pairUp(items);
     // путешествия, афиша, доставка — отдельными блоками во всю ширину; в ровной сетке — только после
     // целого ряда (колонки над блоком выравнивает balanceFeed уже по настоящим высотам)
@@ -620,6 +641,16 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
     const cards = sh ? [...sh.querySelector('.grid').children] : [];
     cards[[1, 3, 0, 2][i % 4] % (cards.length || 1)]?.replaceWith(sc);
   });
+  // рекламные баннеры — в офферные полки своей категории, по одному на полку, вместо оффера;
+  // баннеры вне категорий настройки (продукты банка, связь) в ленте полками не ставим
+  const freeShelves = offerShelves.filter((sh) => !sh.querySelector('.scard'));
+  for (const b of pickBanners(catalog, setup)) {
+    const sh = freeShelves.find((x) => x.dataset.cat === b.category);
+    if (!sh) continue;
+    freeShelves.splice(freeShelves.indexOf(sh), 1);
+    const cards = [...sh.querySelector('.grid').children];
+    cards[Math.min(2, cards.length - 1)]?.replaceWith(bannerCard(b));
+  }
   return shelves;
 }
 
@@ -792,7 +823,7 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
     for (const part of parts) {
       if (part.dataset.cat === 'mix') {
         let any = false;
-        for (const card of part.querySelectorAll('.ocard, .promo, .goods')) {
+        for (const card of part.querySelectorAll('.ocard, .promo, .goods, .banner')) {
           // data-only — карточка только для своей категории (продукты в «Еде»)
           const ok = id === 'all' ? !card.dataset.only : !own && (card.dataset.cat || catOf.get(card.dataset.offer)) === id;
           card.hidden = !ok;

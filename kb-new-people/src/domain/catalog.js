@@ -6,7 +6,7 @@ import { plural } from '../core/dom.js';
 const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
 const DAY_MS = 86400000;
 
-export function buildCatalog(raw, cfg, productsRaw = null, discountsRaw = null, groceryRaw = null, goodsRaw = null, goodsModeratedRaw = null) {
+export function buildCatalog(raw, cfg, productsRaw = null, discountsRaw = null, groceryRaw = null, goodsRaw = null, goodsModeratedRaw = null, bannersRaw = null) {
   const today = new Date(`${cfg.today}T00:00:00`);
   const matchIndex = new Map();
   for (const [brandId, b] of Object.entries(cfg.brands || {})) {
@@ -67,7 +67,9 @@ export function buildCatalog(raw, cfg, productsRaw = null, discountsRaw = null, 
   // товары после модерации (data/tovarka-moderated.json): чистые фото без инфографики — для ленты 07;
   // id у них свои, поэтому hiddenGoods к ним не применяем
   const goodsModerated = goodsModeratedRaw?.categories || [];
-  return createCatalogApi({ categories, offers, brands, cfg, products, promos, grocery, goods, goodsModerated });
+  // рекламные баннеры ленты 07 (data/banners.json): фото, логотип, заголовок, категория
+  const banners = bannersRaw?.banners || [];
+  return createCatalogApi({ categories, offers, brands, cfg, products, promos, grocery, goods, goodsModerated, banners });
 }
 
 /* Товары с кэшбэком (формат land → payload.items[]: фото, название, кэшбэк).
@@ -134,7 +136,7 @@ function buildPromos(discountsRaw, brands) {
   return list;
 }
 
-function createCatalogApi({ categories, offers, brands, cfg, products = [], promos = [], grocery = [], goods = [], goodsModerated = [] }) {
+function createCatalogApi({ categories, offers, brands, cfg, products = [], promos = [], grocery = [], goods = [], goodsModerated = [], banners = [] }) {
   const api = {
     config: cfg,
     categories,
@@ -142,6 +144,7 @@ function createCatalogApi({ categories, offers, brands, cfg, products = [], prom
     promos,
     grocery,
     goodsModerated,
+    banners,
     goods,
     getOffer: (id) => offers.get(id) || null,
     getBrand: (id) => brands.get(id) || null,

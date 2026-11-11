@@ -1,0 +1,152 @@
+{
+  "_about": "Рекламные баннеры ленты 07 (макеты 745:157201…752:157399). Баннер размером со стирашку: фон-картинка, необязательный логотип 24px, заголовок и плашка «Реклама». category — id категории ленты (food, travel, health, beauty, electronics, kids, clothes, fun, auto, pets, home, telecom); \"bank\" — продукты банка, баннер виден только во всей ленте. textColor — light (белый текст) или dark (тёмный). focus — необязательная точка фокуса фото (CSS object-position), если важная часть картинки уезжает при обрезке.",
+  "banners": [
+    {
+      "id": "mvideo-headphones",
+      "category": "electronics",
+      "title": "Лучший кэшбэк\nв М-Видео",
+      "image": "assets/img/ads/mvideo-headphones.webp",
+      "logo": "assets/img/ads/mvideo-logo.svg",
+      "textColor": "light",
+      "figma": "745:157241"
+    },
+    {
+      "id": "makita",
+      "category": "home",
+      "title": "Makita — лучшие инструменты",
+      "image": "assets/img/ads/makita.webp",
+      "logo": "assets/img/ads/makita-logo.svg",
+      "textColor": "light",
+      "figma": "745:157234"
+    },
+    {
+      "id": "hoff-chair",
+      "category": "home",
+      "title": "Лучший кэшбэк\nв Hoff",
+      "image": "assets/img/ads/hoff-chair.webp",
+      "logo": "assets/img/ads/hoff-logo.svg",
+      "textColor": "dark",
+      "figma": "745:157307"
+    },
+    {
+      "id": "newbuildings",
+      "category": "home",
+      "title": "Лучшие новостройки\nМосквы",
+      "image": "assets/img/ads/newbuildings.webp",
+      "textColor": "light",
+      "figma": "745:157216"
+    },
+    {
+      "id": "aura-vitamins",
+      "category": "health",
+      "title": "Позаботьтесь об обмене веществ",
+      "image": "assets/img/ads/aura-vitamins.webp",
+      "textColor": "light",
+      "figma": "745:157201"
+    },
+    {
+      "id": "analyses",
+      "category": "health",
+      "title": "Любые анализы со скидкой 20%",
+      "image": "assets/img/ads/analyses.webp",
+      "textColor": "dark",
+      "figma": "745:157209"
+    },
+    {
+      "id": "pets",
+      "category": "pets",
+      "title": "Товары для питомцев с кэшбэком 10%",
+      "image": "assets/img/ads/pets.webp",
+      "textColor": "dark",
+      "figma": "745:157202"
+    },
+    {
+      "id": "spa",
+      "category": "beauty",
+      "title": "Спа-комплекс с кэшбэком 20%",
+      "image": "assets/img/ads/spa.webp",
+      "textColor": "light",
+      "figma": "745:157224"
+    },
+    {
+      "id": "skin-pink",
+      "category": "beauty",
+      "title": "Позаботьтесь\nо красоте кожи",
+      "image": "assets/img/ads/skin-pink.webp",
+      "textColor": "dark",
+      "figma": "745:157357"
+    },
+    {
+      "id": "aura-skincare",
+      "category": "beauty",
+      "title": "Всё для ухода\nза вашей кожей",
+      "image": "assets/img/ads/aura-skincare.webp",
+      "textColor": "light",
+      "figma": "745:157330"
+    },
+    {
+      "id": "tires",
+      "category": "auto",
+      "title": "Подберите шины для вашего авто",
+      "image": "assets/img/ads/tires.webp",
+      "textColor": "light",
+      "figma": "745:157369"
+    },
+    {
+      "id": "car-repair",
+      "category": "auto",
+      "title": "Надёжный ремонт вашего авто",
+      "image": "assets/img/ads/car-repair.webp",
+      "textColor": "light",
+      "figma": "745:157375"
+    },
+    {
+      "id": "restaurants",
+      "category": "food",
+      "title": "Любимые блюда\nиз ресторанов",
+      "image": "assets/img/ads/restaurants.webp",
+      "textColor": "light",
+      "figma": "745:157351"
+    },
+    {
+      "id": "groceries",
+      "category": "food",
+      "title": "Свежие продукты\nк вашему столу",
+      "image": "assets/img/ads/groceries.webp",
+      "textColor": "light",
+      "figma": "745:157317"
+    },
+    {
+      "id": "travel",
+      "category": "travel",
+      "title": "Путешествия\nвашей мечты",
+      "image": "assets/img/ads/travel.webp",
+      "textColor": "light",
+      "figma": "745:157336"
+    },
+    {
+      "id": "concerts",
+      "category": "fun",
+      "title": "Концерты и шоу\nна любой вкус",
+      "image": "assets/img/ads/concerts.webp",
+      "textColor": "dark",
+      "figma": "745:157363"
+    },
+    {
+      "id": "sim-tariff",
+      "category": "telecom",
+      "title": "Тариф за 390 ₽ — платите вовремя в течение года",
+      "image": "assets/img/ads/sim-tariff.webp",
+      "textColor": "light",
+      "figma": "752:157399"
+    },
+    {
+      "id": "credit-card",
+      "category": "bank",
+      "title": "Удобный беспроцентный период",
+      "image": "assets/img/ads/credit-card.webp",
+      "textColor": "light",
+      "figma": "751:157393"
+    }
+  ]
+}

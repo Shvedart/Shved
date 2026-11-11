@@ -232,6 +232,22 @@ export function offerCard(offer, { size = 'm', onOpen, locked = false, lockLabel
   return h('div', { class: `ocard ocard-${size} ${locked ? 'is-locked' : ''}`, dataset: { offer: offer.id } }, main, corner);
 }
 
+// ---------- Рекламный баннер (макеты 745:157201…752:157399) ----------
+
+// Размером со стирашку: фото на всю плитку, сверху логотип и заголовок, внизу плашка «Реклама».
+// b — баннер из data/banners.json
+export function bannerCard(b) {
+  const el = button({ class: `banner is-${b.textColor === 'dark' ? 'dark' : 'light'}`, dataset: { cat: b.category, banner: b.id }, 'aria-label': `Реклама. ${b.title.replace(/\n/g, ' ')}` },
+    img(b.image, { cls: 'banner-bg', alt: '' }),
+    h('span', { class: 'banner-head' },
+      b.logo ? img(b.logo, { cls: 'banner-logo', alt: '', width: 24, height: 24 }) : null,
+      h('span', { class: 'banner-title' }, b.title)),
+    h('span', { class: 'banner-ad' }, 'Реклама'));
+  if (b.focus) el.querySelector('.banner-bg').style.objectPosition = b.focus;
+  el.addEventListener('click', () => toast('Недоступно в прототипе'));
+  return el;
+}
+
 // ---------- Карточка товара ----------
 
 // item — товар из каталога (catalog.products) или оффер: у товара свой id, а детали открывает его offerId

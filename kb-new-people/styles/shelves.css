@@ -914,6 +914,11 @@
   color: var(--c-info);
 }
 
+/* время доставки — рядом с названием магазина, тем же синим */
+.delivery-time {
+  margin-left: 6px;
+}
+
 .delivery-order b {
   font-weight: 700;
 }
