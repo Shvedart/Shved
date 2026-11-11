@@ -1091,12 +1091,12 @@ img.is-broken {
   user-select: none;
 }
 
-/* в сплошной ленте (07) — плитка 3:4, как у офферов, без места под подпись */
+/* в сплошной ленте (07) — плитка 3:5, выше оффера: без подписи она иначе выглядела короче соседей */
 .shelf-mixed .scard {
   align-self: start;
   width: 100%;
   min-height: 0;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 3 / 5;
 }
 
 .scard-zone {

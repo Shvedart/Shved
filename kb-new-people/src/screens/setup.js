@@ -85,6 +85,20 @@ export function setupScreen({ el, params, nav }) {
   const delivery = h('label', { class: 'setup-switch' },
     h('span', { class: 'setup-switch-text' }, h('span', { class: 'setup-label' }, 'Доставка продуктов'), h('span', { class: 'setup-hint' }, 'Полка с собранной корзиной и кнопкой «Заказать»')),
     deliveryInput, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
+  // товары после модерации — чистые фото без инфографики (data/tovarka-moderated.json); у старых настроек поля нет — включено
+  const modInput = h('input', { class: 'setup-switch-input', type: 'checkbox', role: 'switch' });
+  modInput.checked = setup.moderated !== false;
+  modInput.addEventListener('change', () => { setup = { ...setup, moderated: modInput.checked }; haptics.selection(); });
+  const moderated = h('label', { class: 'setup-switch' },
+    h('span', { class: 'setup-switch-text' }, h('span', { class: 'setup-label' }, 'Чистые карточки товаров'), h('span', { class: 'setup-hint' }, 'Товары после модерации: фото без инфографики')),
+    modInput, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
+  // продукты магазина как товары в ленте; полку «Доставка продуктов» не трогает
+  const groceryInput = h('input', { class: 'setup-switch-input', type: 'checkbox', role: 'switch' });
+  groceryInput.checked = setup.hideGrocery !== false;
+  groceryInput.addEventListener('change', () => { setup = { ...setup, hideGrocery: groceryInput.checked }; haptics.selection(); });
+  const grocery = h('label', { class: 'setup-switch' },
+    h('span', { class: 'setup-switch-text' }, h('span', { class: 'setup-label' }, 'Без продуктов в ленте'), h('span', { class: 'setup-hint' }, 'Продукты только в полке «Доставка продуктов»')),
+    groceryInput, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
   const goodsText = (v) => `${v}% товаров и ${100 - v}% офферов, промокодов и подборок`;
   const goodsHint = h('p', { class: 'setup-hint' }, goodsText(setup.goods));
 
@@ -130,7 +144,7 @@ export function setupScreen({ el, params, nav }) {
       h('h1', { class: 'setup-title' }, 'Соберите ленту под себя'),
       h('p', { class: 'setup-sub' }, 'Как показывать предложения и чего в ленте должно быть больше'),
       h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Вид ленты'), seg, modeHint, tint, delivery),
-      h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Товары или офферы'), goods, goodsHint, big),
+      h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Товары или офферы'), goods, goodsHint, big, moderated, grocery),
       h('section', { class: 'setup-block' },
         h('div', { class: 'setup-block-head' }, h('h2', { class: 'setup-block-title' }, 'Чего показывать больше'), reset),
         h('p', { class: 'setup-hint' }, 'Доли категорий в сумме — 100%. Тронутый ползунок держит свою долю, остальные делят остаток'),

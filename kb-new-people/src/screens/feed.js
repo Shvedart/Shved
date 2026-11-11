@@ -203,6 +203,8 @@ const GOODS_SHELVES = 3;
 // ---------- Лента по настройке (сценарий 07) ----------
 // Сколько карточек в ленте: доли категорий делят это число, доля товаров — каждую категорию
 const CUSTOM_TOTAL = 150;
+// сколько товаров минимум идёт подряд в конце ленты 07, когда офферы кончились
+const TAIL_GOODS = 40;
 const chunk = (list, n) => Array.from({ length: Math.ceil(list.length / n) }, (_, i) => list.slice(i * n, i * n + n));
 
 // Правила для больших карточек в сплошной ленте: больших товаров подряд — не больше двух,
@@ -266,42 +268,165 @@ function customSpecials({ catalog, setup, extras, onLink }) {
   return list;
 }
 
-function customParts({ catalog, byOffer, promos, scratches = [], extras = [], setup, onLink }) {
+// Раздаёт total карточек категориям по весам порциями по step, не больше, чем есть (caps):
+// каждая порция — категории, которой сейчас меньше всех относительно её доли. Кончилась у одной —
+// остаток уходит остальным по их долям.
+function allocate(total, weights, caps, step) {
+  const out = Object.fromEntries(Object.keys(caps).map((c) => [c, 0]));
+  for (let left = Math.floor(total / step) * step; left >= step; left -= step) {
+    let best = null;
+    for (const c of Object.keys(caps)) {
+      if (out[c] + step > caps[c]) continue;
+      if (!best || (out[c] + step) / weights[c] < (out[best] + step) / weights[best]) best = c;
+    }
+    if (!best) break;
+    out[best] += step;
+  }
+  return out;
+}
+
+// Колонки «как в Pinterest» по настоящим высотам: каждая карточка — в ту колонку, что сейчас
+// короче, а в конце одна пара карточек из разных колонок меняется местами, если так колонки
+// сходятся ровнее — иначе над широким блоком (путешествия, афиша) остаётся пустота
+// исходный порядок карточек блока — по очереди слева и справа, как их разложили при сборке
+const masonryItems = (m) => (m.items ||= [...m.children].flatMap((c) => [...c.children].map((el, i) => [i, el]))
+  .sort((a, b) => a[0] - b[0]).map(([, el]) => el));
+
+// Все блоки колонок ленты: если колонки над широким блоком не сходятся (например, карточек
+// нечётное число), последняя карточка переезжает под широкий блок — в начало следующих колонок
+function balanceFeed(section) {
+  const blocks = [...section.children];
+  // высоты меряем сразу у всех, пока карточки на странице: перенесённая карточка на миг
+  // выпадает из DOM, и её высота читалась бы как 0
+  const heights = new Map();
+  for (const m of blocks) if (m.classList.contains('masonry')) for (const el of masonryItems(m)) heights.set(el, el.getBoundingClientRect().height);
+  const balanceMasonry = (m) => balanceColumns(m, heights);
+  blocks.forEach((m, i) => {
+    if (!m.classList.contains('masonry')) return;
+    const next = blocks.slice(i + 1).find((b) => b.classList.contains('masonry'));
+    // пробуем перенести 0–3 карточки и оставляем вариант, где колонки сходятся ровнее
+    const own = masonryItems(m);
+    const moved = [];
+    let best = { k: 0, diff: balanceMasonry(m) };
+    for (let k = 1; k <= 3 && next && best.diff > 40 && own.length > 2; k++) {
+      moved.unshift(own.pop());
+      const diff = balanceMasonry(m);
+      if (diff < best.diff) best = { k, diff };
+    }
+    // лишнее — назад, перенесённое — в начало следующего блока
+    while (moved.length > best.k) own.push(moved.shift());
+    if (next) masonryItems(next).unshift(...moved);
+    balanceMasonry(m);
+  });
+}
+
+function balanceColumns(m, heights, items = masonryItems(m)) {
+  const cols = [...m.children];
+  const hs = items.map((el) => heights.get(el) || 0);
+  const gap = parseFloat(getComputedStyle(cols[0]).rowGap) || 0;
+  const sum = [0, 0];
+  const put = [[], []];
+  hs.forEach((hgt, i) => {
+    const c = sum[0] <= sum[1] ? 0 : 1;
+    put[c].push(i);
+    sum[c] += hgt ? hgt + gap : 0; // скрытая фильтром карточка места не занимает
+  });
+  const d = sum[0] - sum[1];
+  let swap = null;
+  let bestD = Math.abs(d);
+  for (const a of put[0].slice(-4)) for (const b of put[1].slice(-4)) {
+    const nd = Math.abs(d - 2 * (hs[a] - hs[b]));
+    if (nd < bestD) { bestD = nd; swap = [a, b]; }
+  }
+  if (swap) {
+    const [a, b] = swap;
+    put[0][put[0].indexOf(a)] = b;
+    put[1][put[1].indexOf(b)] = a;
+  }
+  cols.forEach((c, k) => c.replaceChildren(...put[k].map((i) => items[i])));
+  return bestD;
+}
+
+function customParts({ catalog, byOffer, promos, scratches: allScratches = [], extras = [], setup, onLink }) {
+  // стирашек в ленте 07 вдвое меньше (из 5 — 3); лишние убираем со страницы
+  const scratches = allScratches.slice(0, Math.round(allScratches.length / 2));
+  allScratches.slice(scratches.length).forEach((sc) => sc.remove());
   const specials = customSpecials({ catalog, setup, extras, onLink });
   const usedOffers = new Set();
   const usedPromos = new Set();
-  // по каждой категории: сколько всего, из них товаров — по доле, остальное офферы и промокоды
-  const plan = {};
-  for (const [cat, w] of Object.entries(setup.weights)) {
-    // полками — кратно 4, чтобы не было полок из одной-двух карточек; маленькая доля может дать 0
-    const shelves = setup.mode !== 'mixed';
-    const n = shelves ? Math.round((CUSTOM_TOTAL * w) / 400) * 4 : Math.round((CUSTOM_TOTAL * w) / 100);
-    if (!n) continue;
-    // у еды своих товаров в tovarka нет — берём продукты из магазина
-    const goodsPool = cat === 'food' ? catalog.grocery.map(groceryAsGoods) : catalog.goods.find((g) => g.id === cat)?.products || [];
-    const offerPool = [
+  // «Чистые карточки товаров» (по умолчанию включено; у старых настроек поля нет) — товары после модерации
+  const goodsSrc = setup.moderated !== false && catalog.goodsModerated.length ? catalog.goodsModerated : catalog.goods;
+  // Доли категорий — это интерес: по ним делятся и товары, и офферы с промокодами.
+  // Доля товаров (ползунок «Товары или офферы») держится во всей ленте точно.
+  // полками — кратно 4, чтобы не было полок из одной-двух карточек
+  const step = setup.mode !== 'mixed' ? 4 : 1;
+  const cats = Object.keys(setup.weights).filter((cat) => setup.weights[cat] > 0);
+  const weights = { ...setup.weights };
+  // «Шопинг» — родитель товарных категорий, в настройке его нет: его офферы добирают
+  // офферов одежде, технике и остальным товарным — с их суммарной долей
+  const goodsWeight = cats.filter((c) => c !== 'food' && goodsSrc.some((g) => g.id === c && g.products.length))
+    .reduce((sum, c) => sum + weights[c], 0);
+  if (goodsWeight && !('shopping' in weights) && catalog.getCategory('shopping')) {
+    cats.push('shopping');
+    weights.shopping = goodsWeight;
+  }
+  const pools = {};
+  for (const cat of cats) {
+    // у еды своих товаров в tovarka нет — берём продукты из магазина; «Без продуктов в ленте»
+    // (по умолчанию включено, у старых настроек поля нет) — их нет, остаются в полке доставки
+    const goods = cat === 'food' ? (setup.hideGrocery !== false ? [] : catalog.grocery.map(groceryAsGoods)) : goodsSrc.find((g) => g.id === cat)?.products || [];
+    const offers = [
       ...catalog.offersInCategory(cat).filter((o) => o && byOffer.has(o.id) && !usedOffers.has(o.id)).map((o) => {
         usedOffers.add(o.id);
         return byOffer.get(o.id);
       }),
       ...promos.filter((p) => p.dataset.cat === cat && !usedPromos.has(p)).map((p) => { usedPromos.add(p); return p; }),
     ];
-    let g = Math.min(goodsPool.length, shelves ? Math.round((n * setup.goods) / 400) * 4 : Math.round((n * setup.goods) / 100));
-    const whole = (x) => (shelves ? Math.floor(x / 4) * 4 : x);
-    let o = whole(Math.min(offerPool.length, n - g));
-    // не хватило одного вида — добираем другим
-    if (g + o < n) g = whole(Math.min(goodsPool.length, n - o));
-    if (!g && !o) continue;
-    const goodsCards = goodsPool.slice(0, g).map((p) => {
-      const card = goodsCard(p);
-      card.dataset.cat = cat;
-      // большие карточки — во всю ширину ленты; продукты еды всегда маленькие
-      if (setup.bigGoods && cat !== 'food') card.classList.add('is-big');
-      // продукты — квадратное фото, как на полке «Вы уже заказывали»
-      if (cat === 'food') card.classList.add('is-square');
+    pools[cat] = { goods, offers };
+  }
+  // В ленту идут все офферы и промокоды выбранных категорий, товары — вперемешку с ними по доле;
+  // когда офферы кончились — дальше одни товары (хвост ленты): минимум TAIL_GOODS и до CUSTOM_TOTAL
+  const sum = (counts) => Object.values(counts).reduce((a, b) => a + b, 0);
+  const offerCaps = Object.fromEntries(cats.map((c) => [c, pools[c].offers.length]));
+  const offerCounts = setup.goods >= 100 ? {} : allocate(sum(offerCaps), weights, offerCaps, step);
+  const offerSum = sum(offerCounts);
+  const goodsTarget = setup.goods >= 100 ? CUSTOM_TOTAL : Math.round((offerSum * setup.goods) / (100 - setup.goods));
+  const goodsCounts = allocate(goodsTarget, weights, Object.fromEntries(cats.map((c) => [c, pools[c].goods.length])), step);
+  const tailTarget = setup.goods > 0 && setup.goods < 100 ? Math.max(TAIL_GOODS, CUSTOM_TOTAL - offerSum - sum(goodsCounts)) : 0;
+  const tailCounts = allocate(tailTarget, weights,
+    Object.fromEntries(cats.map((c) => [c, pools[c].goods.length - (goodsCounts[c] || 0)])), step);
+  const toCard = (cat) => (p) => {
+    const card = goodsCard(p);
+    card.dataset.cat = cat;
+    // большие карточки — во всю ширину ленты; продукты еды всегда маленькие
+    if (setup.bigGoods && cat !== 'food') card.classList.add('is-big');
+    // продукты — квадратное фото, как на полке «Вы уже заказывали»
+    if (cat === 'food') card.classList.add('is-square');
+    return card;
+  };
+  const plan = {};
+  for (const cat of cats) {
+    const g = goodsCounts[cat] || 0;
+    const o = offerCounts[cat] || 0;
+    const t = tailCounts[cat] || 0;
+    if (!g && !o && !t) continue;
+    plan[cat] = {
+      offers: pools[cat].offers.slice(0, o),
+      goods: pools[cat].goods.slice(0, g).map(toCard(cat)),
+      tail: pools[cat].goods.slice(g, g + t).map(toCard(cat)),
+    };
+  }
+  // «Без продуктов в ленте»: во всей ленте продуктов нет, но в категории «Еда» они идут
+  // вперемешку с её офферами — с той же долей товаров (карточки с data-only="food")
+  if (setup.hideGrocery !== false && plan.food?.offers.length && setup.goods < 100) {
+    const want = Math.round((plan.food.offers.length * setup.goods) / (100 - setup.goods));
+    const n = Math.floor(Math.min(catalog.grocery.length, Math.max(step, want)) / step) * step;
+    plan.food.goods.push(...catalog.grocery.slice(0, n).map((p) => {
+      const card = goodsCard(groceryAsGoods(p));
+      card.classList.add('is-square');
+      Object.assign(card.dataset, { cat: 'food', only: 'food' });
       return card;
-    });
-    plan[cat] = { offers: offerPool.slice(0, o), goods: goodsCards };
+    }));
   }
   // офферы, что не попали в ленту, — назад в общий список (их карточки больше нигде не стоят)
   for (const [cat, { offers }] of Object.entries(plan)) for (const c of offers) c.dataset.cat ||= cat;
@@ -318,26 +443,39 @@ function customParts({ catalog, byOffer, promos, scratches = [], extras = [], se
     const order = interleave(Object.fromEntries(Object.entries(perCat).map(([c, l]) => [c, l.length])));
     const taken = {};
     let items = order.map((c) => perCat[c][(taken[c] = (taken[c] || 0) + 1) - 1]);
-    // стирашки — на место офферов и промокодов, равномерно по ленте
+    // офферы кончились — дальше одни товары, категории так же чередуются по долям
+    const tailOrder = interleave(Object.fromEntries(Object.entries(plan).map(([c, { tail }]) => [c, tail.length])));
+    const tailTaken = {};
+    items.push(...tailOrder.map((c) => plan[c].tail[(tailTaken[c] = (tailTaken[c] || 0) + 1) - 1]));
+    // стирашки — на место офферов и промокодов, равномерно по ленте; у каждой своя категория
+    // (того оффера, чьё место она заняла), чтобы в отфильтрованной ленте была максимум одна
     const offerIdx = items.map((x, i) => (x.classList.contains('goods') ? -1 : i)).filter((i) => i >= 0);
     const stepI = offerIdx.length / (scratches.length + 1);
+    const scratchCats = new Set();
     scratches.forEach((sc, i) => {
-      const at = offerIdx[Math.min(offerIdx.length - 1, Math.round(stepI * (i + 1)))];
-      if (at != null) items[at] = sc;
+      let k = Math.min(offerIdx.length - 1, Math.round(stepI * (i + 1)));
+      while (k < offerIdx.length - 1 && scratchCats.has(items[offerIdx[k]].dataset.cat)) k++;
+      const at = offerIdx[k];
+      if (at == null || scratchCats.has(items[at].dataset.cat)) return sc.remove();
+      scratchCats.add(items[at].dataset.cat);
+      sc.dataset.cat = items[at].dataset.cat;
+      items[at] = sc;
     });
     if (setup.bigGoods) items = pairUp(items);
-    // путешествия и афиша — отдельными блоками во всю ширину; в ровной сетке — только после целого ряда
-    for (const sp of specials.slice().reverse()) {
-      let at = Math.round(items.length * sp.at);
+    // путешествия, афиша, доставка — отдельными блоками во всю ширину; в ровной сетке — только после
+    // целого ряда (колонки над блоком выравнивает balanceFeed уже по настоящим высотам)
+    const base = items.length;
+    specials.forEach((sp, n) => {
+      let at = Math.round(base * sp.at) + n;
       const rowEnd = (i) => {
         let smalls = 0;
         for (let j = i - 1; j >= 0 && !items[j].classList.contains('is-big'); j--) smalls++;
         return smalls % 2 === 0;
       };
-      while (setup.bigGoods && at < items.length && !rowEnd(at)) at++;
+      if (setup.bigGoods) while (at < items.length && !rowEnd(at)) at++;
       sp.el.classList.add('is-special');
       items.splice(at, 0, sp.el);
-    }
+    });
     // как Pinterest: две независимые колонки, карточки по очереди слева и справа —
     // разная высота офферов и товаров даёт неровные ряды, порядок чтения сохраняется
     // большая карточка разрывает колонки: до неё — свой блок колонок, она сама — во всю ширину
@@ -369,7 +507,60 @@ function customParts({ catalog, byOffer, promos, scratches = [], extras = [], se
       }
       cols[n++ % 2].append(item);
     }
-    return [h('section', { class: 'shelf shelf-mixed', dataset: { cat: 'mix' } }, blocks)];
+    const section = h('section', { class: 'shelf shelf-mixed', dataset: { cat: 'mix' } }, blocks);
+    // продукты «только для Еды» во всей ленте скрыты
+    for (const el of section.querySelectorAll('[data-only]')) el.hidden = true;
+    // после фильтра по категории колонки раскладываются заново: в категории — без переносов
+    // между блоками, во всей ленте — как при первой раскладке
+    section.rebalance = (all) => {
+      if (setup.bigGoods) return;
+      const masonries = [...section.querySelectorAll(':scope > .masonry')];
+      if (all) {
+        // карточки возвращаются в свои блоки (часть была слита в соседний) — иначе их не измерить
+        masonries.forEach((m) => { m.hidden = false; m.firstElementChild.replaceChildren(...masonryItems(m)); });
+        balanceFeed(section);
+        return;
+      }
+      // в категории широкие блоки чужих категорий скрыты — соседние колонки сливаются в одни,
+      // иначе карточки категории стояли бы по одной-две в разных блоках
+      const heights = new Map(masonries.flatMap((m) => masonryItems(m)).map((el) => [el, el.getBoundingClientRect().height]));
+      const groups = [];
+      let group = null;
+      for (const b of section.children) {
+        if (b.classList.contains('masonry')) (group ||= groups[groups.push([]) - 1]).push(b);
+        else if (!b.hidden) group = null;
+      }
+      // все карточки группы остаются на странице (скрытые места не занимают) — фильтр их находит
+      const lists = groups.map((g) => g.flatMap((m) => masonryItems(m)));
+      groups.forEach(([first, ...rest], i) => {
+        const items = lists[i];
+        const next = lists[i + 1];
+        // как во всей ленте: не сошлись колонки над широким блоком — до 3 видимых карточек переезжают под него
+        const moved = [];
+        let best = { k: 0, diff: balanceColumns(first, heights, items) };
+        for (let k = 1; k <= 3 && next && best.diff > 40 && items.length > 2; k++) {
+          let x;
+          do { x = items.pop(); moved.unshift(x); } while (x.hidden && items.length);
+          const diff = balanceColumns(first, heights, items);
+          if (diff < best.diff) best = { k: moved.length, diff };
+        }
+        while (moved.length > best.k) items.push(moved.shift());
+        if (next) next.unshift(...moved);
+        balanceColumns(first, heights, items);
+        first.hidden = !items.some((el) => !el.hidden);
+        for (const m of rest) { [...m.children].forEach((c) => c.replaceChildren()); m.hidden = true; }
+      });
+    };
+    // высоты карточек известны только на экране: раскладываем колонки, когда лента получила размер
+    if (!setup.bigGoods) {
+      let width = 0;
+      new ResizeObserver(([e]) => {
+        if (!e.contentRect.width || e.contentRect.width === width) return;
+        width = e.contentRect.width;
+        balanceFeed(section);
+      }).observe(section);
+    }
+    return [section];
   }
 
   // полками: у каждой категории полки по 4 — офферные и товарные вперемешку по доле;
@@ -381,9 +572,13 @@ function customParts({ catalog, byOffer, promos, scratches = [], extras = [], se
       cardHeader({ title: i ? `Ещё: ${title.toLowerCase()}` : title, subtitle: 'Кэшбэк у партнёров', link: 'Все', onLink }),
       h('div', { class: 'grid' }, list)));
     // большие карточки — по две в полке: больше двух товаров подряд не идёт
-    const goodsShelves = chunk(goods, goods[0]?.classList.contains('is-big') ? 2 : 4).map((list, i) => h('section', { class: 'shelf shelf-goods', dataset: { cat, goods: 'true' } },
+    // полка из продуктов «только для Еды» во всей ленте не показывается (data-only, как у «Товаров с кэшбэком»)
+    const goodsShelves = chunk(goods, goods[0]?.classList.contains('is-big') ? 2 : 4).map((list, i) => {
+      const only = list.every((c) => c.dataset.only) ? list[0].dataset.only : null;
+      return h('section', { class: 'shelf shelf-goods', hidden: !!only, dataset: { cat, goods: 'true', ...(only ? { only } : {}) } },
       cardHeader({ title: i ? `Ещё товары: ${title.toLowerCase()}` : GOODS_TITLES[cat] || `Товары: ${title.toLowerCase()}`, subtitle: 'Предложения выбранных брендов', link: 'Все', onLink }),
-      h('div', { class: 'grid' }, list)));
+      h('div', { class: 'grid' }, list));
+    });
     const kinds = interleave({ goods: goodsShelves.length, offers: offerShelves.length });
     let gi = 0;
     let oi = 0;
@@ -392,17 +587,36 @@ function customParts({ catalog, byOffer, promos, scratches = [], extras = [], se
   const order = interleave(Object.fromEntries(Object.entries(perCat).map(([c, l]) => [c, l.length])));
   const taken = {};
   const shelves = order.map((c) => perCat[c][(taken[c] = (taken[c] || 0) + 1) - 1]);
+  // офферы кончились — дальше одни товарные полки, категории чередуются по долям
+  const tailShelves = {};
+  for (const [cat, { goods, tail }] of Object.entries(plan)) {
+    const title = catalog.getCategory(cat)?.title || GOODS_TITLES[cat] || 'Подборка';
+    // первая товарная полка категории — с её названием, следующие — «Ещё товары: …»
+    tailShelves[cat] = chunk(tail, tail[0]?.classList.contains('is-big') ? 2 : 4).map((list, i) => h('section', { class: 'shelf shelf-goods', dataset: { cat, goods: 'true' } },
+      cardHeader({ title: goods.length || i ? `Ещё товары: ${title.toLowerCase()}` : GOODS_TITLES[cat] || `Товары: ${title.toLowerCase()}`, subtitle: 'Предложения выбранных брендов', link: 'Все', onLink }),
+      h('div', { class: 'grid' }, list)));
+  }
+  const tailOrder = interleave(Object.fromEntries(Object.entries(tailShelves).map(([c, l]) => [c, l.length])));
+  const tailTaken = {};
+  shelves.push(...tailOrder.map((c) => tailShelves[c][(tailTaken[c] = (tailTaken[c] || 0) + 1) - 1]));
   // путешествия и афиша между полками; товарная полка не встаёт прямо над «Путешествиями»
   for (const sp of specials.slice().reverse()) {
     let at = Math.round(shelves.length * sp.at);
     while (sp.el.dataset.cat === 'travel' && at < shelves.length && shelves[at - 1]?.dataset.goods) at++;
     shelves.splice(at, 0, sp.el);
   }
-  // стирашки — по одной в разные офферные полки, каждый раз на другое место в полке
+  // стирашки — по одной в разные офферные полки, каждый раз на другое место в полке;
+  // полки разных категорий — в отфильтрованной ленте стирашка максимум одна
   const offerShelves = shelves.filter((sh) => !sh.dataset.goods && sh.querySelector('.grid'));
   const stepS = offerShelves.length / (scratches.length + 1);
+  const scratchCats = new Set();
   scratches.forEach((sc, i) => {
-    const sh = offerShelves[Math.min(offerShelves.length - 1, Math.round(stepS * (i + 1)))];
+    let k = Math.min(offerShelves.length - 1, Math.round(stepS * (i + 1)));
+    while (k < offerShelves.length - 1 && scratchCats.has(offerShelves[k].dataset.cat)) k++;
+    const sh = offerShelves[k];
+    if (!sh || scratchCats.has(sh.dataset.cat)) return sc.remove();
+    scratchCats.add(sh.dataset.cat);
+    sc.dataset.cat = sh.dataset.cat;
     const cards = sh ? [...sh.querySelector('.grid').children] : [];
     cards[[1, 3, 0, 2][i % 4] % (cards.length || 1)]?.replaceWith(sc);
   });
@@ -579,11 +793,23 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
       if (part.dataset.cat === 'mix') {
         let any = false;
         for (const card of part.querySelectorAll('.ocard, .promo, .goods')) {
-          const ok = id === 'all' || (!own && (card.dataset.cat || catOf.get(card.dataset.offer)) === id);
+          // data-only — карточка только для своей категории (продукты в «Еде»)
+          const ok = id === 'all' ? !card.dataset.only : !own && (card.dataset.cat || catOf.get(card.dataset.offer)) === id;
           card.hidden = !ok;
           any ||= ok;
         }
+        // стирашка сплошной ленты 07 — только в своей категории (у каждой категории их не больше одной)
+        for (const sc of part.querySelectorAll('.scard[data-cat]')) {
+          sc.hidden = !(id === 'all' || sc.dataset.cat === id);
+          any ||= !sc.hidden;
+        }
+        // широкие блоки сплошной ленты (доставка, путешествия, афиша) — только в своей категории
+        for (const sp of part.querySelectorAll(':scope > .is-special')) {
+          sp.hidden = !(id === 'all' || sp.dataset.cat === id);
+          any ||= !sp.hidden;
+        }
         part.hidden = !any;
+        part.rebalance?.(id === 'all');
       } else {
         // полка «только для категории» во всей ленте не показывается
         if (part.dataset.only) part.hidden = part.dataset.only !== id;
