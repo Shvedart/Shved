@@ -28,6 +28,8 @@ export function mainScreen({ el, params, nav, entry }) {
   const cleanups = [];
   let tour = null;
   el.classList.add('main');
+  // лента 07: цветной фон плиток офферов по категории
+  if (scenario === 's7' && store.state.feedSetup?.tinted) el.classList.add('is-tinted');
 
   // ---------- Верх: сумма и действия ----------
   const actions = [

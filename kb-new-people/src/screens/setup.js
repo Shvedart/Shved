@@ -71,6 +71,20 @@ export function setupScreen({ el, params, nav }) {
   const big = h('label', { class: 'setup-switch' },
     h('span', { class: 'setup-switch-text' }, h('span', { class: 'setup-label' }, 'Большие карточки товаров'), h('span', { class: 'setup-hint' }, 'Товар во всю ширину ленты')),
     bigInput, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
+  // цветной фон плиток офферов — цвет категории вместо серого
+  const tintInput = h('input', { class: 'setup-switch-input', type: 'checkbox', role: 'switch' });
+  tintInput.checked = !!setup.tinted;
+  tintInput.addEventListener('change', () => { setup = { ...setup, tinted: tintInput.checked }; haptics.selection(); });
+  const tint = h('label', { class: 'setup-switch' },
+    h('span', { class: 'setup-switch-text' }, h('span', { class: 'setup-label' }, 'Цветной фон карточек'), h('span', { class: 'setup-hint' }, 'Офферы окрашены в цвет своей категории')),
+    tintInput, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
+  // полка «Доставка продуктов»; у старых настроек поля нет — считаем включённой
+  const deliveryInput = h('input', { class: 'setup-switch-input', type: 'checkbox', role: 'switch' });
+  deliveryInput.checked = setup.delivery !== false;
+  deliveryInput.addEventListener('change', () => { setup = { ...setup, delivery: deliveryInput.checked }; haptics.selection(); });
+  const delivery = h('label', { class: 'setup-switch' },
+    h('span', { class: 'setup-switch-text' }, h('span', { class: 'setup-label' }, 'Доставка продуктов'), h('span', { class: 'setup-hint' }, 'Полка с собранной корзиной и кнопкой «Заказать»')),
+    deliveryInput, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
   const goodsText = (v) => `${v}% товаров и ${100 - v}% офферов, промокодов и подборок`;
   const goodsHint = h('p', { class: 'setup-hint' }, goodsText(setup.goods));
 
@@ -115,7 +129,7 @@ export function setupScreen({ el, params, nav }) {
     h('div', { class: 'setup-inner' },
       h('h1', { class: 'setup-title' }, 'Соберите ленту под себя'),
       h('p', { class: 'setup-sub' }, 'Как показывать предложения и чего в ленте должно быть больше'),
-      h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Вид ленты'), seg, modeHint),
+      h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Вид ленты'), seg, modeHint, tint, delivery),
       h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Товары или офферы'), goods, goodsHint, big),
       h('section', { class: 'setup-block' },
         h('div', { class: 'setup-block-head' }, h('h2', { class: 'setup-block-title' }, 'Чего показывать больше'), reset),

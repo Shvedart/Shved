@@ -376,8 +376,9 @@
 
 /* ---------- Путешествия: «посадочный талон», раскрытый ---------- */
 .fc-trip {
-  /* билет прижат к соседям плотнее остальной ленты: его кромки сами дают зазор */
-  margin: -32px 0; /* на 16px ближе к соседям, чем просто кромки: у билета свои белые кромки */
+  /* у билета свои белые кромки по 16px — нахлёст на их высоту: видимый зазор
+     сверху и снизу ровно как между полками (24px) */
+  margin: -16px 0;
 }
 
 .fc-trip-band {
@@ -849,4 +850,70 @@
   line-height: 16px;
   letter-spacing: -0.08px;
   color: var(--c-text);
+}
+
+
+/* ---------- «Доставка продуктов» (макет 734:155877, лента 07) ---------- */
+/* белая карточка с тенью внутри отступов ленты; продукты — лентой вбок, внизу «Заказать» */
+.delivery {
+  margin: 0 var(--gutter);
+  padding-bottom: 20px;
+  border-radius: var(--r-m);
+}
+
+.delivery .card-header {
+  padding-left: 20px;
+}
+
+/* подзаголовок с кэшбэком за корзину: корона того же серого цвета */
+.delivery-sub {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.delivery-scroll {
+  padding-bottom: 16px;
+}
+
+/* карточки на 20% меньше, чем в макете (165.5 → 132), тоже квадратные */
+.delivery-scroll .gcard {
+  flex: none;
+  width: 132px;
+  scroll-snap-align: start;
+}
+
+/* кнопка центрирует содержимое по вертикали — колонкой от верха, как соседние карточки */
+.delivery-edit {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.delivery-edit .gcard-pic {
+  color: var(--c-label);
+}
+
+.delivery-foot {
+  padding: 0 var(--gutter);
+}
+
+.delivery-order {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 56px;
+  padding: 0 16px;
+  border-radius: var(--r-s);
+  background: var(--c-fill);
+  font-size: 17px;
+  letter-spacing: -0.41px;
+  color: var(--c-info);
+}
+
+.delivery-order b {
+  font-weight: 700;
 }

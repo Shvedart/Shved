@@ -6,6 +6,7 @@ import { animate, EASE, stagger, fadeUpIn } from '../core/motion.js';
 import { haptics } from '../core/haptics.js';
 import { cardHeader, goodsCard, linkButton, productCard } from '../ui/components.js';
 import { travelShelf, afishaShelf } from '../ui/shelves.js';
+import { toast } from '../ui/toast.js';
 import { app } from '../app.js';
 import { interleave } from '../domain/feedSetup.js';
 
@@ -123,24 +124,27 @@ const FOOD_PRODUCTS = ['product-001', 'product-002', 'product-003', 'product-004
 // цена, кэшбэк в рублях с короной и сердечко. Показываем первые четыре.
 const GROCERY = { shop: 'ВкусВилл', title: 'Вы уже заказывали', avatar: 'assets/img/gorod/vkusvill-avatar.svg', count: 4 };
 
-function groceryShelf({ catalog, onLink }) {
-  const items = catalog.grocery.slice(0, GROCERY.count).map((p) => {
-    // сердечко только для вида: товаров нет в избранном прототипа
-    const heart = button({ class: 'heart gcard-heart', 'aria-label': `${p.name}: в избранное`, 'aria-pressed': 'false' },
-      icon('heart-outline', { size: 24, cls: 'heart-outline' }), iconImg('heart-filled', { size: 24, cls: 'heart-filled' }));
-    heart.addEventListener('click', () => {
-      const on = heart.getAttribute('aria-pressed') !== 'true';
-      heart.setAttribute('aria-pressed', String(on));
-      haptics.selection();
-    });
-    return h('div', { class: 'gcard' },
-      h('div', { class: 'gcard-pic' }, img(p.image, { alt: '' })),
-      heart,
-      h('div', { class: 'gcard-info' },
-        h('div', { class: 'gcard-price' }, h('span', null, p.price),
-          h('span', { class: 'gcard-badge' }, icon('crown', { size: 10 }), h('span', null, p.cashback))),
-        h('p', { class: 'gcard-name' }, p.name)));
+// карточка продукта магазина: фото, цена, кэшбэк в рублях с короной, название
+function groceryCard(p) {
+  // сердечко только для вида: товаров нет в избранном прототипа
+  const heart = button({ class: 'heart gcard-heart', 'aria-label': `${p.name}: в избранное`, 'aria-pressed': 'false' },
+    icon('heart-outline', { size: 24, cls: 'heart-outline' }), iconImg('heart-filled', { size: 24, cls: 'heart-filled' }));
+  heart.addEventListener('click', () => {
+    const on = heart.getAttribute('aria-pressed') !== 'true';
+    heart.setAttribute('aria-pressed', String(on));
+    haptics.selection();
   });
+  return h('div', { class: 'gcard' },
+    h('div', { class: 'gcard-pic' }, img(p.image, { alt: '' })),
+    heart,
+    h('div', { class: 'gcard-info' },
+      h('div', { class: 'gcard-price' }, h('span', null, p.price),
+        h('span', { class: 'gcard-badge' }, icon('crown', { size: 10 }), h('span', null, p.cashback))),
+      h('p', { class: 'gcard-name' }, p.name)));
+}
+
+function groceryShelf({ catalog, onLink }) {
+  const items = catalog.grocery.slice(0, GROCERY.count).map(groceryCard);
   if (!items.length) return null;
   // шапка как у других полок (заголовок, подзаголовок, «Все»), только слева — логотип магазина
   return h('section', { class: 'shelf grocery', dataset: { cat: 'food' } },
@@ -149,6 +153,37 @@ function groceryShelf({ catalog, onLink }) {
       h('div', { class: 'card-header-text' }, h('h2', { class: 'card-title' }, GROCERY.title), h('p', { class: 'card-subtitle' }, GROCERY.shop)),
       linkButton('Все', { onClick: onLink, cls: 'card-link' })),
     h('div', { class: 'gorod-grid grocery-grid' }, items));
+}
+
+// «Доставка продуктов» (макет 736:156423, лента 07): белая карточка — продукты магазина
+// лентой вбок; в подзаголовке кэшбэк за корзину, внизу кнопка с магазином и суммой
+const DELIVERY = { title: 'Доставка продуктов', sub: 'Собрали вашу корзину', shop: 'ВкусВилл', count: 6 };
+const rub = (s) => Number(s.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+
+// последняя плитка корзины (макет 736:156684): плюс на сером квадрате и подпись
+function deliveryEdit() {
+  const b = button({ class: 'gcard delivery-edit' },
+    h('span', { class: 'gcard-pic' }, icon('add', { size: 36 })),
+    h('span', { class: 'gcard-info' }, h('span', { class: 'gcard-name' }, 'Добавить или изменить продукты')));
+  b.addEventListener('click', () => toast('Недоступно в прототипе'));
+  return b;
+}
+
+function deliveryShelf({ catalog, onLink }) {
+  const list = catalog.grocery.slice(0, DELIVERY.count);
+  if (!list.length) return null;
+  const sum = (key) => Math.round(list.reduce((s, p) => s + rub(p[key]), 0)).toLocaleString('ru-RU');
+  const order = button({ class: 'delivery-order', 'aria-label': `Заказать в магазине ${DELIVERY.shop} на ${sum('price')} ₽` },
+    h('span', null, DELIVERY.shop), h('b', null, `${sum('price')} ₽`));
+  order.addEventListener('click', () => toast('Недоступно в прототипе'));
+  return h('section', { class: 'card delivery', dataset: { cat: 'food' } },
+    h('div', { class: 'card-header' },
+      h('div', { class: 'card-header-text' },
+        h('h2', { class: 'card-title' }, DELIVERY.title),
+        h('p', { class: 'card-subtitle delivery-sub' }, DELIVERY.sub, icon('crown', { size: 16 }), `${sum('cashback')} ₽`)),
+      linkButton('Все', { onClick: onLink, cls: 'card-link' })),
+    h('div', { class: 'hscroll delivery-scroll' }, list.map(groceryCard), deliveryEdit()),
+    h('div', { class: 'delivery-foot' }, order));
 }
 
 // Товары маркетплейса (data/tovarka.json, карточка — макет 710:155116): полки по 4 товара.
@@ -201,7 +236,38 @@ function pairUp(items) {
   return out;
 }
 
-function customParts({ catalog, byOffer, promos, scratches = [], setup, onLink }) {
+// Продукты из магазина (data/grocery.json) в виде карточки товара — ими лента 07 добирает «товары еды»
+const groceryAsGoods = (p) => ({
+  id: p.id, image: p.image, rating: '', oldPrice: '', discount: '', price: p.price,
+  cashback: p.cashback.replace(/\s*₽$/, ''), brand: '', description: p.name, merchant: 'ВкусВилл', merchantLogo: '', verified: false,
+});
+
+// «Путешествия» и афиша в ленте 07 — если у их категории есть доля; встают на треть и две трети ленты
+function customSpecials({ catalog, setup, extras, onLink }) {
+  const list = [];
+  // «Доставка продуктов» — по тумблеру в настройке, по умолчанию включена (у старых настроек поля нет)
+  if (setup.delivery !== false) {
+    const d = deliveryShelf({ catalog, onLink });
+    if (d) list.push({ el: d, at: 0.1 });
+  }
+  if (setup.weights.travel > 0) {
+    const t = travelShelf({ items: TRAVEL });
+    t.dataset.cat = 'travel';
+    extras.push(t);
+    list.push({ el: t, at: 0.35 });
+  }
+  if (setup.weights.fun > 0) {
+    const a = afishaShelf({ items: AFISHA });
+    a.querySelector('.fc-all-link').addEventListener('click', onLink);
+    a.dataset.cat = 'fun';
+    extras.push(a);
+    list.push({ el: a, at: 0.7 });
+  }
+  return list;
+}
+
+function customParts({ catalog, byOffer, promos, scratches = [], extras = [], setup, onLink }) {
+  const specials = customSpecials({ catalog, setup, extras, onLink });
   const usedOffers = new Set();
   const usedPromos = new Set();
   // по каждой категории: сколько всего, из них товаров — по доле, остальное офферы и промокоды
@@ -211,7 +277,8 @@ function customParts({ catalog, byOffer, promos, scratches = [], setup, onLink }
     const shelves = setup.mode !== 'mixed';
     const n = shelves ? Math.round((CUSTOM_TOTAL * w) / 400) * 4 : Math.round((CUSTOM_TOTAL * w) / 100);
     if (!n) continue;
-    const goodsPool = catalog.goods.find((g) => g.id === cat)?.products || [];
+    // у еды своих товаров в tovarka нет — берём продукты из магазина
+    const goodsPool = cat === 'food' ? catalog.grocery.map(groceryAsGoods) : catalog.goods.find((g) => g.id === cat)?.products || [];
     const offerPool = [
       ...catalog.offersInCategory(cat).filter((o) => o && byOffer.has(o.id) && !usedOffers.has(o.id)).map((o) => {
         usedOffers.add(o.id);
@@ -228,8 +295,10 @@ function customParts({ catalog, byOffer, promos, scratches = [], setup, onLink }
     const goodsCards = goodsPool.slice(0, g).map((p) => {
       const card = goodsCard(p);
       card.dataset.cat = cat;
-      // большие карточки — во всю ширину ленты
-      if (setup.bigGoods) card.classList.add('is-big');
+      // большие карточки — во всю ширину ленты; продукты еды всегда маленькие
+      if (setup.bigGoods && cat !== 'food') card.classList.add('is-big');
+      // продукты — квадратное фото, как на полке «Вы уже заказывали»
+      if (cat === 'food') card.classList.add('is-square');
       return card;
     });
     plan[cat] = { offers: offerPool.slice(0, o), goods: goodsCards };
@@ -257,6 +326,18 @@ function customParts({ catalog, byOffer, promos, scratches = [], setup, onLink }
       if (at != null) items[at] = sc;
     });
     if (setup.bigGoods) items = pairUp(items);
+    // путешествия и афиша — отдельными блоками во всю ширину; в ровной сетке — только после целого ряда
+    for (const sp of specials.slice().reverse()) {
+      let at = Math.round(items.length * sp.at);
+      const rowEnd = (i) => {
+        let smalls = 0;
+        for (let j = i - 1; j >= 0 && !items[j].classList.contains('is-big'); j--) smalls++;
+        return smalls % 2 === 0;
+      };
+      while (setup.bigGoods && at < items.length && !rowEnd(at)) at++;
+      sp.el.classList.add('is-special');
+      items.splice(at, 0, sp.el);
+    }
     // как Pinterest: две независимые колонки, карточки по очереди слева и справа —
     // разная высота офферов и товаров даёт неровные ряды, порядок чтения сохраняется
     // большая карточка разрывает колонки: до неё — свой блок колонок, она сама — во всю ширину
@@ -264,6 +345,11 @@ function customParts({ catalog, byOffer, promos, scratches = [], setup, onLink }
     let cols = null;
     let n = 0;
     for (const item of items) {
+      if (item.classList.contains('is-special')) {
+        blocks.push(item);
+        cols = null;
+        continue;
+      }
       if (item.classList.contains('is-big')) {
         blocks.push(h('div', { class: 'masonry-wide' }, item));
         cols = null;
@@ -295,7 +381,7 @@ function customParts({ catalog, byOffer, promos, scratches = [], setup, onLink }
       cardHeader({ title: i ? `Ещё: ${title.toLowerCase()}` : title, subtitle: 'Кэшбэк у партнёров', link: 'Все', onLink }),
       h('div', { class: 'grid' }, list)));
     // большие карточки — по две в полке: больше двух товаров подряд не идёт
-    const goodsShelves = chunk(goods, setup.bigGoods ? 2 : 4).map((list, i) => h('section', { class: 'shelf shelf-goods', dataset: { cat, goods: 'true' } },
+    const goodsShelves = chunk(goods, goods[0]?.classList.contains('is-big') ? 2 : 4).map((list, i) => h('section', { class: 'shelf shelf-goods', dataset: { cat, goods: 'true' } },
       cardHeader({ title: i ? `Ещё товары: ${title.toLowerCase()}` : GOODS_TITLES[cat] || `Товары: ${title.toLowerCase()}`, subtitle: 'Предложения выбранных брендов', link: 'Все', onLink }),
       h('div', { class: 'grid' }, list)));
     const kinds = interleave({ goods: goodsShelves.length, offers: offerShelves.length });
@@ -306,8 +392,14 @@ function customParts({ catalog, byOffer, promos, scratches = [], setup, onLink }
   const order = interleave(Object.fromEntries(Object.entries(perCat).map(([c, l]) => [c, l.length])));
   const taken = {};
   const shelves = order.map((c) => perCat[c][(taken[c] = (taken[c] || 0) + 1) - 1]);
+  // путешествия и афиша между полками; товарная полка не встаёт прямо над «Путешествиями»
+  for (const sp of specials.slice().reverse()) {
+    let at = Math.round(shelves.length * sp.at);
+    while (sp.el.dataset.cat === 'travel' && at < shelves.length && shelves[at - 1]?.dataset.goods) at++;
+    shelves.splice(at, 0, sp.el);
+  }
   // стирашки — по одной в разные офферные полки, каждый раз на другое место в полке
-  const offerShelves = shelves.filter((sh) => !sh.dataset.goods);
+  const offerShelves = shelves.filter((sh) => !sh.dataset.goods && sh.querySelector('.grid'));
   const stepS = offerShelves.length / (scratches.length + 1);
   scratches.forEach((sc, i) => {
     const sh = offerShelves[Math.min(offerShelves.length - 1, Math.round(stepS * (i + 1)))];
@@ -357,7 +449,7 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
   const extras = [];
   const parts = [];
   const afterTravel = [];
-  if (custom) parts.push(...customParts({ catalog, byOffer, promos: promoPool, scratches, setup: custom, onLink }));
+  if (custom) parts.push(...customParts({ catalog, byOffer, promos: promoPool, scratches, extras, setup: custom, onLink }));
   else {
     LAYOUT.forEach((s, i) => {
       if (s.kind === 'promos') {

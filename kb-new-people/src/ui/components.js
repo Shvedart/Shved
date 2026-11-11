@@ -204,10 +204,18 @@ export function pkBlock(scenario, { flat = true, tilesFlat = flat } = {}) {
 // ---------- Карточка оффера (вертикальная) ----------
 
 // locked: оффер откроется позже — карточка серая, вместо лайка замок, но открыть детали можно.
+// цвет плитки по категории (токены --c-cat-*); включается классом .is-tinted на странице
+const CAT_TINT = {
+  beauty: 'violet', electronics: 'violet', kids: 'violet', clothes: 'violet', home: 'violet',
+  shopping: 'violet', sport: 'violet', flowers: 'violet',
+  travel: 'orange', food: 'green', health: 'grey', fun: 'pink', telecom: 'yellow',
+};
+
 export function offerCard(offer, { size = 'm', onOpen, locked = false, lockLabel = '' } = {}) {
   const brand = app.catalog.getBrand(offer.brandId);
   const open = onOpen || (() => app.nav.push(`/offer/${offer.id}`));
-  const tile = h('div', { class: 'ocard-tile' },
+  const tint = CAT_TINT[offer.categoryId];
+  const tile = h('div', { class: 'ocard-tile', dataset: tint ? { tint } : {} },
     img(offer.image, { cls: 'ocard-image', alt: '' }),
     h('div', { class: 'ocard-head' },
       h('div', { class: 'ocard-value' }, fmt.cardValue(offer)),

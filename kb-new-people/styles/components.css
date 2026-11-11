@@ -615,6 +615,17 @@ img.is-broken {
   width: 180px;
 }
 
+/* цветной фон плиток (настройка ленты 07): цвет категории с прозрачностью 10% вместо серого */
+.is-tinted .ocard-tile[data-tint] {
+  background: color-mix(in srgb, var(--tint) 10%, transparent);
+}
+.ocard-tile[data-tint='violet'] { --tint: var(--c-cat-violet); }
+.ocard-tile[data-tint='orange'] { --tint: var(--c-cat-orange); }
+.ocard-tile[data-tint='green'] { --tint: var(--c-cat-green); }
+.ocard-tile[data-tint='grey'] { --tint: var(--c-cat-grey); }
+.ocard-tile[data-tint='pink'] { --tint: var(--c-cat-pink); }
+.ocard-tile[data-tint='yellow'] { --tint: var(--c-cat-yellow); }
+
 .ocard-main {
   display: block;
   width: 100%;
@@ -1080,6 +1091,14 @@ img.is-broken {
   user-select: none;
 }
 
+/* в сплошной ленте (07) — плитка 3:4, как у офферов, без места под подпись */
+.shelf-mixed .scard {
+  align-self: start;
+  width: 100%;
+  min-height: 0;
+  aspect-ratio: 3 / 4;
+}
+
 .scard-zone {
   position: absolute;
   inset: 0;
@@ -1386,6 +1405,18 @@ img.is-broken {
   height: 100%;
   /* товар целиком, без обрезки: свободные поля — серый фон плитки */
   object-fit: contain;
+}
+
+/* продукты (лента 07): квадрат, продукт по центру с полями — как на полке «Вы уже заказывали» */
+.goods.is-square .goods-pic {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+}
+
+.goods.is-square .goods-pic img {
+  width: 79.46%;
+  height: 79.46%;
 }
 
 /* белый фон снимка сливается с серой плиткой (Overlay с darken в макете) */
