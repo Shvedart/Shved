@@ -596,6 +596,30 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
   // офферы, что не попали в ленту, — назад в общий список (их карточки больше нигде не стоят)
   for (const [cat, { offers }] of Object.entries(plan)) for (const c of offers) c.dataset.cat ||= cat;
 
+  // Доли из «Чего показывать больше» — только для всей ленты. В категории ограничений нет:
+  // всё, что не попало в общую ленту (офферы, промокоды, товары — и у категорий с долей 0),
+  // идёт в конец ленты с data-only — во всей ленте скрыто, в своей категории видно
+  const rest = {};
+  for (const { id: cat } of NAV) {
+    const offers = [
+      ...catalog.offersInCategory(cat).filter((o) => o && byOffer.has(o.id) && !usedOffers.has(o.id)).map((o) => {
+        usedOffers.add(o.id);
+        return byOffer.get(o.id);
+      }),
+      ...promos.filter((p) => p.dataset.cat === cat && !usedPromos.has(p)).map((p) => { usedPromos.add(p); return p; }),
+    ];
+    // товары лежат по порядку: в ленту ушли первые (по доле и хвост), остальные — сюда
+    const all = cat === 'food' ? [] : goodsSrc.find((g) => g.id === cat)?.products || [];
+    const used = plan[cat] ? [...plan[cat].goods, ...plan[cat].tail].filter((c) => !c.dataset.only).length : 0;
+    const goods = all.slice(used).map(toCard(cat));
+    if (!offers.length && !goods.length) continue;
+    const kinds = interleave({ goods: goods.length, offers: offers.length });
+    let gi = 0;
+    let oi = 0;
+    rest[cat] = kinds.map((k) => (k === 'goods' ? goods[gi++] : offers[oi++]));
+    for (const c of rest[cat]) Object.assign(c.dataset, { cat, only: cat });
+  }
+
   if (setup.mode === 'mixed') {
     // сплошная сетка без заголовков: категории перемешаны по долям, внутри — офферы и товары по доле
     const perCat = {};
@@ -630,10 +654,13 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
     const banners = pickBanners(catalog, setup).slice(0, Math.floor(items.length / BANNER_EVERY));
     const stepB = items.length / (banners.length + 1);
     banners.forEach((b, i) => items.splice(Math.round(stepB * (i + 1)) + i, 0, bannerCard(b)));
+    // остальное по категориям — в самый конец (во всей ленте скрыто, места не занимает)
+    items.push(...Object.values(rest).flat());
     if (setup.bigGoods) items = pairUp(items);
     // путешествия, афиша, доставка — отдельными блоками во всю ширину; в ровной сетке — только после
-    // целого ряда (колонки над блоком выравнивает balanceFeed уже по настоящим высотам)
-    const base = items.length;
+    // целого ряда (колонки над блоком выравнивает balanceFeed уже по настоящим высотам).
+    // Место — доля видимой ленты: скрытое «только для категории» в конце не считается
+    const base = items.filter((x) => !x.dataset.only).length;
     specials.forEach((sp, n) => {
       let at = Math.round(base * sp.at) + n;
       const rowEnd = (i) => {
@@ -798,6 +825,13 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
     freeShelves.splice(freeShelves.indexOf(sh), 1);
     const cards = [...sh.querySelector('.grid').children];
     cards[Math.min(2, cards.length - 1)]?.replaceWith(bannerCard(b));
+  }
+  // остальное по категориям — полками в конце, только для своей категории (data-only)
+  for (const [cat, list] of Object.entries(rest)) {
+    const title = catalog.getCategory(cat)?.title || GOODS_TITLES[cat] || NAV.find((n) => n.id === cat)?.label || 'Подборка';
+    chunk(list, 4).forEach((part, i) => shelves.push(h('section', { class: 'shelf', hidden: true, dataset: { cat, only: cat } },
+      cardHeader({ title: i ? `Ещё: ${title.toLowerCase()}` : `Всё: ${title.toLowerCase()}`, subtitle: 'Кэшбэк у партнёров', link: 'Все', onLink }),
+      h('div', { class: 'grid' }, part))));
   }
   return shelves;
 }
