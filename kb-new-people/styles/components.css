@@ -619,12 +619,12 @@ img.is-broken {
 .is-tinted .ocard-tile[data-tint] {
   background: color-mix(in srgb, var(--tint) 10%, transparent);
 }
-.ocard-tile[data-tint='violet'] { --tint: var(--c-cat-violet); }
-.ocard-tile[data-tint='orange'] { --tint: var(--c-cat-orange); }
-.ocard-tile[data-tint='green'] { --tint: var(--c-cat-green); }
-.ocard-tile[data-tint='grey'] { --tint: var(--c-cat-grey); }
-.ocard-tile[data-tint='pink'] { --tint: var(--c-cat-pink); }
-.ocard-tile[data-tint='yellow'] { --tint: var(--c-cat-yellow); }
+[data-tint='violet'] { --tint: var(--c-cat-violet); }
+[data-tint='orange'] { --tint: var(--c-cat-orange); }
+[data-tint='green'] { --tint: var(--c-cat-green); }
+[data-tint='grey'] { --tint: var(--c-cat-grey); }
+[data-tint='pink'] { --tint: var(--c-cat-pink); }
+[data-tint='yellow'] { --tint: var(--c-cat-yellow); }
 
 .ocard-main {
   display: block;
@@ -668,6 +668,10 @@ img.is-broken {
   flex-direction: column;
   gap: var(--sp-1);
   color: var(--c-text);
+}
+
+.ocard-crown {
+  display: none;
 }
 
 .ocard-value {
@@ -1654,4 +1658,96 @@ img.is-broken {
   font-weight: 700;
   letter-spacing: -0.1px;
   color: var(--c-bg);
+}
+
+/* ---------- Оффер без картинки (лента 07, тумблер «Картинки на офферах» выключен) ----------
+   Другой тип карточки, та же разметка offerCard: плиткой становится сама кнопка карточки,
+   обёртки (плитка, шапка, подпись) раскрываются (display: contents), и элементы встают
+   по порядку: логотип → бренд → описание → условия … внизу слева корона и цифра */
+.no-offer-images .ocard {
+  /* 100cqw — ширина карточки: по ней минимальная высота 3:4 */
+  container-type: inline-size;
+}
+
+.no-offer-images .ocard-main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: calc(100cqw * 4 / 3);
+  /* справа поле шире (24px): текст не подходит вплотную к краю */
+  padding: var(--sp-3) 24px var(--sp-3) var(--sp-3);
+  background: var(--c-fill);
+}
+
+.is-tinted.no-offer-images .ocard[data-tint] .ocard-main {
+  background: color-mix(in srgb, var(--tint) 10%, transparent);
+}
+
+.no-offer-images .ocard-tile,
+.no-offer-images .ocard-head,
+.no-offer-images .ocard-caption {
+  display: contents;
+}
+
+.no-offer-images .ocard-image {
+  display: none;
+}
+
+.no-offer-images .ocard-logo {
+  order: 1;
+  flex: none;
+  width: 40px;
+  height: 40px;
+}
+
+.no-offer-images .ocard-name {
+  order: 2;
+  max-width: 100%;
+  margin-top: var(--sp-2);
+  /* название бренда — до двух строк, дальше многоточие */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  white-space: normal;
+}
+
+.no-offer-images .ocard-desc {
+  order: 3;
+  margin-top: 2px;
+}
+
+.no-offer-images .ocard-terms {
+  order: 4;
+  margin-top: var(--sp-2);
+}
+
+/* внизу слева — цифра кэшбэка и корона за ней, слово «Кэшбэк» не нужно */
+.no-offer-images .ocard-kind {
+  display: none;
+}
+
+.no-offer-images .ocard-value {
+  order: 6;
+  display: flex;
+  /* корона стоит на базовой линии текста, как буква; между цифрой и короной — 8px */
+  align-items: baseline;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: var(--sp-3);
+  padding-right: 0;
+  color: var(--c-text);
+}
+
+.no-offer-images .ocard-crown {
+  display: flex;
+  /* после цифры, иконка 20px — корона ниже цифр. Сдвиг ставит низ рисунка короны на линию
+     цифр (у иконки под рисунком своё поле; отступ тут не работает, только transform) */
+  order: 1;
+  transform: translateY(5.75px);
+}
+
+.no-offer-images .ocard-crown > *,
+.no-offer-images .ocard-crown svg {
+  width: 20px;
+  height: 20px;
 }

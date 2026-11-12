@@ -229,7 +229,9 @@ function normalizeOffer(o, categoryId, brandId, today) {
   const cashback = (o.cashback || '').trim();
   const type = /бонус/i.test(cashback) ? 'points' : /₽/.test(cashback) ? 'fixed' : 'cashback';
   const value = Number((cashback.match(/\d+/) || [0])[0]);
-  const daysLeft = parseDaysLeft(o.date || '', today);
+  // срок — всегда в днях и не меньше одного дня: «0 дней» или «−3 дня» не бывает
+  const parsed = parseDaysLeft(o.date || '', today);
+  const daysLeft = parsed == null ? null : Math.max(1, parsed);
   const isHot = daysLeft != null && daysLeft < 2;
   return {
     id: o.id,
@@ -291,9 +293,9 @@ export const fmt = {
   rowSubtitle(offer) {
     return { hot: offer.isHot ? `${fmt.daysLabel(offer.daysLeft)},` : null, text: fmt.lowerFirst(offer.condition) };
   },
-  // Срок на карточке.
+  // Срок на карточке — числом дней («1 день», «10 дней»), а не датой; не разобрали — как в данных.
   cardTerm(offer) {
-    if (offer.isHot) return fmt.daysLabel(offer.daysLeft);
+    if (offer.daysLeft != null) return fmt.daysLabel(offer.daysLeft);
     return offer.date;
   },
   kindLabel(offer) {

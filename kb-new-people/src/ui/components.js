@@ -218,7 +218,8 @@ export function offerCard(offer, { size = 'm', onOpen, locked = false, lockLabel
   const tile = h('div', { class: 'ocard-tile', dataset: tint ? { tint } : {} },
     img(offer.image, { cls: 'ocard-image', alt: '' }),
     h('div', { class: 'ocard-head' },
-      h('div', { class: 'ocard-value' }, fmt.cardValue(offer)),
+      // корона видна только в карточке без картинки (лента 07): там она стоит вместо слова «Кэшбэк»
+      h('div', { class: 'ocard-value' }, h('span', { class: 'ocard-crown', 'aria-hidden': 'true' }, icon('crown', { size: 22 })), fmt.cardValue(offer)),
       h('div', { class: 'ocard-kind' }, fmt.kindLabel(offer)),
       h('div', { class: 'ocard-terms' }, h('span', null, offer.condition), h('span', { class: offer.isHot ? 'is-hot' : '' }, fmt.cardTerm(offer)))),
     h('span', { class: 'ocard-logo' }, img(offer.logo, { alt: '', width: 56, height: 56, fallback: offer.name })));
@@ -229,7 +230,8 @@ export function offerCard(offer, { size = 'm', onOpen, locked = false, lockLabel
   const corner = locked
     ? h('span', { class: 'ocard-heart ocard-lock', 'aria-hidden': 'true' }, icon('lock', { size: 20 }))
     : heartButton(offer.brandId, { size: 24, cls: 'ocard-heart', label: `${brand?.name}: в избранное` });
-  return h('div', { class: `ocard ocard-${size} ${locked ? 'is-locked' : ''}`, dataset: { offer: offer.id } }, main, corner);
+  // цвет категории и на всей карточке: в ленте без картинок фоном служит она, а не плитка
+  return h('div', { class: `ocard ocard-${size} ${locked ? 'is-locked' : ''}`, dataset: tint ? { offer: offer.id, tint } : { offer: offer.id } }, main, corner);
 }
 
 // ---------- Рекламный баннер (макеты 745:157201…752:157399) ----------

@@ -99,6 +99,19 @@ export function setupScreen({ el, params, nav }) {
   const grocery = h('label', { class: 'setup-switch' },
     h('span', { class: 'setup-switch-text' }, h('span', { class: 'setup-label' }, 'Без продуктов в ленте'), h('span', { class: 'setup-hint' }, 'Продукты только в полке «Доставка продуктов»')),
     groceryInput, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
+  // картинки на плитках офферов; у старых настроек поля нет — включены
+  const picsInput = h('input', { class: 'setup-switch-input', type: 'checkbox', role: 'switch' });
+  picsInput.checked = setup.offerImages !== false;
+  picsInput.addEventListener('change', () => {
+    // включили картинки — цветной фон сам выключается (его можно вернуть вручную,
+    // картинки при этом не трогаем: связь только в эту сторону)
+    setup = { ...setup, offerImages: picsInput.checked, ...(picsInput.checked ? { tinted: false } : {}) };
+    if (picsInput.checked) tintInput.checked = false;
+    haptics.selection();
+  });
+  const pics = h('label', { class: 'setup-switch' },
+    h('span', { class: 'setup-switch-text' }, h('span', { class: 'setup-label' }, 'Картинки на офферах'), h('span', { class: 'setup-hint' }, 'Выключены — другой тип карточки: логотип и бренд сверху, кэшбэк и условия снизу')),
+    picsInput, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
   const goodsText = (v) => `${v}% товаров и ${100 - v}% офферов, промокодов и подборок`;
   const goodsHint = h('p', { class: 'setup-hint' }, goodsText(setup.goods));
 
@@ -143,7 +156,7 @@ export function setupScreen({ el, params, nav }) {
     h('div', { class: 'setup-inner' },
       h('h1', { class: 'setup-title' }, 'Соберите ленту под себя'),
       h('p', { class: 'setup-sub' }, 'Как показывать предложения и чего в ленте должно быть больше'),
-      h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Вид ленты'), seg, modeHint, tint, delivery),
+      h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Вид ленты'), seg, modeHint, tint, pics, delivery),
       h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Товары или офферы'), goods, goodsHint, big, moderated, grocery),
       h('section', { class: 'setup-block' },
         h('div', { class: 'setup-block-head' }, h('h2', { class: 'setup-block-title' }, 'Чего показывать больше'), reset),

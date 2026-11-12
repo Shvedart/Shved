@@ -29,7 +29,7 @@ export function offerScreen({ el, params, entry }) {
     h('div', { class: 'offer-hero-text' },
       h('h1', { class: 'offer-title' }, offer.name, h('br'), offer.cashbackText),
       h('p', { class: 'offer-meta' }, offer.condition),
-      h('p', { class: 'offer-meta' }, offer.isHot ? `Осталось ${fmt.daysLabel(offer.daysLeft)}` : offer.date)));
+      h('p', { class: 'offer-meta' }, offer.daysLeft != null ? `Осталось ${fmt.daysLabel(offer.daysLeft)}` : offer.date)));
 
   const steps = [
     ['cart', offer.description, 'Акция действует на покупки в точках, отмеченных на карте'],
