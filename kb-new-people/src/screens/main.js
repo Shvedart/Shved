@@ -9,7 +9,8 @@ import { pkBlock, cardHeader, cell, offerCard, productCard, promoCard } from '..
 import { favCard, favLook } from '../ui/favcard.js';
 import { scratchCard } from '../ui/scratch.js';
 import { buildShelves } from './feed.js';
-import { startTour, stopViewMarks } from './tour.js';
+import { startTour, startViewMarks, stopViewMarks } from './tour.js';
+import { applyCardLook } from '../domain/feedSetup.js';
 import { openSheet } from '../ui/sheet.js';
 import { app } from '../app.js';
 
@@ -34,6 +35,8 @@ export function mainScreen({ el, params, nav, entry }) {
   if (scenario === 's7' && store.state.feedSetup?.offerImages === false) el.classList.add('no-offer-images');
   // лента 07: выключенные строки карточки товара (блок «Карточка товара» в настройке)
   if (scenario === 's7') {
+    // размер логотипа и картинки на офферах и промокодах
+    applyCardLook(el, store.state.feedSetup);
     for (const [part, on] of Object.entries(store.state.feedSetup?.goodsShow || {})) if (on === false) el.classList.add(`goods-no-${part}`);
   }
 
@@ -223,6 +226,8 @@ export function mainScreen({ el, params, nav, entry }) {
   }
   // лента полками во всех сценариях сразу — в 03 тур проходит уже по ней
   toShelves({ animated: false });
+  // лента 07: зелёные галочки «просмотрено» на офферах при скролле, как после тура
+  if (scenario === 's7') requestAnimationFrame(() => startViewMarks(el));
   cleanups.push(() => shelves?.destroy());
 
   // ---------- Апп-бар при скролле ----------
@@ -307,7 +312,8 @@ export function mainScreen({ el, params, nav, entry }) {
   }
 
   return {
-    appbar: { left: 'back', title: 'Кэшбэки', titleVisible: false, search: true, heart: true, heartVisible: false, onLeft: () => nav.popTo('/') },
+    appbar: { left: 'back', title: 'Кэшбэки', titleVisible: false, search: true, heart: true, heartVisible: false, // 07: «назад» — к настройке ленты (как «Изменить»), а не на разводящую
+    onLeft: () => (scenario === 's7' ? nav.replace('/setup/s7') : nav.popTo('/')) },
     onActive: onScroll,
     onInactive() {
       tour?.destroy();

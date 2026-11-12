@@ -1269,7 +1269,7 @@
   /* эксперимент: галочка «засчитано» в правом нижнем углу логотипа (логотип 48px, отступ плитки 12px);
      после показа сжимается до 16px к этому углу */
   position: absolute;
-  left: calc(var(--sp-3) + 48px + 2px - 28px);
+  left: calc(var(--sp-3) + var(--logo-size, 48px) + 2px - 28px);
   bottom: calc(var(--sp-3) - 2px);
   z-index: 2;
   width: 28px;
@@ -2153,6 +2153,11 @@
   background: var(--c-fill-strong);
 }
 
+/* выбор размера логотипа — четыре варианта в ряд */
+.setup-seg.is-logo {
+  grid-template-columns: repeat(4, 1fr);
+}
+
 .setup-seg-item {
   display: grid;
   place-items: center;
@@ -2412,4 +2417,19 @@
 
 @media (prefers-reduced-motion: reduce) {
   .setup-anim * { animation: none !important; }
+}
+
+/* подпись над выбором (размер логотипа) */
+.setup-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 15px;
+  letter-spacing: -0.24px;
+  color: var(--c-text);
+}
+
+.setup-slider.is-pic {
+  margin-top: 12px;
 }

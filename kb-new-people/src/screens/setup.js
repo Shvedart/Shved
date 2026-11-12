@@ -4,8 +4,8 @@
 import { h, button } from '../core/dom.js';
 import { haptics } from '../core/haptics.js';
 import { store } from '../core/store.js';
-import { primaryButton, offerCard, goodsCard } from '../ui/components.js';
-import { SETUP_CATS, defaultSetup, evenWeights, setWeight } from '../domain/feedSetup.js';
+import { primaryButton, offerCard, goodsCard, promoCard } from '../ui/components.js';
+import { SETUP_CATS, LOGO_SIZES, LOGO_DEFAULT, PIC_DEFAULT, applyCardLook, defaultSetup, evenWeights, setWeight } from '../domain/feedSetup.js';
 import { app } from '../app.js';
 
 export function setupScreen({ el, params, nav }) {
@@ -44,13 +44,13 @@ export function setupScreen({ el, params, nav }) {
   }
 
   // ---------- Ползунок ----------
-  function slider({ label, value, onInput, cls = '' }) {
+  function slider({ label, value, onInput, cls = '', min = 0 }) {
     const out = h('span', { class: 'setup-value' }, `${value}%`);
-    const input = h('input', { class: 'setup-range', type: 'range', min: '0', max: '100', step: '1', value: String(value), 'aria-label': label });
+    const input = h('input', { class: 'setup-range', type: 'range', min: String(min), max: '100', step: '1', value: String(value), 'aria-label': label });
     const paint = (v) => {
       out.textContent = `${v}%`;
       input.value = String(v);
-      input.style.setProperty('--fill', `${v}%`);
+      input.style.setProperty('--fill', `${((v - min) / (100 - min)) * 100}%`);
     };
     paint(value);
     input.addEventListener('input', () => onInput(Number(input.value)));
@@ -115,6 +115,36 @@ export function setupScreen({ el, params, nav }) {
   const pics = h('label', { class: 'setup-switch' },
     h('span', { class: 'setup-switch-text' }, h('span', { class: 'setup-label' }, 'Картинки на офферах'), h('span', { class: 'setup-hint' }, 'Выключены — другой тип карточки: логотип и бренд сверху, кэшбэк и условия снизу')),
     picsInput, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
+  // ---------- Логотип и картинка на офферах и промокодах ----------
+  // один размер логотипа у всех офферов и промокодов
+  const logoBtns = LOGO_SIZES.map((size) => {
+    const b = button({ class: 'setup-seg-item', role: 'radio', dataset: { size: String(size) } }, String(size));
+    b.addEventListener('click', () => {
+      if ((setup.logoSize || LOGO_DEFAULT) === size) return;
+      setup = { ...setup, logoSize: size };
+      haptics.selection();
+      syncLogo();
+      syncPreview();
+    });
+    return b;
+  });
+  function syncLogo() {
+    for (const b of logoBtns) {
+      const on = Number(b.dataset.size) === (setup.logoSize || LOGO_DEFAULT);
+      b.classList.toggle('is-active', on);
+      b.setAttribute('aria-checked', String(on));
+    }
+  }
+  const logo = h('div', { class: 'setup-field' },
+    h('span', { class: 'setup-label' }, 'Размер логотипа, px'),
+    h('div', { class: 'setup-seg is-logo', role: 'radiogroup', 'aria-label': 'Размер логотипа' }, logoBtns));
+  const pic = slider({
+    label: 'Размер картинки',
+    value: setup.offerPic ?? PIC_DEFAULT,
+    min: 40,
+    cls: 'is-pic',
+    onInput: (v) => { setup = { ...setup, offerPic: v }; pic.paint(v); syncPreview(); },
+  });
   // случайный подбор: те же доли и места, но офферы и товары категории каждый раз другие
   const randomInput = h('input', { class: 'setup-switch-input', type: 'checkbox', role: 'switch' });
   randomInput.checked = !!setup.random;
@@ -145,30 +175,40 @@ export function setupScreen({ el, params, nav }) {
 
   // ---------- Живые превью: те же карточки и стили, что в ленте ----------
   // тумблеры меняют классы на превью так же, как на главной: .is-tinted, .no-offer-images, .goods-no-*
-  const sampleOffers = ['food', 'electronics']
-    .map((cat) => catalog.offersInCategory(cat).find((o) => o && o.image && o.logo && /от/.test(o.condition)) || catalog.offersInCategory(cat).find((o) => o && o.image))
-    .filter(Boolean);
+  // образцы: оффер и промокод — размер логотипа меняется у обоих
+  const sampleOffer = catalog.offersInCategory('food').find((o) => o && o.image && o.logo && /от/.test(o.condition)) || catalog.offersInCategory('food').find((o) => o && o.image);
+  const samplePromo = catalog.promos.find((p) => p.logo) || catalog.promos[0];
   const goodsList = (catalog.goodsModerated.length ? catalog.goodsModerated : catalog.goods).flatMap((c) => c.products);
   const full = (p) => p.oldPrice && p.brand && p.description;
-  // товар с «Магазин проверен» — тот, что есть в обоих файлах с разными фото: по тумблеру
-  // «Чистые карточки товаров» видно, как инфографика сменяется чистым фото
-  const MOD_SAMPLE = 'Сумка органайзер в багажник автомобиля 50х35х25см';
-  const findIn = (list, not) => list.flatMap((c) => c.products).find((p) => p.description === MOD_SAMPLE && p.image !== not);
-  const clean = findIn(catalog.goodsModerated);
-  // в исходном файле сумка встречается дважды — берём запись с другим фото (с инфографикой)
-  const modPair = { clean, raw: findIn(catalog.goods, clean?.image) };
-  const verifiedSample = modPair.clean || goodsList.find((p) => full(p) && p.verified);
-  const sampleGoods = [goodsList.find((p) => full(p) && !p.verified && p.merchant), verifiedSample].filter(Boolean);
-  const offerPreview = h('div', { class: 'setup-preview', 'aria-hidden': 'true', inert: true }, sampleOffers.map((o) => offerCard(o, { size: 's' })));
+  // образцы — товары, что есть в обоих файлах с разными фото: по тумблеру «Чистые карточки товаров»
+  // видно, как инфографика сменяется чистым фото. Слева — с продавцом, справа — с «Магазин проверен»
+  const MOD_SAMPLES = ['Смартфон iPhone 18 Pro 512 Гб, eSIM+eSIM, Burgundy', 'Сумка органайзер в багажник автомобиля 50х35х25см'];
+  // исходное фото: та же запись по описанию, у айфона описание другое — подбираем по id
+  const RAW_ALIAS = { 'product-160': 'product-012' };
+  const rawGoods = catalog.goods.flatMap((c) => c.products);
+  const modPairs = MOD_SAMPLES.map((d) => {
+    const clean = goodsList.find((p) => p.description === d);
+    // у сумки в исходном файле две записи — берём ту, где фото другое (с инфографикой)
+    const raw = clean && rawGoods.find((p) => (p.id === RAW_ALIAS[clean.id] || p.description === d) && p.image !== clean.image);
+    return { clean, raw };
+  }).filter((x) => x.clean && x.raw);
+  // оба варианта фото грузим заранее — при переключении подмена без задержки
+  for (const x of modPairs) new Image().src = x.raw.image;
+  const sampleGoods = modPairs.length === 2 ? modPairs.map((x) => x.clean)
+    : [goodsList.find((p) => full(p) && !p.verified && p.merchant), goodsList.find((p) => full(p) && p.verified)].filter(Boolean);
+  const offerPreview = h('div', { class: 'setup-preview', 'aria-hidden': 'true', inert: true }, [sampleOffer && offerCard(sampleOffer, { size: 's' }), samplePromo && promoCard(samplePromo)].filter(Boolean));
   const goodsPreview = h('div', { class: 'setup-preview', 'aria-hidden': 'true', inert: true }, sampleGoods.map((p) => goodsCard(p)));
   function syncPreview() {
     offerPreview.classList.toggle('is-tinted', !!setup.tinted);
     offerPreview.classList.toggle('no-offer-images', setup.offerImages === false);
+    applyCardLook(offerPreview, setup);
     for (const part of ['old', 'brand', 'desc', 'shop', 'verified']) goodsPreview.classList.toggle(`goods-no-${part}`, setup.goodsShow?.[part] === false);
-    // «Чистые карточки товаров»: у товара-образца фото после модерации или исходное, с инфографикой
-    const pic = goodsPreview.querySelector(`[data-goods="${verifiedSample?.id}"] .goods-pic img`);
-    const src = (setup.moderated !== false ? modPair.clean : modPair.raw)?.image;
-    if (pic && src && pic.getAttribute('src') !== src) pic.src = src;
+    // «Чистые карточки товаров»: у образцов фото после модерации или исходное, с инфографикой
+    for (const { clean, raw } of modPairs) {
+      const pic = goodsPreview.querySelector(`[data-goods="${clean.id}"] .goods-pic img`);
+      const src = (setup.moderated !== false ? clean : raw).image;
+      if (pic && pic.getAttribute('src') !== src) pic.src = src;
+    }
   }
   // любой тумблер — превью обновляется (обработчик тумблера уже записал новое значение в setup)
   el.addEventListener('change', syncPreview);
@@ -258,7 +298,7 @@ export function setupScreen({ el, params, nav }) {
     h('div', { class: 'setup-inner' },
       h('h1', { class: 'setup-title' }, 'Соберите ленту под себя'),
       h('p', { class: 'setup-sub' }, 'Как показывать предложения и чего в ленте должно быть больше'),
-      h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Вид ленты'), seg, modeHint, offerPreview, tint, pics),
+      h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Вид ленты'), seg, modeHint, offerPreview, tint, pics, logo, pic),
       h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Что попадает в ленту'), random, delivery, grocery),
       h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Товары или офферы'), goods, goodsHint, big),
       h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Карточка товара'), goodsPreview, moderated, goodsParts),
@@ -269,6 +309,8 @@ export function setupScreen({ el, params, nav }) {
     h('div', { class: 'setup-bar bottom-bar is-shown' }, create));
 
   syncMode();
+  syncLogo();
+  syncPreview();
   syncWeights();
   return { appbar: { left: 'back', title: 'Настройка ленты' }, destroy: () => previewRo.disconnect() };
 }

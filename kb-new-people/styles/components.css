@@ -659,7 +659,8 @@ img.is-broken {
 }
 
 .ocard-s .ocard-image {
-  width: 78%; /* было 68% — 112 из 166 на экране 375, +15% */
+  /* --pic-size — размер картинки из настройки ленты 07 */
+  width: var(--pic-size, 78%); /* было 68% — 112 из 166 на экране 375, +15% */
 }
 
 .ocard-head {
@@ -710,9 +711,10 @@ img.is-broken {
   background: #fff;
 }
 
+/* --logo-size — размер логотипа из настройки ленты 07 (нет — как в макете) */
 .ocard-s .ocard-logo {
-  width: 48px;
-  height: 48px;
+  width: var(--logo-size, 48px);
+  height: var(--logo-size, 48px);
 }
 
 .ocard-logo img {
@@ -1227,8 +1229,9 @@ img.is-broken {
 }
 
 .promo-logo {
-  width: 56px;
-  height: 56px;
+  flex: none;
+  width: var(--logo-size, 56px);
+  height: var(--logo-size, 56px);
   border-radius: 50%;
   overflow: hidden;
   background: #fff;
@@ -1703,11 +1706,22 @@ img.is-broken {
   display: none;
 }
 
+/* галочка «просмотрено» — в правом нижнем углу логотипа 40px сверху карточки */
+.no-offer-images .ocard-main {
+  position: relative;
+}
+
+.no-offer-images .counted {
+  left: calc(var(--sp-3) + var(--logo-size, 40px) + 2px - 28px);
+  top: calc(var(--sp-3) + var(--logo-size, 40px) + 2px - 28px);
+  bottom: auto;
+}
+
 .no-offer-images .ocard-logo {
   order: 1;
   flex: none;
-  width: 40px;
-  height: 40px;
+  width: var(--logo-size, 40px);
+  height: var(--logo-size, 40px);
 }
 
 .no-offer-images .ocard-name {

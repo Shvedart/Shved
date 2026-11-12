@@ -567,7 +567,10 @@ function trackViews(page, list) {
     const band = (bottom - appbarBottom) * 0.2;
     // ищем по странице, а не в сохранённом списке: после тура карточки переезжают в полки
     for (const card of page.querySelectorAll('[data-tour-cards] .ocard:not(.is-viewed)')) {
-      const r = card.querySelector('.ocard-tile').getBoundingClientRect();
+      // без картинок плитка раскрыта (display: contents) — меряем саму карточку
+      const tile = card.querySelector('.ocard-tile');
+      const r = (tile.getClientRects().length ? tile : card).getBoundingClientRect();
+      if (!r.height) continue; // скрыта фильтром категории
       if (Math.abs(r.top + r.height / 2 - mid) <= band) markViewed(card);
     }
   };
@@ -586,6 +589,11 @@ function markViewed(card) {
   const mark = h('span', { class: 'counted', 'aria-hidden': 'true' }, iconImg('success', { size: 28 }));
   card.querySelector('.ocard-tile').append(mark);
   animate(mark, [{ opacity: 0 }, { opacity: 1 }], { duration: 500, easing: EASE.out });
+}
+
+// лента 07: галочки при скролле без тура
+export function startViewMarks(page) {
+  trackViews(page);
 }
 
 export function stopViewMarks(page) {

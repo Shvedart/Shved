@@ -24,6 +24,16 @@ export function evenWeights(ids) {
   return Object.fromEntries(ids.map((id) => [id, base + (rest-- > 0 ? 1 : 0)]));
 }
 
+// Логотип и картинка на офферах и промокодах (лента 07): CSS-переменные на контейнере ленты или превью.
+// logoSize — px, один размер у офферов и промокодов; offerPic — % ширины плитки
+export const LOGO_SIZES = [56, 44, 40, 32];
+export const LOGO_DEFAULT = 44;
+export const PIC_DEFAULT = 78;
+export function applyCardLook(node, setup) {
+  node.style.setProperty('--pic-size', `${setup?.offerPic ?? PIC_DEFAULT}%`);
+  node.style.setProperty('--logo-size', `${setup?.logoSize || LOGO_DEFAULT}px`);
+}
+
 export function defaultSetup(ids) {
   return { mode: 'mixed', goods: 20, bigGoods: false, tinted: true, offerImages: true, random: false, delivery: true, hideGrocery: true, moderated: true, weights: evenWeights(ids), locked: [] };
 }
