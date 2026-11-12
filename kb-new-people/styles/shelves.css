@@ -1088,3 +1088,23 @@
   aspect-ratio: auto;
   scroll-snap-align: start;
 }
+
+/* ---------- «Где выгоднее заказать продукты?» (DELIVERY_LOOK = 'compare2') ---------- */
+/* магазины сразу под заголовком; строка выгодного магазина выше — в ней третья строка «На N ₽ дешевле» */
+.delivery-compare.is-v2 .delivery-stores {
+  padding-bottom: 8px;
+}
+
+.delivery-compare.is-v2 .delivery-store {
+  height: auto;
+  min-height: 56px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.delivery-store-saving {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.08px;
+  color: var(--c-green);
+}

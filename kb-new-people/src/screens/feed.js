@@ -171,14 +171,16 @@ function deliveryEdit() {
 
 // какой вид полки «Доставка продуктов» показывать: 'compare' — сравнение корзины в магазинах
 // (макет 762:158548), 'single' — прежний вид с одним магазином (макет 736:156423, сохранён, скрыт)
-const DELIVERY_LOOK = 'compare';
+// 'compare2' — «Где выгоднее заказать продукты?»: сначала магазины, у выгодного — на сколько дешевле,
+// ниже продукты. Вернуть прежний вид «Ваша корзина» — 'compare'
+const DELIVERY_LOOK = 'compare2';
 
 // Одна и та же корзина в разных магазинах. У магазина своя цена на каждый продукт: базовая цена
 // из data/grocery.json × множитель (prices, по кругу; 1 — как в данных), кэшбэк продукта × cashback.
 // Самая выгодная корзина — меньше всего «цена минус кэшбэк»: она выбрана сразу, её цена зелёная
 const DELIVERY_STORES = [
-  { id: 'pyaterochka', name: 'Пятёрочка', logo: 'assets/img/gorod/pyaterochka.png', time: 'за 30 мин', prices: [1], cashback: 1 },
-  { id: 'lenta', name: 'Лента доставка', logo: 'assets/img/gorod/lenta.png', time: 'за 240 мин', prices: [1.16, 0.92, 1.21, 1.09, 1.3, 1.12, 0.95, 1.18, 1.07, 1.14, 0.9, 1.22], cashback: 0.8 },
+  { id: 'pyaterochka', name: 'Пятёрочка', where: 'Пятёрочке', logo: 'assets/img/gorod/pyaterochka.png', time: 'за 30 мин', prices: [1], cashback: 1 },
+  { id: 'lenta', name: 'Лента доставка', where: 'Ленте', logo: 'assets/img/gorod/lenta.png', time: 'за 240 мин', prices: [1.16, 0.92, 1.21, 1.09, 1.3, 1.12, 0.95, 1.18, 1.07, 1.14, 0.9, 1.22], cashback: 0.8 },
 ];
 
 // какие продукты из data/grocery.json в корзине — разные: молочка, фрукты, мясо, бакалея, сыр
@@ -186,10 +188,11 @@ const DELIVERY_BASKET = ['grocery-001', 'grocery-002', 'grocery-003', 'grocery-0
   'grocery-007', 'grocery-017', 'grocery-018', 'grocery-021', 'grocery-036', 'grocery-073'];
 
 function deliveryShelf(args) {
-  return DELIVERY_LOOK === 'compare' ? deliveryCompareShelf(args) : deliverySingleShelf(args);
+  if (DELIVERY_LOOK === 'single') return deliverySingleShelf(args);
+  return deliveryCompareShelf({ ...args, look: DELIVERY_LOOK });
 }
 
-function deliveryCompareShelf({ catalog, onLink }) {
+function deliveryCompareShelf({ catalog, onLink, look = 'compare' }) {
   const list = DELIVERY_BASKET.map((id) => catalog.grocery.find((p) => p.id === id)).filter(Boolean);
   if (!list.length) return null;
   const money = (n) => `${(Math.round(n * 100) / 100).toLocaleString('ru-RU', { maximumFractionDigits: 2 })}\u00a0₽`;
@@ -223,13 +226,18 @@ function deliveryCompareShelf({ catalog, onLink }) {
     });
     sumEl.textContent = money(Math.round(picked.total));
   }
+  // compare2: у выгодного магазина третьей строкой — на сколько он дешевле следующего по цене («На 133 ₽ дешевле»)
+  const runnerUp = stores.filter((st) => st !== best).reduce((a, b) => (!a || b.total < a.total ? b : a), null);
+  const saving = runnerUp ? Math.round(runnerUp.total) - Math.round(best.total) : 0;
   const rows = stores.map((st) => {
     const row = button({ class: 'delivery-store', role: 'radio', 'aria-checked': String(st === picked), 'aria-label': `${st.name}: ${money(st.total)}, кэшбэк ${money(st.back)}, доставка ${st.time}` },
       img(st.logo, { cls: 'delivery-store-logo', alt: '', width: 40, height: 40 }),
       h('span', { class: 'delivery-store-text' },
         h('span', { class: 'delivery-store-name' }, h('span', { class: 'delivery-store-title' }, st.name), ' • ',
           h('span', { class: st === best ? 'is-best' : '' }, money(Math.round(st.total)))),
-        h('span', { class: 'delivery-store-meta' }, icon('crown', { size: 14 }), h('span', { class: 'delivery-store-back' }, money(st.back)), ' • ', st.time)),
+        h('span', { class: 'delivery-store-meta' }, icon('crown', { size: 14 }), h('span', { class: 'delivery-store-back' }, money(st.back)), ' • ', st.time),
+        look === 'compare2' && st === best && saving > 0
+          ? h('span', { class: 'delivery-store-saving' }, `На ${money(saving)} дешевле`) : null),
       h('span', { class: 'delivery-radio', 'aria-hidden': 'true' }, iconImg('checkbox', { size: 22 })));
     row.addEventListener('click', () => {
       if (picked === st) return;
@@ -243,10 +251,18 @@ function deliveryCompareShelf({ catalog, onLink }) {
   paint();
   const order = button({ class: 'delivery-order' }, h('span', null, 'Заказать'), sumEl);
   order.addEventListener('click', () => toast('Недоступно в прототипе'));
+  const scroll = h('div', { class: 'hscroll delivery-scroll' }, cards, deliveryEdit());
+  const storeList = h('div', { class: 'delivery-stores', role: 'radiogroup', 'aria-label': 'Магазин' }, rows);
+  // compare2 — сначала магазины, потом продукты; compare — прежний порядок
+  if (look === 'compare2') {
+    return h('section', { class: 'card delivery delivery-compare is-v2', dataset: { cat: 'food' } },
+      cardHeader({ title: 'Где выгоднее заказать продукты?', subtitle: 'Те же продукты в двух магазинах', link: 'Все', onLink }),
+      storeList, scroll,
+      h('div', { class: 'delivery-foot' }, order));
+  }
   return h('section', { class: 'card delivery delivery-compare', dataset: { cat: 'food' } },
     cardHeader({ title: 'Ваша корзина', subtitle: 'Доставка продуктов из Т-Банка', link: 'Все', onLink }),
-    h('div', { class: 'hscroll delivery-scroll' }, cards, deliveryEdit()),
-    h('div', { class: 'delivery-stores', role: 'radiogroup', 'aria-label': 'Магазин' }, rows),
+    scroll, storeList,
     h('div', { class: 'delivery-foot' }, order));
 }
 
