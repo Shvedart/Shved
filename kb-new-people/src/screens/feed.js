@@ -419,6 +419,9 @@ function giftShelf({ catalog, setup }) {
 
 function customSpecials({ catalog, setup, extras, onLink }) {
   const list = [];
+  // тумблер «Горизонтальные полки» (поле delivery, по умолчанию включён) — выключен: в ленте нет
+  // ни одной полки с лентой вбок — корзины продуктов, подборок товаров, путешествий и афиши
+  if (setup.delivery === false) return list;
   if (setup.goods > 0) {
     const f = favDropShelf({ catalog, setup });
     if (f) list.push({ el: f, at: 0.5 });
@@ -427,11 +430,8 @@ function customSpecials({ catalog, setup, extras, onLink }) {
     // наборы — между «Подешевело в избранном» и афишей
     catalog.kits.forEach((kit, i) => list.push({ el: kitShelf(kit), at: 0.6 + i * 0.05 }));
   }
-  // «Доставка продуктов» — по тумблеру в настройке, по умолчанию включена (у старых настроек поля нет)
-  if (setup.delivery !== false) {
-    const d = deliveryShelf({ catalog, onLink });
-    if (d) list.push({ el: d, at: 0.1 });
-  }
+  const d = deliveryShelf({ catalog, onLink });
+  if (d) list.push({ el: d, at: 0.1 });
   if (setup.weights.travel > 0) {
     const t = travelShelf({ items: TRAVEL });
     t.dataset.cat = 'travel';
@@ -551,18 +551,35 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
     cats.push('shopping');
     weights.shopping = goodsWeight;
   }
+  // «Случайный подбор»: внутри категории офферы, промокоды и товары перемешаны — доли и места
+  // в ленте те же, но какой именно оффер или товар туда попадёт, каждый раз другой
+  const mix = (list) => {
+    if (!setup.random) return list;
+    const out = [...list];
+    for (let i = out.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [out[i], out[j]] = [out[j], out[i]];
+    }
+    return out;
+  };
+  // товары категории — один раз в одном порядке: из него берутся и лента, и «всё для категории»
+  const goodsOrder = new Map();
+  const goodsOf = (cat) => {
+    if (!goodsOrder.has(cat)) goodsOrder.set(cat, mix(goodsSrc.find((g) => g.id === cat)?.products || []));
+    return goodsOrder.get(cat);
+  };
   const pools = {};
   for (const cat of cats) {
-    // у еды своих товаров в tovarka нет — берём продукты из магазина; «Без продуктов в ленте»
-    // (по умолчанию включено, у старых настроек поля нет) — их нет, остаются в полке доставки
-    const goods = cat === 'food' ? (setup.hideGrocery !== false ? [] : catalog.grocery.map(groceryAsGoods)) : goodsSrc.find((g) => g.id === cat)?.products || [];
-    const offers = [
+    // у еды своих товаров в tovarka нет — берём продукты из магазина; тумблер «Продукты в ленте» выключен
+    // (по умолчанию, у старых настроек поля нет) — их нет, остаются в полке доставки
+    const goods = cat === 'food' ? (setup.hideGrocery !== false ? [] : mix(catalog.grocery).map(groceryAsGoods)) : goodsOf(cat);
+    const offers = mix([
       ...catalog.offersInCategory(cat).filter((o) => o && byOffer.has(o.id) && !usedOffers.has(o.id)).map((o) => {
         usedOffers.add(o.id);
         return byOffer.get(o.id);
       }),
       ...promos.filter((p) => p.dataset.cat === cat && !usedPromos.has(p)).map((p) => { usedPromos.add(p); return p; }),
-    ];
+    ]);
     pools[cat] = { goods, offers };
   }
   // В ленту идут все офферы и промокоды выбранных категорий, товары — вперемешку с ними по доле;
@@ -597,7 +614,7 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
       tail: pools[cat].goods.slice(g, g + t).map(toCard(cat)),
     };
   }
-  // «Без продуктов в ленте»: во всей ленте продуктов нет, но в категории «Еда» они идут
+  // «Продукты в ленте» выключен: во всей ленте продуктов нет, но в категории «Еда» они идут
   // вперемешку с её офферами — с той же долей товаров (карточки с data-only="food")
   if (setup.hideGrocery !== false && plan.food?.offers.length && setup.goods < 100) {
     const want = Math.round((plan.food.offers.length * setup.goods) / (100 - setup.goods));
@@ -625,7 +642,7 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
       ...promos.filter((p) => p.dataset.cat === cat && !usedPromos.has(p)).map((p) => { usedPromos.add(p); return p; }),
     ];
     // товары лежат по порядку: в ленту ушли первые (по доле и хвост), остальные — сюда
-    const all = cat === 'food' ? [] : goodsSrc.find((g) => g.id === cat)?.products || [];
+    const all = cat === 'food' ? [] : goodsOf(cat);
     const used = plan[cat] ? [...plan[cat].goods, ...plan[cat].tail].filter((c) => !c.dataset.only).length : 0;
     const goods = all.slice(used).map(toCard(cat));
     if (!offers.length && !goods.length) continue;

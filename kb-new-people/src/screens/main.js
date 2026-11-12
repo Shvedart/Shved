@@ -32,6 +32,10 @@ export function mainScreen({ el, params, nav, entry }) {
   if (scenario === 's7' && store.state.feedSetup?.tinted) el.classList.add('is-tinted');
   // лента 07: плитки офферов без картинок (тумблер «Картинки на офферах»)
   if (scenario === 's7' && store.state.feedSetup?.offerImages === false) el.classList.add('no-offer-images');
+  // лента 07: выключенные строки карточки товара (блок «Карточка товара» в настройке)
+  if (scenario === 's7') {
+    for (const [part, on] of Object.entries(store.state.feedSetup?.goodsShow || {})) if (on === false) el.classList.add(`goods-no-${part}`);
+  }
 
   // ---------- Верх: сумма и действия ----------
   const actions = [

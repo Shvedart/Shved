@@ -288,7 +288,8 @@ function slug(name) {
 // Подписи для оффера, общие для всех экранов.
 export const fmt = {
   lowerFirst: (s) => (s ? s[0].toLowerCase() + s.slice(1) : s),
-  daysLabel: (n) => `${n} ${plural(n, 'день', 'дня', 'дней')}`,
+  // неразрывный пробел: «83 дня» не разрывается на две строки
+  daysLabel: (n) => `${n}\u00a0${plural(n, 'день', 'дня', 'дней')}`,
   // Строка под названием в списке: дата только у горящих офферов.
   rowSubtitle(offer) {
     return { hot: offer.isHot ? `${fmt.daysLabel(offer.daysLeft)},` : null, text: fmt.lowerFirst(offer.condition) };

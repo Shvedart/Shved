@@ -2325,3 +2325,91 @@
   outline: 2px solid var(--c-info);
   outline-offset: 2px;
 }
+
+/* ---------- Живые превью карточек в настройке ленты ---------- */
+/* две карточки, как ряд сплошной ленты; нажатия не нужны — это только показ */
+.setup-preview {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* высоту задаёт lockHeight в setup.js (по самому высокому варианту) — карточки по центру */
+  align-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: var(--r-l);
+  background: var(--c-bg);
+  box-shadow: var(--shadow-card);
+  pointer-events: none;
+}
+
+/* ---------- «Что попадает в ленту»: анимации из квадратиков у тумблеров ---------- */
+.setup-anim {
+  flex: none;
+  display: flex;
+  width: 44px;
+  height: 44px;
+}
+
+.setup-anim rect {
+  fill: #e1e4e8;
+}
+
+/* Случайный подбор: синий и жёлтый квадратики меняются местами, пока тумблер включён */
+.anim-random .a { fill: var(--c-info); }
+.anim-random .b { fill: var(--c-brand); }
+
+.setup-switch:has(input:checked) .anim-random .a {
+  animation: anim-swap-a 2.4s var(--ease-ios, ease-in-out) infinite;
+}
+
+.setup-switch:has(input:checked) .anim-random .b {
+  animation: anim-swap-b 2.4s var(--ease-ios, ease-in-out) infinite;
+}
+
+@keyframes anim-swap-a {
+  0%, 30% { transform: translate(0, 0); }
+  50%, 80% { transform: translate(26px, 26px); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes anim-swap-b {
+  0%, 30% { transform: translate(0, 0); }
+  50%, 80% { transform: translate(-26px, -26px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Горизонтальные полки: в полоске карточки едут вбок; выключено — полоски нет */
+.anim-shelves .strip { fill: #d6e6fd; transition: opacity 0.2s ease; }
+.anim-shelves .s { fill: var(--c-info); transition: opacity 0.2s ease; }
+
+.setup-switch:has(input:checked) .anim-shelves .run {
+  animation: anim-run 1.4s linear infinite;
+}
+
+.setup-switch:not(:has(input:checked)) .anim-shelves .strip,
+.setup-switch:not(:has(input:checked)) .anim-shelves .s {
+  opacity: 0;
+}
+
+@keyframes anim-run {
+  from { transform: translateX(0); }
+  to { transform: translateX(-11px); }
+}
+
+/* Продукты в ленте: выключено — зелёный квадратик-продукт пропадает, на его месте пунктир */
+.anim-grocery .g { fill: var(--c-green); transition: opacity 0.25s ease, transform 0.35s var(--ease-spring); transform-origin: 22px 22px; }
+.anim-grocery .slot { fill: none; stroke: #c3c8cf; stroke-width: 1; stroke-dasharray: 2 2; opacity: 0; transition: opacity 0.25s ease; }
+
+.setup-switch:not(:has(input:checked)) .anim-grocery .g {
+  opacity: 0;
+  transform: scale(0.4);
+}
+
+.setup-switch:not(:has(input:checked)) .anim-grocery .slot {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .setup-anim * { animation: none !important; }
+}
