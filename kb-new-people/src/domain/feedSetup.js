@@ -17,6 +17,19 @@ export const SETUP_CATS = [
   { id: 'pets', label: 'Животные' },
 ];
 
+// Интенты «Чего показывать больше»: готовые пропорции категорий, тап сам расставляет ползунки
+// (остальные категории — 0). Сумма — 100.
+export const INTENTS = [
+  { id: 'care', label: 'Уход и продукты', weights: { beauty: 40, food: 40, clothes: 15, home: 5 } },
+  { id: 'pets', label: 'Питомцы и дом', weights: { pets: 50, food: 25, home: 20, kids: 5 } },
+  { id: 'tech', label: 'Техника и поездки', weights: { electronics: 40, travel: 40, clothes: 20 } },
+  { id: 'family', label: 'Семья с детьми', weights: { food: 40, kids: 40, clothes: 20 } },
+];
+
+export function intentWeights(intent, ids) {
+  return Object.fromEntries(ids.map((id) => [id, intent.weights[id] || 0]));
+}
+
 // поровну, остаток от деления — первым категориям
 export function evenWeights(ids) {
   const base = Math.floor(100 / ids.length);
@@ -25,7 +38,7 @@ export function evenWeights(ids) {
 }
 
 // Логотип и картинка на офферах и промокодах (лента 07): CSS-переменные на контейнере ленты или превью.
-// logoSize — px, один размер у офферов и промокодов; offerPic — % ширины плитки
+// logoSize — px, один размер у офферов и промокодов; offerPic — % ширины плитки; nameLines — 1 или 2 строки названия
 export const LOGO_SIZES = [56, 44, 40, 32];
 export const LOGO_DEFAULT = 56;
 export const PIC_DEFAULT = 87;
@@ -34,10 +47,21 @@ export function applyCardLook(node, setup) {
   node.classList.add('card-look');
   node.style.setProperty('--pic-pref', `${setup?.offerPic ?? PIC_DEFAULT}%`);
   node.style.setProperty('--logo-pref', `${setup?.logoSize || LOGO_DEFAULT}px`);
+  // название бренда на офферах и промокодах — в одну строку (по умолчанию) или в две
+  node.classList.toggle('name-2', setup?.nameLines === 2);
+  node.classList.toggle('name-1', setup?.nameLines !== 2);
 }
 
+// по умолчанию: сплошная лента, 20% товаров, название бренда в две строки, у карточки товара только
+// описание, доли категорий — интент «Уход и продукты»
 export function defaultSetup(ids) {
-  return { mode: 'mixed', goods: 20, bigGoods: false, tinted: false, offerImages: true, random: false, delivery: true, hideGrocery: true, moderated: true, weights: evenWeights(ids), locked: [] };
+  const weights = intentWeights(INTENTS[0], ids);
+  return {
+    mode: 'mixed', goods: 20, bigGoods: false, tinted: false, offerImages: true, random: false, delivery: true, hideGrocery: true, moderated: true,
+    nameLines: 2,
+    goodsShow: { old: false, brand: false, desc: true, shop: false, verified: false },
+    weights, locked: ids.filter((id) => weights[id] > 0),
+  };
 }
 
 // Ставит категории id долю value; остаток делят нетронутые категории пропорционально их долям.

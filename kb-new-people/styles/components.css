@@ -1805,3 +1805,16 @@ img.is-broken {
     --pic-size: min(var(--pic-pref), 75%);
   }
 }
+
+/* название бренда на офферах и промокодах (настройка ленты 07): в одну строку или до двух, дальше многоточие */
+.card-look.name-1 .ocard-name {
+  display: block;
+  white-space: nowrap;
+}
+
+.card-look.name-2 .ocard-name {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  white-space: normal;
+}

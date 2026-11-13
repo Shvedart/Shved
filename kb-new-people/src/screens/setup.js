@@ -5,7 +5,7 @@ import { h, button } from '../core/dom.js';
 import { haptics } from '../core/haptics.js';
 import { store } from '../core/store.js';
 import { primaryButton, offerCard, goodsCard, promoCard } from '../ui/components.js';
-import { SETUP_CATS, LOGO_SIZES, LOGO_DEFAULT, PIC_DEFAULT, applyCardLook, defaultSetup, evenWeights, setWeight } from '../domain/feedSetup.js';
+import { SETUP_CATS, INTENTS, intentWeights, LOGO_SIZES, LOGO_DEFAULT, PIC_DEFAULT, applyCardLook, defaultSetup, evenWeights, setWeight } from '../domain/feedSetup.js';
 import { app } from '../app.js';
 
 export function setupScreen({ el, params, nav }) {
@@ -22,6 +22,19 @@ export function setupScreen({ el, params, nav }) {
     { id: 'mixed', label: 'Сплошной лентой', hint: 'Без заголовков: офферы и товары вперемешку, рядом друг с другом' },
   ];
   const modeHint = h('p', { class: 'setup-hint' });
+  // анимации вида ленты из квадратиков над переключателем (стили .anim-mode в screens.css), по одной над вариантом:
+  // полками — заголовок и сетка 2×2, сплошной — две колонки разной высоты; лента едет вверх, двигается только выбранный
+  const sq = (x, y, w, hh, cls = '') => `<rect class="${cls}" x="${x}" y="${y}" width="${w}" height="${hh}" rx="2.5"/>`;
+  // полка: заголовок + 2 ряда по 2 карточки, период 34px — сдвиг вверх на 34px зацикливается без шва
+  const shelves = [0, 1, 2].map((k) => { const y = 2 + k * 34; return sq(4, y, k % 2 ? 12 : 18, 3, 't') + sq(4, y + 6, 17, 10) + sq(23, y + 6, 17, 10) + sq(4, y + 19, 17, 10) + sq(23, y + 19, 17, 10); }).join('');
+  // колонка: повтор высот с периодом 30px
+  const column = (x, hs) => [0, 1, 2].flatMap((k) => { let y = 4 + k * 30; return hs.map((hh, i) => { const r = sq(x, y, 17, hh, x > 20 && i === 0 ? 'c' : ''); y += hh + 3; return r; }); }).join('');
+  const MODE_ANIM = {
+    shelves: `<g class="up up-34">${shelves}</g>`,
+    mixed: `<g class="up up-30">${column(4, [14, 10])}${column(23, [10, 14])}</g>`,
+  };
+  const modeAnims = modes.map((m) => h('span', { class: 'setup-anim anim-mode', dataset: { mode: m.id }, 'aria-hidden': 'true', html: `<svg viewBox="0 0 44 44" width="44" height="44">${MODE_ANIM[m.id]}</svg>` }));
+  const modePics = h('div', { class: 'setup-mode-pics' }, modeAnims);
   const modeBtns = modes.map((m) => {
     const b = button({ class: 'setup-seg-item', role: 'radio', dataset: { mode: m.id } }, m.label);
     b.addEventListener('click', () => {
@@ -41,6 +54,7 @@ export function setupScreen({ el, params, nav }) {
       b.setAttribute('aria-checked', String(on));
     }
     modeHint.textContent = modes.find((m) => m.id === setup.mode).hint;
+    for (const a of modeAnims) a.classList.toggle('is-on', a.dataset.mode === setup.mode);
   }
 
   // ---------- Ползунок ----------
@@ -139,6 +153,13 @@ export function setupScreen({ el, params, nav }) {
     h('span', { class: 'setup-label' }, 'Размер логотипа, px'),
     h('div', { class: 'setup-seg is-logo', role: 'radiogroup', 'aria-label': 'Размер логотипа' }, logoBtns),
     h('span', { class: 'setup-hint' }, 'На экранах уже 390px логотип не больше 44px, картинка — не больше 75%'));
+  // название бренда на офферах и промокодах в две строки; выключено — в одну
+  const nameInput = h('input', { class: 'setup-switch-input', type: 'checkbox', role: 'switch' });
+  nameInput.checked = setup.nameLines === 2;
+  nameInput.addEventListener('change', () => { setup = { ...setup, nameLines: nameInput.checked ? 2 : 1 }; haptics.selection(); });
+  const nameLines = h('label', { class: 'setup-switch' },
+    h('span', { class: 'setup-switch-text' }, h('span', { class: 'setup-label' }, 'Название бренда в две строки'), h('span', { class: 'setup-hint' }, 'На офферах и промокодах. Выключено — в одну строку')),
+    nameInput, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
   const pic = slider({
     label: 'Размер картинки',
     value: setup.offerPic ?? PIC_DEFAULT,
@@ -230,7 +251,8 @@ export function setupScreen({ el, params, nav }) {
   const previewRo = new ResizeObserver(([e]) => {
     if (!e.contentRect.width || e.contentRect.width === previewWidth) return;
     previewWidth = e.contentRect.width;
-    lockHeight(offerPreview, ['', 'no-offer-images']);
+    // самый высокий вариант — с названием в две строки (классы .card-look/.name-2 — как в applyCardLook)
+    lockHeight(offerPreview, ['card-look name-2', 'no-offer-images card-look name-2']);
     lockHeight(goodsPreview, ['']);
   });
   previewRo.observe(offerPreview);
@@ -272,7 +294,23 @@ export function setupScreen({ el, params, nav }) {
     rows.set(c.id, row);
     return row;
   });
+  // интенты: тап расставляет ползунки в пропорции интента; выбранный подсвечен, пока доли совпадают
+  const intentBtns = INTENTS.map((it) => {
+    const b = button({ class: 'chip chip-m', dataset: { intent: it.id } }, h('span', { class: 'chip-text' }, it.label));
+    b.addEventListener('click', () => {
+      const weights = intentWeights(it, ids);
+      setup = { ...setup, weights, locked: ids.filter((id) => weights[id] > 0) };
+      haptics.selection();
+      syncWeights();
+    });
+    return b;
+  });
+  const intents = h('div', { class: 'setup-intents' }, intentBtns);
   function syncWeights() {
+    for (const b of intentBtns) {
+      const it = INTENTS.find((x) => x.id === b.dataset.intent);
+      b.classList.toggle('is-active', ids.every((id) => (setup.weights[id] || 0) === (it.weights[id] || 0)));
+    }
     for (const [id, row] of rows) {
       row.paint(setup.weights[id]);
       // тронутые ползунки выделены: их доля не меняется, пока правишь другие
@@ -299,13 +337,14 @@ export function setupScreen({ el, params, nav }) {
     h('div', { class: 'setup-inner' },
       h('h1', { class: 'setup-title' }, 'Соберите ленту под себя'),
       h('p', { class: 'setup-sub' }, 'Как показывать предложения и чего в ленте должно быть больше'),
-      h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Вид ленты'), seg, modeHint, offerPreview, tint, pics, logo, pic),
+      h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Вид ленты'), modePics, seg, modeHint, offerPreview, logo, tint, pics, nameLines, pic),
       h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Что попадает в ленту'), random, delivery, grocery),
       h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Товары или офферы'), goods, goodsHint, big),
       h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Карточка товара'), goodsPreview, moderated, goodsParts),
       h('section', { class: 'setup-block' },
         h('div', { class: 'setup-block-head' }, h('h2', { class: 'setup-block-title' }, 'Чего показывать больше'), reset),
         h('p', { class: 'setup-hint' }, 'Доли категорий в сумме — 100%. Тронутый ползунок держит свою долю, остальные делят остаток'),
+        intents,
         h('div', { class: 'setup-sliders' }, catSliders))),
     h('div', { class: 'setup-bar bottom-bar is-shown' }, create));
 

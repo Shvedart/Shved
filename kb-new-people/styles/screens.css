@@ -2415,6 +2415,48 @@
   opacity: 1;
 }
 
+/* Вид ленты: над каждым вариантом переключателя своя анимация; лента едет вверх только у выбранного,
+   невыбранная — бледная и стоит */
+.setup-mode-pics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
+  margin-bottom: var(--sp-2);
+}
+
+.anim-mode .t { fill: #c3c8cf; }
+.anim-mode .c { fill: var(--c-info); }
+
+.anim-mode {
+  opacity: 0.4;
+  transition: opacity 0.25s ease;
+}
+
+.anim-mode.is-on {
+  opacity: 1;
+}
+
+.anim-mode .up {
+  animation: 3s linear infinite paused;
+}
+
+.anim-mode.is-on .up {
+  animation-play-state: running;
+}
+
+.anim-mode .up-34 { animation-name: anim-up-34; }
+.anim-mode .up-30 { animation-name: anim-up-30; }
+
+@keyframes anim-up-34 {
+  from { transform: translateY(0); }
+  to { transform: translateY(-34px); }
+}
+
+@keyframes anim-up-30 {
+  from { transform: translateY(0); }
+  to { transform: translateY(-30px); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .setup-anim * { animation: none !important; }
 }
@@ -2432,4 +2474,12 @@
 
 .setup-slider.is-pic {
   margin-top: 12px;
+}
+
+/* интенты «Чего показывать больше» — чипсы в несколько строк над ползунками */
+.setup-intents {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-bottom: 24px;
 }
