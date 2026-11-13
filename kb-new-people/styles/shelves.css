@@ -158,6 +158,18 @@
   transition: opacity var(--dur-fast) ease, transform var(--dur-fast) var(--ease-out);
 }
 
+/* «подол» вверх под апп-бар: iPhone при резкой прокрутке рисует липкую строку с запаздыванием ниже,
+   и между апп-баром и чипсами просвечивала лента. Подол прячется под апп-баром (он выше по z-index) */
+.feed-chips-bar::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 80px;
+  background: var(--c-bg);
+}
+
 .feed-chips.is-shown .feed-chips-bar {
   opacity: 1;
   transform: none;
