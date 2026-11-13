@@ -1182,3 +1182,50 @@
   letter-spacing: -0.08px;
   color: var(--c-green);
 }
+
+/* ---------- Корзина с кэшбэком (DELIVERY_LOOK = 'cashback') ---------- */
+/* логотип отдельной колонкой, по центру блока «заголовок + подзаголовок»; «Все» — наверху, как у других полок */
+.delivery-cb-head {
+  align-items: center;
+  gap: 8px;
+}
+
+.delivery-cb-logo {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  margin-right: 4px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.delivery-cb-head .card-header-text {
+  gap: 4px;
+}
+
+.delivery-cb-head .card-link {
+  align-self: flex-start;
+}
+
+/* «1 382 ₽ 1 176 ₽ с кэшбэком»: старая цена зачёркнута, новая — зелёным */
+.delivery-cb-sub s {
+  white-space: nowrap;
+}
+
+.delivery-cb-sub b {
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--c-green);
+}
+
+/* у фото Самоката свой светлый фон и поля — растягиваем на всю плитку, а не 79% как у вырезанных продуктов */
+.store-shelf .gcard-pic img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* кнопки внизу нет — снизу только отступ самой карточки */
+.store-shelf .delivery-scroll {
+  padding-bottom: 0;
+}

@@ -5,7 +5,7 @@ import { h, button } from '../core/dom.js';
 import { haptics } from '../core/haptics.js';
 import { store } from '../core/store.js';
 import { primaryButton, offerCard, goodsCard, promoCard } from '../ui/components.js';
-import { SETUP_CATS, INTENTS, intentWeights, LOGO_SIZES, LOGO_DEFAULT, PIC_DEFAULT, applyCardLook, defaultSetup, evenWeights, setWeight } from '../domain/feedSetup.js';
+import { SETUP_CATS, INTENTS, intentWeights, LOGO_SIZES, LOGO_DEFAULT, PIC_DEFAULT, applyCardLook, defaultSetup, evenWeights, setWeight, GROCERY_CARDS } from '../domain/feedSetup.js';
 import { app } from '../app.js';
 
 export function setupScreen({ el, params, nav }) {
@@ -151,8 +151,9 @@ export function setupScreen({ el, params, nav }) {
   }
   const logo = h('div', { class: 'setup-field' },
     h('span', { class: 'setup-label' }, 'Размер логотипа, px'),
-    h('div', { class: 'setup-seg is-logo', role: 'radiogroup', 'aria-label': 'Размер логотипа' }, logoBtns),
-    h('span', { class: 'setup-hint' }, 'На экранах уже 390px логотип не больше 44px, картинка — не больше 75%'));
+    h('div', { class: 'setup-seg is-logo', role: 'radiogroup', 'aria-label': 'Размер логотипа' }, logoBtns));
+  // подсказка про узкие экраны — под логотипом и картинкой сразу
+  const lookHint = h('p', { class: 'setup-hint' }, 'На экранах уже 390px логотип не больше 44px, картинка — не больше 75%');
   // название бренда на офферах и промокодах в две строки; выключено — в одну
   const nameInput = h('input', { class: 'setup-switch-input', type: 'checkbox', role: 'switch' });
   nameInput.checked = setup.nameLines === 2;
@@ -337,8 +338,8 @@ export function setupScreen({ el, params, nav }) {
     h('div', { class: 'setup-inner' },
       h('h1', { class: 'setup-title' }, 'Соберите ленту под себя'),
       h('p', { class: 'setup-sub' }, 'Как показывать предложения и чего в ленте должно быть больше'),
-      h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Вид ленты'), modePics, seg, modeHint, offerPreview, logo, tint, pics, nameLines, pic),
-      h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Что попадает в ленту'), random, delivery, grocery),
+      h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Вид ленты'), modePics, seg, modeHint, offerPreview, logo, pic, lookHint, tint, pics, nameLines),
+      h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Что попадает в ленту'), random, delivery, GROCERY_CARDS ? grocery : null),
       h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Товары или офферы'), goods, goodsHint, big),
       h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Карточка товара'), goodsPreview, moderated, goodsParts),
       h('section', { class: 'setup-block' },

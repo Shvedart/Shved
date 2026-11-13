@@ -8,7 +8,7 @@ import { bannerCard, cardHeader, goodsCard, linkButton, productCard } from '../u
 import { travelShelf, afishaShelf } from '../ui/shelves.js';
 import { toast } from '../ui/toast.js';
 import { app } from '../app.js';
-import { interleave } from '../domain/feedSetup.js';
+import { interleave, GROCERY_CARDS } from '../domain/feedSetup.js';
 
 // Порядок ленты. offers — смысловая полка: категория каталога, при необходимости — фильтр по названию;
 // scratch — номер скретч-карточки (по SCRATCH_PRIZES в main.js), тогда офферов три.
@@ -207,7 +207,8 @@ function deliveryEdit() {
 // (макет 762:158548), 'single' — прежний вид с одним магазином (макет 736:156423, сохранён, скрыт)
 // 'compare2' — «Где выгоднее заказать продукты?»: сначала магазины, у выгодного — на сколько дешевле,
 // ниже продукты. Вернуть прежний вид «Ваша корзина» — 'compare'
-const DELIVERY_LOOK = 'compare2';
+// 'cashback' — один магазин с логотипом в заголовке: «корзина стоила N ₽, с кэшбэком — M ₽», без выбора магазина
+const DELIVERY_LOOK = 'cashback';
 
 // Одна и та же корзина в разных магазинах. У магазина своя цена на каждый продукт: базовая цена
 // из data/grocery.json × множитель (prices, по кругу; 1 — как в данных), кэшбэк продукта × cashback.
@@ -223,6 +224,7 @@ const DELIVERY_BASKET = ['grocery-001', 'grocery-002', 'grocery-003', 'grocery-0
 
 function deliveryShelf(args) {
   if (DELIVERY_LOOK === 'single') return deliverySingleShelf(args);
+  if (DELIVERY_LOOK === 'cashback') return deliveryCashbackShelf(args);
   return deliveryCompareShelf({ ...args, look: DELIVERY_LOOK });
 }
 
@@ -298,6 +300,66 @@ function deliveryCompareShelf({ catalog, onLink, look = 'compare' }) {
     cardHeader({ title: 'Ваша корзина', subtitle: 'Доставка продуктов из Т-Банка', link: 'Все', onLink }),
     scroll, storeList,
     h('div', { class: 'delivery-foot' }, order));
+}
+
+// Корзина в одном магазине (первый в DELIVERY_STORES): логотип в заголовке, ниже — сколько корзина
+// стоила и сколько будет стоить с кэшбэком (цена минус кэшбэк продуктов), дальше продукты и «Заказать»
+function deliveryCashbackShelf({ catalog, onLink }) {
+  const list = DELIVERY_BASKET.map((id) => catalog.grocery.find((p) => p.id === id)).filter(Boolean);
+  if (!list.length) return null;
+  const st = DELIVERY_STORES[0];
+  const money = (n) => `${Math.round(n).toLocaleString('ru-RU')}\u00a0₽`;
+  const total = list.reduce((t, p) => t + rub(p.price), 0);
+  const back = list.reduce((t, p) => t + Math.round(rub(p.cashback)), 0);
+  const order = button({ class: 'delivery-order', 'aria-label': `Заказать в ${st.where} на ${money(total)}` }, h('span', null, 'Заказать'), h('b', null, money(total)));
+  order.addEventListener('click', () => toast('Недоступно в прототипе'));
+  return h('section', { class: 'card delivery delivery-cashback', dataset: { cat: 'food' } },
+    // шапка как у cardHeader, но логотип отдельной колонкой — подзаголовок встаёт под заголовок, а не под логотип
+    h('div', { class: 'card-header delivery-cb-head' },
+      img(st.logo, { cls: 'delivery-cb-logo', alt: '', width: 40, height: 40, lazy: false }),
+      h('div', { class: 'card-header-text' },
+        h('h2', { class: 'card-title' }, `Корзина в ${st.where}`),
+        h('p', { class: 'card-subtitle delivery-cb-sub', 'aria-label': `Стоила ${money(total)}, с кэшбэком ${money(total - back)}` },
+          h('s', null, money(total)), ' ', h('b', null, money(total - back)), ' с кэшбэком')),
+      linkButton('Все', { onClick: onLink, cls: 'card-link' })),
+    h('div', { class: 'hscroll delivery-scroll' }, list.map(groceryCard), deliveryEdit()),
+    h('div', { class: 'delivery-foot' }, order));
+}
+
+// Полки магазинов продуктов — по виду как корзина с кэшбэком (логотип слева от заголовка), но без суммы
+// корзины и без «Заказать»: просто продукты лентой вбок с кэшбэком на каждом. Фото у этих магазинов
+// со своим фоном — на всю плитку (.store-shelf в shelves.css)
+// «Не забудьте взять» из Самоката: повседневное вперемешку со сладким к чаю
+const REMIND = {
+  logo: 'assets/img/gorod/samokat.png',
+  title: 'Не забудьте взять',
+  sub: 'Обычно докупаете в Самокате',
+  source: 'samokat',
+  items: ['samokat-030', 'samokat-038', 'samokat-043', 'samokat-003', 'samokat-072', 'samokat-036', 'samokat-012', 'samokat-001',
+    'samokat-074', 'samokat-062', 'samokat-094', 'samokat-049', 'samokat-058', 'samokat-011', 'samokat-060', 'samokat-055'],
+};
+// «Ваш ВкусВилл»: то, что вы всегда там берёте, — теперь выгоднее; товары — все из data/vkusvill.json
+// (повторы убирает catalog), items: null — все по порядку
+const VKUSVILL = {
+  logo: 'assets/img/gorod/vkusvill.png',
+  title: 'Ваш ВкусВилл',
+  sub: 'Как всегда, только выгоднее',
+  source: 'vkusvill',
+  items: null,
+};
+
+function storeShelf(cfg, { catalog, onLink }) {
+  const all = catalog[cfg.source] || [];
+  const list = cfg.items ? cfg.items.map((id) => all.find((p) => p.id === id)).filter(Boolean) : all;
+  if (!list.length) return null;
+  return h('section', { class: `card delivery delivery-cashback store-shelf is-${cfg.source}`, dataset: { cat: 'food' } },
+    h('div', { class: 'card-header delivery-cb-head' },
+      img(cfg.logo, { cls: 'delivery-cb-logo', alt: '', width: 40, height: 40, lazy: false }),
+      h('div', { class: 'card-header-text' },
+        h('h2', { class: 'card-title' }, cfg.title),
+        h('p', { class: 'card-subtitle' }, cfg.sub)),
+      linkButton('Все', { onClick: onLink, cls: 'card-link' })),
+    h('div', { class: 'hscroll delivery-scroll' }, list.map(groceryCard)));
 }
 
 function deliverySingleShelf({ catalog, onLink }) {
@@ -466,6 +528,10 @@ function customSpecials({ catalog, setup, extras, onLink }) {
   }
   const d = deliveryShelf({ catalog, onLink });
   if (d) list.push({ el: d, at: 0.1 });
+  const r = storeShelf(REMIND, { catalog, onLink });
+  if (r) list.push({ el: r, at: 0.25 });
+  const v = storeShelf(VKUSVILL, { catalog, onLink });
+  if (v) list.push({ el: v, at: 0.45 });
   if (setup.weights.travel > 0) {
     const t = travelShelf({ items: TRAVEL });
     t.dataset.cat = 'travel';
@@ -606,7 +672,8 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
   for (const cat of cats) {
     // у еды своих товаров в tovarka нет — берём продукты из магазина; тумблер «Продукты в ленте» выключен
     // (по умолчанию, у старых настроек поля нет) — их нет, остаются в полке доставки
-    const goods = cat === 'food' ? (setup.hideGrocery !== false ? [] : mix(catalog.grocery).map(groceryAsGoods)) : goodsOf(cat);
+    // GROCERY_CARDS выключен — отдельных продуктов в ленте нет вовсе, только полки
+    const goods = cat === 'food' ? (!GROCERY_CARDS || setup.hideGrocery !== false ? [] : mix(catalog.grocery).map(groceryAsGoods)) : goodsOf(cat);
     const offers = mix([
       ...catalog.offersInCategory(cat).filter((o) => o && byOffer.has(o.id) && !usedOffers.has(o.id)).map((o) => {
         usedOffers.add(o.id);
@@ -650,7 +717,7 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
   }
   // «Продукты в ленте» выключен: во всей ленте продуктов нет, но в категории «Еда» они идут
   // вперемешку с её офферами — с той же долей товаров (карточки с data-only="food")
-  if (setup.hideGrocery !== false && plan.food?.offers.length && setup.goods < 100) {
+  if (GROCERY_CARDS && setup.hideGrocery !== false && plan.food?.offers.length && setup.goods < 100) {
     const want = Math.round((plan.food.offers.length * setup.goods) / (100 - setup.goods));
     const n = Math.floor(Math.min(catalog.grocery.length, Math.max(step, want)) / step) * step;
     plan.food.goods.push(...catalog.grocery.slice(0, n).map((p) => {

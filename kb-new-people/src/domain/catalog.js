@@ -6,7 +6,7 @@ import { plural } from '../core/dom.js';
 const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
 const DAY_MS = 86400000;
 
-export function buildCatalog(raw, cfg, productsRaw = null, discountsRaw = null, groceryRaw = null, goodsRaw = null, goodsModeratedRaw = null, bannersRaw = null, kitsRaw = null) {
+export function buildCatalog(raw, cfg, productsRaw = null, discountsRaw = null, groceryRaw = null, goodsRaw = null, goodsModeratedRaw = null, bannersRaw = null, kitsRaw = null, samokatRaw = null, vkusvillRaw = null) {
   const today = new Date(`${cfg.today}T00:00:00`);
   const matchIndex = new Map();
   for (const [brandId, b] of Object.entries(cfg.brands || {})) {
@@ -60,6 +60,16 @@ export function buildCatalog(raw, cfg, productsRaw = null, discountsRaw = null, 
   const promos = buildPromos(discountsRaw, brands);
   // продукты из магазина (data/grocery.json): цена, кэшбэк в рублях и фото — для полки «Вы уже заказывали»
   const grocery = groceryRaw?.products || [];
+  // продукты Самоката (data/samokat.json, тот же формат) — для полки «Не забудьте взять» в ленте 07
+  const samokat = samokatRaw?.products || [];
+  // продукты ВкусВилла (data/vkusvill.json) — выгрузка с сайта: цена «368 руб/шт» → «368 ₽»,
+  // в названиях бывают &nbsp; и повтор веса («300&nbsp;г, 300 г»), одинаковые товары — один раз
+  const vvSeen = new Set();
+  const vkusvill = (vkusvillRaw?.products || []).map((p) => ({
+    ...p,
+    name: p.name.replace(/,\s*([\d,.]+)&nbsp;(\S+), \1 \2$/, ', $1 $2').replace(/&nbsp;/g, '\u00a0'),
+    price: p.price.replace(/\s*руб\/шт$/, '\u00a0₽'),
+  })).filter((p) => !vvSeen.has(p.name) && vvSeen.add(p.name));
   // товары маркетплейса (data/tovarka.json) по категориям навигации: [{ id, title, products }];
   // hiddenGoods в overrides — товары, которые пока не показываем (например, фото-инфографика)
   const hiddenGoods = new Set(cfg.hiddenGoods || []);
@@ -71,7 +81,7 @@ export function buildCatalog(raw, cfg, productsRaw = null, discountsRaw = null, 
   const banners = bannersRaw?.banners || [];
   // наборы товаров с баннером (data/kits.json) — полки «Сделать свою первую свечу» и подобные
   const kits = kitsRaw?.kits || [];
-  return createCatalogApi({ categories, offers, brands, cfg, products, promos, grocery, goods, goodsModerated, banners, kits });
+  return createCatalogApi({ categories, offers, brands, cfg, products, promos, grocery, samokat, vkusvill, goods, goodsModerated, banners, kits });
 }
 
 /* Товары с кэшбэком (формат land → payload.items[]: фото, название, кэшбэк).
@@ -138,13 +148,15 @@ function buildPromos(discountsRaw, brands) {
   return list;
 }
 
-function createCatalogApi({ categories, offers, brands, cfg, products = [], promos = [], grocery = [], goods = [], goodsModerated = [], banners = [], kits = [] }) {
+function createCatalogApi({ categories, offers, brands, cfg, products = [], promos = [], grocery = [], samokat = [], vkusvill = [], goods = [], goodsModerated = [], banners = [], kits = [] }) {
   const api = {
     config: cfg,
     categories,
     products,
     promos,
     grocery,
+    samokat,
+    vkusvill,
     goodsModerated,
     banners,
     kits,

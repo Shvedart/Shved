@@ -1,0 +1,220 @@
+{
+  "products": [
+    {
+      "id": "vkusvill-001",
+      "name": "Лапша Пад Тай с курицей, 250 г",
+      "price": "368 руб/шт",
+      "cashback": "55 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/c0c6a64d-d768-4c33-a7ea-07ba449c1890.webp?1793559731",
+      "shopLogo": ""
+    },
+    {
+      "id": "vkusvill-002",
+      "name": "Ковурма-лагман с говядиной и соусом Лаза, 295 г",
+      "price": "478 руб/шт",
+      "cashback": "72 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/57d76a8d-4b1b-48ad-b191-e58d6cdfb622.webp?1793572937",
+      "shopLogo": ""
+    },
+    {
+      "id": "vkusvill-003",
+      "name": "Боул \"50/25/25\" с булгуром, киноа и куриным филе су-вид, 250 г",
+      "price": "370 руб/шт",
+      "cashback": "56 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/2c9857be-b068-4740-9f76-b95034ae4eea.webp?1793574341",
+      "shopLogo": ""
+    },
+    {
+      "id": "vkusvill-004",
+      "name": "Сэндвич \"Вкусмаффин\" с яйцом и беконом, 130 г",
+      "price": "240 руб/шт",
+      "cashback": "36 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/8d0c5a4a-e001-420c-aadf-35d80a206137.webp?1793560281",
+      "shopLogo": ""
+    },
+    {
+      "id": "vkusvill-005",
+      "name": "Свинина кимчи по-корейски с рисом, 240 г",
+      "price": "378 руб/шт",
+      "cashback": "57 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/6c0b7660-0f86-4a13-a344-4d41606686b8.webp?1793648054",
+      "shopLogo": ""
+    },
+    {
+      "id": "vkusvill-006",
+      "name": "Клаб-сэндвич с бужениной и Коул Слоу, 190 г",
+      "price": "318 руб/шт",
+      "cashback": "48 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/5422a0ed-ca92-4e92-9964-c407461ff3d5.webp?1794170600",
+      "shopLogo": ""
+    },
+    {
+      "id": "vkusvill-007",
+      "name": "Сэндвич ролл \"Сельдь под шубой\", 190 г",
+      "price": "298 руб/шт",
+      "cashback": "45 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/3285232c-9b89-4745-8afd-d4d5ebbf9b47.webp?1783444659",
+      "shopLogo": ""
+    },
+    {
+      "id": "vkusvill-008",
+      "name": "Чипсы картофельные со вкусом \"Морская капуста и лимонный тимьян\", 100 г",
+      "price": "155 руб/шт",
+      "cashback": "23 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/2a2bf11a-a759-46a7-8f94-47bfeabfd6ec.webp?1794431585",
+      "shopLogo": ""
+    },
+    {
+      "id": "vkusvill-009",
+      "name": "Чипсы картофельные рифленые со вкусом \"Острый чеддер с копченой паприкой\", 100 г",
+      "price": "168 руб/шт",
+      "cashback": "25 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/e90c2556-a6d0-4f4d-9084-c6d8850de778.webp?1794431702",
+      "shopLogo": ""
+    },
+    {
+      "id": "vkusvill-010",
+      "name": "Финики сушеные \"Мазафати\" с косточкой, 300&nbsp;г, 300 г",
+      "price": "298 руб/шт",
+      "cashback": "45 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/63e3c1c9-170b-4037-be4a-9f95dce157ab.webp?1794162945",
+      "shopLogo": ""
+    },
+    {
+      "id": "vkusvill-011",
+      "name": "Чипсы картофельные с луком, 100 г",
+      "price": "152 руб/шт",
+      "cashback": "23 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/3f3ea02e-77a8-499c-a2b7-a36f4bcb4737.webp?1793126854",
+      "shopLogo": ""
+    },
+    {
+      "id": "vkusvill-012",
+      "name": "Кешью жареный с кокосом и ванилью, 100 г",
+      "price": "248 руб/шт",
+      "cashback": "37 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/19cc2259-b888-4c2e-bb13-826687d35b37.webp?1793463780",
+      "shopLogo": ""
+    },
+    {
+      "id": "vkusvill-013",
+      "name": "Пюре из манго, ананаса и яблока \"Сердечки\", 200 г",
+      "price": "235 руб/шт",
+      "cashback": "35 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/1afb672b-771f-46df-82f3-3137f1500487.webp?1794497642",
+      "shopLogo": ""
+    },
+    {
+      "id": "vkusvill-014",
+      "name": "Чипсы картофельные рифленые со вкусом \"Острый чеддер с копченой паприкой\", 100 г",
+      "price": "168 руб/шт",
+      "cashback": "25 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/e90c2556-a6d0-4f4d-9084-c6d8850de778.webp?1794431702",
+      "shopLogo": ""
+    },
+    {
+      "id": "vkusvill-015",
+      "name": "Кислошот \"Ягодная кислинка\", 100 мл",
+      "price": "148 руб/шт",
+      "cashback": "22 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/bd8aa723-ac15-47a0-b62a-605a427e74ad.webp?1793957428",
+      "shopLogo": ""
+    },
+    {
+      "id": "vkusvill-016",
+      "name": "Свеча парфюмированная \"Лимонный пирог\", 100 мл",
+      "price": "625 руб/шт",
+      "cashback": "94 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/d60dafda-18d1-4a53-9908-e0a53cf0a315.webp?1794143900",
+      "shopLogo": ""
+    },
+    {
+      "id": "vkusvill-017",
+      "name": "Свеча парфюмированная \"Лимонный пирог\", 100 мл",
+      "price": "625 руб/шт",
+      "cashback": "94 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/d60dafda-18d1-4a53-9908-e0a53cf0a315.webp?1794143900",
+      "shopLogo": ""
+    },
+    {
+      "id": "vkusvill-018",
+      "name": "Свеча парфюмированная \"Лимонный пирог\", 100 мл",
+      "price": "625 руб/шт",
+      "cashback": "94 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/d60dafda-18d1-4a53-9908-e0a53cf0a315.webp?1794143900",
+      "shopLogo": ""
+    },
+    {
+      "id": "vkusvill-019",
+      "name": "Свеча парфюмированная \"Лимонный пирог\", 100 мл",
+      "price": "625 руб/шт",
+      "cashback": "94 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/d60dafda-18d1-4a53-9908-e0a53cf0a315.webp?1794143900",
+      "shopLogo": ""
+    },
+    {
+      "id": "vkusvill-020",
+      "name": "Свеча парфюмированная \"Лимонный пирог\", 100 мл",
+      "price": "625 руб/шт",
+      "cashback": "94 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/d60dafda-18d1-4a53-9908-e0a53cf0a315.webp?1794143900",
+      "shopLogo": ""
+    },
+    {
+      "id": "vkusvill-021",
+      "name": "Компот из клюквы, 1&nbsp;л, 1 л",
+      "price": "410 руб/шт",
+      "cashback": "62 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/30c82c2f-e909-47b2-a9ae-c14e2802682b.webp?1793707566",
+      "shopLogo": ""
+    },
+    {
+      "id": "vkusvill-022",
+      "name": "Гренки пшеничные \"Томат с зеленью\", 100 г",
+      "price": "140 руб/шт",
+      "cashback": "21 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/7155a93f-c3f8-4a0b-aded-e9250ceda4aa.webp?1793708505",
+      "shopLogo": ""
+    },
+    {
+      "id": "vkusvill-023",
+      "name": "Эклеры ассорти \"Я люблю осень\", 3 шт, 160 г",
+      "price": "338 руб/шт",
+      "cashback": "51 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/852fe0b5-887c-46a7-89d4-fa9b7c85f7b0.webp?1793648114",
+      "shopLogo": ""
+    },
+    {
+      "id": "vkusvill-024",
+      "name": "Рулет \"Мияри\" вишня на японском бисквите, 90 г",
+      "price": "172 руб/шт",
+      "cashback": "26 ₽",
+      "badge": "",
+      "image": "https://img.vkusvill.ru/pim/images/site/site_Mini_SquareWebP/ec0dbd9e-8a08-442f-90be-986aef82a4e0.webp?1793673275",
+      "shopLogo": ""
+    }
+  ]
+}
