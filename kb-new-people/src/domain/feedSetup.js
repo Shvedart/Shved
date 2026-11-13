@@ -27,15 +27,17 @@ export function evenWeights(ids) {
 // Логотип и картинка на офферах и промокодах (лента 07): CSS-переменные на контейнере ленты или превью.
 // logoSize — px, один размер у офферов и промокодов; offerPic — % ширины плитки
 export const LOGO_SIZES = [56, 44, 40, 32];
-export const LOGO_DEFAULT = 44;
-export const PIC_DEFAULT = 78;
+export const LOGO_DEFAULT = 56;
+export const PIC_DEFAULT = 87;
 export function applyCardLook(node, setup) {
-  node.style.setProperty('--pic-size', `${setup?.offerPic ?? PIC_DEFAULT}%`);
-  node.style.setProperty('--logo-size', `${setup?.logoSize || LOGO_DEFAULT}px`);
+  // выбранные значения; итоговые --logo-size и --pic-size считает CSS (.card-look) — на узких экранах с потолком
+  node.classList.add('card-look');
+  node.style.setProperty('--pic-pref', `${setup?.offerPic ?? PIC_DEFAULT}%`);
+  node.style.setProperty('--logo-pref', `${setup?.logoSize || LOGO_DEFAULT}px`);
 }
 
 export function defaultSetup(ids) {
-  return { mode: 'mixed', goods: 20, bigGoods: false, tinted: true, offerImages: true, random: false, delivery: true, hideGrocery: true, moderated: true, weights: evenWeights(ids), locked: [] };
+  return { mode: 'mixed', goods: 20, bigGoods: false, tinted: false, offerImages: true, random: false, delivery: true, hideGrocery: true, moderated: true, weights: evenWeights(ids), locked: [] };
 }
 
 // Ставит категории id долю value; остаток делят нетронутые категории пропорционально их долям.

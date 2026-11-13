@@ -137,7 +137,8 @@ export function setupScreen({ el, params, nav }) {
   }
   const logo = h('div', { class: 'setup-field' },
     h('span', { class: 'setup-label' }, 'Размер логотипа, px'),
-    h('div', { class: 'setup-seg is-logo', role: 'radiogroup', 'aria-label': 'Размер логотипа' }, logoBtns));
+    h('div', { class: 'setup-seg is-logo', role: 'radiogroup', 'aria-label': 'Размер логотипа' }, logoBtns),
+    h('span', { class: 'setup-hint' }, 'На экранах уже 390px логотип не больше 44px, картинка — не больше 75%'));
   const pic = slider({
     label: 'Размер картинки',
     value: setup.offerPic ?? PIC_DEFAULT,

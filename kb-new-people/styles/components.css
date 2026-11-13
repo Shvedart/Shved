@@ -1791,3 +1791,17 @@ img.is-broken {
 .goods-no-verified .goods-shop:has(.goods-verified) {
   display: none;
 }
+
+/* размер логотипа и картинки из настройки ленты 07 (applyCardLook в feedSetup.js) */
+.card-look {
+  --logo-size: var(--logo-pref);
+  --pic-size: var(--pic-pref);
+}
+
+/* узкие экраны (меньше 390px): логотип не больше 44px, картинка не больше 75% плитки */
+@media (max-width: 389px) {
+  .card-look {
+    --logo-size: min(var(--logo-pref), 44px);
+    --pic-size: min(var(--pic-pref), 75%);
+  }
+}
