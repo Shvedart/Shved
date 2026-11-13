@@ -102,6 +102,68 @@
   font-weight: 600;
 }
 
+/* навигация ленты 07 плитками (макет 791:159769): плитка 80px в колонке 96px, подпись через 6px */
+.feed-nav.is-tiles {
+  gap: 2px;
+  /* плитка уже колонки на 8px с каждой стороны — первая встаёт ровно по отступу страницы */
+  padding: 0 calc(var(--gutter) - 8px) 8px;
+}
+
+.feed-nav.is-tiles .feed-nav-item {
+  width: 96px;
+  gap: 6px;
+}
+
+.feed-nav-tile {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  background: var(--tile-bg);
+  overflow: hidden;
+}
+
+/* картинка 1600×1520: по умолчанию по высоте плитки и по центру, как object-fit: cover */
+.feed-nav-tile-img {
+  position: absolute;
+  top: 0;
+  left: -2.63%;
+  width: 105.26%;
+  height: 100%;
+  max-width: none;
+  pointer-events: none;
+}
+
+/* чипсы в шапке ленты 07: липкий слой нулевой высоты под навигацией, строка чипсов выезжает из-под апп-бара */
+.feed-chips {
+  position: sticky;
+  /* липкий отступ считается от края с учётом padding-top страницы — он уже равен высоте апп-бара */
+  top: 0;
+  z-index: 15;
+  height: 0;
+  /* слой лежит поверх низа навигации — тапы проходят к ней, пока чипсы скрыты */
+  pointer-events: none;
+}
+
+.feed-chips-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding-top: 8px;
+  background: var(--c-bg);
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+  transition: opacity var(--dur-fast) ease, transform var(--dur-fast) var(--ease-out);
+}
+
+.feed-chips.is-shown .feed-chips-bar {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
 /* билет первым под навигацией — без отрицательного отступа сверху */
 .shelves.starts-with-trip > .fc-trip:not([hidden]) {
   margin-top: -16px;

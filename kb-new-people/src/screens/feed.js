@@ -69,6 +69,40 @@ const NAV = [
   { id: 'flowers', label: 'Цветы', img: 'assets/img/cats/flowers.webp' },
 ];
 
+// навигация ленты 07 (макет 791:159769): квадратная плитка 80px с цветным фоном и 3D-картинкой, подпись под ней.
+// NAV_LOOK — какой вид показывать в 07: 'tiles' — этот, 'cloud' — прежний (иллюстрации 105×100 из NAV).
+// crop — кадрирование картинки в плитке как в макете (left, top, width, height в %); нет — по центру с обрезкой.
+const NAV_LOOK = 'tiles';
+const TILE_VIOLET = 'rgba(163, 129, 255, 0.1)';
+const TILE_GREY = 'rgba(144, 173, 191, 0.1)';
+const NAV_TILES = {
+  food: { bg: 'rgba(88, 192, 130, 0.1)' },
+  travel: { bg: 'rgba(239, 195, 138, 0.2)', crop: [3.18, 0.09, 105.26, 100] },
+  health: { bg: 'rgba(88, 182, 192, 0.1)' },
+  beauty: { bg: TILE_VIOLET },
+  electronics: { bg: TILE_VIOLET, crop: [-2.63, -3.73, 105.26, 100], label: 'Электроника' },
+  kids: { bg: TILE_VIOLET },
+  clothes: { bg: TILE_VIOLET },
+  fun: { bg: 'rgba(212, 93, 140, 0.1)', crop: [-6.87, -4.03, 113.75, 108.06] },
+  auto: { bg: TILE_GREY, crop: [-9.37, -6.41, 118.75, 112.81] },
+  pets: { bg: TILE_GREY },
+  home: { bg: TILE_VIOLET, crop: [-6.02, 0, 105.26, 100] },
+  education: { bg: TILE_GREY },
+  shopping: { bg: TILE_VIOLET },
+  telecom: { bg: 'rgba(255, 221, 45, 0.1)', crop: [-14.37, -11.16, 128.75, 122.31] },
+  sport: { bg: TILE_VIOLET, crop: [-0.11, 0, 105.26, 100] },
+  flowers: { bg: TILE_VIOLET },
+};
+function navTile(id) {
+  const t = NAV_TILES[id] || { bg: TILE_VIOLET };
+  const pic = img(`assets/img/cats-tiles/${id}.webp`, { cls: 'feed-nav-tile-img', alt: '', width: 80, height: 76, lazy: false });
+  if (t.crop) {
+    const [left, top, width, height] = t.crop;
+    Object.assign(pic.style, { left: `${left}%`, top: `${top}%`, width: `${width}%`, height: `${height}%` });
+  }
+  return h('span', { class: 'feed-nav-tile', style: `--tile-bg: ${t.bg}` }, pic);
+}
+
 const TRAVEL = [
   { img: 'assets/img/travel/phuket.webp', place: 'Пхукет', trigger: 'вода +29°', cashback: '7%', price: 'от 5 240 ₽', oldPrice: '7 900 ₽', color: '#4c8aa8' },
   { img: 'assets/img/travel/alanya.webp', place: 'Аланья', trigger: 'пляж Клеопатры', cashback: '5%', price: 'от 3 180 ₽', oldPrice: '4 900 ₽', color: '#6895A1' },
@@ -1010,18 +1044,54 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
   // Тап оставляет в ленте только полки категории, повторный тап — снова вся лента.
   const catOf = new Map();
   for (const c of catalog.categories) for (const id of c.offerIds) catOf.set(id, c.id);
+  // в 07 — плитки (NAV_LOOK), в остальных сценариях прежние иллюстрации
+  const tiles = !!custom && NAV_LOOK === 'tiles';
   const navItems = NAV.filter((n) => catalog.getCategory(n.id)).map((n) => {
     const el = button({ class: 'feed-nav-item', role: 'tab', 'aria-selected': 'false', dataset: { cat: n.id } },
-      h('span', { class: 'feed-nav-pic' }, img(n.img, { cls: 'feed-nav-img', alt: '', width: 105, height: 100, lazy: false })),
-      h('span', { class: 'feed-nav-label' }, n.label));
+      tiles ? navTile(n.id) : h('span', { class: 'feed-nav-pic' }, img(n.img, { cls: 'feed-nav-img', alt: '', width: 105, height: 100, lazy: false })),
+      h('span', { class: 'feed-nav-label' }, (tiles && NAV_TILES[n.id]?.label) || n.label));
     el.addEventListener('click', () => select(current === n.id ? 'all' : n.id));
     return el;
   });
-  const chipsBar = h('div', { class: 'feed-nav', role: 'tablist', 'aria-label': 'Категории ленты' }, navItems);
+  const chipsBar = h('div', { class: `feed-nav ${tiles ? 'is-tiles' : ''}`, role: 'tablist', 'aria-label': 'Категории ленты' }, navItems);
   let current = 'all';
 
+  // ---------- Чипсы в шапке (07): навигация уехала под апп-бар — сверху появляется строка чипсов ----------
+  // Липкий слой высотой со строку чипсов, поднятый на ту же высоту (отрицательный отступ, место в потоке — ноль):
+  // лежит поверх низа навигации и прилипает к апп-бару, когда навигация уходит под него; лента не сдвигается.
+  // Чипсы и плитки выбирают одно и то же.
+  const chips = custom ? [{ id: 'all', label: 'Все' }, ...NAV.filter((n) => catalog.getCategory(n.id)).map((n) => ({ id: n.id, label: NAV_TILES[n.id]?.label || n.label }))].map((c) => {
+    const el = button({ class: `chip chip-m ${c.id === 'all' ? 'is-active' : ''}`, dataset: { cat: c.id } }, h('span', { class: 'chip-text' }, c.label));
+    el.addEventListener('click', () => select(c.id, { fromChips: true }));
+    return el;
+  }) : [];
+  const chipsScroll = h('div', { class: 'chips-scroll' }, h('div', { class: 'chips-line' }, chips));
+  const chipsTop = custom ? h('div', { class: 'feed-chips' }, h('div', { class: 'feed-chips-bar' }, chipsScroll)) : null;
+  const CHIPS_DELAY = 30;
+  let chipsShown = false;
+  // после тапа по чипсу задержки нет: лента встаёт под строку чипсов целиком, чипсы остаются;
+  // как только навигация снова видна — обычный режим
+  let chipsPinned = false;
+  function syncChips() {
+    if (!chipsTop || !pageEl) return;
+    // слой ниже на CHIPS_DELAY: чипсы появляются, когда ленту прокрутили ещё на столько после ухода навигации
+    const lift = chipsTop.firstChild.offsetHeight - (chipsPinned ? 0 : CHIPS_DELAY);
+    chipsTop.style.height = `${lift}px`;
+    chipsTop.style.marginTop = `${-lift}px`;
+    const appbarBottom = pageEl.getBoundingClientRect().top + parseFloat(getComputedStyle(pageEl).paddingTop);
+    const show = chipsBar.getBoundingClientRect().bottom <= appbarBottom + lift + 1;
+    if (!show && chipsPinned) {
+      chipsPinned = false;
+      syncChips();
+      return;
+    }
+    if (show === chipsShown) return;
+    chipsShown = show;
+    chipsTop.classList.toggle('is-shown', show);
+  }
+
   let pageEl = null;
-  function select(id) {
+  function select(id, { fromChips = false } = {}) {
     if (id === current) return;
     current = id;
     haptics.selection();
@@ -1030,6 +1100,12 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
       const on = el.dataset.cat === id;
       el.classList.toggle('is-active', on);
       el.setAttribute('aria-selected', String(on));
+    }
+    for (const el of chips) {
+      const on = el.dataset.cat === id;
+      el.classList.toggle('is-active', on);
+      // выбранный чипс — в видимую часть строки
+      if (on) chipsScroll.scrollTo({ left: el.offsetLeft - (chipsScroll.clientWidth - el.offsetWidth) / 2, behavior: 'smooth' });
     }
     // у категории есть свои полки — показываем их; если своих нет (спорт, связь),
     // показываем её карточки из сборных полок «Ещё для вас»
@@ -1077,7 +1153,14 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
     // билет прижат к соседям отрицательным отступом — первым под навигацией ему нужен обычный
     root.classList.toggle('starts-with-trip', !!shown[0]?.classList.contains('fc-trip'));
     // лента встаёт к навигации, видимые полки проявляются по очереди
-    if (pageEl) {
+    if (pageEl && fromChips) {
+      // из чипсов — к началу ленты под строкой чипсов, чтобы они остались на экране
+      const pad = parseFloat(getComputedStyle(pageEl).paddingTop) + chipsTop.firstChild.offsetHeight;
+      const y = root.getBoundingClientRect().top - pageEl.getBoundingClientRect().top + pageEl.scrollTop - pad;
+      chipsPinned = true;
+      if (pageEl.scrollTop > y) pageEl.scrollTo({ top: Math.max(0, y), behavior: 'auto' });
+      syncChips();
+    } else if (pageEl) {
       // по заголовку «Лента выгоды», а не по блоку: над ним отступ 32px, и из-под шапки торчала тень блока выше
       const title = head.querySelector('.feed-head-title');
       const y = title.getBoundingClientRect().top - pageEl.getBoundingClientRect().top + pageEl.scrollTop - parseFloat(getComputedStyle(pageEl).paddingTop) - 4;
@@ -1093,9 +1176,18 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
   const head = h('div', { class: 'feed-head' },
     h('div', { class: 'feed-head-row' }, h('h2', { class: 'feed-head-title' }, 'Лента выгоды'), tune),
     h('p', { class: 'feed-head-sub' }, custom ? 'Собрана по вашей настройке' : 'Кэшбэк во всех категориях'));
-  const wrap = h('div', { class: 'feed-shelves' }, head, chipsBar, root);
+  const wrap = h('div', { class: 'feed-shelves' }, head, chipsBar, chipsTop, root);
   let cleanups = [];
-  wrap.mount = (page) => { pageEl = page; cleanups = extras.map((x) => x.mount(page)); };
+  wrap.mount = (page) => {
+    pageEl = page;
+    cleanups = extras.map((x) => x.mount(page));
+    if (chipsTop) {
+      let raf = 0;
+      const onScroll = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(syncChips); };
+      page.addEventListener('scroll', onScroll, { passive: true });
+      cleanups.push(() => page.removeEventListener('scroll', onScroll));
+    }
+  };
   wrap.destroy = () => cleanups.forEach((fn) => fn?.());
   return wrap;
 }
