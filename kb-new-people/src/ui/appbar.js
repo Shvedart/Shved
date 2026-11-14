@@ -1,6 +1,8 @@
 // Постоянный апп-бар: стоит на месте, меняется только набор элементов.
 // Конфиг: { left: 'back' | 'close' | null, title, titleVisible, progress (0..1 | null),
-//           search, heart, heartVisible, transparent, onLeft, onHeart }
+//           search, heart, heartVisible, transparent, onLeft, onHeart, extra }
+// extra — узел под строкой кнопок (чипсы ленты 07): живёт в самой шапке, а не липнет в странице —
+// на iPhone липкий слой при резкой прокрутке дёргался, шапка — нет
 
 import { h, button, icon, iconImg, iconUrl } from '../core/dom.js';
 import { animate, EASE } from '../core/motion.js';
@@ -21,7 +23,8 @@ export function createAppbar({ getNav }) {
   const heartFilled = iconImg('heart-filled', { cls: 'heart-filled' });
   const heart = button({ class: 'appbar-btn glass heart-btn', 'aria-label': 'Избранное' }, heartOutline, heartFilled);
   const right = h('div', { class: 'appbar-right' }, search, heart);
-  const bar = h('header', { class: 'appbar' }, h('div', { class: 'appbar-controls' }, h('div', { class: 'appbar-left' }, left), center, right));
+  const extraSlot = h('div', { class: 'appbar-extra' });
+  const bar = h('header', { class: 'appbar' }, h('div', { class: 'appbar-controls' }, h('div', { class: 'appbar-left' }, left), center, right), extraSlot);
 
   left.addEventListener('click', () => {
     const cfg = current?.appbarState;
@@ -41,6 +44,7 @@ export function createAppbar({ getNav }) {
     if (cfg === false) return;
     bar.classList.toggle('is-transparent', !!cfg.transparent);
     bar.classList.toggle('is-solid', !cfg.transparent);
+    if (extraSlot.firstChild !== (cfg.extra || null)) extraSlot.replaceChildren(...(cfg.extra ? [cfg.extra] : []));
 
     // Стрелка назад превращается в крестик в модальных экранах
     const kind = cfg.left || null;

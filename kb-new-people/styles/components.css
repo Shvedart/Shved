@@ -21,6 +21,15 @@
   background: transparent;
 }
 
+/* доп. строка шапки (чипсы ленты 07): висит под апп-баром, сам апп-бар не растёт — место под ней
+   не занято, пока строка скрыта */
+.appbar-extra {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+
 .appbar-controls {
   position: relative;
   display: flex;

@@ -326,6 +326,60 @@ function deliveryCashbackShelf({ catalog, onLink }) {
     h('div', { class: 'delivery-foot' }, order));
 }
 
+// Фото, название и цена — из каталога; партнёрский процент задан для сравнения.
+const PRODUCT_BENEFIT = {
+  product: 'samokat-110', categoryPercent: 5, partnerPercent: 28,
+  titles: { 'samokat-110': ['Говяжий стейк «Рибай»', 'Самокат, 200 г'] },
+};
+function productBenefitShelf({ catalog }) {
+  const product = catalog.samokat.find((p) => p.id === PRODUCT_BENEFIT.product);
+  if (!product) return null;
+  const price = rub(product.price);
+  const partnerBack = Math.floor(price * PRODUCT_BENEFIT.partnerPercent / 100);
+  if (price <= 0 || partnerBack <= 0 || partnerBack > price) return null;
+  const categoryBack = Math.floor(price * PRODUCT_BENEFIT.categoryPercent / 100);
+  // Оба варианта считаем от одной цены, возврат округляем вниз до рублей.
+  const variants = [
+    { percent: PRODUCT_BENEFIT.categoryPercent, back: categoryBack, label: 'Повышенный кэшбэк на\u00a0супермаркеты' },
+    { percent: PRODUCT_BENEFIT.partnerPercent, back: partnerBack, label: 'Партнёрский кэшбэк от\u00a0Самоката' },
+  ];
+  const money = (n) => `${n.toLocaleString('ru-RU', { maximumFractionDigits: 2 })}\u00a0₽`;
+  const title = PRODUCT_BENEFIT.titles[product.id];
+  const subtitle = title ? [title[0], h('br'), `${title[1]} · ${money(price)}`] : `${product.name} · ${money(price)}`;
+  const hearts = [];
+  let liked = false;
+  const variant = (v, i) => {
+    const partner = i === 1;
+    const label = v.label;
+    const heart = button({ class: 'benefit-product-heart', 'aria-label': `${product.name}: в избранное`, 'aria-pressed': 'false' },
+      img('assets/img/benefit/heart.svg', { alt: '', width: 24, height: 24 }),
+      iconImg('heart-filled', { size: 24, cls: 'benefit-heart-filled' }));
+    hearts.push(heart);
+    heart.addEventListener('click', () => {
+      liked = !liked;
+      haptics.selection();
+      for (const el of hearts) el.setAttribute('aria-pressed', String(liked));
+    });
+    const open = () => toast(`Цена ${money(price)}. Кэшбэк Самоката — ${money(partnerBack)}. Пример категории ${PRODUCT_BENEFIT.categoryPercent}% — ${money(categoryBack)}`, { duration: 5000 });
+    const pic = button({ class: 'benefit-product-pic', 'aria-label': `${product.name}. ${label}: ${v.percent}%. ${money(price - v.back)} с кэшбэком` },
+      h('span', { class: 'benefit-product-image' }, img(product.image, { alt: '', lazy: false })),
+      h('span', { class: 'benefit-product-percent' }, `${v.percent}%`));
+    pic.addEventListener('click', open);
+    return h('div', { class: `benefit-product${partner ? ' is-partner' : ''}` },
+      h('div', { class: 'benefit-product-tile' }, pic, heart),
+      h('div', { class: 'benefit-product-info' },
+        h('div', { class: 'ocard-name benefit-product-price' }, `${money(price - v.back)} с кэшбэком`),
+        h('p', { class: 'ocard-desc benefit-product-name' }, label)));
+  };
+  const header = cardHeader({ title: 'Один товар — разный кэшбэк', subtitle, link: 'Все',
+    onLink: () => toast('Другие сравнения появятся в приложении') });
+  header.classList.add('delivery-cb-head');
+  header.prepend(img('assets/img/gorod/samokat.png', { cls: 'delivery-cb-logo', alt: 'Самокат', width: 40, height: 40, lazy: false }));
+  return h('section', { class: 'card product-benefit', dataset: { cat: 'food' } },
+    header,
+    h('div', { class: 'product-benefit-grid' }, variants.map(variant)));
+}
+
 // Полки магазинов продуктов — по виду как корзина с кэшбэком (логотип слева от заголовка), но без суммы
 // корзины и без «Заказать»: просто продукты лентой вбок с кэшбэком на каждом. Фото у этих магазинов
 // со своим фоном — на всю плитку (.store-shelf в shelves.css)
@@ -526,6 +580,8 @@ function customSpecials({ catalog, setup, extras, onLink }) {
     // наборы — между «Подешевело в избранном» и афишей
     catalog.kits.forEach((kit, i) => list.push({ el: kitShelf(kit), at: 0.6 + i * 0.05 }));
   }
+  const benefit = productBenefitShelf({ catalog });
+  if (benefit) list.push({ el: benefit, at: 0.18 });
   const d = deliveryShelf({ catalog, onLink });
   if (d) list.push({ el: d, at: 0.1 });
   const r = storeShelf(REMIND, { catalog, onLink });
@@ -1123,17 +1179,16 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
   const chipsBar = h('div', { class: `feed-nav ${tiles ? 'is-tiles' : ''}`, role: 'tablist', 'aria-label': 'Категории ленты' }, navItems);
   let current = 'all';
 
-  // ---------- Чипсы в шапке (07): навигация уехала под апп-бар — сверху появляется строка чипсов ----------
-  // Липкий слой высотой со строку чипсов, поднятый на ту же высоту (отрицательный отступ, место в потоке — ноль):
-  // лежит поверх низа навигации и прилипает к апп-бару, когда навигация уходит под него; лента не сдвигается.
-  // Чипсы и плитки выбирают одно и то же.
+  // ---------- Чипсы в шапке (07): навигация уехала под апп-бар — в шапке появляется строка чипсов ----------
+  // Строка живёт в самом апп-баре (wrap.chipsEl → appbar.extra в main.js): липкий слой в странице на iPhone
+  // при резкой прокрутке дёргался. Чипсы и плитки выбирают одно и то же.
   const chips = custom ? [{ id: 'all', label: 'Все' }, ...NAV.filter((n) => catalog.getCategory(n.id)).map((n) => ({ id: n.id, label: NAV_TILES[n.id]?.label || n.label }))].map((c) => {
     const el = button({ class: `chip chip-m ${c.id === 'all' ? 'is-active' : ''}`, dataset: { cat: c.id } }, h('span', { class: 'chip-text' }, c.label));
     el.addEventListener('click', () => select(c.id, { fromChips: true }));
     return el;
   }) : [];
   const chipsScroll = h('div', { class: 'chips-scroll' }, h('div', { class: 'chips-line' }, chips));
-  const chipsTop = custom ? h('div', { class: 'feed-chips' }, h('div', { class: 'feed-chips-bar' }, chipsScroll)) : null;
+  const chipsTop = custom ? h('div', { class: 'feed-chips-bar' }, chipsScroll) : null;
   const CHIPS_DELAY = 30;
   let chipsShown = false;
   // после тапа по чипсу задержки нет: лента встаёт под строку чипсов целиком, чипсы остаются;
@@ -1141,13 +1196,11 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
   let chipsPinned = false;
   function syncChips() {
     if (!chipsTop || !pageEl) return;
-    // слой ниже на CHIPS_DELAY: чипсы появляются, когда ленту прокрутили ещё на столько после ухода навигации
-    const lift = chipsTop.firstChild.offsetHeight - (chipsPinned ? 0 : CHIPS_DELAY);
-    chipsTop.style.height = `${lift}px`;
-    chipsTop.style.marginTop = `${-lift}px`;
     const appbarBottom = pageEl.getBoundingClientRect().top + parseFloat(getComputedStyle(pageEl).paddingTop);
-    const show = chipsBar.getBoundingClientRect().bottom <= appbarBottom + lift + 1;
-    if (!show && chipsPinned) {
+    const navBottom = chipsBar.getBoundingClientRect().bottom;
+    // чипсы появляются, когда ленту прокрутили ещё на CHIPS_DELAY после ухода навигации под шапку
+    const show = navBottom <= appbarBottom - (chipsPinned ? -chipsTop.offsetHeight : CHIPS_DELAY);
+    if (!show && chipsPinned && navBottom > appbarBottom) {
       chipsPinned = false;
       syncChips();
       return;
@@ -1222,7 +1275,7 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
     // лента встаёт к навигации, видимые полки проявляются по очереди
     if (pageEl && fromChips) {
       // из чипсов — к началу ленты под строкой чипсов, чтобы они остались на экране
-      const pad = parseFloat(getComputedStyle(pageEl).paddingTop) + chipsTop.firstChild.offsetHeight;
+      const pad = parseFloat(getComputedStyle(pageEl).paddingTop) + chipsTop.offsetHeight;
       const y = root.getBoundingClientRect().top - pageEl.getBoundingClientRect().top + pageEl.scrollTop - pad;
       chipsPinned = true;
       if (pageEl.scrollTop > y) pageEl.scrollTo({ top: Math.max(0, y), behavior: 'auto' });
@@ -1243,7 +1296,9 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
   const head = h('div', { class: 'feed-head' },
     h('div', { class: 'feed-head-row' }, h('h2', { class: 'feed-head-title' }, 'Лента выгоды'), tune),
     h('p', { class: 'feed-head-sub' }, custom ? 'Собрана по вашей настройке' : 'Кэшбэк во всех категориях'));
-  const wrap = h('div', { class: 'feed-shelves' }, head, chipsBar, chipsTop, root);
+  const wrap = h('div', { class: 'feed-shelves' }, head, chipsBar, root);
+  // строка чипсов для апп-бара (07)
+  wrap.chipsEl = chipsTop;
   let cleanups = [];
   wrap.mount = (page) => {
     pageEl = page;

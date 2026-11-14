@@ -135,21 +135,8 @@
 }
 
 /* чипсы в шапке ленты 07: липкий слой нулевой высоты под навигацией, строка чипсов выезжает из-под апп-бара */
-.feed-chips {
-  position: sticky;
-  /* липкий отступ считается от края с учётом padding-top страницы — он уже равен высоте апп-бара */
-  top: 0;
-  z-index: 15;
-  height: 0;
-  /* слой лежит поверх низа навигации — тапы проходят к ней, пока чипсы скрыты */
-  pointer-events: none;
-}
-
+/* строка лежит в апп-баре (.appbar-extra) сразу под кнопками: шапка стоит на месте, чипсы не дёргаются */
 .feed-chips-bar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
   padding-top: 8px;
   background: var(--c-bg);
   opacity: 0;
@@ -158,19 +145,7 @@
   transition: opacity var(--dur-fast) ease, transform var(--dur-fast) var(--ease-out);
 }
 
-/* «подол» вверх под апп-бар: iPhone при резкой прокрутке рисует липкую строку с запаздыванием ниже,
-   и между апп-баром и чипсами просвечивала лента. Подол прячется под апп-баром (он выше по z-index) */
-.feed-chips-bar::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 100%;
-  height: 80px;
-  background: var(--c-bg);
-}
-
-.feed-chips.is-shown .feed-chips-bar {
+.feed-chips-bar.is-shown {
   opacity: 1;
   transform: none;
   pointer-events: auto;
@@ -1229,3 +1204,24 @@
 .store-shelf .delivery-scroll {
   padding-bottom: 0;
 }
+
+/* Полка сравнения: геометрия и локальные изображения из Figma 821:160804. */
+.product-benefit { margin: 0 var(--gutter); padding-bottom: var(--sp-5); border-radius: var(--r-m); }
+.product-benefit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); padding: 0 var(--sp-4) var(--sp-2); }
+.benefit-product { min-width: 0; }
+.benefit-product-tile { position: relative; }
+.benefit-product-pic { position: relative; display: block; width: 100%; aspect-ratio: 1; border-radius: var(--r-m); overflow: hidden; background: var(--c-bg-page); text-align: left; }
+.benefit-product-image { position: absolute; inset: 0; }
+.benefit-product-image img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.benefit-product-percent { position: absolute; left: 12px; bottom: 12px; padding: 0 4px 0 5px; border-radius: 8px; background: var(--c-bg); color: var(--c-label); font: 700 20px/24px var(--font-rounded); letter-spacing: -.36px; box-shadow: 0 6px 17px rgba(0,0,0,.12); }
+.benefit-product.is-partner .benefit-product-percent { background: var(--c-brand); box-shadow: none; }
+.benefit-product-heart { position: absolute; right: 0; top: 0; width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--r-pill); }
+.benefit-product-heart > * { grid-area: 1 / 1; }
+.benefit-product-heart .benefit-heart-filled { visibility: hidden; }
+.benefit-product-heart[aria-pressed="true"] > img { visibility: hidden; }
+.benefit-product-heart[aria-pressed="true"] .benefit-heart-filled { visibility: visible; }
+.benefit-product-info { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: var(--sp-2) 0 0 var(--sp-1); }
+.benefit-product-price { font-size: 13px; line-height: 16px; letter-spacing: -.08px; font-weight: 600; white-space: nowrap; }
+.benefit-product-name { display: block; margin: 0; height: 32px; overflow: hidden; font-size: 13px; line-height: 16px; letter-spacing: -.08px; color: var(--c-text); }
+
+.product-benefit .delivery-cb-logo { align-self: flex-start; }

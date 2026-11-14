@@ -944,6 +944,51 @@
       "badge": "−20%",
       "image": "https://damcdn.samokat.ru/dam-storage-ext-env-prod/2026/07/cb836aff-a68e-4259-89f7-683ce8fc9448?resolution=480x480",
       "shopLogo": ""
+    },
+    {
+      "id": "samokat-106",
+      "name": "Бенто-торт Чёрная вишня Самокат, 300 г",
+      "price": "461 ₽",
+      "cashback": "69 ₽",
+      "badge": "−30%",
+      "image": "https://damcdn.samokat.ru/dam-storage-ext-env-prod/2025/11/7d88cc2a-c0c6-4947-beeb-f27589a0155c?resolution=480x480",
+      "shopLogo": ""
+    },
+    {
+      "id": "samokat-107",
+      "name": "Мякоть бедра цыплёнка-бройлера Самокат, в маринаде, с печёным перцем, для запекания, 500 г",
+      "price": "439 ₽",
+      "cashback": "66 ₽",
+      "badge": "",
+      "image": "https://damcdn.samokat.ru/dam-storage-ext-env-prod/2026/04/e298a079-5b29-4410-b038-d208167ea81f?resolution=480x480",
+      "shopLogo": ""
+    },
+    {
+      "id": "samokat-108",
+      "name": "Мясо Ближние горки, По-итальянски, из свинины, в маринаде, охлаждённое, 700 г",
+      "price": "345 ₽",
+      "cashback": "52 ₽",
+      "badge": "−31%",
+      "image": "https://damcdn.samokat.ru/dam-storage-ext-env-prod/2025/11/ed22ba39-f454-4f43-b992-ee197e1197e1?resolution=480x480",
+      "shopLogo": ""
+    },
+    {
+      "id": "samokat-109",
+      "name": "Свиная корейка Слово мясника, без кости, охлаждённая, 800 г",
+      "price": "399 ₽",
+      "cashback": "60 ₽",
+      "badge": "−27%",
+      "image": "https://damcdn.samokat.ru/dam-storage-ext-env-prod/2026/08/69970a64-c28b-455d-ab1f-373099e2a674?resolution=480x480",
+      "shopLogo": ""
+    },
+    {
+      "id": "samokat-110",
+      "name": "Говяжий стейк «Рибай» Самокат, с ароматным маслом, охлаждённый, 200 г",
+      "price": "569 ₽",
+      "cashback": "85 ₽",
+      "badge": "",
+      "image": "https://damcdn.samokat.ru/dam-storage-ext-env-prod/2026/09/af5e3017-f38c-4020-aa28-876e879c01a8?resolution=480x480",
+      "shopLogo": ""
     }
   ]
 }

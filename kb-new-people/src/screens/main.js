@@ -313,7 +313,9 @@ export function mainScreen({ el, params, nav, entry }) {
 
   return {
     appbar: { left: 'back', title: 'Кэшбэки', titleVisible: false, search: true, heart: true, heartVisible: false, // 07: «назад» — к настройке ленты (как «Изменить»), а не на разводящую
-    onLeft: () => (scenario === 's7' ? nav.replace('/setup/s7') : nav.popTo('/')) },
+    onLeft: () => (scenario === 's7' ? nav.replace('/setup/s7') : nav.popTo('/')),
+    // 07: строка чипсов категорий — в самой шапке (появляется, когда навигация ушла под неё)
+    extra: shelves?.chipsEl || null },
     onActive: onScroll,
     onInactive() {
       tour?.destroy();
