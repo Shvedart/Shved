@@ -305,9 +305,17 @@ export function promoCard(promo) {
 // Фото 3:4 на серой плитке (белый фон снимка сливается с ней), рейтинг, сердечко и точки галереи;
 // ниже старая цена со скидкой, цена с кэшбэком, бренд, описание в две строки и магазин.
 export function goodsCard(p) {
+  const amount = (value) => Number(String(value ?? '').replace(/[^\d,.-]/g, '').replace(',', '.'));
+  const price = amount(p.price);
+  const cashback = amount(p.cashback);
+  const canCalculate = p.cashback != null && String(p.cashback).trim() !== '' && Number.isFinite(price) && price > 0 && Number.isFinite(cashback) && cashback >= 0 && cashback <= price;
+  const finalPrice = canCalculate ? Math.round((price - cashback) * 100) / 100 : null;
+  const percent = canCalculate ? Math.round(cashback / price * 100) : null;
+  const money = (n) => `${n.toLocaleString('ru-RU', { maximumFractionDigits: 2 })}\u00a0₽`;
   const pic = h('div', { class: 'goods-pic' },
     img(p.image, { alt: '' }),
-    p.rating ? h('span', { class: 'goods-rating' }, icon('star', { size: 10 }), p.rating) : null);
+    p.rating ? h('span', { class: 'goods-rating' }, icon('star', { size: 10 }), p.rating) : null,
+    canCalculate ? h('span', { class: 'goods-cashback-percent' }, `${percent}%`) : null);
   const merchant = p.verified
     ? h('div', { class: 'goods-shop' }, h('span', { class: 'goods-verified' }, iconImg('premium-dark', { size: 10 })), 'Магазин проверен')
     : p.merchant ? h('div', { class: 'goods-shop' }, // логотип не загрузился (часть адресов cdn-tinkoff недоступна) — кружок с первой буквой
@@ -319,10 +327,11 @@ export function goodsCard(p) {
       p.oldPrice ? h('div', { class: 'goods-old' }, h('s', null, p.oldPrice), p.discount ? h('span', { class: 'goods-discount' }, p.discount) : null) : null,
       h('div', { class: 'goods-price' }, h('span', null, p.price),
         h('span', { class: 'gcard-badge' }, icon('crown', { size: 10 }), h('span', null, `${p.cashback}\u00A0₽`))),
+      canCalculate ? h('div', { class: 'goods-price-net' }, `${money(finalPrice)} `, h('span', null, 'с\u00a0кэшбэком')) : null,
       h('div', { class: 'goods-text' }, h('p', { class: 'goods-brand' }, p.brand), h('p', { class: 'goods-desc' }, p.description)),
       merchant));
   main.addEventListener('click', () => toast('Товар откроется в приложении'));
-  return h('div', { class: 'goods', dataset: { goods: p.id } }, main, localHeart(`${p.brand}: в избранное`));
+  return h('div', { class: `goods${canCalculate ? ' has-net-price' : ''}`, dataset: { goods: p.id } }, main, localHeart(`${p.brand}: в избранное`));
 }
 
 // Сердечко без бренда в каталоге: отметка живёт только на карточке

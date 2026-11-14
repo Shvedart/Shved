@@ -320,7 +320,7 @@ function deliveryCashbackShelf({ catalog, onLink }) {
       h('div', { class: 'card-header-text' },
         h('h2', { class: 'card-title' }, `Корзина в ${st.where}`),
         h('p', { class: 'card-subtitle delivery-cb-sub', 'aria-label': `Стоила ${money(total)}, с кэшбэком ${money(total - back)}` },
-          h('s', null, money(total)), ' ', h('b', null, money(total - back)), ' с кэшбэком')),
+          h('s', null, money(total)), ' ', h('b', null, `${money(total - back)} с кэшбэком`))),
       linkButton('Все', { onClick: onLink, cls: 'card-link' })),
     h('div', { class: 'hscroll delivery-scroll' }, list.map(groceryCard), deliveryEdit()),
     h('div', { class: 'delivery-foot' }, order));

@@ -1827,3 +1827,11 @@ img.is-broken {
   -webkit-box-orient: vertical;
   white-space: normal;
 }
+
+/* Новый вид товаров в 07: возврат вычтен из цены, процент переехал на фото. */
+.goods-price-net, .goods-cashback-percent { display: none; }
+.goods-net-price .has-net-price .goods-price { display: none; }
+.goods-net-price .goods-price-net { display: block; font-size: 15px; line-height: 20px; font-weight: 700; letter-spacing: -.24px; }
+.goods-net-price .goods-cashback-percent { display: block; position: absolute; left: 12px; bottom: 12px; padding: 0 4px 0 5px; border-radius: 8px; background: var(--c-brand); color: var(--c-label); font: 700 20px/24px var(--font-rounded); letter-spacing: -.36px; }
+
+.goods-net-price .goods-price-net > span { font-weight: 400; }

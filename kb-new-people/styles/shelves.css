@@ -1182,15 +1182,18 @@
   align-self: flex-start;
 }
 
-/* «1 382 ₽ 1 176 ₽ с кэшбэком»: старая цена зачёркнута, новая — зелёным */
+/* Старая цена зачёркнута; новая с подписью — как цена в полке сравнения. */
 .delivery-cb-sub s {
   white-space: nowrap;
 }
 
 .delivery-cb-sub b {
-  font-weight: 600;
+  font-size: 15px;
+  line-height: 20px;
+  letter-spacing: -.08px;
+  font-weight: 700;
   white-space: nowrap;
-  color: var(--c-green);
+  color: var(--c-text);
 }
 
 /* у фото Самоката свой светлый фон и поля — растягиваем на всю плитку, а не 79% как у вырезанных продуктов */

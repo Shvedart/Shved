@@ -37,6 +37,7 @@ export function mainScreen({ el, params, nav, entry }) {
   if (scenario === 's7') {
     // размер логотипа и картинки на офферах и промокодах
     applyCardLook(el, store.state.feedSetup);
+    el.classList.toggle('goods-net-price', !!store.state.feedSetup?.goodsNetPrice);
     for (const [part, on] of Object.entries(store.state.feedSetup?.goodsShow || {})) if (on === false) el.classList.add(`goods-no-${part}`);
   }
 
