@@ -1214,6 +1214,33 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
 
   const root = h('div', { class: 'shelves', dataset: { tourCards: 'selection' } }, parts);
 
+  // Сохраняем исходный порядок, чтобы фильтр не менял общую ленту навсегда.
+  const travelContainers = [root, ...root.querySelectorAll('.shelf-mixed')];
+  const travelOrder = new Map(travelContainers.map((el) => [el, [...el.children]]));
+  function orderTravel(id) {
+    for (const container of travelContainers) {
+      const visible = [...container.children].filter((el) => !el.hidden);
+      const hot = visible.find((el) => el.classList.contains('hot-flights'));
+      const trip = visible.find((el) => el.classList.contains('fc-trip'));
+      if (id === 'travel' && hot) {
+        visible.splice(visible.indexOf(hot), 1);
+        visible.unshift(hot);
+      }
+      if (trip) {
+        visible.splice(visible.indexOf(trip), 1);
+        // Между горячими билетами и направлениями оставляем обычный блок.
+        const slots = visible.map((el, i) => i).filter((i) => i > 0 && visible[i - 1] !== hot);
+        if (slots.length) {
+          const original = [...container.children].filter((el) => !el.hidden).indexOf(trip);
+          const at = slots.reduce((best, i) => Math.abs(i - original) < Math.abs(best - original) ? i : best);
+          visible.splice(at, 0, trip);
+        } else visible.push(trip);
+      }
+      container.append(...visible);
+    }
+  }
+  orderTravel('all');
+
   // ---------- Навигация по категориям (макет 654:145600): плитка-иллюстрация и подпись ----------
   // Тап оставляет в ленте только полки категории, повторный тап — снова вся лента.
   const catOf = new Map();
@@ -1265,6 +1292,8 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
   function select(id, { fromChips = false } = {}) {
     if (id === current) return;
     current = id;
+    for (const [container, children] of travelOrder) container.append(...children);
+    for (const part of parts) part.rebalance?.(true);
     haptics.selection();
     chipsBar.classList.toggle('has-active', id !== 'all');
     for (const el of navItems) {
@@ -1302,7 +1331,9 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
           any ||= !sp.hidden;
         }
         part.hidden = !any;
-        part.rebalance?.(id === 'all');
+        for (const block of part.querySelectorAll(':scope > .masonry')) {
+          block.hidden = ![...block.querySelectorAll('.ocard, .promo, .goods, .banner, .scard')].some((card) => !card.hidden);
+        }
       } else {
         // полка «только для категории» во всей ленте не показывается
         if (part.dataset.only) part.hidden = part.dataset.only !== id;
@@ -1312,6 +1343,8 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
       }
       if (!part.hidden) shown.push(part);
     }
+    orderTravel(id);
+    for (const part of parts) part.rebalance?.(id === 'all');
     // интерактивная полка (путешествия, афиша) не встаёт первой: в категории она идёт второй
     for (const part of parts) part.style.order = '';
     const interactive = (el) => el?.classList.contains('fc-trip') || el?.classList.contains('fc-hero');
