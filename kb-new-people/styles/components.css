@@ -1869,7 +1869,7 @@ img.is-broken {
 }
 .goods-net-price .has-cashback-change .goods-cashback-percent { z-index: 1; white-space: nowrap; }
 .goods-net-price .has-cashback-change .goods-price-before { color: var(--c-text-secondary); }
-.goods-net-price .has-cashback-change:not([data-change-state="pending"]) .goods-price-before { text-decoration: line-through; }
+.goods-net-price .has-cashback-change .goods-price-before { text-decoration: none; }
 .goods-change-old, .goods-change-arrow, .goods-change-new { display: inline-block; color: var(--c-label); }
 .has-cashback-change .goods-dots > img { display: block; }
 

@@ -38,8 +38,8 @@ export function mainScreen({ el, params, nav, entry }) {
   if (scenario === 's7') {
     // размер логотипа и картинки на офферах и промокодах
     applyCardLook(el, store.state.feedSetup);
-    el.classList.toggle('goods-net-price', !!store.state.feedSetup?.goodsNetPrice);
-    el.classList.toggle('goods-cover', store.state.feedSetup?.goodsCover !== false);
+    el.classList.toggle('goods-net-price', store.state.feedSetup?.goodsNetPrice !== false);
+    el.classList.toggle('goods-cover', store.state.feedSetup?.goodsCover === true);
     for (const [part, on] of Object.entries(store.state.feedSetup?.goodsShow || {})) if (on === false) el.classList.add(`goods-no-${part}`);
   }
 
@@ -47,7 +47,7 @@ export function mainScreen({ el, params, nav, entry }) {
   let photoSwitch = null;
   if (scenario === 's7') {
     const input = h('input', { class: 'setup-switch-input', type: 'checkbox', role: 'switch', 'aria-label': 'Фото на всю плитку' });
-    input.checked = store.state.feedSetup?.goodsCover !== false;
+    input.checked = store.state.feedSetup?.goodsCover === true;
     photoSwitch = h('label', { class: 'feed-photo-switch', title: 'Фото на всю плитку' },
       input, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
     input.addEventListener('change', () => {

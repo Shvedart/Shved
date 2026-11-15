@@ -14,7 +14,7 @@ export function setupScreen({ el, params, nav }) {
   const cats = SETUP_CATS.filter((c) => catalog.getCategory(c.id) || catalog.goods.some((g) => g.id === c.id));
   const ids = cats.map((c) => c.id);
   const saved = store.state.feedSetup;
-  let setup = saved && ids.every((id) => id in saved.weights) ? { ...saved } : defaultSetup(ids);
+  let setup = saved && ids.every((id) => id in saved.weights) ? { ...defaultSetup(ids), ...saved } : defaultSetup(ids);
 
   // ---------- Вид ленты ----------
   const modes = [
@@ -225,8 +225,8 @@ export function setupScreen({ el, params, nav }) {
     offerPreview.classList.toggle('is-tinted', !!setup.tinted);
     offerPreview.classList.toggle('no-offer-images', setup.offerImages === false);
     applyCardLook(offerPreview, setup);
-    goodsPreview.classList.toggle('goods-net-price', !!setup.goodsNetPrice);
-    goodsPreview.classList.toggle('goods-cover', setup.goodsCover !== false);
+    goodsPreview.classList.toggle('goods-net-price', setup.goodsNetPrice !== false);
+    goodsPreview.classList.toggle('goods-cover', setup.goodsCover === true);
     for (const part of ['old', 'brand', 'desc', 'shop', 'verified']) goodsPreview.classList.toggle(`goods-no-${part}`, setup.goodsShow?.[part] === false);
     // «Чистые карточки товаров»: у образцов фото после модерации или исходное, с инфографикой
     for (const { clean, raw } of modPairs) {
@@ -261,7 +261,7 @@ export function setupScreen({ el, params, nav }) {
   previewRo.observe(offerPreview);
 
   const netPriceInput = h('input', { class: 'setup-switch-input', type: 'checkbox', role: 'switch' });
-  netPriceInput.checked = !!setup.goodsNetPrice;
+  netPriceInput.checked = setup.goodsNetPrice !== false;
   netPriceInput.addEventListener('change', () => {
     setup = { ...setup, goodsNetPrice: netPriceInput.checked };
     haptics.selection();
@@ -272,7 +272,7 @@ export function setupScreen({ el, params, nav }) {
     netPriceInput, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
 
   const coverInput = h('input', { class: 'setup-switch-input', type: 'checkbox', role: 'switch' });
-  coverInput.checked = setup.goodsCover !== false;
+  coverInput.checked = setup.goodsCover === true;
   coverInput.addEventListener('change', () => {
     setup = { ...setup, goodsCover: coverInput.checked };
     haptics.selection();

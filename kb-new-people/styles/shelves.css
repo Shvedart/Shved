@@ -1232,3 +1232,15 @@
 .benefit-product-price-caption { font-weight: 400; }
 
 .product-benefit .delivery-foot { margin-top: 12px; }
+
+/* В избранном оставляем один бейдж на фото — процент кэшбэка. */
+.fav-drop .delivery-diff.is-down { display: none; }
+
+/* Избранное без карусели: четыре карточки, два товара в каждом ряду. */
+.fav-drop-cards { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--sp-6) var(--sp-3); padding: 0 var(--sp-4) 14px; }
+.fav-drop-grid .goods { width: auto; scroll-snap-align: none; }
+
+/* Цвет объединяет всю подборку; отдельные товары без собственных рамок. */
+.fav-drop-grid { background: color-mix(in srgb, var(--c-red) 10%, white); box-shadow: none; }
+.fav-drop-grid .goods.has-cashback-change::before { display: none; }
+.fav-drop-all { justify-content: center; }

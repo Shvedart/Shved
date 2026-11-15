@@ -44,7 +44,7 @@ export function installGoodsChange(card, { price, cashback, boostPoints = 15 }) 
     if (started || heart.getAttribute('aria-pressed') !== 'true') return;
     started = true;
     card.dataset.changeState = 'running';
-    before.textContent = money(fromPrice);
+    before.textContent = money(price);
     const old = h('span', { class: 'goods-change-old' }, String(fromPercent));
     const arrow = h('span', { class: 'goods-change-arrow', 'aria-hidden': 'true' }, '\u00a0→\u00a0');
     number = h('span', { class: 'goods-change-new' }, `${fromPercent}%`);

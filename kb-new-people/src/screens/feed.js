@@ -502,22 +502,27 @@ const groceryAsGoods = (p) => ({
 });
 
 // «Путешествия» и афиша в ленте 07 — если у их категории есть доля; встают на треть и две трети ленты
-// «Подешевело в избранном» (макет 762:158789, лента 07): белая карточка, товары со
-// скидкой из выбранных категорий лентой вбок (карточки 132px, как в «Вашей корзине»), сердечко
-// уже отмечено, на фото — зелёная плашка, на сколько рублей стало дешевле
+// «Подешевело в избранном»: четыре товара сеткой с ростом кэшбэка от 5 до 15 п.п.
 const FAV_DROP_COUNT = 8;
+const FAV_DROP_GRID_COUNT = 4;
 
 function favDropShelf({ catalog, setup }) {
   const src = setup.moderated !== false && catalog.goodsModerated.length ? catalog.goodsModerated : catalog.goods;
   const pools = Object.fromEntries(src.filter((c) => (setup.weights[c.id] || 0) > 0)
-    .map((c) => [c.id, c.products.filter((p) => p.oldPrice && rub(p.oldPrice) > rub(p.price))]));
-  // категории чередуются по долям, чтобы в полке были не одни часы
-  const order = interleave(Object.fromEntries(Object.entries(pools).map(([c, l]) => [c, Math.min(l.length, FAV_DROP_COUNT)])));
+    .map((c) => [c.id, c.products.filter((p) => p.oldPrice && rub(p.oldPrice) > rub(p.price)
+      && String(p.cashback ?? '').trim() && rub(String(p.cashback)) >= 0 && rub(String(p.cashback)) < rub(p.price))]));
+  // Чередуем категории, сохраняя прежний подбор товаров полки.
+  const order = interleave(Object.fromEntries(Object.entries(pools).map(([c, l]) => [c, Math.min(l.length, FAV_DROP_GRID_COUNT)])));
   const taken = {};
-  const list = order.slice(0, FAV_DROP_COUNT).map((c) => pools[c][(taken[c] = (taken[c] || 0) + 1) - 1]);
+  const list = order.slice(0, FAV_DROP_GRID_COUNT).map((c) => pools[c][(taken[c] = (taken[c] || 0) + 1) - 1]);
   if (list.length < 2) return null;
-  return goodsStrip({ title: 'Подешевело в избранном', cat: 'shopping', list, liked: true,
-    label: (p) => ({ text: `−${Math.round(rub(p.oldPrice) - rub(p.price)).toLocaleString('ru-RU')}\u00a0₽`, cls: 'is-down' }) });
+  const cards = list.map((p) => goodsCard(p, { cashbackChange: { boostPoints: 5 + Math.floor(Math.random() * 11) } }));
+  const all = button({ class: 'delivery-order fav-drop-all' }, 'Посмотреть все');
+  all.addEventListener('click', () => toast('Все товары избранного откроются в приложении'));
+  return h('section', { class: 'card delivery fav-drop fav-drop-grid goods-net-price', dataset: { cat: 'shopping' } },
+    cardHeader({ title: 'Стало выгоднее', subtitle: 'Повышенный кэшбэк — ещё 3\u00a0дня' }),
+    h('div', { class: 'fav-drop-cards' }, cards),
+    h('div', { class: 'delivery-foot' }, all));
 }
 
 // Белая карточка с товарами лентой вбок (карточки 132px, без старой цены и магазина) и плашкой на фото:
@@ -743,7 +748,7 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
   const tailCounts = allocate(tailTarget, weights,
     Object.fromEntries(cats.map((c) => [c, pools[c].goods.length - (goodsCounts[c] || 0)])), step);
   // Три разных товара из общей ленты выбираются заново, независимо от перемешивания ленты.
-  const changeCandidates = setup.goodsNetPrice ? cats.filter((cat) => cat !== 'food').flatMap((cat) =>
+  const changeCandidates = setup.goodsNetPrice !== false ? cats.filter((cat) => cat !== 'food').flatMap((cat) =>
     pools[cat].goods.slice(0, (goodsCounts[cat] || 0) + (tailCounts[cat] || 0))
       .filter((p) => rub(p.price) > 0 && String(p.cashback ?? '').trim() && rub(String(p.cashback)) < rub(p.price))
       .map((p) => `${cat}:${p.id}`)) : [];

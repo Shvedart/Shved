@@ -34,6 +34,8 @@ export function favCard({ mode = 'live', variant: initialVariant = 'default', lo
   const root = h('section', { class: `card favcard favcard-${mode} favcard-${variant} ${v2 ? 'favcard-v2' : ''}`, 'aria-label': 'Мое любимое' });
   let selected = null;
   let unsub = null;
+  let showBrandHint = true;
+  if (v2 && live) root.classList.add('has-brand-tabs');
 
   const brands = () => store.state.favBrands.map((id) => app.catalog.getBrand(id)).filter(Boolean);
 
@@ -55,10 +57,11 @@ export function favCard({ mode = 'live', variant: initialVariant = 'default', lo
     // подзаголовка нет; пока ничего не лайкнули (сценарий 03), на его месте подсказка
     root.replaceChildren(cardHeader({
       title: 'Мое любимое',
-      subtitle: list.length ? null : ['Отмечайте бренды сердечком —', h('br'), 'их предложения появятся здесь'],
+      subtitle: list.length ? (v2 && live && showBrandHint ? 'Выберите магазин — покажем его акции' : null) : ['Отмечайте бренды сердечком —', h('br'), 'их предложения появятся здесь'],
       link: 'Все',
       onLink: live ? () => app.nav.push('/favorites') : null,
     }));
+    if (v2 && live && list.length && showBrandHint) root.querySelector('.card-subtitle')?.classList.add('favcard-brand-hint');
     const link = root.querySelector('.card-link');
     if (!live && link) { link.disabled = true; link.tabIndex = -1; }
 
@@ -105,12 +108,13 @@ export function favCard({ mode = 'live', variant: initialVariant = 'default', lo
         dataset: { brand: b.id },
       },
       h('span', { class: 'fav-logo-pic' }, img(b.logo, { alt: '', width: 56, height: 56, fallback: b.name })),
-      top ? h('span', { class: 'fav-logo-badge' }, top.short) : null);
+      top ? h('span', { class: 'fav-logo-badge' }, top.short) : null,
+      live ? h('span', { class: 'fav-logo-label' }, b.name) : null);
       if (live) el.addEventListener('click', () => select(b.id));
       else { el.tabIndex = -1; el.disabled = true; }
       return el;
     });
-    const add = button({ class: 'fav-logo fav-logo-add', 'aria-label': 'Добавить бренды' }, h('span', { class: 'fav-logo-pic' }, icon('add', { size: 28 })));
+    const add = button({ class: 'fav-logo fav-logo-add', 'aria-label': 'Добавить бренды' }, h('span', { class: 'fav-logo-pic' }, icon('add', { size: 28 })), live ? h('span', { class: 'fav-logo-label' }, 'Добавить') : null);
     if (live) add.addEventListener('click', () => app.nav.push('/brands'));
     else { add.tabIndex = -1; add.disabled = true; }
     return h('div', { class: 'fav-logos-scroll' }, h('div', { class: 'fav-logos', role: 'tablist', 'aria-label': 'Любимые бренды' }, items, add));
@@ -210,7 +214,13 @@ export function favCard({ mode = 'live', variant: initialVariant = 'default', lo
     selected = id;
     haptics.selection();
     for (const c of root.querySelectorAll('.chip')) setChipActive(c, c.dataset.brand === id);
-    if (v2) syncBadge();
+    if (v2) {
+      syncBadge();
+      if (live) {
+        showBrandHint = false;
+        root.querySelector('.favcard-brand-hint')?.remove();
+      }
+    }
     const listEl = root.querySelector('.favcard-list');
     const h0 = listEl.offsetHeight;
     listEl.replaceChildren(...renderList());
