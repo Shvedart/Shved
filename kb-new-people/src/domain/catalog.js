@@ -6,7 +6,7 @@ import { plural } from '../core/dom.js';
 const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
 const DAY_MS = 86400000;
 
-export function buildCatalog(raw, cfg, productsRaw = null, discountsRaw = null, groceryRaw = null, goodsRaw = null, goodsModeratedRaw = null, bannersRaw = null, kitsRaw = null, samokatRaw = null, vkusvillRaw = null) {
+export function buildCatalog(raw, cfg, productsRaw = null, discountsRaw = null, groceryRaw = null, goodsRaw = null, goodsModeratedRaw = null, bannersRaw = null, kitsRaw = null, samokatRaw = null, vkusvillRaw = null, aviaRaw = null) {
   const today = new Date(`${cfg.today}T00:00:00`);
   const matchIndex = new Map();
   for (const [brandId, b] of Object.entries(cfg.brands || {})) {
@@ -81,7 +81,8 @@ export function buildCatalog(raw, cfg, productsRaw = null, discountsRaw = null, 
   const banners = bannersRaw?.banners || [];
   // наборы товаров с баннером (data/kits.json) — полки «Сделать свою первую свечу» и подобные
   const kits = kitsRaw?.kits || [];
-  return createCatalogApi({ categories, offers, brands, cfg, products, promos, grocery, samokat, vkusvill, goods, goodsModerated, banners, kits });
+  const avia = aviaRaw?.tickets || [];
+  return createCatalogApi({ categories, offers, brands, cfg, products, promos, grocery, samokat, vkusvill, goods, goodsModerated, banners, kits, avia });
 }
 
 /* Товары с кэшбэком (формат land → payload.items[]: фото, название, кэшбэк).
@@ -148,7 +149,7 @@ function buildPromos(discountsRaw, brands) {
   return list;
 }
 
-function createCatalogApi({ categories, offers, brands, cfg, products = [], promos = [], grocery = [], samokat = [], vkusvill = [], goods = [], goodsModerated = [], banners = [], kits = [] }) {
+function createCatalogApi({ categories, offers, brands, cfg, products = [], promos = [], grocery = [], samokat = [], vkusvill = [], goods = [], goodsModerated = [], banners = [], kits = [], avia = [] }) {
   const api = {
     config: cfg,
     categories,
@@ -160,6 +161,7 @@ function createCatalogApi({ categories, offers, brands, cfg, products = [], prom
     goodsModerated,
     banners,
     kits,
+    avia,
     goods,
     getOffer: (id) => offers.get(id) || null,
     getBrand: (id) => brands.get(id) || null,

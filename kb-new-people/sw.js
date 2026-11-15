@@ -1,5 +1,5 @@
 // Service worker: оболочка приложения доступна офлайн, картинки партнёров кешируются по мере просмотра.
-const VERSION = 'kb-np-v337';
+const VERSION = 'kb-np-v340';
 const SHELL = [
   './',
   'index.html',
@@ -11,6 +11,8 @@ const SHELL = [
   'data/grocery.json',
   'data/samokat.json',
   'data/vkusvill.json',
+  'data/avia-hot.json',
+  'assets/img/avia/crown.svg',
   'data/tovarka.json',
   'data/tovarka-moderated.json',
   'data/banners.json',
@@ -19,6 +21,7 @@ const SHELL = [
   'assets/img/benefit/heart.svg',
   'assets/img/benefit/samokat.svg',
   'assets/img/benefit/category-complete.png',
+  'assets/icons/hot-flame.svg',
   'styles/tokens.css',
   'styles/base.css',
   'styles/components.css',

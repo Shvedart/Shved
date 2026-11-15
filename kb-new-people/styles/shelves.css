@@ -1243,4 +1243,29 @@
 /* Цвет объединяет всю подборку; отдельные товары без собственных рамок. */
 .fav-drop-grid { background: color-mix(in srgb, var(--c-red) 10%, white); box-shadow: none; }
 .fav-drop-grid .goods.has-cashback-change::before { display: none; }
-.fav-drop-all { justify-content: center; }
+.fav-drop-all { justify-content: center; background: var(--c-bg); }
+
+/* Горячие авиабилеты — Figma 835:161771; содержимое рейса берётся из JSON. */
+.hot-flights { background: color-mix(in srgb, var(--c-cat-orange) 10%, white); box-shadow: none; }
+.hot-flights-scroll { align-items: stretch; padding-top: 0; padding-bottom: var(--sp-4); scroll-snap-type: x mandatory; }
+.hot-flight-card { flex: 0 0 255px; width: 255px; min-width: 0; border-radius: var(--r-m); background: var(--c-bg); }
+.hot-flight-main { position: relative; display: flex; flex-direction: column; justify-content: space-between; width: 100%; height: 200px; padding: var(--sp-3); text-align: left; color: var(--c-text); }
+.hot-flight-top { display: flex; flex-direction: column; align-items: flex-start; gap: var(--sp-1); width: 100%; }
+.hot-flight-old { max-width: calc(100% - 72px); font-size: 13px; line-height: 16px; letter-spacing: -.08px; color: var(--c-text-secondary); white-space: nowrap; }
+.hot-flight-price { font: 700 30px/36px var(--font-rounded); letter-spacing: -.36px; white-space: nowrap; }
+.hot-flight-airline { display: flex; align-items: center; gap: var(--sp-2); width: 100%; font-size: 13px; line-height: 16px; letter-spacing: -.08px; }
+.hot-flight-airline > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hot-flight-airline-logo { display: grid; place-items: center; flex: none; width: 18px; height: 18px; overflow: hidden; border-radius: 50%; }
+.hot-flight-airline-logo img { width: 18px; height: 18px; object-fit: contain; }
+.hot-flight-airline-logo .img-fallback { font-size: 11px; }
+.hot-flight-info { display: flex; flex-direction: column; gap: var(--sp-2); width: 100%; }
+.hot-flight-route { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 15px; line-height: 18px; font-weight: 600; letter-spacing: -.24px; }
+.hot-flight-meta { display: flex; flex-direction: column; gap: 2px; font-size: 13px; line-height: 16px; letter-spacing: -.08px; }
+.hot-flight-row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--sp-2); min-height: 16px; }
+.hot-flight-row > span { white-space: nowrap; }
+.hot-flight-time, .hot-flight-extra { color: var(--c-text-secondary); }
+.hot-flight-extra { min-width: 0; overflow: hidden; text-overflow: ellipsis; text-align: right; }
+.hot-flight-date { color: var(--c-text); }
+.hot-flight-cashback { position: absolute; top: var(--sp-3); right: var(--sp-3); display: flex; align-items: center; min-height: 24px; padding: 0 4px 0 6px; border-radius: var(--r-pill); background: var(--c-brand); font-size: 13px; line-height: 16px; font-weight: 600; letter-spacing: -.08px; }
+.hot-flight-cashback > span { padding: 3.5px 4px 4.5px; }
+.hot-flights-more { justify-content: center; background: var(--c-bg); }

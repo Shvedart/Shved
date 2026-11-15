@@ -117,6 +117,47 @@ const TRAVEL = [
   { cta: true, img: 'assets/img/travel/stavropol-2.webp', color: '#609379', title: 'Скидки до 30%\nна горящие билеты', desc: 'Подберём даты и цену под вас', button: 'Смотреть билеты' },
 ];
 
+// Рейсы из выгрузки: параметры пересадки переставляются между двумя строками карточки.
+function hotFlightsShelf({ catalog }) {
+  if (!catalog.avia.length) return null;
+  const duration = (value = '') => value.replace(/\s*в пути\s*$/i, '').replace(/(\d)\.(\d)/g, '$1,$2').trim();
+  const cards = catalog.avia.map((flight) => {
+    const transfer = !!flight.layoverCity || (/пересад/i.test(flight.stops || '') && !/^0\b/.test(flight.stops));
+    const flightTime = duration(flight.duration);
+    const upper = transfer ? [flight.stops, flightTime].filter(Boolean).join(' • ') : '';
+    const lower = transfer
+      ? [flight.layoverCity, duration(flight.layoverDuration)].filter(Boolean).join(' • ')
+      : ['Прямой', flightTime].filter(Boolean).join(' • ');
+    const time = `${flight.departureTime} — ${flight.arrivalTime}`;
+    const date = [flight.date, flight.weekday].filter(Boolean).join(', ');
+    const cashback = String(flight.cashback || '').replace(/\s*%$/, '\u00a0%');
+    const main = button({ class: 'hot-flight-main', 'aria-label': `${flight.direction}. ${flight.airline}. ${date}, ${time}. ${transfer ? upper + ', ' + lower : lower}. ${flight.price}, кэшбэк ${flight.cashback}` },
+      h('span', { class: 'hot-flight-top' },
+        flight.oldPrice ? h('s', { class: 'hot-flight-old' }, flight.oldPrice) : null,
+        h('b', { class: 'hot-flight-price' }, flight.price),
+        h('span', { class: 'hot-flight-airline' },
+          h('span', { class: 'hot-flight-airline-logo' }, img(flight.logo, { alt: '', width: 18, height: 18, fallback: flight.airline })),
+          h('span', null, flight.airline))),
+      h('span', { class: 'hot-flight-info' },
+        h('span', { class: 'hot-flight-route', title: flight.direction }, flight.direction),
+        h('span', { class: 'hot-flight-meta' },
+          h('span', { class: 'hot-flight-row hot-flight-row-top' },
+            h('span', { class: 'hot-flight-time' }, time), h('span', { class: 'hot-flight-extra' }, upper)),
+          h('span', { class: 'hot-flight-row' },
+            h('span', { class: 'hot-flight-date' }, date), h('span', { class: 'hot-flight-extra' }, lower)))),
+      h('span', { class: 'hot-flight-cashback' },
+        img('assets/img/avia/crown.svg', { alt: '', lazy: false }), h('span', null, cashback)));
+    main.addEventListener('click', () => toast('Выбор авиабилета откроется в приложении'));
+    return h('article', { class: 'hot-flight-card', role: 'listitem', dataset: { flight: flight.id, transfer: String(transfer) } }, main);
+  });
+  const more = button({ class: 'delivery-order hot-flights-more' }, 'Больше билетов');
+  more.addEventListener('click', () => toast('Все авиабилеты откроются в приложении'));
+  return h('section', { class: 'card delivery hot-flights', dataset: { cat: 'travel' } },
+    cardHeader({ title: 'Горячие авиабилеты', subtitle: 'Хорошие цены — ненадолго' }),
+    h('div', { class: 'hscroll hot-flights-scroll', role: 'list', 'aria-label': 'Горячие авиабилеты' }, cards),
+    h('div', { class: 'delivery-foot' }, more));
+}
+
 // «Заказать продукты домой через Т-Банк» (макет 685:150677): четыре бренда, кэшбэк — с заказа
 // через Город / Т-Банк. У ВкусВилла такого предложения в данных нет — процент задан вручную.
 const GOROD = {
@@ -583,6 +624,8 @@ function customSpecials({ catalog, setup, extras, onLink }) {
   if (d) list.push({ el: d, at: 0.1 });
   const r = storeShelf(REMIND, { catalog, onLink });
   if (r) list.push({ el: r, at: 0.25 });
+  const flights = hotFlightsShelf({ catalog });
+  if (flights) list.push({ el: flights, at: 0.34 });
   const v = storeShelf(VKUSVILL, { catalog, onLink });
   if (v) list.push({ el: v, at: 0.45 });
   if (setup.weights.travel > 0) {
