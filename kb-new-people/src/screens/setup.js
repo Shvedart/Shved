@@ -226,6 +226,7 @@ export function setupScreen({ el, params, nav }) {
     offerPreview.classList.toggle('no-offer-images', setup.offerImages === false);
     applyCardLook(offerPreview, setup);
     goodsPreview.classList.toggle('goods-net-price', !!setup.goodsNetPrice);
+    goodsPreview.classList.toggle('goods-cover', setup.goodsCover !== false);
     for (const part of ['old', 'brand', 'desc', 'shop', 'verified']) goodsPreview.classList.toggle(`goods-no-${part}`, setup.goodsShow?.[part] === false);
     // «Чистые карточки товаров»: у образцов фото после модерации или исходное, с инфографикой
     for (const { clean, raw } of modPairs) {
@@ -269,6 +270,17 @@ export function setupScreen({ el, params, nav }) {
     h('span', { class: 'setup-switch-text' }, h('span', { class: 'setup-label' }, 'Цена с кэшбэком'),
       h('span', { class: 'setup-hint' }, 'Итоговая цена под фото, процент кэшбэка — на жёлтой плашке')),
     netPriceInput, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
+
+  const coverInput = h('input', { class: 'setup-switch-input', type: 'checkbox', role: 'switch' });
+  coverInput.checked = setup.goodsCover !== false;
+  coverInput.addEventListener('change', () => {
+    setup = { ...setup, goodsCover: coverInput.checked };
+    haptics.selection();
+  });
+  const cover = h('label', { class: 'setup-switch' },
+    h('span', { class: 'setup-switch-text' }, h('span', { class: 'setup-label' }, 'Фото на всю плитку'),
+      h('span', { class: 'setup-hint' }, 'Включено — заполняет плитку с обрезкой краёв. Выключено — фото целиком')),
+    coverInput, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
 
   // ---------- Карточка товара: какие строки показывать ----------
   // поле в настройке — goodsShow: { old, brand, desc, shop, verified }; нет поля — строка показана
@@ -353,7 +365,7 @@ export function setupScreen({ el, params, nav }) {
       h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Вид ленты'), modePics, seg, modeHint, offerPreview, logo, pic, lookHint, tint, pics, nameLines),
       h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Что попадает в ленту'), random, delivery, GROCERY_CARDS ? grocery : null),
       h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Товары или офферы'), goods, goodsHint, big),
-      h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Карточка товара'), goodsPreview, netPrice, moderated, goodsParts),
+      h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Карточка товара'), goodsPreview, netPrice, cover, moderated, goodsParts),
       h('section', { class: 'setup-block' },
         h('div', { class: 'setup-block-head' }, h('h2', { class: 'setup-block-title' }, 'Чего показывать больше'), reset),
         h('p', { class: 'setup-hint' }, 'Доли категорий в сумме — 100%. Тронутый ползунок держит свою долю, остальные делят остаток'),

@@ -340,44 +340,36 @@ function productBenefitShelf({ catalog }) {
   const categoryBack = Math.floor(price * PRODUCT_BENEFIT.categoryPercent / 100);
   // Оба варианта считаем от одной цены, возврат округляем вниз до рублей.
   const variants = [
-    { percent: PRODUCT_BENEFIT.categoryPercent, back: categoryBack, label: 'Повышенный кэшбэк на\u00a0супермаркеты' },
-    { percent: PRODUCT_BENEFIT.partnerPercent, back: partnerBack, label: 'Партнёрский кэшбэк от\u00a0Самоката' },
+    { percent: PRODUCT_BENEFIT.categoryPercent, back: categoryBack, label: 'Повышенный' },
+    { percent: PRODUCT_BENEFIT.partnerPercent, back: partnerBack, label: 'от\u00a0Самоката' },
   ];
   const money = (n) => `${n.toLocaleString('ru-RU', { maximumFractionDigits: 2 })}\u00a0₽`;
   const title = PRODUCT_BENEFIT.titles[product.id];
-  const subtitle = title ? [title[0], h('br'), `${title[1]} · ${money(price)}`] : `${product.name} · ${money(price)}`;
-  const hearts = [];
-  let liked = false;
+  const subtitle = title ? title[0] : product.name;
   const variant = (v, i) => {
     const partner = i === 1;
     const label = v.label;
-    const heart = button({ class: 'benefit-product-heart', 'aria-label': `${product.name}: в избранное`, 'aria-pressed': 'false' },
-      img('assets/img/benefit/heart.svg', { alt: '', width: 24, height: 24 }),
-      iconImg('heart-filled', { size: 24, cls: 'benefit-heart-filled' }));
-    hearts.push(heart);
-    heart.addEventListener('click', () => {
-      liked = !liked;
-      haptics.selection();
-      for (const el of hearts) el.setAttribute('aria-pressed', String(liked));
-    });
     const open = () => toast(`Цена ${money(price)}. Кэшбэк Самоката — ${money(partnerBack)}. Пример категории ${PRODUCT_BENEFIT.categoryPercent}% — ${money(categoryBack)}`, { duration: 5000 });
     const pic = button({ class: 'benefit-product-pic', 'aria-label': `${product.name}. ${label}: ${v.percent}%. ${money(price - v.back)} с кэшбэком` },
       h('span', { class: 'benefit-product-image' }, img(product.image, { alt: '', lazy: false })),
       h('span', { class: 'benefit-product-percent' }, `${v.percent}%`));
     pic.addEventListener('click', open);
     return h('div', { class: `benefit-product${partner ? ' is-partner' : ''}` },
-      h('div', { class: 'benefit-product-tile' }, pic, heart),
+      h('div', { class: 'benefit-product-tile' }, pic),
       h('div', { class: 'benefit-product-info' },
-        h('div', { class: 'ocard-name benefit-product-price' }, `${money(price - v.back)} с кэшбэком`),
-        h('p', { class: 'ocard-desc benefit-product-name' }, label)));
+        h('div', { class: 'benefit-product-before' }, money(price)),
+        h('div', { class: 'ocard-name benefit-product-price' }, money(price - v.back), h('span', { class: 'benefit-product-price-caption' }, ' с\u00a0кэшбэком')),
+        h('div', { class: 'benefit-product-label' }, label)));
   };
-  const header = cardHeader({ title: 'Один товар — разный кэшбэк', subtitle, link: 'Все',
-    onLink: () => toast('Другие сравнения появятся в приложении') });
+  const header = cardHeader({ title: 'Есть кэшбэк и повыгоднее', subtitle });
+  const order = button({ class: 'delivery-order benefit-order' }, `Заказать продукты с кэшбэком ${PRODUCT_BENEFIT.partnerPercent}%`);
+  order.addEventListener('click', () => toast('Заказ продуктов откроется в приложении'));
   header.classList.add('delivery-cb-head');
   header.prepend(img('assets/img/gorod/samokat.png', { cls: 'delivery-cb-logo', alt: 'Самокат', width: 40, height: 40, lazy: false }));
   return h('section', { class: 'card product-benefit', dataset: { cat: 'food' } },
     header,
-    h('div', { class: 'product-benefit-grid' }, variants.map(variant)));
+    h('div', { class: 'product-benefit-grid' }, variants.map(variant)),
+    h('div', { class: 'delivery-foot' }, order));
 }
 
 // Полки магазинов продуктов — по виду как корзина с кэшбэком (логотип слева от заголовка), но без суммы
@@ -750,8 +742,19 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
   const tailTarget = setup.goods > 0 && setup.goods < 100 ? Math.max(TAIL_GOODS, CUSTOM_TOTAL - offerSum - sum(goodsCounts)) : 0;
   const tailCounts = allocate(tailTarget, weights,
     Object.fromEntries(cats.map((c) => [c, pools[c].goods.length - (goodsCounts[c] || 0)])), step);
+  // Три разных товара из общей ленты выбираются заново, независимо от перемешивания ленты.
+  const changeCandidates = setup.goodsNetPrice ? cats.filter((cat) => cat !== 'food').flatMap((cat) =>
+    pools[cat].goods.slice(0, (goodsCounts[cat] || 0) + (tailCounts[cat] || 0))
+      .filter((p) => rub(p.price) > 0 && String(p.cashback ?? '').trim() && rub(String(p.cashback)) < rub(p.price))
+      .map((p) => `${cat}:${p.id}`)) : [];
+  for (let i = changeCandidates.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [changeCandidates[i], changeCandidates[j]] = [changeCandidates[j], changeCandidates[i]];
+  }
+  const changedGoods = new Set([...new Set(changeCandidates)].slice(0, 3));
   const toCard = (cat) => (p) => {
-    const card = goodsCard(p);
+    const change = changedGoods.has(`${cat}:${p.id}`);
+    const card = goodsCard(p, { cashbackChange: change ? { boostPoints: 15 } : null });
     card.dataset.cat = cat;
     // большие карточки — во всю ширину ленты; продукты еды всегда маленькие
     if (setup.bigGoods && cat !== 'food') card.classList.add('is-big');

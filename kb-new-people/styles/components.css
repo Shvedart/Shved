@@ -1429,7 +1429,7 @@ img.is-broken {
 .goods-pic img {
   width: 100%;
   height: 100%;
-  /* товар целиком, без обрезки: свободные поля — серый фон плитки */
+  /* По умолчанию фото целиком; заполнение плитки включает настройка 07. */
   object-fit: contain;
 }
 
@@ -1458,20 +1458,33 @@ img.is-broken {
 .goods-rating {
   position: absolute;
   z-index: 1;
-  top: 14px;
+  top: 12px;
   left: 12px;
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 2px 0;
+}
+
+.goods-rating-badge {
+  display: flex;
   align-items: center;
-  gap: 1px;
+  justify-content: center;
   min-height: 16px;
-  padding: 0 4px 0 3px;
+  min-width: 16px;
+  padding: 0 2px;
+  overflow: hidden;
   border-radius: var(--r-pill);
   background: var(--c-bg);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: -0.1px;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   color: var(--c-text);
 }
+
+.goods-rating-icon { display: flex; align-items: center; height: 16px; padding-left: 1px; }
+.goods-rating-starbox { position: relative; display: block; width: 10px; height: 10px; }
+.goods-rating .goods-rating-star { position: absolute; left: .625px; top: .625px; width: auto; height: auto; }
+.goods-rating-label { padding: 1.5px 2px; font: 700 11px/13px var(--font-text); letter-spacing: -.1px; white-space: nowrap; }
 
 .goods .promo-heart {
   position: absolute;
@@ -1835,3 +1848,29 @@ img.is-broken {
 .goods-net-price .goods-cashback-percent { display: block; position: absolute; left: 12px; bottom: 12px; padding: 0 4px 0 5px; border-radius: 8px; background: var(--c-brand); color: var(--c-label); font: 700 20px/24px var(--font-rounded); letter-spacing: -.36px; }
 
 .goods-net-price .goods-price-net > span { font-weight: 400; }
+
+/* Цена до кэшбэка обязательна в новом виде и не зависит от строки старой цены. */
+.goods-price-before { display: none; }
+.goods-net-price .has-net-price .goods-old { display: none; }
+.goods-net-price .goods-price-before { display: block; color: var(--c-text-secondary); font-size: 13px; line-height: 16px; font-weight: 400; letter-spacing: -.08px; text-decoration: none; margin-bottom: -4px; }
+
+/* Избранный товар с выросшим возвратом: чёрный счётчик и цена на розовой подложке. */
+/* Подложка вне раскладки: 6px рамка и ещё 8px воздуха под текстом без сжатия фото. */
+.goods-net-price .goods.has-cashback-change { border-radius: var(--r-m); isolation: isolate; }
+.goods-net-price .has-cashback-change::before {
+  content: '';
+  position: absolute;
+  inset: -6px -6px -14px;
+  z-index: -1;
+  border: 6px solid color-mix(in srgb, var(--c-red) 10%, white);
+  border-radius: calc(var(--r-m) + 6px);
+  background: color-mix(in srgb, var(--c-red) 10%, white);
+  pointer-events: none;
+}
+.goods-net-price .has-cashback-change .goods-cashback-percent { z-index: 1; white-space: nowrap; }
+.goods-net-price .has-cashback-change .goods-price-before { color: var(--c-text-secondary); }
+.goods-net-price .has-cashback-change:not([data-change-state="pending"]) .goods-price-before { text-decoration: line-through; }
+.goods-change-old, .goods-change-arrow, .goods-change-new { display: inline-block; color: var(--c-label); }
+.has-cashback-change .goods-dots > img { display: block; }
+
+.goods-cover .goods-pic > img { object-fit: cover; }

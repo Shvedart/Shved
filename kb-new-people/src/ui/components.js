@@ -8,6 +8,7 @@ import { store } from '../core/store.js';
 import { fmt } from '../domain/catalog.js';
 import { app } from '../app.js';
 import { toast } from './toast.js';
+import { installGoodsChange } from './goodsChange.js';
 
 // ---------- Избранное ----------
 
@@ -304,7 +305,7 @@ export function promoCard(promo) {
 // ---------- Карточка товара (макет 710:155116) ----------
 // Фото 3:4 на серой плитке (белый фон снимка сливается с ней), рейтинг, сердечко и точки галереи;
 // ниже старая цена со скидкой, цена с кэшбэком, бренд, описание в две строки и магазин.
-export function goodsCard(p) {
+export function goodsCard(p, { cashbackChange = null } = {}) {
   const amount = (value) => Number(String(value ?? '').replace(/[^\d,.-]/g, '').replace(',', '.'));
   const price = amount(p.price);
   const cashback = amount(p.cashback);
@@ -314,7 +315,10 @@ export function goodsCard(p) {
   const money = (n) => `${n.toLocaleString('ru-RU', { maximumFractionDigits: 2 })}\u00a0₽`;
   const pic = h('div', { class: 'goods-pic' },
     img(p.image, { alt: '' }),
-    p.rating ? h('span', { class: 'goods-rating' }, icon('star', { size: 10 }), p.rating) : null,
+    p.rating ? h('span', { class: 'goods-rating' },
+      h('span', { class: 'goods-rating-badge' },
+        h('span', { class: 'goods-rating-icon' }, h('span', { class: 'goods-rating-starbox' }, img('assets/img/benefit/star.svg', { alt: '', cls: 'goods-rating-star', lazy: false }))),
+        h('span', { class: 'goods-rating-label' }, p.rating))) : null,
     canCalculate ? h('span', { class: 'goods-cashback-percent' }, `${percent}%`) : null);
   const merchant = p.verified
     ? h('div', { class: 'goods-shop' }, h('span', { class: 'goods-verified' }, iconImg('premium-dark', { size: 10 })), 'Магазин проверен')
@@ -327,11 +331,14 @@ export function goodsCard(p) {
       p.oldPrice ? h('div', { class: 'goods-old' }, h('s', null, p.oldPrice), p.discount ? h('span', { class: 'goods-discount' }, p.discount) : null) : null,
       h('div', { class: 'goods-price' }, h('span', null, p.price),
         h('span', { class: 'gcard-badge' }, icon('crown', { size: 10 }), h('span', null, `${p.cashback}\u00A0₽`))),
-      canCalculate ? h('div', { class: 'goods-price-net' }, `${money(finalPrice)} `, h('span', null, 'с\u00a0кэшбэком')) : null,
+      canCalculate ? h('div', { class: 'goods-price-before' }, p.price) : null,
+      canCalculate ? h('div', { class: 'goods-price-net' }, h('b', { class: 'goods-net-value' }, money(finalPrice)), ' ', h('span', null, 'с\u00a0кэшбэком')) : null,
       h('div', { class: 'goods-text' }, h('p', { class: 'goods-brand' }, p.brand), h('p', { class: 'goods-desc' }, p.description)),
       merchant));
   main.addEventListener('click', () => toast('Товар откроется в приложении'));
-  return h('div', { class: `goods${canCalculate ? ' has-net-price' : ''}`, dataset: { goods: p.id } }, main, localHeart(`${p.brand}: в избранное`));
+  const root = h('div', { class: `goods${canCalculate ? ' has-net-price' : ''}`, dataset: { goods: p.id } }, main, localHeart(`${p.brand}: в избранное`));
+  if (canCalculate && cashbackChange) installGoodsChange(root, { price, cashback, boostPoints: cashbackChange.boostPoints });
+  return root;
 }
 
 // Сердечко без бренда в каталоге: отметка живёт только на карточке
