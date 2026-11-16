@@ -611,12 +611,8 @@ function customSpecials({ catalog, setup, extras, onLink }) {
   // ни одной полки с лентой вбок — корзины продуктов, подборок товаров, путешествий и афиши
   if (setup.delivery === false) return list;
   if (setup.goods > 0) {
-    const f = favDropShelf({ catalog, setup });
-    if (f) list.push({ el: f, at: 0.5 });
-    const g = giftShelf({ catalog, setup });
-    if (g) list.push({ el: g, at: 0.85 });
-    // наборы — между «Подешевело в избранном» и афишей
-    catalog.kits.forEach((kit, i) => list.push({ el: kitShelf(kit), at: 0.6 + i * 0.05 }));
+    // Согласованные полки убраны из ленты; остальные наборы остаются.
+    catalog.kits.filter((kit) => kit.id !== 'candle').forEach((kit, i) => list.push({ el: kitShelf(kit), at: 0.6 + i * 0.05 }));
   }
   const benefit = productBenefitShelf({ catalog });
   if (benefit) list.push({ el: benefit, at: 0.18 });
@@ -791,18 +787,19 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
   const tailCounts = allocate(tailTarget, weights,
     Object.fromEntries(cats.map((c) => [c, pools[c].goods.length - (goodsCounts[c] || 0)])), step);
   // Три разных товара из общей ленты выбираются заново, независимо от перемешивания ленты.
-  const changeCandidates = setup.goodsNetPrice !== false ? cats.filter((cat) => cat !== 'food').flatMap((cat) =>
+  const changeCandidates = cats.filter((cat) => cat !== 'food').flatMap((cat) =>
     pools[cat].goods.slice(0, (goodsCounts[cat] || 0) + (tailCounts[cat] || 0))
       .filter((p) => rub(p.price) > 0 && String(p.cashback ?? '').trim() && rub(String(p.cashback)) < rub(p.price))
-      .map((p) => `${cat}:${p.id}`)) : [];
+      .map((p) => `${cat}:${p.id}`));
   for (let i = changeCandidates.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [changeCandidates[i], changeCandidates[j]] = [changeCandidates[j], changeCandidates[i]];
   }
   const changedGoods = new Set([...new Set(changeCandidates)].slice(0, 3));
   const toCard = (cat) => (p) => {
-    const change = changedGoods.has(`${cat}:${p.id}`);
-    const card = goodsCard(p, { cashbackChange: change ? { boostPoints: 15 } : null });
+    const changeIndex = [...changedGoods].indexOf(`${cat}:${p.id}`);
+    const change = changeIndex >= 0;
+    const card = goodsCard(p, { cashbackChange: change ? { boostPoints: 15, kind: ['discount', 'cashback', 'both'][changeIndex] } : null });
     card.dataset.cat = cat;
     // большие карточки — во всю ширину ленты; продукты еды всегда маленькие
     if (setup.bigGoods && cat !== 'food') card.classList.add('is-big');

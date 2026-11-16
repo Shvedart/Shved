@@ -1856,8 +1856,8 @@ img.is-broken {
 
 /* Избранный товар с выросшим возвратом: чёрный счётчик и цена на розовой подложке. */
 /* Подложка вне раскладки: 6px рамка и ещё 8px воздуха под текстом без сжатия фото. */
-.goods-net-price .goods.has-cashback-change { border-radius: var(--r-m); isolation: isolate; }
-.goods-net-price .has-cashback-change::before {
+.goods.has-cashback-change { border-radius: var(--r-m); isolation: isolate; }
+.goods.has-cashback-change::before {
   content: '';
   position: absolute;
   inset: -6px -6px -14px;
@@ -1874,3 +1874,43 @@ img.is-broken {
 .has-cashback-change .goods-dots > img { display: block; }
 
 .goods-cover .goods-pic > img { object-fit: cover; }
+
+/* Старый сниппет: рост возврата показываем снижением итоговой цены. */
+.goods-change-before, .goods-change-caption { display: none; }
+.has-cashback-change .goods-price > span:not(.gcard-badge) { white-space: nowrap; }
+.has-cashback-change .goods-change-before { display: block; width: 100%; color: var(--c-text-secondary); font-size: 13px; line-height: 16px; font-weight: 400; }
+.has-cashback-change .goods-old { display: none; }
+.has-cashback-change .goods-change-caption { display: block; font-size: 13px; line-height: 16px; font-weight: 400; }
+.goods-price-arrow { display: inline-block; }
+.has-cashback-change[data-change-state="pending"] .goods-price-arrow { visibility: hidden; }
+.goods-net-price .has-cashback-change .goods-change-caption { display: none; }
+
+.goods-change-details { display: flex; flex-direction: column; gap: 2px; font-size: 13px; line-height: 16px; letter-spacing: -.08px; }
+.goods-change-title { font-weight: 600; }
+.goods-change-purchase { color: var(--c-text-secondary); }
+.goods-change-purchase b { font-weight: 400; color: inherit; }
+.goods-net-price .has-cashback-change .goods-price-before,
+.goods-net-price .has-cashback-change .goods-cashback-percent { display: none; }
+
+/* У изменившегося товара крупно показываем сумму к оплате. */
+.has-cashback-change .goods-price-net > span { display: none; }
+
+/* Цвет отмечает только ту выгоду, которая изменилась. */
+
+
+/* Кэшбэк на фото, зачёркнутая цена рядом с текущей. */
+.goods .goods-pic > .gcard-badge { position: absolute; left: 12px; bottom: 12px; z-index: 1; font-size: 13px; line-height: normal; height: 20px; min-height: 20px; padding: 0 6px 0 4px; gap: 2px; }
+.goods .goods-price .goods-old { margin: 0; font-size: 13px; line-height: 16px; font-weight: 400; }
+.goods-net-price .goods .goods-cashback-percent { display: none; }
+
+.goods .goods-pic > .gcard-badge > .ico { width: 12px !important; height: 12px !important; }
+
+.goods .goods-price { align-items: baseline; }
+
+.goods.has-cashback-change .goods-price .goods-old:not([hidden]) { display: inline; }
+.goods-change-summary { font-size: 13px; line-height: 16px; letter-spacing: -.08px; }
+
+.goods-cashback-up { font-size: 13px; line-height: 1; }
+.has-cashback-change[data-change-state="pending"] .goods-cashback-up { display: none; }
+
+.goods-change-summaries { display: flex; flex-direction: column; gap: 0; }

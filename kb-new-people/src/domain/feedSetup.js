@@ -62,9 +62,9 @@ export function applyCardLook(node, setup) {
 export function defaultSetup(ids) {
   const weights = intentWeights(INTENTS[0], ids);
   return {
-    mode: 'mixed', goods: 20, goodsNetPrice: true, goodsCover: false, bigGoods: false, tinted: false, offerImages: true, random: false, delivery: true, hideGrocery: true, moderated: true,
+    mode: 'mixed', goods: 20, goodsNetPrice: false, goodsCover: false, bigGoods: false, tinted: false, offerImages: true, random: false, delivery: true, hideGrocery: true, moderated: true,
     nameLines: 2,
-    goodsShow: { old: false, brand: false, desc: true, shop: false, verified: false },
+    goodsShow: { old: true, brand: false, desc: true, shop: false, verified: false },
     weights, locked: ids.filter((id) => weights[id] > 0),
   };
 }

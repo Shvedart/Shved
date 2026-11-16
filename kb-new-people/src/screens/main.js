@@ -10,7 +10,7 @@ import { favCard, favLook } from '../ui/favcard.js';
 import { scratchCard } from '../ui/scratch.js';
 import { buildShelves } from './feed.js';
 import { startTour, startViewMarks, stopViewMarks } from './tour.js';
-import { applyCardLook, defaultSetup, SETUP_CATS } from '../domain/feedSetup.js';
+import { applyCardLook } from '../domain/feedSetup.js';
 import { openSheet } from '../ui/sheet.js';
 import { watchGoodsChanges } from '../ui/goodsChange.js';
 import { app } from '../app.js';
@@ -41,23 +41,6 @@ export function mainScreen({ el, params, nav, entry }) {
     el.classList.toggle('goods-net-price', store.state.feedSetup?.goodsNetPrice !== false);
     el.classList.toggle('goods-cover', store.state.feedSetup?.goodsCover === true);
     for (const [part, on] of Object.entries(store.state.feedSetup?.goodsShow || {})) if (on === false) el.classList.add(`goods-no-${part}`);
-  }
-
-  // Вне прокручиваемой страницы: переключатель не едет вместе с карточками.
-  let photoSwitch = null;
-  if (scenario === 's7') {
-    const input = h('input', { class: 'setup-switch-input', type: 'checkbox', role: 'switch', 'aria-label': 'Фото на всю плитку' });
-    input.checked = store.state.feedSetup?.goodsCover === true;
-    photoSwitch = h('label', { class: 'feed-photo-switch', title: 'Фото на всю плитку' },
-      input, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
-    input.addEventListener('change', () => {
-      el.classList.toggle('goods-cover', input.checked);
-      const setup = store.state.feedSetup || defaultSetup(SETUP_CATS
-        .filter((c) => catalog.getCategory(c.id) || catalog.goods.some((g) => g.id === c.id)).map((c) => c.id));
-      store.setFeedSetup({ ...setup, goodsCover: input.checked });
-      haptics.selection();
-    });
-    cleanups.push(() => photoSwitch.remove());
   }
 
   // ---------- Верх: сумма и действия ----------
@@ -341,10 +324,8 @@ export function mainScreen({ el, params, nav, entry }) {
     onActive() {
       onScroll();
       goodsChanges?.check();
-      if (photoSwitch) document.getElementById('app').append(photoSwitch);
     },
     onInactive() {
-      photoSwitch?.remove();
       tour?.destroy();
       tour = null;
       el.classList.remove('is-touring', 'is-tour-intro', 'is-tour-clear');

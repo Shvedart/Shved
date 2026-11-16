@@ -319,7 +319,8 @@ export function goodsCard(p, { cashbackChange = null } = {}) {
       h('span', { class: 'goods-rating-badge' },
         h('span', { class: 'goods-rating-icon' }, h('span', { class: 'goods-rating-starbox' }, img('assets/img/benefit/star.svg', { alt: '', cls: 'goods-rating-star', lazy: false }))),
         h('span', { class: 'goods-rating-label' }, p.rating))) : null,
-    canCalculate ? h('span', { class: 'goods-cashback-percent' }, `${percent}%`) : null);
+    canCalculate ? h('span', { class: 'goods-cashback-percent' }, `${percent}%`) : null,
+    h('span', { class: 'gcard-badge' }, icon('crown', { size: 10 }), h('span', null, `${p.cashback}\u00A0₽`)));
   const merchant = p.verified
     ? h('div', { class: 'goods-shop' }, h('span', { class: 'goods-verified' }, iconImg('premium-dark', { size: 10 })), 'Магазин проверен')
     : p.merchant ? h('div', { class: 'goods-shop' }, // логотип не загрузился (часть адресов cdn-tinkoff недоступна) — кружок с первой буквой
@@ -328,16 +329,15 @@ export function goodsCard(p, { cashbackChange = null } = {}) {
     pic,
     h('div', { class: 'goods-dots', 'aria-hidden': 'true' }, h('span', { class: 'is-on' }), h('span'), h('span')),
     h('div', { class: 'goods-info' },
-      p.oldPrice ? h('div', { class: 'goods-old' }, h('s', null, p.oldPrice), p.discount ? h('span', { class: 'goods-discount' }, p.discount) : null) : null,
       h('div', { class: 'goods-price' }, h('span', null, p.price),
-        h('span', { class: 'gcard-badge' }, icon('crown', { size: 10 }), h('span', null, `${p.cashback}\u00A0₽`))),
+        p.oldPrice ? h('span', { class: 'goods-old' }, h('s', null, p.oldPrice)) : null),
       canCalculate ? h('div', { class: 'goods-price-before' }, p.price) : null,
       canCalculate ? h('div', { class: 'goods-price-net' }, h('b', { class: 'goods-net-value' }, money(finalPrice)), ' ', h('span', null, 'с\u00a0кэшбэком')) : null,
       h('div', { class: 'goods-text' }, h('p', { class: 'goods-brand' }, p.brand), h('p', { class: 'goods-desc' }, p.description)),
       merchant));
   main.addEventListener('click', () => toast('Товар откроется в приложении'));
   const root = h('div', { class: `goods${canCalculate ? ' has-net-price' : ''}`, dataset: { goods: p.id } }, main, localHeart(`${p.brand}: в избранное`));
-  if (canCalculate && cashbackChange) installGoodsChange(root, { price, cashback, boostPoints: cashbackChange.boostPoints });
+  if (canCalculate && cashbackChange) installGoodsChange(root, { price, cashback, boostPoints: cashbackChange.boostPoints, kind: cashbackChange.kind, oldPrice: amount(p.oldPrice), discount: p.discount });
   return root;
 }
 
