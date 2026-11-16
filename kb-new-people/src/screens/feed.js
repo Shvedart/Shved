@@ -146,7 +146,7 @@ function hotFlightsShelf({ catalog }) {
           h('span', { class: 'hot-flight-row' },
             h('span', { class: 'hot-flight-date' }, date), h('span', { class: 'hot-flight-extra' }, lower)))),
       h('span', { class: 'hot-flight-cashback' },
-        img('assets/img/avia/crown.svg', { alt: '', lazy: false }), h('span', null, cashback)));
+        icon('avia-crown', { size: 16 }), h('span', null, cashback)));
     main.addEventListener('click', () => toast('Выбор авиабилета откроется в приложении'));
     return h('article', { class: 'hot-flight-card', role: 'listitem', dataset: { flight: flight.id, transfer: String(transfer) } }, main);
   });
@@ -210,11 +210,11 @@ function groceryCard(p) {
     haptics.selection();
   });
   return h('div', { class: 'gcard' },
-    h('div', { class: 'gcard-pic' }, img(p.image, { alt: '' })),
+    h('div', { class: 'gcard-pic' }, img(p.image, { alt: '' }),
+      h('span', { class: 'gcard-badge' }, icon('crown', { size: 12 }), h('span', null, p.cashback))),
     heart,
     h('div', { class: 'gcard-info' },
-      h('div', { class: 'gcard-price' }, h('span', null, p.price),
-        h('span', { class: 'gcard-badge' }, icon('crown', { size: 10 }), h('span', null, p.cashback))),
+      h('div', { class: 'gcard-price' }, h('span', null, p.price)),
       h('p', { class: 'gcard-name' }, p.name)));
 }
 
@@ -249,7 +249,7 @@ function deliveryEdit() {
 // 'compare2' — «Где выгоднее заказать продукты?»: сначала магазины, у выгодного — на сколько дешевле,
 // ниже продукты. Вернуть прежний вид «Ваша корзина» — 'compare'
 // 'cashback' — один магазин с логотипом в заголовке: «корзина стоила N ₽, с кэшбэком — M ₽», без выбора магазина
-const DELIVERY_LOOK = 'cashback';
+const DELIVERY_LOOK = 'redeem';
 
 // Одна и та же корзина в разных магазинах. У магазина своя цена на каждый продукт: базовая цена
 // из data/grocery.json × множитель (prices, по кругу; 1 — как в данных), кэшбэк продукта × cashback.
@@ -264,6 +264,7 @@ const DELIVERY_BASKET = ['grocery-001', 'grocery-002', 'grocery-003', 'grocery-0
   'grocery-007', 'grocery-017', 'grocery-018', 'grocery-021', 'grocery-036', 'grocery-073'];
 
 function deliveryShelf(args) {
+  if (DELIVERY_LOOK === 'redeem') return deliveryRedeemShelf(args);
   if (DELIVERY_LOOK === 'single') return deliverySingleShelf(args);
   if (DELIVERY_LOOK === 'cashback') return deliveryCashbackShelf(args);
   return deliveryCompareShelf({ ...args, look: DELIVERY_LOOK });
@@ -345,6 +346,31 @@ function deliveryCompareShelf({ catalog, onLink, look = 'compare' }) {
 
 // Корзина в одном магазине (первый в DELIVERY_STORES): логотип в заголовке, ниже — сколько корзина
 // стоила и сколько будет стоить с кэшбэком (цена минус кэшбэк продуктов), дальше продукты и «Заказать»
+// Накопленный кэшбэк списывается со всего заказа, цены продуктов не меняются.
+const DELIVERY_REDEEM_BALANCE = 1160;
+function deliveryRedeemShelf({ catalog }) {
+  const list = DELIVERY_BASKET.map((id) => catalog.grocery.find((p) => p.id === id)).filter(Boolean);
+  if (!list.length) return null;
+  const st = DELIVERY_STORES[0];
+  const money = (n) => `${Math.round(n).toLocaleString('ru-RU')}\u00a0₽`;
+  const total = Math.round(list.reduce((sum, p) => sum + rub(p.price), 0) * 100) / 100;
+  // Демо-баланс из примера оформления; списание не превышает сумму товаров.
+  const redeemed = Math.min(DELIVERY_REDEEM_BALANCE, total);
+  const remaining = Math.round((total - redeemed) * 100) / 100;
+  const cards = list.map(groceryCard);
+  const order = button({ class: 'delivery-order delivery-redeem-order' }, `Заказать за ${money(remaining)}`);
+  order.addEventListener('click', () => toast('Списание кэшбэка можно выбрать при оформлении заказа'));
+  return h('section', { class: 'card delivery delivery-redeem', dataset: { cat: 'food' } },
+    h('div', { class: 'card-header delivery-cb-head' },
+      img(st.logo, { cls: 'delivery-cb-logo', alt: '', width: 40, height: 40, lazy: false }),
+      h('div', { class: 'card-header-text' },
+        h('h2', { class: 'card-title' }, `Корзина в ${st.where}`),
+        h('p', { class: 'card-subtitle' }, `${list.length} товаров · ${money(total)}`))),
+    h('div', { class: 'hscroll delivery-scroll' }, cards, deliveryEdit()),
+    h('div', { class: 'delivery-foot' }, order,
+      h('p', { class: 'delivery-redeem-under' }, 'Спишем ', h('span', { class: 'delivery-redeem-inline' }, money(redeemed)), ' накопленного кэшбэка')));
+}
+
 function deliveryCashbackShelf({ catalog, onLink }) {
   const list = DELIVERY_BASKET.map((id) => catalog.grocery.find((p) => p.id === id)).filter(Boolean);
   if (!list.length) return null;

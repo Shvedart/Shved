@@ -1267,5 +1267,18 @@
 .hot-flight-extra { min-width: 0; overflow: hidden; text-overflow: ellipsis; text-align: right; }
 .hot-flight-date { color: var(--c-text); }
 .hot-flight-cashback { position: absolute; top: var(--sp-3); right: var(--sp-3); display: flex; align-items: center; min-height: 24px; padding: 0 4px 0 6px; border-radius: var(--r-pill); background: var(--c-brand); font-size: 13px; line-height: 16px; font-weight: 600; letter-spacing: -.08px; }
-.hot-flight-cashback > span { padding: 3.5px 4px 4.5px; }
+.hot-flight-cashback > span:not(.ico) { padding: 3.5px 4px 4.5px; }
 .hot-flights-more { justify-content: center; background: var(--c-bg); }
+
+.delivery-redeem-summary { display: flex; flex-direction: column; gap: 8px; padding: 0 var(--sp-4) var(--sp-4); font-size: 15px; line-height: 20px; letter-spacing: -.24px; }
+.delivery-redeem-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.delivery-redeem-amount { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.delivery-redeem-total { padding-top: 4px; font-weight: 600; }
+.delivery-redeem-note { margin: 0; color: var(--c-text-secondary); font-size: 13px; line-height: 16px; }
+.delivery-redeem-order { justify-content: center; }
+
+.gcard-pic > .gcard-badge { position: absolute; left: 12px; bottom: 12px; z-index: 1; height: 20px; min-height: 20px; padding: 0 6px 0 4px; gap: 2px; font-size: 13px; line-height: normal; }
+
+.delivery-redeem-under { margin: 8px 0 0; text-align: center; color: var(--c-text-secondary); font-size: 13px; line-height: 16px; letter-spacing: -.08px; }
+
+.delivery-redeem-inline { display: inline-flex; align-items: center; gap: 3px; vertical-align: baseline; white-space: nowrap; }
