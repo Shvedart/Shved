@@ -361,6 +361,18 @@ function deliveryRedeemShelf({ catalog }) {
   const cards = list.map(groceryCard);
   const order = button({ class: 'delivery-order delivery-redeem-order' }, `Заказать за ${money(remaining)}`);
   order.addEventListener('click', () => toast('Списание кэшбэка можно выбрать при оформлении заказа'));
+  const redeemInput = h('input', { class: 'setup-switch-input', type: 'checkbox', role: 'switch' });
+  redeemInput.checked = true;
+  const redeemLabel = h('span', { class: 'delivery-redeem-cell-description' }, 'Спишем накопленного кэшбэка');
+  const redeemCell = h('label', { class: 'delivery-redeem-cell' },
+    h('span', { class: 'delivery-redeem-cell-avatar' }, icon('crown', { size: 24 })),
+    h('span', { class: 'delivery-redeem-cell-text' }, h('span', { class: 'delivery-redeem-cell-title' }, money(redeemed)), redeemLabel),
+    redeemInput, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
+  redeemInput.addEventListener('change', () => {
+    order.textContent = `Заказать за ${money(redeemInput.checked ? remaining : total)}`;
+    redeemLabel.textContent = redeemInput.checked ? 'Спишем накопленного кэшбэка' : 'Списать накопленный кэшбэк';
+    haptics.selection();
+  });
   return h('section', { class: 'card delivery delivery-redeem', dataset: { cat: 'food' } },
     h('div', { class: 'card-header delivery-cb-head' },
       img(st.logo, { cls: 'delivery-cb-logo', alt: '', width: 40, height: 40, lazy: false }),
@@ -368,8 +380,8 @@ function deliveryRedeemShelf({ catalog }) {
         h('h2', { class: 'card-title' }, `Корзина в ${st.where}`),
         h('p', { class: 'card-subtitle' }, `${list.length} товаров · ${money(total)}`))),
     h('div', { class: 'hscroll delivery-scroll' }, cards, deliveryEdit()),
-    h('div', { class: 'delivery-foot' }, order,
-      h('p', { class: 'delivery-redeem-under' }, 'Спишем ', h('span', { class: 'delivery-redeem-inline' }, money(redeemed)), ' накопленного кэшбэка')));
+    redeemCell,
+    h('div', { class: 'delivery-foot' }, order));
 }
 
 function deliveryCashbackShelf({ catalog, onLink }) {

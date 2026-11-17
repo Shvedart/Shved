@@ -1282,3 +1282,11 @@
 .delivery-redeem-under { margin: 8px 0 0; text-align: center; color: var(--c-text-secondary); font-size: 13px; line-height: 16px; letter-spacing: -.08px; }
 
 .delivery-redeem-inline { display: inline-flex; align-items: center; gap: 3px; vertical-align: baseline; white-space: nowrap; }
+
+.delivery-redeem-cell { position: relative; display: flex; align-items: center; gap: 16px; margin: 0 0 var(--sp-4); padding: 8px var(--sp-4); min-height: 56px; cursor: pointer; }
+.delivery-redeem-cell-avatar { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 50%; background: var(--c-text); color: white; }
+.delivery-redeem-cell-text { display: flex; flex: 1; flex-direction: column; gap: 4px; min-width: 0; }
+.delivery-redeem-cell-title { font-size: 17px; line-height: 20px; letter-spacing: -.41px; color: var(--c-text); }
+.delivery-redeem-cell-description { font-size: 13px; line-height: 16px; letter-spacing: -.08px; color: var(--c-text-secondary); }
+
+.delivery-redeem-cell .setup-switch-input:checked + .setup-switch-track { background: var(--c-info); }
