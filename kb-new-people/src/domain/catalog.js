@@ -60,7 +60,7 @@ export function buildCatalog(raw, cfg, productsRaw = null, discountsRaw = null, 
   }
 
   const products = buildProducts(productsRaw, offers, brands);
-  const promos = buildPromos(discountsRaw, brands);
+  const promos = buildPromos(discountsRaw, brands, today);
   // продукты из магазина (data/grocery.json): цена, кэшбэк в рублях и фото — для полки «Вы уже заказывали»
   const grocery = groceryRaw?.products || [];
   // продукты Самоката (data/samokat.json, тот же формат) — для полки «Не забудьте взять» в ленте 07
@@ -124,7 +124,7 @@ function buildProducts(productsRaw, offers, brands) {
 /* Промокоды (data/discounts.json): та же раскладка «категория → предложения», что у кэшбэка,
    но вместо процента — скидка и код. Бренд ищем среди брендов кэшбэка по названию —
    тогда работает сердечко и переход в детали. */
-function buildPromos(discountsRaw, brands) {
+function buildPromos(discountsRaw, brands, today) {
   const list = [];
   const brandList = [...brands.values()].sort((a, b) => b.name.length - a.name.length);
   for (const cat of discountsRaw?.categories || []) {
@@ -137,11 +137,12 @@ function buildPromos(discountsRaw, brands) {
         categoryId: cat.id,
         name: normName(p.name),
         description: p.description || '',
-        discount: p.discount,
+        discount: nonbreakingMoney(p.discount),
         discountText: p.discountText,
         code: p.promoCode,
-        condition: p.condition,
+        condition: nonbreakingMoney(p.condition),
         date: p.date,
+        daysLeft: parseDaysLeft(p.date || '', today) == null ? null : Math.max(1, parseDaysLeft(p.date || '', today)),
         logo: p.logo,
         image: p.image,
         brandId: brand?.id || null,
@@ -242,8 +243,16 @@ const CHANNEL_PHRASE = {
   магазины: 'в магазинах',
 };
 
+// Сумма и предлог перед ней не разрываются на разные строки карточки.
+function nonbreakingMoney(text = '') {
+  return String(text).replace(/&nbsp;/g, '\u00a0')
+    .replace(/\d[\d \u00a0\u202f]*(?:[,.]\d+)?[ \u00a0\u202f]*(?:₽|руб(?:лей|ля|ль)?\.?)/gi,
+      (amount) => amount.replace(/[ \u00a0\u202f]+/g, '\u00a0').replace(/(\d)(₽|руб)/i, '$1\u00a0$2'))
+    .replace(/(^|[^а-яёa-z])(от|до)[ \u00a0\u202f]+(?=\d)/gi, '$1$2\u00a0');
+}
+
 function normalizeOffer(o, categoryId, brandId, today) {
-  const cashback = (o.cashback || '').trim();
+  const cashback = nonbreakingMoney(o.cashback || '').trim();
   const type = /бонус/i.test(cashback) ? 'points' : /₽/.test(cashback) ? 'fixed' : 'cashback';
   const value = Number((cashback.match(/\d+/) || [0])[0]);
   // срок — всегда в днях и не меньше одного дня: «0 дней» или «−3 дня» не бывает
@@ -259,7 +268,7 @@ function normalizeOffer(o, categoryId, brandId, today) {
     cashback,
     short: cashback.replace(/^до\s+/i, ''),
     cashbackText: o.cashbackText || `Кэшбэк ${cashback}`,
-    condition: (o.condition || '').trim(),
+    condition: nonbreakingMoney(o.condition || '').trim(),
     date: (o.date || '').trim(),
     daysLeft,
     isHot,
@@ -306,7 +315,7 @@ function slug(name) {
 export const fmt = {
   lowerFirst: (s) => (s ? s[0].toLowerCase() + s.slice(1) : s),
   // неразрывный пробел: «83 дня» не разрывается на две строки
-  daysLabel: (n) => `${n}\u00a0${plural(n, 'день', 'дня', 'дней')}`,
+  daysLabel: (n) => `ещё\u00a0${n}\u00a0${plural(n, 'день', 'дня', 'дней')}`,
   // Строка под названием в списке: дата только у горящих офферов.
   rowSubtitle(offer) {
     return { hot: offer.isHot ? `${fmt.daysLabel(offer.daysLeft)},` : null, text: fmt.lowerFirst(offer.condition) };

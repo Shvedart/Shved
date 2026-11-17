@@ -286,7 +286,7 @@ export function promoCard(promo) {
           h('div', { class: `ocard-value ${promo.discount.length > 7 ? 'is-long' : ''}` }, promo.discount),
           h('div', { class: 'promo-terms' }, promo.condition),
           // срок — только на широких экранах, где в плитке хватает места (см. .promo-date)
-          promo.date ? h('div', { class: 'promo-date' }, promo.date) : null)),
+          promo.date ? h('div', { class: 'promo-date' }, fmt.cardTerm(promo)) : null)),
       // перфорация и код прибиты к низу плитки — линия разрыва у всех карточек на одной высоте
       h('div', { class: 'promo-bottom' },
         h('img', { class: 'promo-perf', src: 'assets/img/promo-perforation.svg', alt: '', 'aria-hidden': 'true', draggable: 'false' }),
