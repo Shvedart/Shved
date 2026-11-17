@@ -38,6 +38,8 @@ export function mainScreen({ el, params, nav, entry }) {
   if (scenario === 's7') {
     // размер логотипа и картинки на офферах и промокодах
     applyCardLook(el, store.state.feedSetup);
+    el.classList.toggle('hide-offer-picture', store.state.feedSetup?.offerPicture === false);
+    el.classList.toggle('no-view-marks', store.state.feedSetup?.viewMarks !== true);
     el.classList.toggle('goods-net-price', store.state.feedSetup?.goodsNetPrice !== false);
     el.classList.toggle('goods-cover', store.state.feedSetup?.goodsCover === true);
     for (const [part, on] of Object.entries(store.state.feedSetup?.goodsShow || {})) if (on === false) el.classList.add(`goods-no-${part}`);
@@ -173,7 +175,15 @@ export function mainScreen({ el, params, nav, entry }) {
     const liked = new Set(store.state.favBrands);
     const seen = new Set();
     const all = [...cfg.selection.map((id) => catalog.getOffer(id)), ...catalog.categories.flatMap((c) => catalog.offersInCategory(c.id))];
-    return all.filter((o) => o && o.image && !liked.has(o.brandId) && !seen.has(o.id) && seen.add(o.id));
+    const unique = all.filter((o) => o && o.image && !liked.has(o.brandId) && !seen.has(o.id) && seen.add(o.id));
+    // Одинаковое фото в ленте показываем один раз — с максимальным возвратом.
+    const bestByImage = new Map();
+    for (const offer of unique) {
+      const key = offer.image.trim();
+      const best = bestByImage.get(key);
+      if (!best || offer.rank > best.rank) bestByImage.set(key, offer);
+    }
+    return unique.filter((offer) => bestByImage.get(offer.image.trim()) === offer);
   }
 
   // Скретч-карточки с крутыми призами: первая — в 8-м ряду (её стирают в туре), остальные разбросаны ниже.

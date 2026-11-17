@@ -6,6 +6,7 @@ import { animate, EASE, stagger, fadeUpIn } from '../core/motion.js';
 import { haptics } from '../core/haptics.js';
 import { bannerCard, cardHeader, goodsCard, linkButton, productCard } from '../ui/components.js';
 import { travelShelf, afishaShelf } from '../ui/shelves.js';
+import { installGoodsChange } from '../ui/goodsChange.js';
 import { toast } from '../ui/toast.js';
 import { app } from '../app.js';
 import { interleave, GROCERY_CARDS } from '../domain/feedSetup.js';
@@ -559,6 +560,8 @@ function pairUp(items) {
       run = 0;
     }
   }
+  // Нечётная последняя карточка тоже должна оставаться доступной.
+  out.push(...bigs, ...smalls);
   return out;
 }
 
@@ -758,7 +761,7 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
   // Доли категорий — это интерес: по ним делятся и товары, и офферы с промокодами.
   // Доля товаров (ползунок «Товары или офферы») держится во всей ленте точно.
   // полками — кратно 4, чтобы не было полок из одной-двух карточек
-  const step = setup.mode !== 'mixed' ? 4 : 1;
+  const step = setup.mode === 'shelves' ? 4 : 1;
   const cats = Object.keys(setup.weights).filter((cat) => setup.weights[cat] > 0);
   const weights = { ...setup.weights };
   // «Шопинг» — родитель товарных категорий, в настройке его нет: его офферы добирают
@@ -780,6 +783,13 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
     }
     return out;
   };
+  // Промокоды сохраняют свои места; офферы известных брендов идут раньше даже после shuffle.
+  const prioritize = (list) => {
+    const offers = list.filter((card) => card.dataset.offer).sort((a, b) =>
+      (catalog.getOffer(b.dataset.offer)?.feedPriority || 0) - (catalog.getOffer(a.dataset.offer)?.feedPriority || 0));
+    let i = 0;
+    return list.map((card) => card.dataset.offer ? offers[i++] : card);
+  };
   // товары категории — один раз в одном порядке: из него берутся и лента, и «всё для категории»
   const goodsOrder = new Map();
   const goodsOf = (cat) => {
@@ -792,13 +802,13 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
     // (по умолчанию, у старых настроек поля нет) — их нет, остаются в полке доставки
     // GROCERY_CARDS выключен — отдельных продуктов в ленте нет вовсе, только полки
     const goods = cat === 'food' ? (!GROCERY_CARDS || setup.hideGrocery !== false ? [] : mix(catalog.grocery).map(groceryAsGoods)) : goodsOf(cat);
-    const offers = mix([
+    const offers = prioritize(mix([
       ...catalog.offersInCategory(cat).filter((o) => o && byOffer.has(o.id) && !usedOffers.has(o.id)).map((o) => {
         usedOffers.add(o.id);
         return byOffer.get(o.id);
       }),
       ...promos.filter((p) => p.dataset.cat === cat && !usedPromos.has(p)).map((p) => { usedPromos.add(p); return p; }),
-    ]);
+    ]));
     pools[cat] = { goods, offers };
   }
   // В ленту идут все офферы и промокоды выбранных категорий, товары — вперемешку с ними по доле;
@@ -812,20 +822,9 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
   const tailTarget = setup.goods > 0 && setup.goods < 100 ? Math.max(TAIL_GOODS, CUSTOM_TOTAL - offerSum - sum(goodsCounts)) : 0;
   const tailCounts = allocate(tailTarget, weights,
     Object.fromEntries(cats.map((c) => [c, pools[c].goods.length - (goodsCounts[c] || 0)])), step);
-  // Три разных товара из общей ленты выбираются заново, независимо от перемешивания ленты.
-  const changeCandidates = cats.filter((cat) => cat !== 'food').flatMap((cat) =>
-    pools[cat].goods.slice(0, (goodsCounts[cat] || 0) + (tailCounts[cat] || 0))
-      .filter((p) => rub(p.price) > 0 && String(p.cashback ?? '').trim() && rub(String(p.cashback)) < rub(p.price))
-      .map((p) => `${cat}:${p.id}`));
-  for (let i = changeCandidates.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [changeCandidates[i], changeCandidates[j]] = [changeCandidates[j], changeCandidates[i]];
-  }
-  const changedGoods = new Set([...new Set(changeCandidates)].slice(0, 3));
   const toCard = (cat) => (p) => {
-    const changeIndex = [...changedGoods].indexOf(`${cat}:${p.id}`);
-    const change = changeIndex >= 0;
-    const card = goodsCard(p, { cashbackChange: change ? { boostPoints: 15, kind: ['discount', 'cashback', 'both'][changeIndex] } : null });
+    const card = goodsCard(p);
+    card.changeProduct = p;
     card.dataset.cat = cat;
     // большие карточки — во всю ширину ленты; продукты еды всегда маленькие
     if (setup.bigGoods && cat !== 'food') card.classList.add('is-big');
@@ -865,13 +864,13 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
   // идёт в конец ленты с data-only — во всей ленте скрыто, в своей категории видно
   const rest = {};
   for (const { id: cat } of NAV) {
-    const offers = [
+    const offers = prioritize(mix([
       ...catalog.offersInCategory(cat).filter((o) => o && byOffer.has(o.id) && !usedOffers.has(o.id)).map((o) => {
         usedOffers.add(o.id);
         return byOffer.get(o.id);
       }),
       ...promos.filter((p) => p.dataset.cat === cat && !usedPromos.has(p)).map((p) => { usedPromos.add(p); return p; }),
-    ];
+    ]));
     // товары лежат по порядку: в ленту ушли первые (по доле и хвост), остальные — сюда
     const all = cat === 'food' ? [] : goodsOf(cat);
     const used = plan[cat] ? [...plan[cat].goods, ...plan[cat].tail].filter((c) => !c.dataset.only).length : 0;
@@ -884,7 +883,7 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
     for (const c of rest[cat]) Object.assign(c.dataset, { cat, only: cat });
   }
 
-  if (setup.mode === 'mixed') {
+  if (setup.mode === 'mixed' || setup.mode === 'flat') {
     // сплошная сетка без заголовков: категории перемешаны по долям, внутри — офферы и товары по доле
     const perCat = {};
     for (const [cat, { offers, goods }] of Object.entries(plan)) {
@@ -912,6 +911,10 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
       if (at == null || scratchCats.has(items[at].dataset.cat)) return sc.remove();
       scratchCats.add(items[at].dataset.cat);
       sc.dataset.cat = items[at].dataset.cat;
+      // Оффер под стирашкой остаётся доступен при выборе его категории.
+      const replaced = items[at];
+      replaced.dataset.only = replaced.dataset.cat;
+      items.push(replaced);
       items[at] = sc;
     });
     // рекламные баннеры — между карточками, равномерно по ленте (карточки не заменяют)
@@ -920,7 +923,8 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
     banners.forEach((b, i) => items.splice(Math.round(stepB * (i + 1)) + i, 0, bannerCard(b)));
     // остальное по категориям — в самый конец (во всей ленте скрыто, места не занимает)
     items.push(...Object.values(rest).flat());
-    if (setup.bigGoods) items = pairUp(items);
+    const aligned = setup.bigGoods || setup.mode === 'flat';
+    if (aligned) items = pairUp(items);
     // путешествия, афиша, доставка — отдельными блоками во всю ширину; в ровной сетке — только после
     // целого ряда (колонки над блоком выравнивает balanceFeed уже по настоящим высотам).
     // Место — доля видимой ленты: скрытое «только для категории» в конце не считается
@@ -932,7 +936,7 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
         for (let j = i - 1; j >= 0 && !items[j].classList.contains('is-big'); j--) smalls++;
         return smalls % 2 === 0;
       };
-      if (setup.bigGoods) while (at < items.length && !rowEnd(at)) at++;
+      if (aligned) while (at < items.length && !rowEnd(at)) at++;
       sp.el.classList.add('is-special');
       items.splice(at, 0, sp.el);
     });
@@ -955,7 +959,7 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
       }
       // с большими карточками ряды ровные (обычная сетка), без них — колонки как в Pinterest
       if (!cols) {
-        if (setup.bigGoods) {
+        if (aligned) {
           const grid = h('div', { class: 'grid' });
           cols = [grid, grid];
           blocks.push(grid);
@@ -967,12 +971,31 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
       }
       cols[n++ % 2].append(item);
     }
-    const section = h('section', { class: 'shelf shelf-mixed', dataset: { cat: 'mix' } }, blocks);
+    const section = h('section', { class: `shelf shelf-mixed${setup.mode === 'flat' ? ' is-flat' : ''}`, dataset: { cat: 'mix' } }, blocks);
     // продукты «только для Еды» во всей ленте скрыты
     for (const el of section.querySelectorAll('[data-only]')) el.hidden = true;
     // после фильтра по категории колонки раскладываются заново: в категории — без переносов
     // между блоками, во всей ленте — как при первой раскладке
+    const flatGrids = setup.mode === 'flat' ? blocks.filter((b) => b.classList.contains('grid')) : [];
+    const flatOriginal = new Map(flatGrids.map((g) => [g, [...g.children]]));
     section.rebalance = (all) => {
+      if (setup.mode === 'flat') {
+        for (const [grid, cards] of flatOriginal) {
+          grid.replaceChildren(...cards);
+          grid.hidden = !cards.some((card) => !card.hidden);
+        }
+        if (!all) {
+          let first = null;
+          for (const block of section.children) {
+            if (block.classList.contains('grid')) {
+              if (!first) first = block;
+              else { first.append(...block.children); block.hidden = true; }
+              first.hidden = ![...first.children].some((card) => !card.hidden);
+            } else if (!block.hidden) first = null;
+          }
+        }
+        return;
+      }
       if (setup.bigGoods) return;
       const masonries = [...section.querySelectorAll(':scope > .masonry')];
       if (all) {
@@ -1012,7 +1035,7 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
       });
     };
     // высоты карточек известны только на экране: раскладываем колонки, когда лента получила размер
-    if (!setup.bigGoods) {
+    if (!aligned) {
       let width = 0;
       new ResizeObserver(([e]) => {
         if (!e.contentRect.width || e.contentRect.width === width) return;
@@ -1236,6 +1259,30 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
   }
 
   const root = h('div', { class: 'shelves', dataset: { tourCards: 'selection' } }, parts);
+  if (custom) {
+    // Считаем порядок чтения, а не DOM независимых колонок Pinterest.
+    const ordered = parts.flatMap((part) => part.classList.contains('shelf-mixed')
+      ? [...part.children].flatMap((block) => block.classList.contains('masonry') ? masonryItems(block) : [...block.querySelectorAll('.ocard, .promo, .goods, .banner')])
+      : [...part.querySelectorAll('.ocard, .promo, .goods, .banner')]);
+    const candidates = ordered.filter((card) => card.changeProduct && !card.dataset.only && !card.closest('.is-special'));
+    for (let i = candidates.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+    }
+    const selected = [];
+    for (const card of candidates) {
+      const p = card.changeProduct;
+      const price = rub(p.price), cashback = rub(String(p.cashback ?? ''));
+      if (!price || !String(p.cashback ?? '').trim() || cashback >= price) continue;
+      const sameCategory = ordered.filter((el) => el.dataset.cat === card.dataset.cat);
+      if (selected.some((other) => Math.abs(ordered.indexOf(card) - ordered.indexOf(other)) < 7
+        || (other.dataset.cat === card.dataset.cat && Math.abs(sameCategory.indexOf(card) - sameCategory.indexOf(other)) < 7))) continue;
+      installGoodsChange(card, { price, cashback, oldPrice: rub(p.oldPrice || ''), boostPoints: 15, kind: ['discount', 'cashback', 'both'][selected.length] });
+      selected.push(card);
+      if (selected.length === 3) break;
+    }
+  }
+
 
   // Сохраняем исходный порядок, чтобы фильтр не менял общую ленту навсегда.
   const travelContainers = [root, ...root.querySelectorAll('.shelf-mixed')];
@@ -1354,7 +1401,7 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
           any ||= !sp.hidden;
         }
         part.hidden = !any;
-        for (const block of part.querySelectorAll(':scope > .masonry')) {
+        for (const block of part.querySelectorAll(':scope > .masonry, :scope > .grid')) {
           block.hidden = ![...block.querySelectorAll('.ocard, .promo, .goods, .banner, .scard')].some((card) => !card.hidden);
         }
       } else {

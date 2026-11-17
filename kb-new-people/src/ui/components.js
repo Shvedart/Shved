@@ -322,7 +322,7 @@ export function goodsCard(p, { cashbackChange = null } = {}) {
     canCalculate ? h('span', { class: 'goods-cashback-percent' }, `${percent}%`) : null,
     h('span', { class: 'gcard-badge' }, icon('crown', { size: 10 }), h('span', null, `${p.cashback}\u00A0₽`)));
   const merchant = p.verified
-    ? h('div', { class: 'goods-shop' }, h('span', { class: 'goods-verified' }, iconImg('premium-dark', { size: 10 })), 'Магазин проверен')
+    ? h('div', { class: 'goods-shop' }, h('span', { class: 'goods-verified' }, iconImg('shop-verified', { size: 16 })), 'Магазин проверен')
     : p.merchant ? h('div', { class: 'goods-shop' }, // логотип не загрузился (часть адресов cdn-tinkoff недоступна) — кружок с первой буквой
       p.merchantLogo ? h('span', { class: 'goods-shop-logo' }, img(p.merchantLogo, { alt: '', fallback: p.merchant })) : null, p.merchant) : null;
   const main = button({ class: 'goods-main', 'aria-label': `${p.brand}, ${p.description}. ${p.price}, кэшбэк ${p.cashback} ₽` },

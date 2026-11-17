@@ -33,6 +33,9 @@ export function buildCatalog(raw, cfg, productsRaw = null, discountsRaw = null, 
     for (const rawOffer of list) {
       const brandId = matchIndex.get(normName(rawOffer.name)) || slug(rawOffer.name);
       const offer = normalizeOffer(rawOffer, cat.id, brandId, today);
+      // Редакторский приоритет бренда, не размер кэшбэка.
+      const name = normName(rawOffer.name).toLowerCase();
+      offer.feedPriority = Number((cfg.priorityBrands || []).some((brand) => name.includes(normName(brand).toLowerCase())));
       offers.set(offer.id, offer);
       ids.push(offer.id);
 

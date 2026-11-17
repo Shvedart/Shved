@@ -19,7 +19,8 @@ export function setupScreen({ el, params, nav }) {
   // ---------- Вид ленты ----------
   const modes = [
     { id: 'shelves', label: 'Полками', hint: 'Подборки с заголовками: офферы и товары своими полками' },
-    { id: 'mixed', label: 'Сплошной лентой', hint: 'Без заголовков: офферы и товары вперемешку, рядом друг с другом' },
+    { id: 'mixed', label: 'Сплошная', hint: 'Без заголовков: офферы и товары вперемешку, рядом друг с другом' },
+    { id: 'flat', label: 'Ровная', hint: 'Без заголовков: по две карточки в ряд, с одинаковым началом каждого ряда' },
   ];
   const modeHint = h('p', { class: 'setup-hint' });
   // анимации вида ленты из квадратиков над переключателем (стили .anim-mode в screens.css), по одной над вариантом:
@@ -31,6 +32,7 @@ export function setupScreen({ el, params, nav }) {
   const column = (x, hs) => [0, 1, 2].flatMap((k) => { let y = 4 + k * 30; return hs.map((hh, i) => { const r = sq(x, y, 17, hh, x > 20 && i === 0 ? 'c' : ''); y += hh + 3; return r; }); }).join('');
   const MODE_ANIM = {
     shelves: `<g class="up up-34">${shelves}</g>`,
+    flat: `<g class="up up-30">${column(4, [12, 12])}${column(23, [12, 12])}</g>`,
     mixed: `<g class="up up-30">${column(4, [14, 10])}${column(23, [10, 14])}</g>`,
   };
   const modeAnims = modes.map((m) => h('span', { class: 'setup-anim anim-mode', dataset: { mode: m.id }, 'aria-hidden': 'true', html: `<svg viewBox="0 0 44 44" width="44" height="44">${MODE_ANIM[m.id]}</svg>` }));
@@ -46,7 +48,7 @@ export function setupScreen({ el, params, nav }) {
     });
     return b;
   });
-  const seg = h('div', { class: 'setup-seg', role: 'radiogroup', 'aria-label': 'Вид ленты' }, modeBtns);
+  const seg = h('div', { class: 'setup-seg is-feed-mode', role: 'radiogroup', 'aria-label': 'Вид ленты' }, modeBtns);
   function syncMode() {
     for (const b of modeBtns) {
       const on = b.dataset.mode === setup.mode;
@@ -118,17 +120,28 @@ export function setupScreen({ el, params, nav }) {
     groceryInput, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
   // картинки на плитках офферов; у старых настроек поля нет — включены
   const picsInput = h('input', { class: 'setup-switch-input', type: 'checkbox', role: 'switch' });
-  picsInput.checked = setup.offerImages !== false;
+  picsInput.checked = setup.offerImages === false;
   picsInput.addEventListener('change', () => {
     // включили картинки — цветной фон сам выключается (его можно вернуть вручную,
     // картинки при этом не трогаем: связь только в эту сторону)
-    setup = { ...setup, offerImages: picsInput.checked, ...(picsInput.checked ? { tinted: false } : {}) };
-    if (picsInput.checked) tintInput.checked = false;
+    setup = { ...setup, offerImages: !picsInput.checked, ...(!picsInput.checked ? { tinted: false } : {}) };
+    if (!picsInput.checked) tintInput.checked = false;
+    syncPreview();
     haptics.selection();
   });
   const pics = h('label', { class: 'setup-switch' },
-    h('span', { class: 'setup-switch-text' }, h('span', { class: 'setup-label' }, 'Картинки на офферах'), h('span', { class: 'setup-hint' }, 'Выключены — другой тип карточки: логотип и бренд сверху, кэшбэк и условия снизу')),
+    h('span', { class: 'setup-switch-text' }, h('span', { class: 'setup-label' }, 'Другой тип карточки оффера'), h('span', { class: 'setup-hint' }, 'Логотип и бренд сверху, кэшбэк и условия снизу')),
     picsInput, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
+  const imageInput = h('input', { class: 'setup-switch-input', type: 'checkbox', role: 'switch' });
+  imageInput.checked = setup.offerPicture !== false;
+  imageInput.addEventListener('change', () => {
+    setup = { ...setup, offerPicture: imageInput.checked };
+    haptics.selection();
+    syncPreview();
+  });
+  const offerPicture = h('label', { class: 'setup-switch' },
+    h('span', { class: 'setup-switch-text' }, h('span', { class: 'setup-label' }, 'Показывать картинку в оффере'), h('span', { class: 'setup-hint' }, 'Скрывает только изображение, сохраняя вид и размер карточки')),
+    imageInput, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
   // ---------- Логотип и картинка на офферах и промокодах ----------
   // один размер логотипа у всех офферов и промокодов
   const logoBtns = LOGO_SIZES.map((size) => {
@@ -161,6 +174,12 @@ export function setupScreen({ el, params, nav }) {
   const nameLines = h('label', { class: 'setup-switch' },
     h('span', { class: 'setup-switch-text' }, h('span', { class: 'setup-label' }, 'Название бренда в две строки'), h('span', { class: 'setup-hint' }, 'На офферах и промокодах. Выключено — в одну строку')),
     nameInput, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
+  const marksInput = h('input', { class: 'setup-switch-input', type: 'checkbox', role: 'switch' });
+  marksInput.checked = setup.viewMarks === true;
+  marksInput.addEventListener('change', () => { setup = { ...setup, viewMarks: marksInput.checked }; haptics.selection(); });
+  const viewMarks = h('label', { class: 'setup-switch' },
+    h('span', { class: 'setup-switch-text' }, h('span', { class: 'setup-label' }, 'Галочки на логотипах'), h('span', { class: 'setup-hint' }, 'Отмечать просмотренные предложения')),
+    marksInput, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
   const pic = slider({
     label: 'Размер картинки',
     value: setup.offerPic ?? PIC_DEFAULT,
@@ -224,6 +243,7 @@ export function setupScreen({ el, params, nav }) {
   function syncPreview() {
     offerPreview.classList.toggle('is-tinted', !!setup.tinted);
     offerPreview.classList.toggle('no-offer-images', setup.offerImages === false);
+    offerPreview.classList.toggle('hide-offer-picture', setup.offerPicture === false);
     applyCardLook(offerPreview, setup);
     goodsPreview.classList.toggle('goods-net-price', setup.goodsNetPrice !== false);
     goodsPreview.classList.toggle('goods-cover', setup.goodsCover === true);
@@ -362,7 +382,7 @@ export function setupScreen({ el, params, nav }) {
     h('div', { class: 'setup-inner' },
       h('h1', { class: 'setup-title' }, 'Соберите ленту под себя'),
       h('p', { class: 'setup-sub' }, 'Как показывать предложения и чего в ленте должно быть больше'),
-      h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Вид ленты'), modePics, seg, modeHint, offerPreview, logo, pic, lookHint, tint, pics, nameLines),
+      h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Вид ленты'), modePics, seg, modeHint, offerPreview, logo, pic, lookHint, tint, pics, offerPicture, nameLines, viewMarks),
       h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Что попадает в ленту'), random, delivery, GROCERY_CARDS ? grocery : null),
       h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Товары или офферы'), goods, goodsHint, big),
       h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Карточка товара'), goodsPreview, netPrice, cover, moderated, goodsParts),

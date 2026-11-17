@@ -1914,3 +1914,7 @@ img.is-broken {
 .has-cashback-change[data-change-state="pending"] .goods-cashback-up { display: none; }
 
 .goods-change-summaries { display: flex; flex-direction: column; gap: 0; }
+
+.no-view-marks .ocard .counted { display: none; }
+
+.hide-offer-picture .ocard-image { visibility: hidden; }
