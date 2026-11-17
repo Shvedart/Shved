@@ -1290,3 +1290,27 @@
 .delivery-redeem-cell-description { font-size: 13px; line-height: 16px; letter-spacing: -.08px; color: var(--c-text-secondary); }
 
 .delivery-redeem-cell .setup-switch-input:checked + .setup-switch-track { background: var(--c-info); }
+
+/* Общее оформление полок; сплошные колонки и путешествия сохраняют свой фон. */
+.colored-shelves :is(.shelf:not(.shelf-mixed), .delivery, .fc-hero):not(.fc-trip):not(.hot-flights) {
+  background: rgba(130, 161, 255, .10);
+  background: color(display-p3 0.51 0.63 1 / 0.1);
+  box-shadow: none;
+}
+.colored-shelves :is(.shelf:not(.shelf-mixed), .delivery, .fc-hero):not(.fc-trip):not(.hot-flights) .delivery-order { background: var(--c-bg); }
+
+/* Как у логотипа оффера: обводка поверх фото не меняет размер плитки. */
+.colored-shelves :is(.shelf:not(.shelf-mixed), .delivery, .fc-hero):not(.fc-trip):not(.hot-flights) :is(.gcard-pic, .goods-pic, .benefit-product-pic)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(0, 16, 36, 0.08);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Эксперимент: белая плитка и Multiply только для фото продуктов в цветных полках. */
+.colored-shelves .delivery:not(.hot-flights) .gcard-pic { background: var(--c-bg); isolation: isolate; }
+.colored-shelves .delivery:not(.hot-flights) .gcard-pic > img { mix-blend-mode: multiply; }
+.colored-shelves .delivery:not(.hot-flights) .gcard-pic::after { display: none; }

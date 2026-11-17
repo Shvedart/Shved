@@ -63,7 +63,7 @@ export function defaultSetup(ids) {
   const weights = intentWeights(INTENTS[0], ids);
   return {
     mode: 'mixed', goods: 20, goodsNetPrice: false, goodsCover: false, bigGoods: false, tinted: false, offerImages: true, offerPicture: true, random: false, delivery: true, hideGrocery: true, moderated: true,
-    nameLines: 2, viewMarks: false,
+    nameLines: 2, viewMarks: false, coloredShelves: false,
     goodsShow: { old: true, brand: false, desc: true, shop: false, verified: true },
     weights, locked: ids.filter((id) => weights[id] > 0),
   };

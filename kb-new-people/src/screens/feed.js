@@ -377,11 +377,11 @@ function deliveryRedeemShelf({ catalog }) {
     h('div', { class: 'card-header delivery-cb-head' },
       img(st.logo, { cls: 'delivery-cb-logo', alt: '', width: 40, height: 40, lazy: false }),
       h('div', { class: 'card-header-text' },
-        h('h2', { class: 'card-title' }, `Корзина в ${st.where}`),
+        h('h2', { class: 'card-title' }, 'Уже заказывали'),
         h('p', { class: 'card-subtitle' }, `${list.length} товаров · ${money(total)}`))),
     h('div', { class: 'hscroll delivery-scroll' }, cards, deliveryEdit()),
-    redeemCell,
-    h('div', { class: 'delivery-foot' }, order));
+    h('div', { class: 'delivery-foot' }, order,
+      h('p', { class: 'delivery-redeem-under' }, `Спишем ${money(redeemed)} накопленного кэшбэка`)));
 }
 
 function deliveryCashbackShelf({ catalog, onLink }) {
@@ -655,8 +655,12 @@ function customSpecials({ catalog, setup, extras, onLink }) {
     // Согласованные полки убраны из ленты; остальные наборы остаются.
     catalog.kits.filter((kit) => kit.id !== 'candle').forEach((kit, i) => list.push({ el: kitShelf(kit), at: 0.6 + i * 0.05 }));
   }
-  const benefit = productBenefitShelf({ catalog });
-  if (benefit) list.push({ el: benefit, at: 0.18 });
+  // Сравнение кэшбэка пока скрыто: вернём после доработки.
+  const SHOW_PRODUCT_BENEFIT = false;
+  if (SHOW_PRODUCT_BENEFIT) {
+    const benefit = productBenefitShelf({ catalog });
+    if (benefit) list.push({ el: benefit, at: 0.18 });
+  }
   const d = deliveryShelf({ catalog, onLink });
   if (d) list.push({ el: d, at: 0.1 });
   const r = storeShelf(REMIND, { catalog, onLink });
@@ -1270,7 +1274,7 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
     for (let i = 0; i < promoPool.length; i += 4) shelf('Ещё промокоды', 'Скидки по коду у партнёров', promoPool.slice(i, i + 4), 'mix');
   }
 
-  const root = h('div', { class: 'shelves', dataset: { tourCards: 'selection' } }, parts);
+  const root = h('div', { class: `shelves${custom && custom.coloredShelves === true ? ' colored-shelves' : ''}`, dataset: { tourCards: 'selection' } }, parts);
   if (custom) {
     // Считаем порядок чтения, а не DOM независимых колонок Pinterest.
     const ordered = parts.flatMap((part) => part.classList.contains('shelf-mixed')

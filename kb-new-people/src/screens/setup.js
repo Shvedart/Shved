@@ -194,6 +194,12 @@ export function setupScreen({ el, params, nav }) {
   const random = h('label', { class: 'setup-switch' },
     h('span', { class: 'setup-switch-text' }, h('span', { class: 'setup-label' }, 'Случайный подбор'), h('span', { class: 'setup-hint' }, 'Те же доли категорий, но офферы и товары каждый раз другие')),
     randomInput, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
+  const shelvesColorInput = h('input', { class: 'setup-switch-input', type: 'checkbox', role: 'switch' });
+  shelvesColorInput.checked = setup.coloredShelves === true;
+  shelvesColorInput.addEventListener('change', () => { setup = { ...setup, coloredShelves: shelvesColorInput.checked }; haptics.selection(); });
+  const coloredShelves = h('label', { class: 'setup-switch' },
+    h('span', { class: 'setup-switch-text' }, h('span', { class: 'setup-label' }, 'Цветной фон полок'), h('span', { class: 'setup-hint' }, 'Без тени, с белыми кнопками. Кроме путешествий и горячих авиабилетов')),
+    shelvesColorInput, h('span', { class: 'setup-switch-track', 'aria-hidden': 'true' }));
   // ---------- Что попадает в ленту: тумблеры с анимацией из квадратиков ----------
   // схема ленты 3×3 (квадратик 10px, шаг 13px); что двигается — показывает, что делает тумблер,
   // и зависит от его положения (CSS по :checked)
@@ -383,7 +389,7 @@ export function setupScreen({ el, params, nav }) {
       h('h1', { class: 'setup-title' }, 'Соберите ленту под себя'),
       h('p', { class: 'setup-sub' }, 'Как показывать предложения и чего в ленте должно быть больше'),
       h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Вид ленты'), modePics, seg, modeHint, offerPreview, logo, pic, lookHint, tint, pics, offerPicture, nameLines, viewMarks),
-      h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Что попадает в ленту'), random, delivery, GROCERY_CARDS ? grocery : null),
+      h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Что попадает в ленту'), random, delivery, coloredShelves, GROCERY_CARDS ? grocery : null),
       h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Товары или офферы'), goods, goodsHint, big),
       h('section', { class: 'setup-block' }, h('h2', { class: 'setup-block-title' }, 'Карточка товара'), goodsPreview, netPrice, cover, moderated, goodsParts),
       h('section', { class: 'setup-block' },
