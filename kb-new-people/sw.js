@@ -1,7 +1,10 @@
 // Service worker: оболочка приложения доступна офлайн, картинки партнёров кешируются по мере просмотра.
-const VERSION = 'kb-np-v400';
+const VERSION = 'kb-np-v404';
 const SHELL = [
   './',
+  'assets/img/auto/lada-vesta.webp',
+  'assets/img/auto/jetour-x90-plus.webp',
+  'assets/img/auto/belgee-x70.webp',
   'index.html',
   'manifest.webmanifest',
   'cashback-web.json',

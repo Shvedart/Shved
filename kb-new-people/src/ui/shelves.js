@@ -3,6 +3,9 @@
 // и «События для вас» — карусель афиши с параллаксом, закольцованная.
 // Логика и геометрия сохранены; вместо window-скролла — скролл страницы прототипа.
 
+import { h, button, img, icon } from '../core/dom.js';
+import { toast } from './toast.js';
+
 const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 function el(html) {
@@ -49,6 +52,41 @@ export function afishaShelf({ title = 'События для вас', items }) {
         ${items.map(heroCardHtml).join('')}
       </div>
     </section>`);
+  // Делегирование сохраняет клики на дубликатах зацикленной ленты.
+  section.addEventListener('click', (e) => {
+    if (e.target.closest('.auto-open')) toast('Предложение автомобиля откроется в приложении');
+  });
+  section.mount = () => initHeroCarousel(section.querySelector('[data-hero]'));
+  return section;
+}
+
+// Авто использует ту же геометрию и параллакс, что и афиша.
+export function autoShelf({ items }) {
+  const money = (n) => `${n.toLocaleString('ru-RU')}\u00a0₽`;
+  const all = button({ class: 'fc-all-link' }, 'Все');
+  all.addEventListener('click', () => toast('Каталог автомобилей откроется в приложении'));
+  const cards = items.map((car) => {
+    const open = button({ class: 'auto-open', 'aria-label': `${car.name}. ${money(car.price)}. Кредит от ${money(car.credit)} в месяц` });
+    return h('div', { class: 'fc-snap' },
+      h('article', { class: 'fc-hero-card fc-par-box auto-card' },
+        img(car.img, { alt: car.name }),
+        h('div', { class: 'fc-shade' }),
+        car.support ? h('div', { class: 'auto-support' }, 'Господдержка') : null,
+        h('div', { class: 'auto-content' },
+          h('div', { class: 'auto-name' }, car.name),
+          car.oldPrice ? h('div', { class: 'auto-discount-row' },
+            h('s', { class: 'auto-old' }, money(car.oldPrice)),
+            h('span', { class: 'auto-discount' }, icon('coupon', { size: 12 }), `−${money(car.discount)}`)) : null,
+          h('div', { class: 'auto-price-row' }, h('b', { class: 'auto-price' }, money(car.price)),
+            h('span', { class: 'auto-credit' }, `от\u00a0${money(car.credit)}/мес`))), open));
+  });
+  const section = h('section', { class: 'fc-shelf fc-hero auto-shelf', dataset: { cat: 'auto' } },
+    h('div', { class: 'fc-section-header' }, h('h2', null, 'Новые авто со скидками до\u00a0700\u00a0000\u00a0₽'), all),
+    h('div', { class: 'fc-scroller fc-scroller--center', dataset: { hero: '', loop: '1' } }, cards));
+  // Делегирование сохраняет клики на дубликатах зацикленной ленты.
+  section.addEventListener('click', (e) => {
+    if (e.target.closest('.auto-open')) toast('Предложение автомобиля откроется в приложении');
+  });
   section.mount = () => initHeroCarousel(section.querySelector('[data-hero]'));
   return section;
 }
@@ -66,7 +104,7 @@ function initHeroCarousel(scroller) {
 
   // зацикливание: по краям — дубликаты; докрутив до дубликата, скролл перескакивает на такую же настоящую
   const realCount = scroller.children.length;
-  const looped = scroller.dataset.loop === '1' && realCount > CLONES;
+  const looped = scroller.dataset.loop === '1' && realCount >= CLONES;
   if (looped) {
     const orig = [...scroller.children];
     for (let i = 0; i < CLONES; i++) {
@@ -117,26 +155,28 @@ function initHeroCarousel(scroller) {
 
   // перескок на стыке — только когда лента встала: подмена позиции на лету сбивает инерцию
   let settleTimer = 0;
-  let jumpedThisFling = false;
+  let jumping = false;
   const indexAt = (p) => Math.round((p - snapOf(first)) / step);
-  function jump(exact) {
+  function jump() {
+    if (!step || jumping) return;
     const i = indexAt(scroller.scrollLeft);
-    let to = i;
-    if (i < 0) to = i + realCount;
-    else if (i > realCount - 1) to = i - realCount;
+    const to = ((i % realCount) + realCount) % realCount;
     if (to === i) return;
-    const from = first + i;
-    const dest = first + to;
-    if (!slots[dest]) return;
-    if (exact) {
-      const prev = scroller.style.scrollSnapType;
-      scroller.style.scrollSnapType = 'none';
-      scroller.scrollLeft = snapOf(dest);
-      void scroller.offsetWidth;
+    // Сохраняем дробное смещение: дубликат и оригинал должны совпасть до пикселя.
+    const offset = scroller.scrollLeft - snapOf(first + i);
+    const target = snapOf(first + to) + offset;
+    const prev = scroller.style.scrollSnapType;
+    jumping = true;
+    scroller.style.scrollSnapType = 'none';
+    scroller.scrollLeft = target;
+    lastPos = scroller.scrollLeft;
+    paint();
+    // Safari нужно отрисовать перенос без snap, иначе он повторно дёргает ленту.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
       scroller.style.scrollSnapType = prev;
-    } else {
-      scroller.scrollLeft += snapOf(dest) - snapOf(from);
-    }
+      jumping = false;
+      lastPos = scroller.scrollLeft;
+    }));
   }
 
   // пока палец на экране, перескакивать нельзя — лента выдёргивается из-под пальца
@@ -154,33 +194,26 @@ function initHeroCarousel(scroller) {
   let ticking = false;
   let lastPos = -1;
   function onScroll() {
-    if (looped && !jumpedThisFling && !touching) {
-      // у самой стенки перескакиваем сразу, иначе лента упрётся в край
-      const max = scroller.scrollWidth - scroller.clientWidth;
-      if (scroller.scrollLeft < step * 0.25 || scroller.scrollLeft > max - step * 0.25) {
-        jumpedThisFling = true;
-        jump(false);
-      }
-    }
+    if (jumping) return;
     clearTimeout(settleTimer);
     lastPos = scroller.scrollLeft;
     settleTimer = setTimeout(settled, SETTLE);
     if (!ticking) { ticking = true; requestAnimationFrame(() => { ticking = false; paint(); }); }
   }
   function settled() {
+    if (jumping) return;
     if (touching || scroller.scrollLeft !== lastPos) {
       lastPos = scroller.scrollLeft;
       settleTimer = setTimeout(settled, SETTLE);
       return;
     }
-    jumpedThisFling = false;
-    if (looped) jump(true);
+    if (looped) jump();
     paint();
   }
 
   scroller.addEventListener('scroll', onScroll, { passive: true });
   scroller.addEventListener('scrollend', () => {
-    if (touching) return;
+    if (touching || jumping) return;
     clearTimeout(settleTimer);
     lastPos = scroller.scrollLeft;
     settled();
@@ -192,12 +225,18 @@ function initHeroCarousel(scroller) {
     measure();
     if (!scroller.clientWidth) return;
     if (!placed && looped) { placed = true; scroller.scrollLeft = snapOf(first); }
+    else if (looped) jump(); // После скрытия категории браузер может сбросить scrollLeft.
     paint();
   };
   const ro = new ResizeObserver(onResize);
   ro.observe(scroller);
+  // Перенос DOM при фильтрации тоже сбрасывает позицию, даже без изменения размеров.
+  const visible = new IntersectionObserver((entries) => {
+    if (entries.some((entry) => entry.isIntersecting)) onResize();
+  });
+  visible.observe(scroller);
   onResize();
-  return () => ro.disconnect();
+  return () => { ro.disconnect(); visible.disconnect(); };
 }
 
 // ---------- Путешествия: «посадочный талон» с направлениями, раскрытый ----------

@@ -5,7 +5,7 @@ import { h, button, img, icon, iconImg } from '../core/dom.js';
 import { animate, EASE, stagger, fadeUpIn } from '../core/motion.js';
 import { haptics } from '../core/haptics.js';
 import { bannerCard, cardHeader, goodsCard, linkButton, productCard } from '../ui/components.js';
-import { travelShelf, afishaShelf } from '../ui/shelves.js';
+import { travelShelf, afishaShelf, autoShelf } from '../ui/shelves.js';
 import { installGoodsChange } from '../ui/goodsChange.js';
 import { toast } from '../ui/toast.js';
 import { app } from '../app.js';
@@ -646,6 +646,12 @@ function giftShelf({ catalog, setup }) {
     label: (p) => ({ text: GIFT_DAYS[list.indexOf(p) % GIFT_DAYS.length], cls: 'is-date' }) });
 }
 
+const AUTO = [
+  { name: 'Lada Vesta', support: true, oldPrice: 1781000, discount: 200000, price: 1581000, credit: 25179, img: 'assets/img/auto/lada-vesta.webp' },
+  { name: 'Jetour X90 Plus', oldPrice: 4211000, discount: 251000, price: 3960000, credit: 63789, img: 'assets/img/auto/jetour-x90-plus.webp' },
+  { name: 'Belgee X70', price: 2579990, credit: 41089, img: 'assets/img/auto/belgee-x70.webp' },
+];
+
 function customSpecials({ catalog, setup, extras, onLink }) {
   const list = [];
   // тумблер «Горизонтальные полки» (поле delivery, по умолчанию включён) — выключен: в ленте нет
@@ -682,6 +688,9 @@ function customSpecials({ catalog, setup, extras, onLink }) {
     extras.push(a);
     list.push({ el: a, at: 0.7 });
   }
+  const cars = autoShelf({ items: AUTO });
+  extras.push(cars);
+  list.push({ el: cars, at: 0.56 });
   // широкие блоки ставятся по порядку своего места в ленте
   return list.sort((a, b) => a.at - b.at);
 }
