@@ -1,5 +1,5 @@
 // Service worker: оболочка приложения доступна офлайн, картинки партнёров кешируются по мере просмотра.
-const VERSION = 'kb-np-v404';
+const VERSION = 'kb-np-v405';
 const SHELL = [
   './',
   'assets/img/auto/lada-vesta.webp',

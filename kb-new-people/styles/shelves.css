@@ -1333,3 +1333,8 @@
 
 /* Отдельные слои удерживают фото при переносе зацикленной ленты в Safari. */
 .auto-card, .auto-card > img { will-change: transform; backface-visibility: hidden; }
+/* Safari поднимает анимированное фото в отдельный слой — текст держим выше него. */
+.auto-card > img { z-index: 0; }
+.auto-card .fc-shade { z-index: 1; }
+.auto-content, .auto-support { z-index: 2; transform: translateZ(0); }
+.auto-open { z-index: 3; background: transparent; }
