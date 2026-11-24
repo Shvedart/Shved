@@ -2,39 +2,26 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Временно недоступно</title>
-  <meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>Кэшбэки и бонусы</title>
+  <meta name="description" content="Прототип онбординга новичков в разделе «Кэшбэки и бонусы»">
   <meta name="theme-color" content="#ffffff">
-  <style>
-    html, body { height: 100%; margin: 0; }
-    body {
-      display: grid;
-      place-items: center;
-      font: 16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: #111;
-      background: #fff;
-      padding: 24px;
-      text-align: center;
-    }
-    p { margin: 0; opacity: .55; }
-  </style>
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Кэшбэки">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/app/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/app/apple-touch-icon.png">
+  <link rel="stylesheet" href="styles/tokens.css">
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/screens.css">
+  <link rel="stylesheet" href="styles/shelves.css">
+  <script type="module" src="src/main.js"></script>
 </head>
 <body>
-  <p>Временно недоступно</p>
-  <script>
-    (async () => {
-      try {
-        if ('serviceWorker' in navigator) {
-          const regs = await navigator.serviceWorker.getRegistrations();
-          await Promise.all(regs.map((r) => r.unregister()));
-        }
-        if (window.caches) {
-          const keys = await caches.keys();
-          await Promise.all(keys.map((k) => caches.delete(k)));
-        }
-      } catch (_) {}
-    })();
-  </script>
+  <div id="app"></div>
+  <noscript>Для работы прототипа включите JavaScript.</noscript>
 </body>
 </html>
