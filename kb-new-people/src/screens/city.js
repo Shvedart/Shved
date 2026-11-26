@@ -41,6 +41,7 @@ function fuelMotion(page, canvas, logo, settings = FUEL) {
   let active = false, visible = false, target = 0, tilt = 0, tiltSpeed = 0;
   let wave = 0, speed = 0, level = settings.progress, levelSpeed = 0;
   let lastY, lastScroll = 0, previousDelta = 0, pitch = null, hasLogo = false;
+  let previousRoll = null;
   const clamp = (v, max) => Math.max(-max, Math.min(max, v));
   const getTile = () => canvas.parentElement;
   const tint = (a) => 'rgba(' + settings.waterColor + ',' + a + ')';
@@ -191,9 +192,15 @@ function fuelMotion(page, canvas, logo, settings = FUEL) {
     if (!orientationAllowed || !visible || reducedMotion() || !Number.isFinite(event.gamma)) return;
     // Наклон поверхности следует горизонту. Ограничиваем тангенс у 90°.
     const roll = clamp(event.gamma, 80) * Math.PI / 180;
-    target = Math.tan(roll);
+    target = -Math.tan(roll);
+    // Изменение угла даёт импульс волне, а пружина гасит его после поворота.
+    if (previousRoll !== null) {
+      const rollDelta = roll - previousRoll;
+      if (Math.abs(rollDelta) > .002) speed = clamp(speed + rollDelta * 390, 240);
+    }
+    previousRoll = roll;
     if (Number.isFinite(event.beta)) {
-      if (pitch !== null) speed = clamp(speed + clamp(event.beta - pitch, 10) * 5, 140);
+      if (pitch !== null) speed = clamp(speed + clamp(event.beta - pitch, 10) * 5, 240);
       pitch = event.beta;
     }
     wake();
@@ -208,7 +215,7 @@ function fuelMotion(page, canvas, logo, settings = FUEL) {
   function pause() {
     cancelAnimationFrame(frame);
     frame = last = previousDelta = 0;
-    pitch = null;
+    pitch = previousRoll = null;
   }
   const observer = new IntersectionObserver(([entry]) => {
     visible = entry.isIntersecting;

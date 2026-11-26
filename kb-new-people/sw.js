@@ -1,5 +1,5 @@
 // Service worker: оболочка приложения доступна офлайн, картинки партнёров кешируются по мере просмотра.
-const VERSION = 'kb-np-v426';
+const VERSION = 'kb-np-v427';
 const SHELL = [
   './',
   'styles/city.css',
