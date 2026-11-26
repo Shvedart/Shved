@@ -1,7 +1,15 @@
 // Service worker: оболочка приложения доступна офлайн, картинки партнёров кешируются по мере просмотра.
-const VERSION = 'kb-np-v433';
+const VERSION = 'kb-np-v434';
 const SHELL = [
   './',
+  'assets/img/city/supermarket.mp4',
+  'assets/img/city/grocery-poster.png',
+  'assets/img/city/order-brand.png',
+  'assets/img/city/nutella.png',
+  'assets/icons/city-service-fuel.svg',
+  'assets/icons/city-service-first.svg',
+  'assets/icons/city-service-second.svg',
+  'assets/icons/city-service-auto.svg',
   'assets/img/city/electronics.mp4',
   'assets/img/city/electronics.png',
   'assets/img/city/brand-first.png',

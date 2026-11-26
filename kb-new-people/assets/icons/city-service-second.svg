@@ -1,0 +1,26 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10.9286" height="10.9286" viewBox="0 0 10.9286 10.9286" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="AvatarIcon">
+<mask id="mask0_0_569" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="11" height="11">
+<g id="Mask">
+<path id="Mask_2" d="M7.16378 9.47557L7.16377 6.55814L8.72049 5.85127L8.72049 8.7703L7.16378 9.47557Z" fill="black" style="fill:black;fill-opacity:1;"/>
+<path id="Mask_3" d="M1.7162 8.54745C1.22598 8.32536 0.910713 7.83446 0.910714 7.29325L0.910715 3.59806L5.46429 5.66107V10.2455L1.7162 8.54745ZM3.70253 6.51487L2.26233 5.85344V7.27851C2.26233 7.45649 2.36598 7.61817 2.52768 7.69243L3.96788 8.35386V6.9288C3.96788 6.75081 3.86424 6.58914 3.70253 6.51487Z" fill-rule="evenodd" clip-rule="evenodd" fill="black" style="fill:black;fill-opacity:1;"/>
+<path id="Mask_4" d="M7.96385 2.43081L5.46696 5.65987L5.46428 5.66108V10.2456L7.1638 9.47558L7.16379 6.55815L8.7205 5.85128L8.72051 8.77031L9.21237 8.54747C9.70259 8.32538 10.0179 7.83448 10.0179 7.29327L10.0161 3.59824L7.96385 2.43081Z" fill="url(#paint0_linear_0_569)"/>
+<path id="Mask_5" opacity="0.3" d="M2.26238 5.85344L3.70257 6.51487C3.86428 6.58914 3.96792 6.75081 3.96792 6.9288V8.35386L2.52773 7.69243C2.36602 7.61817 2.26238 7.45649 2.26238 7.27851V5.85344Z" fill="black" style="fill:black;fill-opacity:1;"/>
+<path id="Mask_6" d="M0.911381 3.59838L3.64283 0.455357L7.96348 2.43126L5.46693 5.65986L5.46426 5.66107L0.911381 3.59838Z" fill="url(#paint1_linear_0_569)"/>
+</g>
+</mask>
+<g mask="url(#mask0_0_569)">
+<path id="Color" d="M0 0H10.9286V10.9286H0V0Z" fill="white" style="fill:white;fill-opacity:1;"/>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_569" x1="8.03026" y1="2.43081" x2="8.03026" y2="9.18745" gradientUnits="userSpaceOnUse">
+<stop stop-opacity="0.4" style="stop-color:black;stop-opacity:0.4;"/>
+<stop offset="1" stop-opacity="0.6" style="stop-color:black;stop-opacity:0.6;"/>
+</linearGradient>
+<linearGradient id="paint1_linear_0_569" x1="6.61207" y1="1.7852" x2="4.6657" y2="5.24081" gradientUnits="userSpaceOnUse">
+<stop stop-opacity="0.6" style="stop-color:black;stop-opacity:0.6;"/>
+<stop offset="1" stop-opacity="0.8" style="stop-color:black;stop-opacity:0.8;"/>
+</linearGradient>
+</defs>
+</svg>

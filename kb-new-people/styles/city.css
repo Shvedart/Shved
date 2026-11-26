@@ -64,3 +64,23 @@
 
 
 .city-page .feed-shelves { scroll-margin-top: 72px; }
+
+.city-products .city-tiles > .city-tile { background: #eaf7f0; }
+.city-products .city-headphone-video {
+  top: 39px;
+  left: 41%;
+  width: 86%;
+  -webkit-mask-image: radial-gradient(ellipse at 76% 73%, black 59%, transparent 78%);
+  mask-image: radial-gradient(ellipse at 76% 73%, black 59%, transparent 78%);
+}
+.city-order-meta { font-size: 13px; line-height: 16px; }
+.city-order-brand { position: absolute; right: 12px; bottom: 10px; width: 24px; height: 24px; border-radius: 50%; }
+.city-nutella-art { position: absolute; z-index: -1; left: 39.74%; top: -9.57%; width: 71.47%; height: 159.85%; }
+.city-service-icons { display: grid; grid-template: repeat(2, 20px) / repeat(2, 20px); gap: 2px; place-content: center; border-radius: 20px; background: rgba(0,16,36,.03); }
+.city-page .delivery-redeem { scroll-margin-top: 72px; }
+
+.city-service-icons .ico-img { box-sizing: content-box; padding: 3px; border-radius: 50%; }
+.city-service-auto { background: #596695; }
+.city-service-first { background: #ff7206; }
+.city-service-fuel { background: #7caeff; }
+.city-service-second { background: #a381ff; }

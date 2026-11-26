@@ -26,8 +26,9 @@ export function requestCityOrientation() {
   })();
 }
 
-export function cityScreen({ el, nav }) {
+export function cityScreen({ el, nav, params }) {
   const { catalog } = app;
+  const products = params.branch === 'products';
   const setup = {
     ...defaultSetup([]),
     mode: 'flat',
@@ -35,6 +36,7 @@ export function cityScreen({ el, nav }) {
     weights: { electronics: 86, home: 8, food: 4, travel: 1, fun: 1 },
   };
   el.classList.add('city-page');
+  if (products) el.classList.add('city-products');
   applyCardLook(el, setup);
   for (const [part, on] of Object.entries(setup.goodsShow)) if (!on) el.classList.add('goods-no-' + part);
 
@@ -60,11 +62,11 @@ export function cityScreen({ el, nav }) {
   const search = h('label', { class: 'city-search' }, iconImg('city-search', { size: 24 }), input);
   const video = h('video', { class: 'city-headphone-video', muted: true, playsinline: true, preload: 'auto', 'aria-hidden': 'true' });
   video.muted = true;
-  const electronics = button({ class: 'city-tile city-electronics', onClick: () => {
+  const featured = button({ class: 'city-tile city-electronics', onClick: () => {
     if (!orientationRequest) requestCityOrientation();
-    select('electronics');
-  } }, art('electronics.png', 'city-headphone-poster'), video,
-    h('span', { class: 'city-tile-title' }, 'Электроника'),
+    select(products ? 'food' : 'electronics');
+  } }, art(products ? 'grocery-poster.png' : 'electronics.png', 'city-headphone-poster'), video,
+    h('span', { class: 'city-tile-title' }, products ? 'Супермаркеты' : 'Электроника'),
     h('span', { class: 'city-badge' }, iconImg('city-shield', { size: 12 }), '20%'));
   const clock = h('span', { role: 'timer' }, '00:16:32');
   const deadline = Date.now() + 992000;
@@ -75,10 +77,19 @@ export function cityScreen({ el, nav }) {
     h('span', { class: 'city-brand-stack', 'aria-hidden': 'true' }, art('brand-first.png'), art('brand-second.png')),
     h('span', { class: 'city-tile-title' }, 'Кэшбэк', h('br'), 'от брендов'));
 
+  const repeatOrder = button({ class: 'city-tile city-repeat-order', onClick: () => select('food', '.delivery-redeem') },
+    h('span', { class: 'city-tile-title' }, 'Повторить заказ'),
+    h('span', { class: 'city-order-meta' }, '12 товаров', h('br'), '~ 5 900 ₽'),
+    art('order-brand.png', 'city-order-brand'));
+  const nutella = button({ class: 'city-tile city-nutella', onClick: () => select('food') },
+    art('nutella.png', 'city-nutella-art'),
+    h('span', { class: 'city-tile-title' }, 'Nutella'),
+    h('span', { class: 'city-badge' }, iconImg('city-shield', { size: 12 }), '100%'));
+
   let videoURL, frame = 0, progress = 0, timer, mounted = true;
   const download = new AbortController();
   // Blob позволяет перематывать локальное видео и на сервере без Range-запросов.
-  fetch(asset('electronics.mp4'), { signal: download.signal }).then((response) => {
+  fetch(asset(products ? 'supermarket.mp4' : 'electronics.mp4'), { signal: download.signal }).then((response) => {
     if (!response.ok) throw new Error('Видео не загрузилось');
     return response.blob();
   }).then((blob) => {
@@ -124,6 +135,17 @@ export function cityScreen({ el, nav }) {
     class: 'city-shortcut', dataset: { category }, 'aria-pressed': 'false', onClick: () => select(category),
   }, h('span', { class: 'city-shortcut-icon city-icon-' + image }, iconImg('city-' + image, { size: 28 })), name));
 
+  const serviceIcons = ['auto', 'first', 'fuel', 'second'];
+  shortcuts.push(button({ class: 'city-shortcut', onClick: () => show('Сервисы',
+    [['Электроника', '/main/s8'], ['Продукты', '/main/s8/products']].map(([label, path]) =>
+      button({ class: 'city-option', onClick: async () => {
+        await requestCityOrientation();
+        sheet.close({ instant: true });
+        nav.push(path);
+      } }, label))) },
+  h('span', { class: 'city-shortcut-icon city-service-icons' },
+    serviceIcons.map((name) => iconImg('city-service-' + name, { size: 14, cls: 'city-service-' + name }))), 'Сервисы'));
+
   const bestByImage = new Map();
   for (const { id } of catalog.categories) {
     for (const offer of catalog.offersInCategory(id)) {
@@ -149,15 +171,15 @@ export function cityScreen({ el, nav }) {
     const query = input.value.trim().toLocaleLowerCase('ru-RU');
     feed.select(category, { query });
   }
-  function select(next) {
-    category = category === next ? 'all' : next;
+  function select(next, destination) {
+    category = !destination && category === next ? 'all' : next;
     for (const shortcut of shortcuts) shortcut.setAttribute('aria-pressed', String(shortcut.dataset.category === category));
     render();
-    feed.scrollIntoView({ block: 'start' });
+    (destination && feed.querySelector(destination) || feed).scrollIntoView({ block: 'start' });
   }
   input.addEventListener('input', render);
   el.append(header, hero, search, h('nav', { 'aria-label': 'Сервисы Города' },
-    h('div', { class: 'city-tiles' }, electronics, discounts, brands), h('div', { class: 'city-shortcuts' }, shortcuts)), feed);
+    h('div', { class: 'city-tiles' }, featured, ...(products ? [repeatOrder, nutella] : [discounts, brands])), h('div', { class: 'city-shortcuts' }, shortcuts)), feed);
   return {
     appbar: false,
     onActive() {
@@ -169,8 +191,10 @@ export function cityScreen({ el, nav }) {
       goodsChanges?.check();
       window.addEventListener('pointermove', pointer, { passive: true });
       window.addEventListener('deviceorientation', tilt);
-      tick();
-      timer = setInterval(tick, 1000);
+      if (!products) {
+        tick();
+        timer = setInterval(tick, 1000);
+      }
     },
     onInactive: stop,
     destroy() {
