@@ -12,7 +12,7 @@
 .city-search { display: flex; align-items: center; gap: 6px; height: 44px; margin: 0 var(--gutter) 20px; padding: 0 10px; border-radius: var(--r-pill); background: rgba(0,16,36,.06); }
 .city-search input { min-width: 0; flex: 1; border: 0; background: transparent; color: var(--c-text); font: inherit; }
 .city-search input::placeholder { color: var(--c-text-muted); }
-.city-tiles, .city-feed { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; margin-inline: var(--gutter); }
+.city-tiles { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; margin-inline: var(--gutter); }
 .city-tile { position: relative; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; isolation: isolate; overflow: hidden; min-width: 0; height: 150px; padding: 10px 12px 12px; border-radius: 16px; text-align: left; }
 .city-fuel { background: rgb(124 174 255 / 10%); }
 .city-fuel .city-badge { color: var(--c-text); }
@@ -30,12 +30,6 @@
 .city-shortcut[aria-pressed="true"] .city-shortcut-icon { outline: 2px solid var(--c-info); outline-offset: -2px; }
 .city-icon-fun { background: rgba(212,93,140,.12); }
 .city-icon-hotels { background: rgba(255,114,6,.12); }
-.city-feed { margin-top: 20px; row-gap: 24px; align-items: start; scroll-margin-top: 8px; }
-.city-feed .city-ad { height: 300px; aspect-ratio: auto; background: #d2e6bc; }
-.city-ad .banner-bg { object-position: center bottom; }
-.city-ad .banner-title { white-space: pre-line; }
-.city-empty { grid-column: 1 / -1; color: var(--c-text-muted); }
-.city-feed.grid { padding: 0; }
 .city-glass, .city-location, .city-search input { font-size: 17px; }
 
 .city-fuel-logo.is-rendered { opacity: 0; }
@@ -67,3 +61,6 @@
 .city-brand-stack img + img { margin-left: -6px; }
 
 .city-brand-stack img:first-child { position: relative; z-index: 1; }
+
+
+.city-page .feed-shelves { scroll-margin-top: 72px; }

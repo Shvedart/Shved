@@ -1,9 +1,11 @@
 import { h, button, img, iconImg } from '../core/dom.js';
 import { reducedMotion } from '../core/motion.js';
 import { applyCardLook, defaultSetup } from '../domain/feedSetup.js';
-import { goodsCard, offerCard, bannerCard, promoCard } from '../ui/components.js';
+import { offerCard, promoCard } from '../ui/components.js';
 import { openSheet } from '../ui/sheet.js';
 import { app } from '../app.js';
+import { buildShelves } from './feed.js';
+import { watchGoodsChanges } from '../ui/goodsChange.js';
 
 const asset = (name) => 'assets/img/city/' + name;
 const art = (name, cls) => img(asset(name), { cls, alt: '', lazy: false });
@@ -26,7 +28,12 @@ export function requestCityOrientation() {
 
 export function cityScreen({ el, nav }) {
   const { catalog } = app;
-  const setup = defaultSetup([]);
+  const setup = {
+    ...defaultSetup([]),
+    mode: 'flat',
+    goods: 90,
+    weights: { electronics: 86, home: 8, food: 4, travel: 1, fun: 1 },
+  };
   el.classList.add('city-page');
   applyCardLook(el, setup);
   for (const [part, on] of Object.entries(setup.goodsShow)) if (!on) el.classList.add('goods-no-' + part);
@@ -68,7 +75,7 @@ export function cityScreen({ el, nav }) {
     h('span', { class: 'city-brand-stack', 'aria-hidden': 'true' }, art('brand-first.png'), art('brand-second.png')),
     h('span', { class: 'city-tile-title' }, 'Кэшбэк', h('br'), 'от брендов'));
 
-  let videoURL, frame = 0, desired = 0, timer, mounted = true;
+  let videoURL, frame = 0, progress = 0, timer, mounted = true;
   const download = new AbortController();
   // Blob позволяет перематывать локальное видео и на сервере без Range-запросов.
   fetch(asset('electronics.mp4'), { signal: download.signal }).then((response) => {
@@ -81,13 +88,15 @@ export function cityScreen({ el, nav }) {
   }).catch(() => {});
   function seek() {
     frame = 0;
-    if (!video.seeking && video.readyState >= 1 && Math.abs(video.currentTime - desired) >= 1 / 60) {
-      video.currentTime = Math.min(desired, video.duration);
-    }
+    if (video.seeking || video.readyState < 1 || !Number.isFinite(video.duration)) return;
+    // Конечная позиция внутри последнего кадра, чтобы он оставался видимым.
+    const end = Math.max(0, video.duration - 1 / 60);
+    const desired = progress * end;
+    if (Math.abs(video.currentTime - desired) >= 1 / 60) video.currentTime = desired;
   }
   function scrub(fraction) {
     if (reducedMotion()) return;
-    desired = Math.max(0, Math.min(1, fraction)) * 1.5;
+    progress = Math.max(0, Math.min(1, fraction));
     if (!frame) frame = requestAnimationFrame(seek);
   }
   const pointer = (event) => {
@@ -115,44 +124,49 @@ export function cityScreen({ el, nav }) {
     class: 'city-shortcut', dataset: { category }, 'aria-pressed': 'false', onClick: () => select(category),
   }, h('span', { class: 'city-shortcut-icon city-icon-' + image }, iconImg('city-' + image, { size: 28 })), name));
 
-  const feed = h('section', { class: 'city-feed grid', 'aria-label': 'Лента выгоды' });
-  const src = catalog.goodsModerated.length ? catalog.goodsModerated : catalog.goods;
-  const getGoods = (cat) => (src.find((group) => group.id === cat)?.products || []).map(goodsCard);
-  const offers = (cat) => catalog.offersInCategory(cat).map((offer) => offerCard(offer));
-  const tech = getGoods('electronics');
-  const phone = tech.findIndex((card) => /iphone.*pro/i.test(card.textContent));
-  if (phone > 0) tech.unshift(...tech.splice(phone, 1));
-  const goods = [...tech.slice(0, 18), ...getGoods('home').slice(0, 4), ...tech.slice(18, 23)];
-  const partner = [...offers('electronics').slice(0, 2), ...offers('shopping').slice(0, 1)];
-  const ad = bannerCard({ id: 'city-pets', category: 'pets', title: 'Товары\nдля питомцев\nс кэшбэком 10%', image: asset('pet-ad.png'), textColor: 'dark' });
-  ad.classList.add('city-ad');
-  const initial = goods.flatMap((card, i) => [card, i === 0 ? ad : null, i % 9 === 8 ? partner[Math.floor(i / 9)] : null].filter(Boolean));
-  const filtered = new Map();
-  let category = '';
-  function render() {
-    if (category && !filtered.has(category)) {
-      const items = category === 'discounts' ? catalog.promos.map((promo) => promoCard(promo))
-        : category === 'brands' ? catalog.categories.flatMap(({ id }) => offers(id))
-          : [...getGoods(category), ...offers(category)];
-      filtered.set(category, items);
+  const bestByImage = new Map();
+  for (const { id } of catalog.categories) {
+    for (const offer of catalog.offersInCategory(id)) {
+      if (!offer.image) continue;
+      const key = offer.image.trim();
+      if (!bestByImage.has(key) || offer.rank > bestByImage.get(key).rank) bestByImage.set(key, offer);
     }
+  }
+  const feed = buildShelves({
+    catalog,
+    cards: [...bestByImage.values()].map((offer) => offerCard(offer, { size: 's' })),
+    promos: catalog.promos.map((promo) => promoCard(promo)),
+    scratches: [],
+    custom: setup,
+    externalControls: true,
+    firstBanner: { id: 'city-pets', category: 'pets', title: 'Товары для питомцев с кэшбэком 10%', image: asset('pet-ad.png'), textColor: 'dark' },
+    onLink: () => nav.push('/favorites'),
+  });
+  let goodsChanges;
+  let feedMounted = false;
+  let category = 'all';
+  function render() {
     const query = input.value.trim().toLocaleLowerCase('ru-RU');
-    const items = (filtered.get(category) || initial).filter((card) => !query || card.textContent.toLocaleLowerCase('ru-RU').includes(query));
-    feed.replaceChildren(...(items.length ? items : [h('p', { class: 'city-empty' }, 'Ничего не найдено')]));
+    feed.select(category, { query });
   }
   function select(next) {
-    category = category === next ? '' : next;
+    category = category === next ? 'all' : next;
     for (const shortcut of shortcuts) shortcut.setAttribute('aria-pressed', String(shortcut.dataset.category === category));
     render();
     feed.scrollIntoView({ block: 'start' });
   }
   input.addEventListener('input', render);
-  render();
   el.append(header, hero, search, h('nav', { 'aria-label': 'Сервисы Города' },
     h('div', { class: 'city-tiles' }, electronics, discounts, brands), h('div', { class: 'city-shortcuts' }, shortcuts)), feed);
   return {
     appbar: false,
     onActive() {
+      if (!feedMounted) {
+        feed.mount(el);
+        goodsChanges = watchGoodsChanges(el);
+        feedMounted = true;
+      }
+      goodsChanges?.check();
       window.addEventListener('pointermove', pointer, { passive: true });
       window.addEventListener('deviceorientation', tilt);
       tick();
@@ -163,6 +177,8 @@ export function cityScreen({ el, nav }) {
       stop();
       mounted = false;
       download.abort();
+      feed.destroy();
+      goodsChanges?.destroy();
       if (videoURL) URL.revokeObjectURL(videoURL);
       sheet?.close({ instant: true });
     },

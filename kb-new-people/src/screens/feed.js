@@ -774,7 +774,7 @@ function balanceColumns(m, heights, items = masonryItems(m)) {
   return bestD;
 }
 
-function customParts({ catalog, byOffer, promos, scratches: allScratches = [], extras = [], setup, onLink }) {
+function customParts({ catalog, byOffer, promos, scratches: allScratches = [], extras = [], setup, onLink, firstBanner }) {
   // стирашек в ленте 07 вдвое меньше (из 5 — 3); лишние убираем со страницы
   const scratches = allScratches.slice(0, Math.round(allScratches.length / 2));
   allScratches.slice(scratches.length).forEach((sc) => sc.remove());
@@ -943,9 +943,10 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
       items[at] = sc;
     });
     // рекламные баннеры — между карточками, равномерно по ленте (карточки не заменяют)
-    const banners = pickBanners(catalog, setup).slice(0, Math.floor(items.length / BANNER_EVERY));
+    const banners = pickBanners(catalog, setup).filter((b) => b.id !== firstBanner?.id).slice(0, Math.floor(items.length / BANNER_EVERY));
     const stepB = items.length / (banners.length + 1);
     banners.forEach((b, i) => items.splice(Math.round(stepB * (i + 1)) + i, 0, bannerCard(b)));
+    if (firstBanner) items.splice(1, 0, bannerCard(firstBanner));
     // остальное по категориям — в самый конец (во всей ленте скрыто, места не занимает)
     items.push(...Object.values(rest).flat());
     const aligned = setup.bigGoods || setup.mode === 'flat';
@@ -953,18 +954,28 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
     // путешествия, афиша, доставка — отдельными блоками во всю ширину; в ровной сетке — только после
     // целого ряда (колонки над блоком выравнивает balanceFeed уже по настоящим высотам).
     // Место — доля видимой ленты: скрытое «только для категории» в конце не считается
-    const base = items.filter((x) => !x.dataset.only).length;
-    specials.forEach((sp, n) => {
-      let at = Math.round(base * sp.at) + n;
-      const rowEnd = (i) => {
-        let smalls = 0;
-        for (let j = i - 1; j >= 0 && !items[j].classList.contains('is-big'); j--) smalls++;
-        return smalls % 2 === 0;
-      };
-      if (aligned) while (at < items.length && !rowEnd(at)) at++;
-      sp.el.classList.add('is-special');
-      items.splice(at, 0, sp.el);
-    });
+    const base = items.filter((item) => !item.dataset.only).length;
+    let previousEnd = 0;
+    let visibleBefore = 0;
+    for (const special of specials) {
+      const desired = Math.round(base * special.at);
+      let at = previousEnd;
+      let rowLength = 0;
+      while (at < items.length && (visibleBefore < desired || (aligned && rowLength % 2 !== 0))) {
+        const card = items[at++];
+        if (card.dataset.only) continue;
+        visibleBefore++;
+        rowLength = card.classList.contains('is-big') ? 0 : rowLength + 1;
+      }
+      // Если в конце осталась одиночная карточка, полка встаёт перед ней.
+      if (aligned && rowLength % 2 !== 0) {
+        do { at--; } while (at > previousEnd && items[at].dataset.only);
+        visibleBefore--;
+      }
+      special.el.classList.add('is-special');
+      items.splice(at, 0, special.el);
+      previousEnd = at + 1;
+    }
     // как Pinterest: две независимые колонки, карточки по очереди слева и справа —
     // разная высота офферов и товаров даёт неровные ряды, порядок чтения сохраняется
     // большая карточка разрывает колонки: до неё — свой блок колонок, она сама — во всю ширину
@@ -1163,7 +1174,7 @@ const AFISHA = [
    «просмотрено», лайки и стёртые скретч-карточки сохраняются. */
 // custom — настройка ленты из сценария 07 (store.state.feedSetup): тогда лента собирается не по LAYOUT,
 // а по долям категорий и товаров, полками или сплошной сеткой (customParts)
-export function buildShelves({ catalog, cards, scratches, promos = [], goods = false, custom = null, onLink }) {
+export function buildShelves({ catalog, cards, scratches, promos = [], goods = false, custom = null, onLink, externalControls = false, firstBanner }) {
   const byOffer = new Map(cards.map((c) => [c.dataset.offer, c]));
   const used = new Set();
   const take = (cat, match, n) => {
@@ -1188,7 +1199,7 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
   const extras = [];
   const parts = [];
   const afterTravel = [];
-  if (custom) parts.push(...customParts({ catalog, byOffer, promos: promoPool, scratches, extras, setup: custom, onLink }));
+  if (custom) parts.push(...customParts({ catalog, byOffer, promos: promoPool, scratches, extras, setup: custom, onLink, firstBanner }));
   else {
     LAYOUT.forEach((s, i) => {
       if (s.kind === 'promos') {
@@ -1351,6 +1362,7 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
   });
   const chipsBar = h('div', { class: `feed-nav ${tiles ? 'is-tiles' : ''}`, role: 'tablist', 'aria-label': 'Категории ленты' }, navItems);
   let current = 'all';
+  let currentQuery = '';
 
   // ---------- Чипсы в шапке (07): навигация уехала под апп-бар — в шапке появляется строка чипсов ----------
   // Строка живёт в самом апп-баре (wrap.chipsEl → appbar.extra в main.js): липкий слой в странице на iPhone
@@ -1384,9 +1396,10 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
   }
 
   let pageEl = null;
-  function select(id, { fromChips = false } = {}) {
-    if (id === current) return;
+  function select(id, { fromChips = false, query = '' } = {}) {
+    if (id === current && query === currentQuery) return;
     current = id;
+    currentQuery = query;
     for (const [container, children] of travelOrder) container.append(...children);
     for (const part of parts) part.rebalance?.(true);
     haptics.selection();
@@ -1411,7 +1424,11 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
         let any = false;
         for (const card of part.querySelectorAll('.ocard, .promo, .goods, .banner')) {
           // data-only — карточка только для своей категории (продукты в «Еде»)
-          const ok = id === 'all' ? !card.dataset.only : !own && (card.dataset.cat || catOf.get(card.dataset.offer)) === id;
+          const matchesCategory = id === 'all' ? !card.dataset.only
+            : id === 'discounts' ? card.classList.contains('promo')
+              : id === 'brands' ? card.classList.contains('ocard')
+                : !own && (card.dataset.cat || catOf.get(card.dataset.offer)) === id;
+          const ok = matchesCategory && (!query || card.textContent.toLocaleLowerCase('ru-RU').includes(query));
           card.hidden = !ok;
           any ||= ok;
         }
@@ -1422,7 +1439,7 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
         }
         // широкие блоки сплошной ленты (доставка, путешествия, афиша) — только в своей категории
         for (const sp of part.querySelectorAll(':scope > .is-special')) {
-          sp.hidden = !(id === 'all' || sp.dataset.cat === id);
+          sp.hidden = !!query || !(id === 'all' || sp.dataset.cat === id);
           any ||= !sp.hidden;
         }
         part.hidden = !any;
@@ -1439,7 +1456,7 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
       if (!part.hidden) shown.push(part);
     }
     orderTravel(id);
-    for (const part of parts) part.rebalance?.(id === 'all');
+    for (const part of parts) part.rebalance?.(id === 'all' && !query);
     // интерактивная полка (путешествия, афиша) не встаёт первой: в категории она идёт второй
     for (const part of parts) part.style.order = '';
     const interactive = (el) => el?.classList.contains('fc-trip') || el?.classList.contains('fc-hero');
@@ -1459,7 +1476,7 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
       chipsPinned = true;
       if (pageEl.scrollTop > y) pageEl.scrollTo({ top: Math.max(0, y), behavior: 'auto' });
       syncChips();
-    } else if (pageEl) {
+    } else if (pageEl && !externalControls) {
       // по заголовку «Лента выгоды», а не по блоку: над ним отступ 32px, и из-под шапки торчала тень блока выше
       const title = head.querySelector('.feed-head-title');
       const y = title.getBoundingClientRect().top - pageEl.getBoundingClientRect().top + pageEl.scrollTop - parseFloat(getComputedStyle(pageEl).paddingTop) - 4;
@@ -1475,14 +1492,15 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
   const head = h('div', { class: 'feed-head' },
     h('div', { class: 'feed-head-row' }, h('h2', { class: 'feed-head-title' }, 'Лента выгоды'), tune),
     h('p', { class: 'feed-head-sub' }, custom ? 'Собрана по вашей настройке' : 'Кэшбэк во всех категориях'));
-  const wrap = h('div', { class: 'feed-shelves' }, head, chipsBar, root);
+  const wrap = h('div', { class: 'feed-shelves' }, externalControls ? null : [head, chipsBar], root);
   // строка чипсов для апп-бара (07)
   wrap.chipsEl = chipsTop;
+  wrap.select = select;
   let cleanups = [];
   wrap.mount = (page) => {
     pageEl = page;
     cleanups = extras.map((x) => x.mount(page));
-    if (chipsTop) {
+    if (chipsTop && !externalControls) {
       let raf = 0;
       const onScroll = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(syncChips); };
       page.addEventListener('scroll', onScroll, { passive: true });
