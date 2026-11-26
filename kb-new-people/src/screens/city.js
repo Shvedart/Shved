@@ -26,10 +26,10 @@ export function requestCityOrientation() {
 }
 
 const FUEL = {
-  progress: .55, waterColor: '124, 174, 255', opacity: .76,
-  waveAmplitude: 3, waveFrequency: 5, waveSpeed: 1.4,
+  progress: .5, waterColor: '124, 174, 255', opacity: .5,
+  waveAmplitude: 1.2, waveFrequency: 5, waveSpeed: 1.4,
   refractionStrength: 1, springStiffness: 45, damping: 8,
-  tiltStrength: 56, lightIntensity: .11,
+  tiltStrength: 56, lightIntensity: .08,
 };
 
 function fuelMotion(page, canvas, logo, settings = FUEL) {
@@ -72,7 +72,7 @@ function fuelMotion(page, canvas, logo, settings = FUEL) {
     }
 
     fill = ctx.createLinearGradient(0, height * .37, 0, height);
-    fill.addColorStop(0, tint(settings.opacity * 1.25));
+    fill.addColorStop(0, tint(settings.opacity));
     fill.addColorStop(.4, tint(settings.opacity));
     fill.addColorStop(1, tint(settings.opacity * .58));
     shine = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
@@ -96,11 +96,13 @@ function fuelMotion(page, canvas, logo, settings = FUEL) {
     const waterY = height * (1 - level);
     const edge = (x) => {
       const u = x / width;
-      return waterY + (still ? 0 : tilt * (u - .5)
+      return waterY + (still ? 0 : width * tilt * (u - .5)
         + settings.waveAmplitude * (Math.sin(u * settings.waveFrequency + time) + .4 * Math.sin(u * 7 - time * .7))
         + wave * Math.sin(u * Math.PI * 2 - time * 2));
     };
     const line = new Path2D();
+    // Замыкаем маски за плиткой: при сильном наклоне поверхность выходит за её края.
+    const outside = height + width * 6;
     const segments = 24;
     for (let i = 0; i <= segments; i++) {
       const x = width * i / segments;
@@ -110,8 +112,8 @@ function fuelMotion(page, canvas, logo, settings = FUEL) {
     ctx.clearRect(0, 0, width, height);
     if (hasLogo) {
       const dry = new Path2D(line);
-      dry.lineTo(width, 0);
-      dry.lineTo(0, 0);
+      dry.lineTo(width, -outside);
+      dry.lineTo(0, -outside);
       dry.closePath();
       ctx.save();
       ctx.clip(dry);
@@ -119,8 +121,8 @@ function fuelMotion(page, canvas, logo, settings = FUEL) {
       ctx.restore();
     }
     const wet = new Path2D(line);
-    wet.lineTo(width, height);
-    wet.lineTo(0, height);
+    wet.lineTo(width, outside);
+    wet.lineTo(0, outside);
     wet.closePath();
     ctx.save();
     ctx.clip(wet);
@@ -148,7 +150,26 @@ function fuelMotion(page, canvas, logo, settings = FUEL) {
       ctx.restore();
     }
     ctx.restore();
-    ctx.strokeStyle = 'rgba(212, 250, 255, .76)';
+    // Цвет виден только с внутренней стороны кромки.
+    ctx.save();
+    ctx.clip(wet);
+    const glint = ctx.createLinearGradient(0, 0, width, 0);
+    const center = .48 + .16 * Math.sin(time * .55 + tilt);
+    glint.addColorStop(0, 'transparent');
+    glint.addColorStop(center - .25, 'rgba(151, 125, 255, 0)');
+    glint.addColorStop(center - .09, 'rgba(169, 130, 255, .32)');
+    glint.addColorStop(center, 'rgba(255, 212, 183, .44)');
+    glint.addColorStop(center + .10, 'rgba(117, 244, 232, .36)');
+    glint.addColorStop(center + .26, 'rgba(117, 244, 232, 0)');
+    glint.addColorStop(1, 'transparent');
+    ctx.strokeStyle = glint;
+    for (let blur = 0; blur < 4; blur++) {
+      ctx.globalAlpha = .32 - blur * .065;
+      ctx.lineWidth = 2 + blur * 2;
+      ctx.stroke(line);
+    }
+    ctx.restore();
+    ctx.strokeStyle = 'rgba(212, 250, 255, .48)';
     ctx.lineWidth = 1;
     ctx.stroke(line);
     if (!still) wake();
@@ -168,7 +189,9 @@ function fuelMotion(page, canvas, logo, settings = FUEL) {
   }
   function orient(event) {
     if (!orientationAllowed || !visible || reducedMotion() || !Number.isFinite(event.gamma)) return;
-    target = -clamp(event.gamma / 35, 1) * settings.tiltStrength;
+    // Наклон поверхности следует горизонту. Ограничиваем тангенс у 90°.
+    const roll = clamp(event.gamma, 80) * Math.PI / 180;
+    target = Math.tan(roll);
     if (Number.isFinite(event.beta)) {
       if (pitch !== null) speed = clamp(speed + clamp(event.beta - pitch, 10) * 5, 140);
       pitch = event.beta;
@@ -178,7 +201,7 @@ function fuelMotion(page, canvas, logo, settings = FUEL) {
   function pointer(event) {
     if (event.pointerType !== 'mouse' || reducedMotion()) return;
     const box = canvas.getBoundingClientRect();
-    target = clamp((event.clientX - box.left) / box.width - .5, .5) * settings.tiltStrength;
+    target = clamp((event.clientX - box.left) / box.width - .5, .5) * settings.tiltStrength / box.width;
     wake();
   }
   function leave() { target = 0; wake(); }
