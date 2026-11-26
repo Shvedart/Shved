@@ -1,0 +1,18 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="tui-ic-medium / flash">
+<mask id="mask0_0_564" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="1" y="2" width="10" height="10">
+<g id="Mask">
+<path id="Mask_2" d="M1.75018 8L3.82024 3.67142C4.23561 2.80286 5.11283 2.25 6.0756 2.25H9L7.00018 5.5H10.0945C10.2338 5.5 10.2979 5.67326 10.1921 5.76389L3.87963 11.1746C3.63465 11.3846 3.32265 11.5 3 11.5L4.25018 8H1.75018Z" fill="url(#paint0_linear_0_564)"/>
+</g>
+</mask>
+<g mask="url(#mask0_0_564)">
+<path id="Color" d="M0 0H12V12H0V0Z" fill="#333333" style="fill:#333333;fill:color(display-p3 0.2000 0.2000 0.2000);fill-opacity:1;"/>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_564" x1="6.00018" y1="3.5" x2="9.89378" y2="9.755" gradientUnits="userSpaceOnUse">
+<stop style="stop-color:black;stop-opacity:1;"/>
+<stop offset="1" stop-opacity="0.7" style="stop-color:black;stop-opacity:0.7;"/>
+</linearGradient>
+</defs>
+</svg>

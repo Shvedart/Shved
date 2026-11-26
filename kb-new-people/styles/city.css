@@ -39,3 +39,31 @@
 .city-glass, .city-location, .city-search input { font-size: 17px; }
 
 .city-fuel-logo.is-rendered { opacity: 0; }
+
+.city-fuel .is-fuel-rendered { opacity: 0; }
+
+.city-tiles { grid-template-rows: repeat(2, 74px); }
+.city-tiles > .city-tile { height: auto; background: #f5f1ff; }
+.city-electronics { grid-row: span 2; }
+.city-headphone-poster, .city-headphone-video {
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+}
+.city-headphone-poster { inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.city-headphone-video {
+  top: 30px; left: 20px; width: 100%; aspect-ratio: 1;
+  object-fit: cover;
+  opacity: 0;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 14px);
+  mask-image: linear-gradient(to right, transparent, black 14px);
+}
+.city-headphone-video.is-ready { opacity: 1; }
+.city-electronics:has(.is-ready) .city-headphone-poster { visibility: hidden; }
+.city-timer { background: #fff; font-variant-numeric: tabular-nums; }
+.city-brands { justify-content: flex-end; }
+.city-brand-stack { position: absolute; top: 10px; right: 12px; display: flex; }
+.city-brand-stack img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
+.city-brand-stack img + img { margin-left: -6px; }
+
+.city-brand-stack img:first-child { position: relative; z-index: 1; }
