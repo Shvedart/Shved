@@ -1,7 +1,21 @@
 // Service worker: оболочка приложения доступна офлайн, картинки партнёров кешируются по мере просмотра.
-const VERSION = 'kb-np-v405';
+const VERSION = 'kb-np-v420';
 const SHELL = [
   './',
+  'styles/city.css',
+  'src/screens/city.js',
+  'assets/icons/city-beauty.svg',
+  'assets/icons/city-clothes.svg',
+  'assets/img/city/fuel-logo.svg',
+  'assets/icons/city-fun.svg',
+  'assets/img/city/grocery.png',
+  'assets/icons/city-heart.svg',
+  'assets/img/city/hero-front.png',
+  'assets/icons/city-home.svg',
+  'assets/icons/city-hotels.svg',
+  'assets/img/city/pet-ad.png',
+  'assets/icons/city-search.svg',
+  'assets/icons/city-shield.svg',
   'assets/img/auto/lada-vesta.webp',
   'assets/img/auto/jetour-x90-plus.webp',
   'assets/img/auto/belgee-x70.webp',

@@ -16,7 +16,10 @@ import { favoritesScreen } from './screens/favorites.js';
 import { brandsScreen } from './screens/brands.js';
 import { setupScreen } from './screens/setup.js';
 
+import { cityScreen } from './screens/city.js';
+
 const routes = [
+  { pattern: /^\/main\/s8$/, create: cityScreen, parent: '/' },
   { pattern: /^\/$/, create: hubScreen },
   { pattern: /^\/bank\/(?<s>s[1-7])$/, create: bankScreen, parent: '/' },
   { pattern: /^\/onb\/(?<s>s[12])\/(?<step>[1-5])$/, create: onboardingScreen, parent: (p) => `/bank/${p.s}` },

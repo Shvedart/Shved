@@ -1,0 +1,19 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="tui-ic-medium / t-shirt">
+<mask id="mask0_0_334" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="1" y="4" width="26" height="21">
+<g id="Mask">
+<path id="Mask_2" d="M6.82979 4.66667C5.50408 4.66667 4.29216 5.41567 3.69929 6.60142L1.16667 11.6667L7 12.8333V4.66667H6.82979ZM21.1702 4.66667C22.4959 4.66667 23.7078 5.41567 24.3007 6.60142L26.8333 11.6667L21 12.8333V4.66667H21.1702Z" fill-rule="evenodd" clip-rule="evenodd" fill="black" style="fill:black;fill-opacity:1;"/>
+<path id="Mask_3" d="M9.33335 4.66667H7.00002L7 24.5H17.5C19.433 24.5 21 22.933 21 21L21 4.66667H18.6667C18.0224 4.66667 17.5191 5.20334 17.3083 5.81221C16.8338 7.18262 15.5318 8.16667 14 8.16667C12.4682 8.16667 11.1662 7.18262 10.6918 5.81221C10.481 5.20334 9.97769 4.66667 9.33335 4.66667Z" fill="url(#paint0_linear_0_334)"/>
+</g>
+</mask>
+<g mask="url(#mask0_0_334)">
+<path id="Color" d="M0 0H28V28H0V0Z" fill="#A381FF" style="fill:#A381FF;fill:color(display-p3 0.6392 0.5059 1.0000);fill-opacity:1;"/>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_334" x1="7" y1="15.1667" x2="21" y2="15.1667" gradientUnits="userSpaceOnUse">
+<stop stop-opacity="0.8" style="stop-color:black;stop-opacity:0.8;"/>
+<stop offset="1" stop-opacity="0.7" style="stop-color:black;stop-opacity:0.7;"/>
+</linearGradient>
+</defs>
+</svg>

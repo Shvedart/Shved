@@ -1,0 +1,14 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="tui-ic-medium / sign-hotel">
+<mask id="mask0_0_284" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="-2" width="30" height="30">
+<g id="Mask">
+<path id="Mask_2" d="M12.9592 5.12417L15.1252 2.95812C17.4033 0.680064 21.0967 0.680065 23.3748 2.95812L25.0247 4.60804C27.3028 6.8861 27.3028 10.5796 25.0247 12.8576L13.4753 24.407C11.6528 26.2295 8.69808 26.2295 6.87563 24.407L0.275968 17.8074L8.33064 9.7527C9.69153 8.3918 11.7483 8.00595 13.5099 8.78106L19.1648 11.2692C20.2109 11.7295 21.4322 11.5004 22.2403 10.6923C23.3225 9.6101 23.3225 7.85556 22.2403 6.77339L21.3124 5.84547C20.1734 4.70645 18.3266 4.70645 17.1876 5.84548L16.2215 6.81158L12.9592 5.12417ZM10.3928 11.6323L15.755 16.9946L14.9301 17.8195C14.4745 18.2751 13.7358 18.2751 13.2802 17.8195L8.74289 13.2823L10.3928 11.6323ZM10.3928 18.232L7.09297 14.9322L5.44306 16.5821L7.91793 19.057C8.37354 19.5126 9.11224 19.5126 9.56785 19.057L10.3928 18.232Z" fill-rule="evenodd" clip-rule="evenodd" fill="black" style="fill:black;fill-opacity:1;"/>
+<path id="Mask_3" opacity="0.2" d="M10.3928 11.6323L15.7551 16.9946L14.1051 18.6445L8.74292 13.2823L10.3928 11.6323Z" fill="black" style="fill:black;fill-opacity:1;"/>
+<path id="Mask_4" opacity="0.3" d="M7.093 14.9321L10.8053 18.6444L9.15539 20.2943L5.44308 16.582L7.093 14.9321Z" fill="black" style="fill:black;fill-opacity:1;"/>
+</g>
+</mask>
+<g mask="url(#mask0_0_284)">
+<path id="Color" d="M0 0H28V28H0V0Z" fill="#FF7206" style="fill:#FF7206;fill:color(display-p3 1.0000 0.4471 0.0235);fill-opacity:1;"/>
+</g>
+</g>
+</svg>

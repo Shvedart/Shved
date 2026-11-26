@@ -98,7 +98,7 @@ function initHeroCarousel(scroller) {
   if (!scroller || scroller.dataset.heroReady) return () => {};
   scroller.dataset.heroReady = '1';
   const SHRINK = 0.06; // насколько меньше соседние карточки
-  const LAG = 85; // на столько пикселей отстаёт фотография
+  const LAG = parseFloat(getComputedStyle(scroller).getPropertyValue('--parallax-shift')) || 85; // Смещение и запас фото берём из одной настройки.
   const CLONES = 3; // дубликатов по краям для зацикливания
   const SETTLE = 120; // мс тишины, после которых считаем, что встали
 

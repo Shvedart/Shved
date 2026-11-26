@@ -2,6 +2,7 @@
 
 import { h, button, icon } from '../core/dom.js';
 import { store } from '../core/store.js';
+import { requestCityOrientation } from './city.js';
 
 const SCENARIOS = [
   { id: 's1', title: 'Онбординг через лайк оффера', sub: '01 · сценарий' },
@@ -12,6 +13,7 @@ const SCENARIOS = [
   { id: 's5', title: 'Заход через хук и упущенную выгоду', sub: '05 · сценарий' },
   { id: 's6', title: 'Заход через хук: лента с товарами', sub: '06 · сценарий (как 03, плюс товарные полки)' },
   { id: 's7', title: 'Лента под себя: сначала настройка', sub: '07 · сценарий (конструктор ленты)' },
+  { id: 's8', title: 'Концепт Города', sub: '08 · сценарий', path: '/main/s8' },
 ];
 
 export function hubScreen({ el, nav }) {
@@ -24,7 +26,14 @@ export function hubScreen({ el, nav }) {
           const b = button({ class: 'hub-row' },
             h('span', { class: 'hub-row-text' }, h('span', { class: 'hub-row-title' }, s.title), h('span', { class: 'hub-row-sub' }, s.sub)),
             icon('chevron-right', { cls: 'hub-row-chevron' }));
-          b.addEventListener('click', () => nav.push(`/bank/${s.id}`));
+          b.addEventListener('click', async () => {
+            if (s.id === 's8') {
+              b.disabled = true;
+              try { await requestCityOrientation(); }
+              finally { b.disabled = false; }
+            }
+            nav.push(s.path || `/bank/${s.id}`);
+          });
           return h('li', null, b);
         })),
       h('div', { class: 'hub-footer' },

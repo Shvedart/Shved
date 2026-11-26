@@ -1,0 +1,41 @@
+.city-page { padding-bottom: 32px; }
+.city-header { position: sticky; top: 0; z-index: 5; background: rgba(255,255,255,.78); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+.city-bar { display: flex; align-items: center; gap: 10px; padding: max(10px, env(safe-area-inset-top)) var(--gutter) 10px; }
+.city-location { margin-right: auto; font-weight: 600; }
+.city-glass { display: grid; place-items: center; min-width: 44px; height: 44px; padding: 0 10px; border-radius: var(--r-pill); background: rgba(255,255,255,.72); box-shadow: 0 4px 26px rgba(0,0,0,.08), inset 0 0 1px #fff; }
+.city-option { display: block; width: 100%; padding: 14px 0; text-align: left; }
+.city-hero { position: relative; overflow: hidden; isolation: isolate; height: 206px; margin: 10px var(--gutter) 20px; border-radius: 24px; }
+.city-hero-art { position: absolute; inset: -20px -177px auto -92px; aspect-ratio: 3072 / 1674; overflow: hidden; z-index: -1; }
+.city-hero-image { position: absolute; width: 111.76%; height: 137.38%; top: -18.64%; left: -4.05%; max-width: none; }
+.city-hero h1 { position: absolute; top: 16px; left: 16px; width: 180px; font: 700 20px/24px var(--font-display); }
+.city-details { position: absolute; left: 12px; bottom: 12px; height: 30px; padding: 0 12px; border-radius: var(--r-pill); background: #000; color: #fff; font-size: 13px; font-weight: 600; }
+.city-search { display: flex; align-items: center; gap: 6px; height: 44px; margin: 0 var(--gutter) 20px; padding: 0 10px; border-radius: var(--r-pill); background: rgba(0,16,36,.06); }
+.city-search input { min-width: 0; flex: 1; border: 0; background: transparent; color: var(--c-text); font: inherit; }
+.city-search input::placeholder { color: var(--c-text-muted); }
+.city-tiles, .city-feed { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; margin-inline: var(--gutter); }
+.city-tile { position: relative; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; isolation: isolate; overflow: hidden; min-width: 0; height: 150px; padding: 10px 12px 12px; border-radius: 16px; text-align: left; }
+.city-fuel { background: rgb(124 174 255 / 10%); }
+.city-fuel .city-badge { color: var(--c-text); }
+.city-liquid, .city-grocery-art { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
+.city-grocery { background: rgba(88,192,130,.13); }
+.city-grocery-art { object-fit: cover; }
+.city-tile-title { font-size: 15px; font-weight: 600; line-height: 18px; }
+.city-fuel-logo { display: block; width: 78px; height: 20px; border-radius: 6px; object-fit: cover; }
+.city-badges { display: grid; gap: 4px; justify-items: start; }
+.city-badge { display: inline-flex; align-items: center; gap: 2px; height: 20px; padding: 0 6px 0 4px; border-radius: var(--r-pill); background: linear-gradient(90deg,#f8e6af,#ffb566); font-size: 13px; font-weight: 600; white-space: nowrap; }
+.city-mandarins { background: #6c78ed; color: #fff; padding-inline: 6px; }
+.city-shortcuts { display: flex; margin-top: 12px; padding: 0 12px 4px; overflow-x: auto; scrollbar-width: none; }
+.city-shortcut { display: grid; flex: 0 0 82px; height: 80px; align-content: start; justify-items: center; gap: 8px; font-size: 13px; }
+.city-shortcut-icon { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: rgba(163,129,255,.13); }
+.city-shortcut[aria-pressed="true"] .city-shortcut-icon { outline: 2px solid var(--c-info); outline-offset: -2px; }
+.city-icon-fun { background: rgba(212,93,140,.12); }
+.city-icon-hotels { background: rgba(255,114,6,.12); }
+.city-feed { margin-top: 20px; row-gap: 24px; align-items: start; scroll-margin-top: 8px; }
+.city-feed .city-ad { height: 300px; aspect-ratio: auto; background: #d2e6bc; }
+.city-ad .banner-bg { object-position: center bottom; }
+.city-ad .banner-title { white-space: pre-line; }
+.city-empty { grid-column: 1 / -1; color: var(--c-text-muted); }
+.city-feed.grid { padding: 0; }
+.city-glass, .city-location, .city-search input { font-size: 17px; }
+
+.city-fuel-logo.is-rendered { opacity: 0; }
