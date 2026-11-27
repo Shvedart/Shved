@@ -59,7 +59,10 @@ export function cityScreen({ el, nav, params }) {
     button({ class: 'city-details', onClick: () => promo && nav.push('/offer/' + promo.id) }, 'Подробнее'));
 
   const input = h('input', { type: 'search', placeholder: 'Поиск', 'aria-label': 'Поиск по ленте' });
-  const search = h('label', { class: 'city-search' }, iconImg('city-search', { size: 24 }), input);
+  const clearSearch = button({ class: 'city-search-clear', 'aria-label': 'Очистить поиск', hidden: true,
+    onClick: () => { input.value = ''; render(); input.focus(); },
+  }, iconImg('close', { size: 16 }));
+  const search = h('form', { class: 'city-search', role: 'search' }, iconImg('city-search', { size: 24 }), input, clearSearch);
   const video = h('video', { class: 'city-headphone-video', muted: true, playsinline: true, preload: 'auto', 'aria-hidden': 'true' });
   video.muted = true;
   const featured = button({ class: 'city-tile city-electronics', onClick: () => {
@@ -161,15 +164,21 @@ export function cityScreen({ el, nav, params }) {
     scratches: [],
     custom: setup,
     externalControls: true,
+    matchGoodsShare: true,
     firstBanner: { id: 'city-pets', category: 'pets', title: 'Товары для питомцев с кэшбэком 10%', image: asset('pet-ad.png'), textColor: 'dark' },
     onLink: () => nav.push('/favorites'),
   });
+  const emptySearch = h('p', { class: 'city-search-empty', role: 'status', hidden: true }, 'Ничего не нашли');
   let goodsChanges;
   let feedMounted = false;
   let category = 'all';
   function render() {
     const query = input.value.trim().toLocaleLowerCase('ru-RU');
-    feed.select(category, { query });
+    clearSearch.hidden = !input.value;
+    el.classList.toggle('city-searching', !!query);
+    feed.select(query ? 'all' : category, { query });
+    emptySearch.hidden = !query || !!feed.querySelector('.shelf-mixed:not([hidden]) .grid:not([hidden])');
+
   }
   function select(next, destination) {
     category = !destination && category === next ? 'all' : next;
@@ -178,8 +187,9 @@ export function cityScreen({ el, nav, params }) {
     (destination && feed.querySelector(destination) || feed).scrollIntoView({ block: 'start' });
   }
   input.addEventListener('input', render);
+  search.addEventListener('submit', (event) => { event.preventDefault(); input.blur(); });
   el.append(header, hero, search, h('nav', { 'aria-label': 'Сервисы Города' },
-    h('div', { class: 'city-tiles' }, featured, ...(products ? [repeatOrder, nutella] : [discounts, brands])), h('div', { class: 'city-shortcuts' }, shortcuts)), feed);
+    h('div', { class: 'city-tiles' }, featured, ...(products ? [repeatOrder, nutella] : [discounts, brands])), h('div', { class: 'city-shortcuts' }, shortcuts)), emptySearch, feed);
   return {
     appbar: false,
     onActive() {

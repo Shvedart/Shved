@@ -679,7 +679,7 @@ function customSpecials({ catalog, setup, extras, onLink }) {
     const t = travelShelf({ items: TRAVEL });
     t.dataset.cat = 'travel';
     extras.push(t);
-    list.push({ el: t, at: 0.35 });
+    list.push({ el: t, at: 0.40 });
   }
   if (setup.weights.fun > 0) {
     const a = afishaShelf({ items: AFISHA });
@@ -774,7 +774,7 @@ function balanceColumns(m, heights, items = masonryItems(m)) {
   return bestD;
 }
 
-function customParts({ catalog, byOffer, promos, scratches: allScratches = [], extras = [], setup, onLink, firstBanner }) {
+function customParts({ catalog, byOffer, promos, scratches: allScratches = [], extras = [], setup, onLink, firstBanner, matchGoodsShare }) {
   // стирашек в ленте 07 вдвое меньше (из 5 — 3); лишние убираем со страницы
   const scratches = allScratches.slice(0, Math.round(allScratches.length / 2));
   allScratches.slice(scratches.length).forEach((sc) => sc.remove());
@@ -840,13 +840,19 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
   // когда офферы кончились — дальше одни товары (хвост ленты): минимум TAIL_GOODS и до CUSTOM_TOTAL
   const sum = (counts) => Object.values(counts).reduce((a, b) => a + b, 0);
   const offerCaps = Object.fromEntries(cats.map((c) => [c, pools[c].offers.length]));
-  const offerCounts = setup.goods >= 100 ? {} : allocate(sum(offerCaps), weights, offerCaps, step);
+  let offerCounts = setup.goods >= 100 ? {} : allocate(sum(offerCaps), weights, offerCaps, step);
   const offerSum = sum(offerCounts);
   const goodsTarget = setup.goods >= 100 ? CUSTOM_TOTAL : Math.round((offerSum * setup.goods) / (100 - setup.goods));
   const goodsCounts = allocate(goodsTarget, weights, Object.fromEntries(cats.map((c) => [c, pools[c].goods.length])), step);
   const tailTarget = setup.goods > 0 && setup.goods < 100 ? Math.max(TAIL_GOODS, CUSTOM_TOTAL - offerSum - sum(goodsCounts)) : 0;
   const tailCounts = allocate(tailTarget, weights,
     Object.fromEntries(cats.map((c) => [c, pools[c].goods.length - (goodsCounts[c] || 0)])), step);
+  if (matchGoodsShare && setup.goods > 0 && setup.goods < 100) {
+    // Считаем долю по реально доступным товарам, включая хвост.
+    const shownGoods = sum(goodsCounts) + sum(tailCounts);
+    const limit = Math.round(shownGoods * (100 - setup.goods) / setup.goods);
+    offerCounts = allocate(limit, offerCaps, offerCaps, step);
+  }
   const toCard = (cat) => (p) => {
     const card = goodsCard(p);
     card.changeProduct = p;
@@ -865,8 +871,8 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
     if (!g && !o && !t) continue;
     plan[cat] = {
       offers: pools[cat].offers.slice(0, o),
-      goods: pools[cat].goods.slice(0, g).map(toCard(cat)),
-      tail: pools[cat].goods.slice(g, g + t).map(toCard(cat)),
+      goods: pools[cat].goods.slice(0, matchGoodsShare ? g + t : g).map(toCard(cat)),
+      tail: matchGoodsShare ? [] : pools[cat].goods.slice(g, g + t).map(toCard(cat)),
     };
   }
   // «Продукты в ленте» выключен: во всей ленте продуктов нет, но в категории «Еда» они идут
@@ -890,6 +896,7 @@ function customParts({ catalog, byOffer, promos, scratches: allScratches = [], e
   const rest = {};
   for (const { id: cat } of NAV) {
     const offers = prioritize(mix([
+      ...(matchGoodsShare ? pools[cat]?.offers.slice(offerCounts[cat] || 0) || [] : []),
       ...catalog.offersInCategory(cat).filter((o) => o && byOffer.has(o.id) && !usedOffers.has(o.id)).map((o) => {
         usedOffers.add(o.id);
         return byOffer.get(o.id);
@@ -1174,7 +1181,7 @@ const AFISHA = [
    «просмотрено», лайки и стёртые скретч-карточки сохраняются. */
 // custom — настройка ленты из сценария 07 (store.state.feedSetup): тогда лента собирается не по LAYOUT,
 // а по долям категорий и товаров, полками или сплошной сеткой (customParts)
-export function buildShelves({ catalog, cards, scratches, promos = [], goods = false, custom = null, onLink, externalControls = false, firstBanner }) {
+export function buildShelves({ catalog, cards, scratches, promos = [], goods = false, custom = null, onLink, externalControls = false, firstBanner, matchGoodsShare = false }) {
   const byOffer = new Map(cards.map((c) => [c.dataset.offer, c]));
   const used = new Set();
   const take = (cat, match, n) => {
@@ -1199,7 +1206,7 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
   const extras = [];
   const parts = [];
   const afterTravel = [];
-  if (custom) parts.push(...customParts({ catalog, byOffer, promos: promoPool, scratches, extras, setup: custom, onLink, firstBanner }));
+  if (custom) parts.push(...customParts({ catalog, byOffer, promos: promoPool, scratches, extras, setup: custom, onLink, firstBanner, matchGoodsShare }));
   else {
     LAYOUT.forEach((s, i) => {
       if (s.kind === 'promos') {
@@ -1335,11 +1342,17 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
       if (trip) {
         visible.splice(visible.indexOf(trip), 1);
         // Между горячими билетами и направлениями оставляем обычный блок.
-        const slots = visible.map((el, i) => i).filter((i) => i > 0 && visible[i - 1] !== hot);
+        const slots = visible.map((_, i) => i)
+          .filter((i) => i > 0 && visible[i - 1] !== hot && visible[i] !== hot);
+        // При фильтрации иногда остаётся только один блок между полками.
+        if (!slots.length && visible.length > 1 && visible.at(-1) !== hot) slots.push(visible.length);
         if (slots.length) {
           const original = [...container.children].filter((el) => !el.hidden).indexOf(trip);
           const at = slots.reduce((best, i) => Math.abs(i - original) < Math.abs(best - original) ? i : best);
           visible.splice(at, 0, trip);
+        } else if (hot && visible.length === 1) {
+          // Без разделителя оставляем в этой выдаче только горячие билеты.
+          trip.hidden = true;
         } else visible.push(trip);
       }
       container.append(...visible);
@@ -1424,11 +1437,11 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
         let any = false;
         for (const card of part.querySelectorAll('.ocard, .promo, .goods, .banner')) {
           // data-only — карточка только для своей категории (продукты в «Еде»)
-          const matchesCategory = id === 'all' ? !card.dataset.only
+          const matchesCategory = id === 'all' ? (!!query || !card.dataset.only)
             : id === 'discounts' ? card.classList.contains('promo')
               : id === 'brands' ? card.classList.contains('ocard')
                 : !own && (card.dataset.cat || catOf.get(card.dataset.offer)) === id;
-          const ok = matchesCategory && (!query || card.textContent.toLocaleLowerCase('ru-RU').includes(query));
+          const ok = matchesCategory && (!query || (!card.classList.contains('banner') && query.split(/\s+/).every((word) => card.textContent.toLocaleLowerCase('ru-RU').replaceAll('ё', 'е').includes(word.replaceAll('ё', 'е')))));
           card.hidden = !ok;
           any ||= ok;
         }
@@ -1455,12 +1468,13 @@ export function buildShelves({ catalog, cards, scratches, promos = [], goods = f
       }
       if (!part.hidden) shown.push(part);
     }
-    orderTravel(id);
     for (const part of parts) part.rebalance?.(id === 'all' && !query);
-    // интерактивная полка (путешествия, афиша) не встаёт первой: в категории она идёт второй
+    orderTravel(id);
+    shown.splice(0, shown.length, ...[...root.children].filter((part) => !part.hidden));
+    // Интерактивная полка в категории идёт второй.
     for (const part of parts) part.style.order = '';
     const interactive = (el) => el?.classList.contains('fc-trip') || el?.classList.contains('fc-hero');
-    if (id !== 'all' && interactive(shown[0]) && shown[1]) {
+    if (id !== 'all' && interactive(shown[0]) && shown[1] && !shown[1].classList.contains('hot-flights')) {
       shown.forEach((el, i) => { el.style.order = String(i); });
       shown[0].style.order = '1';
       shown[1].style.order = '0';
